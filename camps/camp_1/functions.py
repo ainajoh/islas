@@ -10,6 +10,9 @@ import numpy as np
 
 
 
+
+# little edit
+
 class meteogram():
     def __init__(self):
         self.latlon_mapdomain = [11, 14, 78.8, 79.2] # Kingsbay area, domain of interest
