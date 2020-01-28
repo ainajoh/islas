@@ -10,6 +10,11 @@
 #           What about mointain vs ground level ? Is there a height for each grid point? remember its supposed to reopresnt average in gridcell..
 
 
+#from islas.camps.camp_1.functions import test
+
+
+
+
 from netCDF4 import Dataset                     #For reading netcdf files.
 import cartopy.crs as ccrs                      #For setting up a map
 from cartopy.io import shapereader              #For reading shapefiles containg high-resolution coastline.
@@ -118,8 +123,8 @@ def background_map(latlon_old_pier, latlon_mapdomain, lons_gridPointDomain, lats
     ax = plt.axes( projection=projection )
     ax.set_extent( latlon_mapdomain )
     #LOAD SHAPEFILE FOR COAST and HEIGHT CONTOURS
-    shp = shapereader.Reader('/Users/ainajoh/Downloads/NP_S100_SHP/S100_Land_f.shp')
-    shpkvote=shapereader.Reader('/Users/ainajoh/Downloads/NP_S100_SHP/S100_Koter_l.shp')
+    shp = shapereader.Reader('/Users/ainajoh/Data/ISAS/shape_files/NP_S100_SHP/S100_Land_f.shp')
+    shpkvote=shapereader.Reader('/Users/ainajoh/Data/ISAS/shape_files/NP_S100_SHP/S100_Koter_l.shp')
     #PLOT GRIDLINES
     gl = ax.gridlines(crs=crs_latlon, draw_labels=False, linewidth=1, color='gray', alpha=0.3, linestyle='--')
     #########################################
