@@ -24,9 +24,34 @@ import matplotlib.cm as cm                      #For colors on map
 import datetime as dt
 import matplotlib.dates as mdates
 import numpy as np
+from scipy.interpolate import RegularGridInterpolator
 
 
+idx = np.array([[517, 517, 518, 518, 518, 518, 518, 519, 519, 519, 519, 519, 519, 520, 520, 520, 520, 520, 520, 520, 520, 520, 521, 521, 521, 521, 521, 521, 521, 521, 521, 522, 522, 522, 522, 522, 522, 522, 522, 522, 523, 523, 523, 523, 523, 523, 524, 524, 524, 524, 524, 525, 525, 525], [183, 184, 182, 183, 184, 185, 186, 182, 183, 184, 185, 186, 187, 181, 182, 183, 184, 185, 186, 187,188, 189, 182, 183, 184, 185, 186, 187, 188, 189, 190, 183, 184, 185, 186, 187, 188, 189, 190, 191, 185, 186, 187, 188, 189, 190, 186, 187, 188, 189, 190, 187, 188, 189]])
 url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc"
+jindx = idx[0]
+iindx = idx[1]
+url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc?"+ \
+      f"time,"+ \
+      f"hybrid,ap,b,"+ \
+      f"latitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"longitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"air_temperature_ml[0:1:66][0:1:64][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"x_wind_ml[0:1:66][0:1:64][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"y_wind_ml[0:1:66][0:1:64][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"specific_humidity_ml[0:1:66][0:1:64][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"atmosphere_boundary_layer_thickness[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"air_temperature_2m[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"surface_air_pressure[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"relative_humidity_2m[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"x_wind_10m[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"y_wind_10m[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"x_wind_gust_10m[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"y_wind_gust_10m[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"integral_of_surface_downward_sensible_heat_flux_wrt_time[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"integral_of_surface_downward_latent_heat_flux_wrt_time[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}],"+ \
+      f"land_area_fraction[0:1:66][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+
 print("Reads the data")
 dataset = Dataset(url)
 #########################################
@@ -43,7 +68,6 @@ y_wind_ml = dataset.variables["y_wind_ml"]
 specific_humidity_ml = dataset.variables["specific_humidity_ml"]
 # cloud_area_fraction_ml
 BL_meter = dataset.variables["atmosphere_boundary_layer_thickness"][:]
-
 #normal surface meteograms
 air_temperature_2m = dataset.variables["air_temperature_2m"][:] #(time,height1,y,x)
 relative_humidity_2m = dataset.variables["relative_humidity_2m"][:]
@@ -99,15 +123,24 @@ def Svalbard():
     latmax = latlon_mapdomain[3] - 0.2
 
     #FIND INDEX AND COORDINATES OF GRIDPOINTS INSIDE THE DOMAIN.
-    indx = np.where( [(lon > lonmin) & (lon < lonmax) & (lat >= latmin) & (lat <= latmax)] )
+    indx = np.where( (lon > lonmin) & (lon < lonmax) & (lat >= latmin) & (lat <= latmax) )
+    indx_land = np.where( (lon > lonmin) & (lon < lonmax) & (lat >= latmin) & (lat <= latmax) & (land_area_fraction[0][0][:][:] == 1 ))
+    indx_sea = np.where((lon > lonmin) & (lon < lonmax) & (lat >= latmin) & (lat <= latmax) & (land_area_fraction[0][0][:][:]==0))
+    #dlon= lon[0][1] - lon[0][0]
+    #dlat= lat[0][1] - lat[1][1]
+    #itp = RegularGridInterpolator((lat, lon), data, method='nearest')
+    #N0 = 78.95
+
+    #indx_line1 = itp(some_new_point)
     #Index of points in domain
-    jindx_gridPointDomain = indx[1] #index of y/lat
-    iindx_gridPointDomain = indx[2] #index of x/lon
+    jindx_gridPointDomain = indx[0] #index of y/lat
+    iindx_gridPointDomain = indx[1] #index of x/lon
     #Coordinate of points in domain
     lons_gridPointDomain = lon[ jindx_gridPointDomain, iindx_gridPointDomain ]
     lats_gridPointDomain = lat[ jindx_gridPointDomain, iindx_gridPointDomain ]
 
-    return latlon_old_pier, latlon_mapdomain, lons_gridPointDomain, lats_gridPointDomain, jindx_gridPointDomain, iindx_gridPointDomain
+    #return indx_land, indx_sea, indx
+    return latlon_old_pier, latlon_mapdomain, lons_gridPointDomain, lats_gridPointDomain, jindx_gridPointDomain, iindx_gridPointDomain, indx_sea, indx_land
 
 def background_map(latlon_old_pier, latlon_mapdomain, lons_gridPointDomain, lats_gridPointDomain):
     """
@@ -116,6 +149,7 @@ def background_map(latlon_old_pier, latlon_mapdomain, lons_gridPointDomain, lats
     #########################################
     # SETUP PROJECTION AND MAP ELEMENTS
     #########################################
+    print("background map")
     projection = ccrs.UTM( 33 ) #Map projection you want
     crs_latlon = ccrs.PlateCarree() #Coordinates used to plot points on map
 
@@ -157,12 +191,12 @@ def grid_point(lonp,latp, crs_latlon):
     plt.plot(lonp, latp, marker='.', markersize=5.0, markeredgewidth=4,
                       markerfacecolor='red', markeredgecolor='red', zorder=7, transform=crs_latlon,
                       linestyle='None')
-    plt.savefig("AROME_PLOT_lon"+str(lonp) + "__lat" + str(latp) + ".png")
+    #plt.savefig("AROME_PLOT_lon"+str(lonp) + "__lat" + str(latp) + ".png")
 
     #color gridpoint black again
-    plt.plot(lonp, latp, marker='.', markersize=5.0, markeredgewidth=4,
-                      markerfacecolor='black', markeredgecolor='black', zorder=7, transform=crs_latlon,
-                      linestyle='None')
+    #plt.plot(lonp, latp, marker='.', markersize=5.0, markeredgewidth=4,
+    #                  markerfacecolor='black', markeredgecolor='black', zorder=7, transform=crs_latlon,
+    #                  linestyle='None')
 
 def meteogram_vertical(jindx, iindx):
     print("inside meteogram_vertical")
@@ -239,23 +273,58 @@ def meteogram(jindx, iindx):
     #fig5: Cloud cover. (maybe merge with fig3 later.)
     plt.show()
 
-def meteogram_average(jindx_gridPointDomain, iindx_gridPointDomain):
-    Domain_land = jindx_gridPointDomain[np.where([land_area_fraction])]
+def meteogram_average(indx):
+    lona = lon[indx[0],indx[1]]
+    lata = lat[indx[0],indx[1]]
 
+    figma1, axma1 = plt.subplots(figsize=(12, 4))
+    # figm1.suptitle('test title', fontsize=20)
+    tmp_mean = np.mean( air_temperature_2m[:, 0, indx[0], indx[1] ], axis=1 )
 
+    axma1_2 = axma1.twinx()
+    axma1.plot(time_normal, tmp_mean - 273.15, color = "black")
+    axma1.plot(time_normal, air_temperature_2m[:, 0, indx[0], indx[1] ] - 273.15, color = "blue")
+    axma1.set_ylabel('2m Temp ($^\circ$C)')
+    axma1_2.plot(time_normal, relative_humidity_2m[:, 0,indx[0], indx[1]] * 100, color="green")
+    axma1_2.set_ylabel(' 2m Rel. Hum. (%)')
+
+    ##fig2: Wind speed: wind_gust, wind_direction.
+    # TODO: When u have height in meters calc: Find Wind at say 80 m height/ height of mountain in areas.
+    figma2, axma2 = plt.subplots(figsize=(12, 4))
+    # figm2.suptitle('test title', fontsize=20)
+    # axm2_2 = axm1.twinx()
+    wspeed_gust = np.sqrt(x_wind_gust_10m[:, 0, indx[0], indx[1]] ** 2 + y_wind_gust_10m[:, 0, indx[0], indx[1]] ** 2)
+    wspeed = np.sqrt(x_wind_10m[:, 0, indx[0], indx[1]] ** 2 + y_wind_10m[:, 0, indx[0], indx[1]] ** 2)
+    axma2.plot(time_normal, wspeed_gust, zorder=0, color = "gray")
+    axma2.plot(time_normal, wspeed, zorder=1, color = "black")
+    wspeed_mean = np.mean(wspeed, axis = 1)
+    wspeed_meanx = np.mean(x_wind_10m[:, 0, indx[0], indx[1]], axis = 1)
+    wspeed_meany = np.mean(y_wind_10m[:, 0, indx[0], indx[1]], axis = 1)
+    print(np.shape(time_normal))
+    print(np.shape(wspeed_mean))
+    print(np.shape(wspeed_mean))
+    w = axma2.quiver(time_normal, wspeed_mean, wspeed_meanx[:] / wspeed_mean, wspeed_meany[:] / wspeed_mean, scale=80, zorder=2)
+    #w_g = axma2.quiver(time_normal, wspeed_gust, x_wind_gust_10m[:, 0,indx[0], indx[1]] / wspeed_gust,
+    #                     y_wind_gust_10m[:, 0, indx[0], indx[1]] / wspeed_gust, scale=80, zorder=2)
+    axma2.set_ylabel('10m Wind/Gust (m/s)')
 
 
 def main():
-    old_pier, latlon, londomain, latdomain, jindx, iindx = Svalbard()
+    old_pier, latlon, londomain, latdomain, jindx, iindx, indx_sea, indx_land = Svalbard()
     projection, crs_latlon = background_map(old_pier, latlon, londomain, latdomain)
     test = 0
-    #meteogram_average(jindx, iindx )
+    #grid_point(lon[indx_sea[0],indx_sea[1]],lat[indx_sea[0],indx_sea[1]],crs_latlon)
+    #grid_point(lon[indx_land[0],indx_land[1]],lat[indx_land[0],indx_land[1]],crs_latlon)
+    meteogram_average(indx_sea)
+
+    plt.show()
+
     for i in range(0,np.shape(londomain)[0]):
         while test == 0:
             print(test)
             #grid_point(londomain[i], latdomain[i], crs_latlon)
-            meteogram_vertical(jindx[i], iindx[i])
-            meteogram(jindx[i], iindx[i])
+            #meteogram_vertical(jindx[i], iindx[i])
+            #meteogram(jindx[i], iindx[i])
             test += 1
 main()
 
