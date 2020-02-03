@@ -28,13 +28,13 @@ def define_domain( latlon_mapdomain = [11, 14, 78.8, 79.2], adjusted_map2datadom
 
     return idx, latlon_datadomain
 
-class meteogram():
+class Domain():
     def __init__(self):
         #self.latlon_mapdomain = [11, 14, 78.8, 79.2] # Kingsbay area, domain of interest
         self.latlon_mapdomain = [11, 14, 78.8, 79.2] # Kingsbay area, domain of interest
         adjusted_map2datadomain = [0.7, -1.1, 0.08, 0.2]
         self.latlon_old_pier = [11.91929, 78.93030] # end of old pier
-        self.idx =None
+        self.idx = None
         self.latlon_datadomain = None
 
         define_domain( self.latlon_mapdomain, adjusted_map2datadomain)
@@ -55,6 +55,10 @@ class meteogram():
         # lon/lat points for complete region
         #lon_index = ((dataset.variables["longitude"][:] > self.latlon_focus_area[0]) & (dataset.variables["longitude"][:] < self.latlon_focus_area[1]))
         #lat_index = ((dataset.variables["latitude"][:] > self.latlon_focus_area[2]) & (dataset.variables["latitude"][:] < self.latlon_focus_area[3]))
+
+        def Kingsbay():
+
+
 
         def define_domain(self, latlon_mapdomain=[11, 14, 78.8, 79.2], adjusted_map2datadomain=[0.7, -1.1, 0.08, 0.2]):
 

@@ -27,6 +27,8 @@ import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 
 
+
+
 idx = np.array([[517, 517, 518, 518, 518, 518, 518, 519, 519, 519, 519, 519, 519, 520, 520, 520, 520, 520, 520, 520, 520, 520, 521, 521, 521, 521, 521, 521, 521, 521, 521, 522, 522, 522, 522, 522, 522, 522, 522, 522, 523, 523, 523, 523, 523, 523, 524, 524, 524, 524, 524, 525, 525, 525], [183, 184, 182, 183, 184, 185, 186, 182, 183, 184, 185, 186, 187, 181, 182, 183, 184, 185, 186, 187,188, 189, 182, 183, 184, 185, 186, 187, 188, 189, 190, 183, 184, 185, 186, 187, 188, 189, 190, 191, 185, 186, 187, 188, 189, 190, 186, 187, 188, 189, 190, 187, 188, 189]])
 url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc"
 jindx = idx[0]
@@ -98,7 +100,7 @@ p = np.zeros(shape = np.shape(tmp_ml))
 for k in range(0,len(hybrid)): # Outside for loop? p = [ac/100 + bc * psc for ac, bc, psc in zip(ap,b, ps[:,0,:,:])]
     p[:,k,:,:] = ap[k]/100. + b[k] * ps[:,0,:,:]/100.
 
-#dataset.close()
+dataset.close()
 
 def Svalbard():
     """
@@ -198,8 +200,136 @@ def grid_point(lonp,latp, crs_latlon):
     #                  markerfacecolor='black', markeredgecolor='black', zorder=7, transform=crs_latlon,
     #                  linestyle='None')
 
-def meteogram_vertical(jindx, iindx):
+def meteogram_vertical(jindx, iindx, ax2):
     print("inside meteogram_vertical")
+
+    #fig2, ax2 = plt.subplots( figsize = ( 12, 4 ) )
+
+    levels = range( len( hybrid ) )
+    lx, tx = np.meshgrid( levels, time_normal[:] )
+
+    #suggestion2
+    #CS = plt.pcolormesh(tx, p[:, :, jindx, iindx], specific_humidity_ml[:,:,jindx, iindx])
+    # CS = plt.contour(tx, p[:, :, jindx, iindx], specific_humidity_ml[:,:,jindx, iindx]
+    #suggestion1
+    #CS = plt.pcolormesh(tx, p[:, :, jindx, iindx], tmp_ml[:,:,jindx, iindx])
+    cmapback = cm.get_cmap( 'bwr' )
+    #tmp_celcius =
+    CF = ax2.contourf( tx, p[:, :, jindx, iindx], tmp_ml[:, :, jindx, iindx]-273.15, cmap = cmapback )
+    plt.clabel( CF, inline = False )
+    C = ax2.contour( tx, p[:, :, jindx, iindx], specific_humidity_ml[:, :, jindx, iindx], colors = "white", linewidths = 1 )
+    plt.clabel( C )
+
+    ax2.plot( time_normal[:], BL_p[:, 0, jindx, iindx], color = "black", linewidth=3 ) #(67, 1, 949, 739)
+    n= 7
+    C = np.sqrt(x_wind_ml[:,::n,jindx, iindx]** 2 + y_wind_ml[:,::n,jindx, iindx]** 2)*1.943844
+    cmap = plt.cm.jet
+    bounds_ms = [3., 6., 9., 12.]
+    bounds_knots = [x*1.943844 for x in bounds_ms]
+    norm = mpl.colors.BoundaryNorm(bounds_knots, cmap.N)
+    img = ax2.barbs(tx[:, ::n], p[:, ::n, jindx, iindx], x_wind_ml[:,::n,jindx, iindx]*1.943844, y_wind_ml[:,::n,jindx, iindx]*1.943844,C,cmap=cmap,norm=norm, length=4)
+    cbar = plt.colorbar(img, cmap=cmap, norm = norm, boundaries=bounds_knots, ticks=bounds_knots)
+    cbar.ax.set_yticklabels(bounds_ms)  # vertically oriented colorbar
+
+    #plt.gca().invert_yaxis()
+    ax2.invert_yaxis()
+
+    xfmt = mdates.DateFormatter('%d.%m\n%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
+    ax2.xaxis.set_major_formatter(xfmt)  # Setting xaxis to this format
+    #plt.clabel(CS, inline=1, fontsize=10)
+
+    #print("Should show plot soon")
+    #plt.show()
+    #print("Plot done showed")
+    return ax2
+def meteogram(jindx, iindx, axm1, axm2, axm4):
+    print("e")
+    #fig1:temp, dewppint, precip. y1 aksis = temp, y2 aksis = mm precip.
+    #figm1, (axm1,axm2,axm4) = plt.subplots(nrows=3, ncols=1, figsize=(12, 10), sharex=True )
+
+    #figm1.suptitle('test title', fontsize=20)
+    axm1_2 = axm1.twinx()
+    axm1.plot( time_normal, air_temperature_2m[ :, 0, jindx,iindx] - 273.15 )
+    axm1.set_ylabel('2m Temp ($^\circ$C)')
+    axm1_2.plot(time_normal, relative_humidity_2m[:, 0, jindx, iindx]*100, color = "green")
+    axm1_2.set_ylabel(' 2m Rel. Hum. (%)')
+    xfmt = mdates.DateFormatter('%d.%m\n%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
+    axm1.xaxis.set_major_formatter(xfmt)
+    ##fig2: Wind speed: wind_gust, wind_direction.
+    #TODO: When u have height in meters calc: Find Wind at say 80 m height/ height of mountain in areas.
+    #figm2.suptitle('test title', fontsize=20)
+    #axm2_2 = axm1.twinx()
+    wspeed_gust = np.sqrt( x_wind_gust_10m[:, 0, jindx, iindx] **2 + y_wind_gust_10m[:, 0, jindx, iindx] **2)
+    wspeed = np.sqrt( x_wind_10m[:, 0, jindx, iindx] ** 2 + y_wind_10m[:, 0, jindx, iindx] ** 2 )
+    axm2.plot(time_normal,wspeed_gust,zorder=0)
+    axm2.plot(time_normal, wspeed, zorder=1)
+    Q = axm2.quiver(time_normal, wspeed, x_wind_10m[:, 0, jindx, iindx]/wspeed,y_wind_10m[:, 0, jindx, iindx]/wspeed, scale = 80, zorder=2)
+    Q_gust = axm2.quiver(time_normal, wspeed_gust, x_wind_gust_10m[:, 0, jindx, iindx]/wspeed_gust, y_wind_gust_10m[:, 0, jindx, iindx]/wspeed_gust, scale = 80, zorder=2)
+    axm2.set_ylabel('10m Wind/Gust (m/s)')
+    axm2.xaxis.set_major_formatter(xfmt)
+    #fig3: precip, preciptype
+    #figm3, axm3 = plt.subplots(figsize=(12, 4))
+
+    #fig4: Fluxes radiation : latent, sensible, SW down, LW down, LW_up
+    axm4.plot(time_normal, SH[:, 0, jindx, iindx], zorder=0)
+    axm4.plot(time_normal, LH[:, 0, jindx, iindx], zorder=0)
+    axm4.set_ylabel('Fluxes (Ws/m$^2$)')
+    axm4.xaxis.set_major_formatter(xfmt)
+    #fig5: Cloud cover. (maybe merge with fig3 later.)
+    return axm1, axm2, axm4
+def meteogram_average(indx):
+    lona = lon[indx[0],indx[1]]
+    lata = lat[indx[0],indx[1]]
+
+    figma1, (axma1,axma2,axma4) = plt.subplots(nrows=3, ncols=1, figsize=(12, 10), sharex=True )
+    # figm1.suptitle('test title', fontsize=20)
+    #axma1 = ax[0,0]
+    #axma2 = ax[1,0]
+    #axma4 = ax[2,0]
+
+    tmp_mean = np.mean( air_temperature_2m[:, 0, indx[0], indx[1] ], axis=(1) )
+
+    axma1_2 = axma1.twinx()
+    axma1.plot(time_normal, tmp_mean[:] - 273.15, color = "black")
+    axma1.plot(time_normal, air_temperature_2m[:, 0, indx[0], indx[1] ] - 273.15, color = "blue")
+    axma1.set_ylabel('2m Temp ($^\circ$C)', color = "blue")
+    axma1_2.plot(time_normal, relative_humidity_2m[:, 0,indx[0], indx[1]] * 100, color="green")
+    axma1_2.set_ylabel(' 2m Rel. Hum. (%)', color = "green")
+    xfmt = mdates.DateFormatter('%d.%m\n%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
+    axma1.xaxis.set_major_formatter(xfmt)
+
+    ##fig2: Wind speed: wind_gust, wind_direction.
+    # TODO: When u have height in meters calc: Find Wind at say 80 m height/ height of mountain in areas.
+    #figma2, axma2 = plt.subplots(figsize=(12, 4))
+    # figm2.suptitle('test title', fontsize=20)
+    # axm2_2 = axm1.twinx()
+    wspeed_gust = np.sqrt(x_wind_gust_10m[:, 0, indx[0], indx[1]] ** 2 + y_wind_gust_10m[:, 0, indx[0], indx[1]] ** 2)
+    wspeed = np.sqrt(x_wind_10m[:, 0, indx[0], indx[1]] ** 2 + y_wind_10m[:, 0, indx[0], indx[1]] ** 2)
+    plot_wind_gust=axma2.plot(time_normal, wspeed_gust, zorder=0, color = "gray")
+    plot_wind=axma2.plot(time_normal, wspeed, zorder=1, color = "black")
+    wspeed_mean = np.mean(wspeed, axis = (1))
+    wspeed_meanx = np.mean(x_wind_10m[:, 0, indx[0], indx[1]], axis = (1))
+    wspeed_meany = np.mean(y_wind_10m[:, 0, indx[0], indx[1]], axis = (1))
+    w = axma2.quiver(time_normal, wspeed_mean, wspeed_meanx[:] / wspeed_mean, wspeed_meany[:] / wspeed_mean, scale=70, zorder=2, color = "r")
+    wspeed_g_mean = np.mean(wspeed_gust, axis=(1))
+    wspeed_g_meanx = np.mean(x_wind_gust_10m[:, 0, indx[0], indx[1]], axis=(1))
+    wspeed_g_meany = np.mean(y_wind_gust_10m[:, 0, indx[0], indx[1]], axis=(1))
+    w_g = axma2.quiver(time_normal, wspeed_g_mean, wspeed_g_meanx[:] / wspeed_g_mean, wspeed_g_meany[:] / wspeed_g_mean, scale=70, zorder=2, color ="r")
+    axma2.set_ylabel('10m Wind/Gust (m/s)')
+    #axma2.legend([plot_wind_gust[0],plot_wind[0]],['Wind gust', 'Wind'])
+    axma2.xaxis.set_major_formatter(xfmt)
+    # fig4: Fluxes radiation : latent, sensible, SW down, LW down, LW_up
+    #figma4, axma4 = plt.subplots(figsize=(12, 4))
+    plotsh = axma4.plot(time_normal, SH[:, 0, indx[0], indx[1]], zorder=0, color = "yellow")
+    plotlh = axma4.plot(time_normal, LH[:, 0, indx[0], indx[1]], zorder=0, color ="red")
+    axma4.legend([plotsh[0],plotlh[0]],['Sensible heat flux', 'Latent heat flux'])
+    axma4.set_ylabel('Fluxes (Ws/m$^2$)')
+    axma4.xaxis.set_major_formatter(xfmt)
+def meteogram_vertical_average(indx):
+    print("inside meteogram_vertical")
+    lona = lon[indx[0], indx[1]]
+    lata = lat[indx[0], indx[1]]
+
 
     fig2, ax2 = plt.subplots( figsize = ( 12, 4 ) )
     levels = range( len( hybrid ) )
@@ -212,120 +342,62 @@ def meteogram_vertical(jindx, iindx):
     #CS = plt.pcolormesh(tx, p[:, :, jindx, iindx], tmp_ml[:,:,jindx, iindx])
     cmapback = cm.get_cmap( 'bwr' )
     #tmp_celcius =
-    CF = plt.contourf( tx, p[:, :, jindx, iindx], tmp_ml[:, :, jindx, iindx]-273.15, cmap = cmapback )
+    p_mean = np.mean( p[ :, :, :,:], axis=(2,3))
+    t_mean = np.mean( tmp_ml[ :, :, indx[0], indx[1]], axis=(2,3))
+
+    CF = plt.contourf( tx, p_mean, t_mean-273.15, cmap = cmapback )
     plt.clabel( CF, inline = False )
-    C = plt.contour( tx, p[:, :, jindx, iindx], specific_humidity_ml[:, :, jindx, iindx], colors = "white", linewidths = 1 )
-    plt.clabel( C )
+    #C = plt.contour( tx, p[:, :, jindx, iindx], specific_humidity_ml[:, :, jindx, iindx], colors = "white", linewidths = 1 )
+    #plt.clabel( C )
+    #
+    #plt.plot( time_normal[:], BL_p[:, 0, jindx, iindx], color = "black", linewidth=3 ) #(67, 1, 949, 739)
+    #n= 7
+    #C = np.sqrt(x_wind_ml[:,::n,jindx, iindx]** 2 + y_wind_ml[:,::n,jindx, iindx]** 2)*1.943844
+    #cmap = plt.cm.jet
+    #bounds_ms = [3., 6., 9., 12.]
+    #bounds_knots = [x*1.943844 for x in bounds_ms]
+    #norm = mpl.colors.BoundaryNorm(bounds_knots, cmap.N)
+    #img = plt.barbs(tx[:, ::n], p[:, ::n, jindx, iindx], x_wind_ml[:,::n,jindx, iindx]*1.943844, y_wind_ml[:,::n,jindx, iindx]*1.943844,C,cmap=cmap,norm=norm, length=4)
+    #cbar = plt.colorbar(img, cmap=cmap, norm = norm, boundaries=bounds_knots, ticks=bounds_knots)
+    #cbar.ax.set_yticklabels(bounds_ms)  # vertically oriented colorbar
 
-    plt.plot( time_normal[:], BL_p[:, 0, jindx, iindx], color = "black", linewidth=3 ) #(67, 1, 949, 739)
-    n= 7
-    C = np.sqrt(x_wind_ml[:,::n,jindx, iindx]** 2 + y_wind_ml[:,::n,jindx, iindx]** 2)*1.943844
-    cmap = plt.cm.jet
-    bounds_ms = [3., 6., 9., 12.]
-    bounds_knots = [x*1.943844 for x in bounds_ms]
-    norm = mpl.colors.BoundaryNorm(bounds_knots, cmap.N)
-    img = plt.barbs(tx[:, ::n], p[:, ::n, jindx, iindx], x_wind_ml[:,::n,jindx, iindx]*1.943844, y_wind_ml[:,::n,jindx, iindx]*1.943844,C,cmap=cmap,norm=norm, length=4)
-    cbar = plt.colorbar(img, cmap=cmap, norm = norm, boundaries=bounds_knots, ticks=bounds_knots)
-    cbar.ax.set_yticklabels(bounds_ms)  # vertically oriented colorbar
-
-    plt.gca().invert_yaxis()
-    xfmt = mdates.DateFormatter('%d.%m\n%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
-    ax2.xaxis.set_major_formatter(xfmt)  # Setting xaxis to this format
+    #plt.gca().invert_yaxis()
+    #xfmt = mdates.DateFormatter('%d.%m\n%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
+    #ax2.xaxis.set_major_formatter(xfmt)  # Setting xaxis to this format
     #plt.clabel(CS, inline=1, fontsize=10)
 
     print("Should show plot soon")
     plt.show()
     print("Plot done showed")
 
-def meteogram(jindx, iindx):
-    print("e")
-    #fig1:temp, dewppint, precip. y1 aksis = temp, y2 aksis = mm precip.
-    figm1, axm1 = plt.subplots( figsize = ( 12, 4 ) )
-    #figm1.suptitle('test title', fontsize=20)
-    axm1_2 = axm1.twinx()
-    axm1.plot( time_normal, air_temperature_2m[ :, 0, jindx,iindx] - 273.15 )
-    axm1.set_ylabel('2m Temp ($^\circ$C)')
-    axm1_2.plot(time_normal, relative_humidity_2m[:, 0, jindx, iindx]*100, color = "green")
-    axm1_2.set_ylabel(' 2m Rel. Hum. (%)')
-
-    ##fig2: Wind speed: wind_gust, wind_direction.
-    #TODO: When u have height in meters calc: Find Wind at say 80 m height/ height of mountain in areas.
-    figm2, axm2 = plt.subplots(figsize=(12, 4))
-    #figm2.suptitle('test title', fontsize=20)
-    #axm2_2 = axm1.twinx()
-    wspeed_gust = np.sqrt( x_wind_gust_10m[:, 0, jindx, iindx] **2 + y_wind_gust_10m[:, 0, jindx, iindx] **2)
-    wspeed = np.sqrt( x_wind_10m[:, 0, jindx, iindx] ** 2 + y_wind_10m[:, 0, jindx, iindx] ** 2 )
-    axm2.plot(time_normal,wspeed_gust,zorder=0)
-    axm2.plot(time_normal, wspeed, zorder=1)
-    Q = axm2.quiver(time_normal, wspeed, x_wind_10m[:, 0, jindx, iindx]/wspeed,y_wind_10m[:, 0, jindx, iindx]/wspeed, scale = 80, zorder=2)
-    Q_gust = axm2.quiver(time_normal, wspeed_gust, x_wind_gust_10m[:, 0, jindx, iindx]/wspeed_gust, y_wind_gust_10m[:, 0, jindx, iindx]/wspeed_gust, scale = 80, zorder=2)
-    axm2.set_ylabel('10m Wind/Gust (m/s)')
-
-    #fig3: precip, preciptype
-    #figm3, axm3 = plt.subplots(figsize=(12, 4))
-
-    #fig4: Fluxes radiation : latent, sensible, SW down, LW down, LW_up
-    figm4, axm4 = plt.subplots(figsize=(12, 4))
-    axm4.plot(time_normal, SH[:, 0, jindx, iindx], zorder=0)
-    axm4.plot(time_normal, LH[:, 0, jindx, iindx], zorder=0)
-    axm4.set_ylabel('Fluxes (Ws/m$^2$)')
-
-    #fig5: Cloud cover. (maybe merge with fig3 later.)
-    plt.show()
-
-def meteogram_average(indx):
-    lona = lon[indx[0],indx[1]]
-    lata = lat[indx[0],indx[1]]
-
-    figma1, axma1 = plt.subplots(figsize=(12, 4))
-    # figm1.suptitle('test title', fontsize=20)
-    tmp_mean = np.mean( air_temperature_2m[:, 0, indx[0], indx[1] ], axis=1 )
-
-    axma1_2 = axma1.twinx()
-    axma1.plot(time_normal, tmp_mean - 273.15, color = "black")
-    axma1.plot(time_normal, air_temperature_2m[:, 0, indx[0], indx[1] ] - 273.15, color = "blue")
-    axma1.set_ylabel('2m Temp ($^\circ$C)')
-    axma1_2.plot(time_normal, relative_humidity_2m[:, 0,indx[0], indx[1]] * 100, color="green")
-    axma1_2.set_ylabel(' 2m Rel. Hum. (%)')
-
-    ##fig2: Wind speed: wind_gust, wind_direction.
-    # TODO: When u have height in meters calc: Find Wind at say 80 m height/ height of mountain in areas.
-    figma2, axma2 = plt.subplots(figsize=(12, 4))
-    # figm2.suptitle('test title', fontsize=20)
-    # axm2_2 = axm1.twinx()
-    wspeed_gust = np.sqrt(x_wind_gust_10m[:, 0, indx[0], indx[1]] ** 2 + y_wind_gust_10m[:, 0, indx[0], indx[1]] ** 2)
-    wspeed = np.sqrt(x_wind_10m[:, 0, indx[0], indx[1]] ** 2 + y_wind_10m[:, 0, indx[0], indx[1]] ** 2)
-    axma2.plot(time_normal, wspeed_gust, zorder=0, color = "gray")
-    axma2.plot(time_normal, wspeed, zorder=1, color = "black")
-    wspeed_mean = np.mean(wspeed, axis = 1)
-    wspeed_meanx = np.mean(x_wind_10m[:, 0, indx[0], indx[1]], axis = 1)
-    wspeed_meany = np.mean(y_wind_10m[:, 0, indx[0], indx[1]], axis = 1)
-    print(np.shape(time_normal))
-    print(np.shape(wspeed_mean))
-    print(np.shape(wspeed_mean))
-    w = axma2.quiver(time_normal, wspeed_mean, wspeed_meanx[:] / wspeed_mean, wspeed_meany[:] / wspeed_mean, scale=80, zorder=2)
-    #w_g = axma2.quiver(time_normal, wspeed_gust, x_wind_gust_10m[:, 0,indx[0], indx[1]] / wspeed_gust,
-    #                     y_wind_gust_10m[:, 0, indx[0], indx[1]] / wspeed_gust, scale=80, zorder=2)
-    axma2.set_ylabel('10m Wind/Gust (m/s)')
-
 
 def main():
     old_pier, latlon, londomain, latdomain, jindx, iindx, indx_sea, indx_land = Svalbard()
     projection, crs_latlon = background_map(old_pier, latlon, londomain, latdomain)
     test = 0
+    #grid_point( lon[jindx,iindx],lat[jindx,iindx], crs_latlon )
     #grid_point(lon[indx_sea[0],indx_sea[1]],lat[indx_sea[0],indx_sea[1]],crs_latlon)
     #grid_point(lon[indx_land[0],indx_land[1]],lat[indx_land[0],indx_land[1]],crs_latlon)
-    meteogram_average(indx_sea)
 
-    plt.show()
+    #plt.savefig("fc_20200130_LAND_series_location.png")
+    #grid_point(lon[indx_sea[0],indx_sea[1]],lat[indx_sea[0],indx_sea[1]],crs_latlon)
+    #grid_point(lon[indx_land[0],indx_land[1]],lat[indx_land[0],indx_land[1]],crs_latlon)
+    #meteogram_average(indx_land)
+    #plt.savefig("fc_20200130_LAND_series_met.png")
+
+    #meteogram_vertical_average([jindx,iindx])
 
     for i in range(0,np.shape(londomain)[0]):
         while test == 0:
             print(test)
-            #grid_point(londomain[i], latdomain[i], crs_latlon)
-            #meteogram_vertical(jindx[i], iindx[i])
-            #meteogram(jindx[i], iindx[i])
+            grid_point(londomain[i], latdomain[i], crs_latlon)
+            plt.savefig("fc_20200130_LOC1_series_location.png")
+            figm1, (ax2, axm1, axm2, axm4) = plt.subplots(nrows=4, ncols=1, figsize=(12, 14), sharex=True)
+            meteogram_vertical(jindx[i], iindx[i], ax2)
+            meteogram(jindx[i], iindx[i], axm1, axm2, axm4)
+            plt.savefig("fc_20200130_LOC1_series_met.png")
             test += 1
+            plt.show()
 main()
 
 #plt.show()
