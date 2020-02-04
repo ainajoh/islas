@@ -3,6 +3,7 @@ from netCDF4 import Dataset                     #For reading netcdf files.
 import os
 path = os.path.abspath("islas/camps/camp_1")
 from netCDF4 import Dataset
+import numpy as np
 
 def SomeError(exception=Exception, message="Something don't well"):
     #source: https://softwareengineering.stackexchange.com/questions/222586/how-should-you-cleanly-restrict-object-property-types-and-values-in-python
@@ -22,7 +23,7 @@ filter_function_for_modelrun = lambda value: value \
 
 
 class DATA():
-    def __init__(self, data_domain, model="AromeArctic", source="thredds", modelrun="latest", fctime = 66,height_ml = 64, param_ML = None, param_SFC = None):
+    def __init__(self, data_domain, model="AromeArctic", source="thredds", modelrun="latest", fctime = [0,66],height_ml = 64, param_ML = None, param_SFC = None):
 
         self.data_domain = data_domain
         self.source = source
@@ -56,8 +57,8 @@ class DATA():
             self.__dict__[key] = value
 
     def make_url(self):
-        jindx = self.data_domain.idx
-        iindx = self.data_domain.idx
+        jindx = self.data_domain.idx[0]
+        iindx = self.data_domain.idx[1]
         if self.modelrun != "latest":
             YYYY=self.modelrun[0:4]
             MM = self.modelrun[4:6]
@@ -72,19 +73,16 @@ class DATA():
                f"longitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
         if self.param_ML:
             for prm in self.param_ML:
-                url +=f",{prm}[0:1:{self.fctime}][0:1:{self.height_ml}][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+                url +=f",{prm}[{np.min(self.fctime)}:1:{np.max(self.fctime)}][0:1:{self.height_ml}][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
         if self.param_SFC:
             for prm in self.param_SFC:
-                url += f",{prm}[0:1:{self.fctime}][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+                url += f",{prm}[{np.min(self.fctime)}:1:{np.max(self.fctime)}][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
 
         self.__dict__["url"] = url
         return url
 
     def thredds(self, url):
-        print("thredds")
         dataset = Dataset(url)
-        #filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choiced:{model}')
-        #time_normal = [dt.datetime.utcfromtimestamp(x) for x in time
         for prm in ["time", "hybrid", "ap", "b", "latitude", "longitude" ]:
             self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_ML:
@@ -93,16 +91,6 @@ class DATA():
         if self.param_SFC:
             for prm in self.param_SFC:
                 self.__dict__[prm] = dataset.variables[prm][:]
-
-
-        #print(dataset)
-
-        #varname = {"lon":"longitute", "lat":"latitude"}
-
-        #print(varname["lon"])
-
-        #lon = dataset.variables["longitude"][:]
-
         dataset.close()
 
     def retrieve(self):
