@@ -16,13 +16,6 @@ param_SFC = ["atmosphere_boundary_layer_thickness","air_temperature_2m", "surfac
              "integral_of_surface_downward_latent_heat_flux_wrt_time","land_area_fraction"]
 
 
-#sites = pd.read_csv(path + "/sites.csv", sep=";", header=0, index_col=0)
-#sites.loc["OldPier"]
-#d1 = DATA(data_domain=data_domain, param_ML=param_ML, param_SFC = param_SFC)
-#d1 = DATA(data_domain=data_domain)
-#d1.retrieve()
-#print(d1.param) = list all param name defined.
-
 def background_map(lonlat):
     projection = ccrs.UTM( 33 ) #Map projection you want
     crs_latlon = ccrs.PlateCarree() #Coordinates used to plot points on map
@@ -40,6 +33,13 @@ def background_map(lonlat):
     return projection, crs_latlon
 
 def plot_site():
+    # sites = pd.read_csv(path + "/sites.csv", sep=";", header=0, index_col=0)
+    # sites.loc["OldPier"]
+    # d1 = DATA(data_domain=data_domain, param_ML=param_ML, param_SFC = param_SFC)
+    # d1 = DATA(data_domain=data_domain)
+    # d1.retrieve()
+    # print(d1.param) = list all param name defined.
+
     #PLOT COORDINATES FOR OLDPIER
     plt.plot(latlon_old_pier[0], latlon_old_pier[1], marker='o', markersize=5.0, markeredgewidth=2.5,
                      markerfacecolor='blue', markeredgecolor='blue', zorder=6, transform=crs_latlon)

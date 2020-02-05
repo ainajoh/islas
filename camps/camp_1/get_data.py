@@ -5,15 +5,18 @@ path = os.path.abspath("islas/camps/camp_1")
 from netCDF4 import Dataset
 import numpy as np
 
-def SomeError(exception=Exception, message="Something don't well"):
+def SomeError( exception = Exception, message = "Something don't well" ):
     #source: https://softwareengineering.stackexchange.com/questions/222586/how-should-you-cleanly-restrict-object-property-types-and-values-in-python
-    if isinstance(exception.args,tuple):
+    if isinstance( exception.args, tuple ):
         raise exception
     else:
         raise exception(message)
 
 model = ["AromeArctic"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
+type = ["full","sfx","ml"] #include pl here aswell.
+filter_function_for_type= lambda value: value if value in type else SomeError(ValueError, f'Type not found: choices:{type}')
+
 filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choiced:{model}')
 filter_function_for_source = lambda value: value if value in source else SomeError(ValueError, f'Source not found: choiced:{source}')
 filter_function_for_modelrun = lambda value: value \
@@ -22,19 +25,33 @@ filter_function_for_modelrun = lambda value: value \
     else SomeError(ValueError, f'Modelrun wrong: Either; "latest or date on the form: YYYYMMDDHH')
 
 
+#class CALCULATE(DATA):
+
+
+
+
+
 class DATA():
-    def __init__(self, data_domain, model="AromeArctic", source="thredds", modelrun="latest", fctime = [0,66],height_ml = 64, param_ML = None, param_SFC = None):
+    def __init__(self, data_domain, model="AromeArctic", type ="full", source="thredds", modelrun="latest", fctime = [0,66],height_ml = [0,64], param_ML = None, param_SFC = None, param_sfx = None):
 
         self.data_domain = data_domain
         self.source = source
+        self.type = type
         self.model = model
         self.modelrun = modelrun
         self.fctime = fctime
         self.height_ml =  height_ml
         self.param_ML = param_ML
         self.param_SFC = param_SFC
+        self.param_sfx = param_sfx
 
     def __setattr__(self, key, value):
+
+        if key=='type':
+            value = filter_function_for_type(value)
+            if value =="ml":
+                value = "full"
+            self.__dict__[key] = value
         if key=='model':
             value = filter_function_for_models(value)
             self.__dict__[key] = value
@@ -51,6 +68,8 @@ class DATA():
             self.__dict__[key] = value
         if key == "param_SFC":  # or else obj would not be properly set...
             self.__dict__[key] = value
+        if key == "param_sfx":  # or else obj would not be properly set...
+            self.__dict__[key] = value
         if key == "fctime":  # or else obj would not be properly set...
             self.__dict__[key] = value
         if key == "height_ml":  # or else obj would not be properly set...
@@ -64,34 +83,62 @@ class DATA():
             MM = self.modelrun[4:6]
             DD = self.modelrun[6:8]
             HH = self.modelrun[9:10]
-            url = f"https://thredds.met.no/thredds/dodsC/{YYYY}/{MM}/{DD}/arome_arctic_full_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc"
+            url = f"https://thredds.met.no/thredds/dodsC/{YYYY}/{MM}/{DD}/arome_arctic_{self.type}_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc"
         else:
-            url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc"
-        url += "?time," + \
-               f"hybrid,ap,b," + \
+            url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_{self.type}_2_5km_latest.nc"
+
+        url += f"?time[{np.min(self.fctime)}:1:{np.max(self.fctime)}]," + \
                f"latitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]," + \
                f"longitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+
+        if self.type == "full":
+            url += f",hybrid[{np.min(self.height_ml)}:1:{np.max(self.height_ml)}]," + \
+                   f"ap[{np.min(self.height_ml)}:1:{np.max(self.height_ml)}]," + \
+                   f"b[{np.min(self.height_ml)}:1:{np.max(self.height_ml)}]"
         if self.param_ML:
             for prm in self.param_ML:
-                url +=f",{prm}[{np.min(self.fctime)}:1:{np.max(self.fctime)}][0:1:{self.height_ml}][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+                url +=f",{prm}[{np.min(self.fctime)}:1:{np.max(self.fctime)}][{np.min(self.height_ml)}:1:{np.max(self.height_ml)}][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
         if self.param_SFC:
             for prm in self.param_SFC:
                 url += f",{prm}[{np.min(self.fctime)}:1:{np.max(self.fctime)}][0][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+        if self.param_sfx:
+            for prm in self.param_sfx:
+                url += f",{prm}[{np.min(self.fctime)}:1:{np.max(self.fctime)}][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+
 
         self.__dict__["url"] = url
+        print(url)
         return url
 
     def thredds(self, url):
-        dataset = Dataset(url)
-        for prm in ["time", "hybrid", "ap", "b", "latitude", "longitude" ]:
+        print("start retrieve from thredds")
+        dataset = Dataset(url) #fast
+        print("end retrieve from thredds")
+        print("start set each variable")
+
+        for prm in ["time", "latitude", "longitude"]:
+            print(prm)
             self.__dict__[prm] = dataset.variables[prm][:]
+        if self.type =="full":
+            for prm in ["hybrid", "ap", "b" ]:
+                print(prm)
+                self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_ML:
             for prm in self.param_ML:
+                print(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_SFC:
             for prm in self.param_SFC:
+                print(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
+        if self.param_sfx:
+            for prm in self.param_sfx:
+                print(prm)
+                self.__dict__[prm] = dataset.variables[prm][:]
+        print("end set each variable")
+
         dataset.close()
+
 
     def retrieve(self):
         if self.source == "thredds":
