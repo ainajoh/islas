@@ -217,20 +217,16 @@ def meteogram_vertical(jindx, iindx):
     plt.setp(stableinv, color="green", zorder=100)
 
     plt.clabel(CL,inline=False, fmt='%.1f' + r"K/km")
-    plt.clabel(CS, [*CS.levels[3:5:1], *CS.levels[5:10:2], *CS.levels[15:20:5]], inline=False, fmt='%1.0fK')
+    plt.clabel(CS, [*CS.levels[3:5:1], *CS.levels[5:10:2], *CS.levels[15:20:5]], inline=False, fmt='$\Theta$ = %1.0fK')#'%1.0fK')
     c = plt.clabel(CS, [CS.levels[2]], fmt='$\Theta$ = %1.0fK')
     ax2.invert_yaxis()
 
     #ax2.legend( [Z[0],P_BL[0]],['Zeppelin = 479m', 'PBLH'], loc='upper left').set_zorder(99999)
-    #ax2.legend( [CS, Z[0],P_BL[0]],['pot','Zeppelin = 479m', 'PBLH'], loc='upper left').set_zorder(99999)
-    #ax2.legend( CS,['pot'], loc='upper left').set_zorder(99999)
-    #ax2.legend(CS, loc='upper left').set_zorder(99999)
-
     custom_lines = [Line2D([0], [0], color="r", lw=2),
                     Line2D([0], [0], color="green", lw=2),
                     Line2D([0], [0], color="gray", lw=2)]
 
-    ax2.legend(custom_lines, ['Unstable', 'Very Stable', 'Stable'], loc='upper left').set_zorder(99999)
+    ax2.legend( [Z[0],P_BL[0], custom_lines[0], custom_lines[1],custom_lines[2]], ['Zeppelin = 479m', 'PBLH', 'Unstable', 'Very Stable', 'Stable'], loc='upper left').set_zorder(99999)
     #ax2.legend(custom_lines, [r'$\Gamma_e > \Gamma_d$', r'$\Gamma_e > 0 $', 'Hot'], loc='upper left').set_zorder(99999)
 
 

@@ -26,9 +26,11 @@ filter_function_for_modelrun = lambda value: value \
 
 
 #class CALCULATE(DATA):
-
-
-
+#
+#    def pottemp(self):
+#        theta = self.air_temperature_ml * (p0 / p) ** 0.286
+#        self.theta = theta#
+#
 
 
 class DATA():
