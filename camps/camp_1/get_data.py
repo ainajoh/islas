@@ -109,14 +109,13 @@ class DATA():
 
 
         self.__dict__["url"] = url
-        print(url)
+        #print(url)
         return url
 
     def thredds(self, url):
-        print("start retrieve from thredds")
+        print("-------> start retrieve from thredds")
         dataset = Dataset(url) #fast
-        print("end retrieve from thredds")
-        print("start set each variable")
+        print("-------> Getting variable: ")
 
         for prm in ["time", "latitude", "longitude"]:
             print(prm)
@@ -137,8 +136,6 @@ class DATA():
             for prm in self.param_sfx:
                 print(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
-        print("end set each variable")
-
         dataset.close()
 
 

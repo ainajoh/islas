@@ -52,18 +52,45 @@ def plot_site():
 
 def mapwithdata():
     map_domain = DOMAIN()
-    map_domain.Arome_arctic()
+    map_domain.KingsBay_Z0()
     lonlat = np.array(map_domain.lonlat)
     fig = plt.subplots( figsize=(10, 9) )
     projection, crs_latlon = background_map(lonlat)
 
 
     data_domain = DOMAIN()
-    data_domain.Arome_arctic()
-    print(data_domain.idx[0].min())
-    dm = DATA(data_domain=data_domain,param_SFC = ["air_temperature_2m"], fctime=0)
-    dm.retrieve()
-    plt.contourf( dm.longitude, dm.latitude, dm.air_temperature_2m[0,0,:,:], alpha = 0.5, transform=crs_latlon, zorder = 10)
+    data_domain.KingsBay_Z1()
+    dmet = DATA(data_domain=data_domain,param_SFC = ["air_temperature_2m"], fctime=0)
+    dmet.retrieve()
+
+    sites = pd.read_csv("sites.csv", sep=";", header=0, index_col=0)
+    OldPier = sites.loc["OldPier"]
+
+    plt.plot(OldPier.lon, OldPier.lat, marker='o', markersize=5.0, markeredgewidth=2.5,
+             markerfacecolor='blue', markeredgecolor='blue', zorder=6, transform=crs_latlon)
+
+    # PLOT GRIDPOINT OF INTEREST
+    points = plt.plot(dmet.longitude,dmet.latitude, marker='.', markersize=5.0, markeredgewidth=4,
+                      markerfacecolor='black', markeredgecolor='black', zorder=6, transform=crs_latlon,
+                      linestyle='None')
+
+    points = plt.plot(dmet.longitude[1,3], dmet.latitude[1,3], marker='.', markersize=5.0, markeredgewidth=4,
+                      markerfacecolor='black', markeredgecolor='red', zorder=10, transform=crs_latlon,
+                      linestyle='None')
+    points = plt.plot(dmet.longitude[2, 2], dmet.latitude[2, 2], marker='.', markersize=5.0, markeredgewidth=4,
+                      markerfacecolor='black', markeredgecolor='red', zorder=10, transform=crs_latlon,
+                      linestyle='None')
+    points = plt.plot(dmet.longitude[3, 2], dmet.latitude[3, 2], marker='.', markersize=5.0, markeredgewidth=4,
+                      markerfacecolor='black', markeredgecolor='red', zorder=10, transform=crs_latlon,
+                      linestyle='None')
+    points = plt.plot(dmet.longitude[2, 3], dmet.latitude[2, 3], marker='.', markersize=5.0, markeredgewidth=4,
+                      markerfacecolor='black', markeredgecolor='red', zorder=10, transform=crs_latlon,
+                      linestyle='None')
+    #points = plt.plot(dmet.longitude[0, 4], dmet.latitude[0, 4], marker='.', markersize=5.0, markeredgewidth=4,
+    #                  markerfacecolor='black', markeredgecolor='red', zorder=10, transform=crs_latlon,
+    #                  linestyle='None')
+
+    #plt.contourf( dm.longitude, dm.latitude, dm.air_temperature_2m[0,0,:,:], alpha = 0.5, transform=crs_latlon, zorder = 10)
 
     plt.show()
 

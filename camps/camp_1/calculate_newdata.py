@@ -125,6 +125,14 @@ def lapserate(air_temperature_ml, heighttoreturn):
     dtdz[:, :, :, :] = np.divide(dt_levels, dz_levels) * 1000  # /km
     return dtdz
 
+def precip_acc(precip, acc=1):
+    precipacc = np.full(np.shape(precip), np.nan)
+    for t in range(0 + acc, np.shape(precip)[0] ):
+        precipacc[t, 0, :, :] = precip[t, 0, :, :] - precip[t - 1, 0, :, :]
+
+    return precipacc
+
+
 def point_alt_sl2pres(jindx, iindx, point_alt, data_altitude_sl, t_v_level, p, surface_air_pressure, surface_geopotential):
     Rd = 287.06
     g = 9.80665
