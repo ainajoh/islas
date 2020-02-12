@@ -1,7 +1,6 @@
-from config import *  # adjust packages to use and where its located on cyclone
-from domain import *  # require netcdf4
-from get_data import *
-from calculation import *
+from lib.domain import *  # require netcdf4
+from lib.get_data import *
+from lib.calculation import *
 import os
 import matplotlib.pyplot as plt
 import matplotlib
@@ -13,7 +12,7 @@ from matplotlib.lines import Line2D
 import matplotlib as mpl
 from mpl_toolkits.basemap import Basemap
 
-lt = 66  # lead time.
+lt = 1  # lead time.
 modelruntime = "2020021200"
 
 param_ML = ["air_temperature_ml", "specific_humidity_ml", "x_wind_ml", "y_wind_ml"]
@@ -30,7 +29,7 @@ print("\n###########################\n"
       "\n###########################\n")
 data_domain = DOMAIN()
 data_domain.KingsBay_Z1()
-sites = pd.read_csv("./sites.csv", sep=";", header=0, index_col=0)
+sites = pd.read_csv("bin/sites.csv", sep=";", header=0, index_col=0)
 ZeppelinObservatory = sites.loc["ZeppelinObservatory"]
 OldPier = sites.loc["OldPier"]
 
@@ -173,14 +172,10 @@ def meteogram_vertical(jindx, iindx, ax2):
     #################################
     # ADJUSTMENTS AND LABELS
     #################################
-    plt.clabel(CL, inline=False, fmt='%.1f' + r"K/km")
-    print("VLABEL1")
+    ax2.clabel(CL, inline=False, fmt='%.1f' + r"K/km")
     ax2.clabel(CS, [*CS.levels[3:5:1], *CS.levels[5:10:2], *CS.levels[15:20:5]], inline=False,
                fmt='$\Theta$ = %1.0fK')  # '%1.0fK')
-    print("VLABEL2")
-    # c = ax2.clabel(CS,CS.levels[::2], fmt='$\Theta$ = %1.0fK')
     c = ax2.clabel(CS, [CS.levels[2]], fmt='$\Theta$ = %1.0fK')
-    # print("VLABEL2")
     ax2.invert_yaxis()
     custom_lines = [Line2D([0], [0], color="r", lw=2),
                     Line2D([0], [0], color="green", lw=2),
@@ -285,7 +280,7 @@ def background_map(lonlat):
     map = Basemap(llcrnrlon=lonlat[0], llcrnrlat=lonlat[2], urcrnrlon=lonlat[1], urcrnrlat=lonlat[3],
                   resolution='f', projection="tmerc", lon_0=15., lat_0=42.,
                   area_thresh=0.0001)  # "epsg=5973,
-    map.readshapefile('/home/cat010/bin/shapefiles/svalbard/NP_S100_SHP/S100_Land_f_WGS84_2', 'S100_Land_f_WGS84_2',
+    map.readshapefile('./bin/shapefiles/svalbard/S100_Land_f_WGS84', 'S100_Land_f_WGS84',
                       zorder=1000, linewidth=2)
     # Heightcontours
     # ax.add_geometries( shpkvote.geometries(), projection, facecolor="None", edgecolor='white', alpha = 0.1,  zorder=2 )
