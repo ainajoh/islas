@@ -1,6 +1,6 @@
 from domain import *  #require netcdf4
 from get_data import *
-from calculate_newdata import *
+from calculation import *
 import os
 import matplotlib.pyplot as plt                 #For basic plotting in python
 import matplotlib

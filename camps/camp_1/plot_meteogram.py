@@ -1,7 +1,7 @@
 from config import *  # adjust packages to use and where its located on cyclone
 from domain import *  # require netcdf4
 from get_data import *
-from calculate_newdata import *
+from calculation import *
 import os
 import matplotlib.pyplot as plt
 import matplotlib
