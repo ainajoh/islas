@@ -1,7 +1,7 @@
 #GET ONLY THE SPECIFIC DATA SPECIFIED IN MAIN SCRIPT
 from netCDF4 import Dataset                     #For reading netcdf files.
 import os
-path = os.path.abspath("islas/camps/camp_1")
+#path = os.path.abspath("islas/camps/camp_1")
 from netCDF4 import Dataset
 import numpy as np
 
@@ -84,14 +84,15 @@ class DATA():
             YYYY=self.modelrun[0:4]
             MM = self.modelrun[4:6]
             DD = self.modelrun[6:8]
-            HH = self.modelrun[9:10]
-            url = f"https://thredds.met.no/thredds/dodsC/{YYYY}/{MM}/{DD}/arome_arctic_{self.type}_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc"
+            HH = self.modelrun[8:10]
+            url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/arome_arctic_{self.type}_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc"
         else:
             url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_{self.type}_2_5km_latest.nc"
 
         url += f"?time[{np.min(self.fctime)}:1:{np.max(self.fctime)}]," + \
                f"latitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]," + \
-               f"longitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
+               f"longitude[{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]," \
+               f"forecast_reference_time"
 
         if self.type == "full":
             url += f",hybrid[{np.min(self.height_ml)}:1:{np.max(self.height_ml)}]," + \
@@ -117,7 +118,7 @@ class DATA():
         dataset = Dataset(url) #fast
         print("-------> Getting variable: ")
 
-        for prm in ["time", "latitude", "longitude"]:
+        for prm in ["time", "latitude", "longitude", "forecast_reference_time"]:
             print(prm)
             self.__dict__[prm] = dataset.variables[prm][:]
         if self.type =="full":
@@ -127,6 +128,7 @@ class DATA():
         if self.param_ML:
             for prm in self.param_ML:
                 print(prm)
+                print(dataset.variables[prm])
                 self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_SFC:
             for prm in self.param_SFC:

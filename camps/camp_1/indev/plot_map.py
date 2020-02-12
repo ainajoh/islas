@@ -63,7 +63,7 @@ def mapwithdata():
     dmet = DATA(data_domain=data_domain,param_SFC = ["air_temperature_2m"], fctime=0)
     dmet.retrieve()
 
-    sites = pd.read_csv("sites.csv", sep=";", header=0, index_col=0)
+    sites = pd.read_csv("../sites.csv", sep=";", header=0, index_col=0)
     OldPier = sites.loc["OldPier"]
 
     plt.plot(OldPier.lon, OldPier.lat, marker='o', markersize=5.0, markeredgewidth=2.5,

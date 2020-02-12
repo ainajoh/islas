@@ -152,7 +152,7 @@ def alt2pres(jindx, iindx, h):
     return p_point
 
 def point(jindx, iindx):
-    sites = pd.read_csv("sites.csv", sep=";", header=0, index_col=0)
+    sites = pd.read_csv("../sites.csv", sep=";", header=0, index_col=0)
     height = float(sites.loc["ZeppelinObservatory"].height)
     #height_point = np.full(np.shape(dmet.air_temperature_ml)[0], height)
     height_point = np.full( np.shape( specific_humidity_ml[:, :, jindx, iindx] ), height)
