@@ -1,6 +1,6 @@
-from lib.domain import *  # require netcdf4
-from lib.get_data import *
-from lib.calculation import *
+from loclib.domain import *  # require netcdf4
+from loclib.get_data import *
+from loclib.calculation import *
 import os
 import matplotlib.pyplot as plt
 import matplotlib
