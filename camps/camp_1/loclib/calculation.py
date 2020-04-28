@@ -1,11 +1,16 @@
 import datetime as dt
 import numpy as np
+from netCDF4 import Dataset                     #For reading netcdf files.
+import math
+
 
 #INPUT OF PRESSURE HAS TO BE IN Pa NOT hPa
 #all pressure returned in Pa.
 #Many variables are calulated twice as they are needed to get other variables.
 #would be better having a class setting var self.var and checking if it excist and if not do the calculation.
-
+def round_up(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
 
 def potential_temperatur(air_temperature_ml, p):
     p0 = 100000
@@ -60,12 +65,12 @@ def ml2alt_sl( p, surface_geopotential, air_temperature_ml, specific_humidity_ml
 
     return geotoreturn_m
 
-def ml2alt_gl(p, air_temperature_ml,specific_humidity_ml ):     #https://confluence.ecmwf.int/pages/viewpage.action?pageId=68163209
+def ml2alt_gl(p, air_temperature_ml, specific_humidity_ml ):     #https://confluence.ecmwf.int/pages/viewpage.action?pageId=68163209
 
     # todo: Add formula for this
     Rd = 287.06
     g = 9.80665
-    z_h = 0  # why 0?       -->todo
+    z_h = 0  #
 
     timeSize, levelSize, ySize, xSize = np.shape(p)
     heighttoreturn = np.zeros(shape=(timeSize, levelSize, ySize, xSize))
@@ -97,8 +102,31 @@ def ml2alt_gl(p, air_temperature_ml,specific_humidity_ml ):     #https://conflue
 
     return heighttoreturn
 
+def density(Tv, p):
+    #https://confluence.ecmwf.int/pages/viewpage.action?pageId=68163209
+    Rd = 287.06
+    rho = p/(Rd*Tv)
+    #for k in levels_r:
+    #    t_v_level[:, k, :, :] = air_temperature_ml[:, k, :, :] * (1. + 0.609133 * specific_humidity_ml[:, k, :, :])
+    return rho
+
+def get_samplesize(q, rho, a=0.5, b = 0.95, acc = 3):
+    rho = rho / 1000 #/m3 to /L
+    q = q # g/kg
+    samplesize = q * rho * a * b * 60 #per hour
+    samplesize_acc = np.full(np.shape(samplesize), np.nan)
+    for step in range(acc-1, np.shape(samplesize)[0]):
+        s_acc = 0
+        i = 0
+        while i < acc:
+            s_acc += samplesize[ step + i - ( acc - 1 ),:,:,:]
+            i+=1
+        samplesize_acc[step,:,:,:] = s_acc
+
+    return samplesize_acc
 
 def virtual_temp(air_temperature_ml, specific_humidity_ml):
+    #todo: adjust so u can send in either multidim array, lesser dim, or just point numbers
     #https://confluence.ecmwf.int/pages/viewpage.action?pageId=68163209
 
     timeSize, levelSize, ySize, xSize = np.shape(air_temperature_ml)
@@ -116,7 +144,7 @@ def lapserate(air_temperature_ml, heighttoreturn):
     dt_levels = np.full((timeSize, levelSize, ySize, xSize), np.nan)
     dz_levels = np.full((timeSize, levelSize, ySize, xSize), np.nan)
     dtdz = np.full( (timeSize, levelSize, ySize, xSize), np.nan)
-    step = 5
+    step = 5 #5 before
     for k in range(0, levelSize - step):
         k_next = k + step
         dt_levels[:, k, :, :] = air_temperature_ml[:, k, :, :] - air_temperature_ml[:, k_next, :,:]  # over -under
@@ -128,7 +156,8 @@ def lapserate(air_temperature_ml, heighttoreturn):
 def precip_acc(precip, acc=1):
     precipacc = np.full(np.shape(precip), np.nan)
     for t in range(0 + acc, np.shape(precip)[0] ):
-        precipacc[t, 0, :, :] = precip[t, 0, :, :] - precip[t - 1, 0, :, :]
+        precipacc[t, 0, :, :] = precip[t, 0, :, :] - precip[t - acc, 0, :, :]
+        #Set negative values to 0, but I fixed it in plot instead.
 
     return precipacc
 
@@ -178,3 +207,13 @@ def alt_gl2pres(jindx, iindx, h):
 def timestamp2utc(timestamp):
     time_utc = [dt.datetime.utcfromtimestamp(x) for x in timestamp]
     return time_utc
+
+def xwind2uwind(xwind,ywind, alpha):
+    u = xwind.copy()
+    v = ywind.copy()
+    for t in range(0,np.shape(u)[0]):
+        for k in range(0, np.shape(u)[1]):
+            u[t,k,:,:] = u[t,k,:,:]  * np.cos(np.deg2rad(alpha[:,:])) - v[t,k,:,:]  * np.sin(np.deg2rad(alpha[:,:]))
+            v[t,k,:,:]  = v[t,k,:,:]  * np.cos(np.deg2rad(alpha[:,:])) + u[t,k,:,:]  * np.sin(np.deg2rad(alpha[:,:]))
+
+    return u,v
