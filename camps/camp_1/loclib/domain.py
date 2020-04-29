@@ -15,7 +15,6 @@ def lonlat2idx(lonlat, url):
     idx = np.where((lat > lonlat[2]) & (lat < lonlat[3]) & \
                    (lon >= lonlat[0]) & (lon <= lonlat[1]))
     dataset.close()
-    print(idx)
     return idx
 
 def idx2lonlat(idx, url):

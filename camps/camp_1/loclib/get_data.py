@@ -5,21 +5,24 @@ v2: + MEPS at Finse with members
 """
 from netCDF4 import Dataset
 import numpy as np
+import logging
 
 model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 type = ["full","sfx","ml"] #include pl here aswell.
 
+logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 #Nice error messeges.
 def SomeError( exception = Exception, message = "Something did not go well" ):
+    logging.error(exception(message))
     #source: https://softwareengineering.stackexchange.com/questions/222586/how-should-you-cleanly-restrict-object-property-types-and-values-in-python
     if isinstance( exception.args, tuple ):
         raise exception
     else:
         raise exception(message)
 filter_function_for_type= lambda value: value if value in type else SomeError(ValueError, f'Type not found: choices:{type}')
-filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choiced:{model}')
-filter_function_for_source = lambda value: value if value in source else SomeError(ValueError, f'Source not found: choiced:{source}')
+filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choices:{model}')
+filter_function_for_source = lambda value: value if value in source else SomeError(ValueError, f'Source not found: choices:{source}')
 filter_function_for_modelrun = lambda value: value \
     if ( len(value) == 10 ) and ( int(value[0:4]) in range(2000,2021) ) and ( int(value[4:6]) in range(0,13) ) \
     and ( int(value[6:8]) in range(1,32)) and ( int(value[9:10]) in range(0,25)) \
@@ -27,17 +30,16 @@ filter_function_for_modelrun = lambda value: value \
 def filter_for_bad_combination(data_domain, model, mbrs, type, source, modelrun, fctime,height_ml, param_ML, param_SFC, param_sfx):
     if source=="thredds" and model=="MEPS" and mbrs != 0 and param_ML != None: #on thredds modellevels are not available for members on MEPS
         SomeError(ValueError, f'Bad combination: On thredds modellevels is not available for members not being the deterministic(mbrs=0)')
-
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 10, fill = '█', printEnd = "\r"):
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    out='\r'+ "|"+bar+"|"+ percent+"%  - "+ prefix + suffix
+    print( '{m: <100}'.format(m = out), end = '')
+    # Print New Line on Complete
+    if iteration == total:
+        print()
 class DATA():
-    '''
-    Get the data from different sources.
-
-    Example of use:
-    from loclib.get_data import *
-    dmap = DATA( data_domain=map_data_domain,model="MEPS", param_SFC = param_SFC, fctime=[0, lt], modelrun=modelruntime)
-    dmap.retrieve()
-    plt.plot(dmet.time, dmet.air_temperature_2m)
-    '''
 
     def __init__(self, data_domain, model="AromeArctic", mbrs=0, type ="full", source="thredds", modelrun="latest", fctime = [0,66],height_ml = [0,64], param_ML = None, param_SFC = None, param_sfx = None):
 
@@ -164,41 +166,51 @@ class DATA():
                     for prm in self.param_SFC:
                         url += f",{prm}[{np.min(self.fctime)}:1:{np.max(self.fctime)}][0][{self.mbrs}][{jindx.min()}:1:{jindx.max()}][{iindx.min()}:1:{iindx.max()}]"
 
-        print(url)
+        logging.info(url)
         self.__dict__["url"] = url
 
         return url
 
     def thredds(self, url):
-        print("-------> start retrieve from thredds")
-        dataset = Dataset(url) #fast
-        print("-------> Getting variable: ")
         prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time","x","y"]
 
+        logging.info("-------> start retrieve from thredds")
+        printProgressBar(0, len(prm_fixed)+len(self.param_ML), prefix='Retrieve from thredds:')
+        dataset = Dataset(url) #fast
+        logging.info("-------> Getting variable: ")
         if self.model=="MEPS":
             prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time", "x", "y"]
-
+        iteration =-1
         for prm in prm_fixed:
-            print(prm)
+            logging.info(prm)
+            iteration +=1
+            printProgressBar(iteration, len(prm_fixed) + len(self.param_ML), prefix=prm)
+
             self.__dict__[prm] = dataset.variables[prm][:]
 
         if self.type =="full" and self.mbrs == 0:
             for prm in ["hybrid", "ap", "b" ]:
-                print(prm)
+                logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_ML:
             for prm in self.param_ML:
-                print(prm)
+                iteration += 1
+                printProgressBar(iteration, len(prm_fixed) + len(self.param_ML), prefix=prm)
+                logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_SFC:
             for prm in self.param_SFC:
-                print(prm)
+                logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_sfx:
             for prm in self.param_sfx:
-                print(prm)
+
+                logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
         dataset.close()
+        iteration += 1
+        printProgressBar(iteration, len(prm_fixed) + len(self.param_ML), prefix="DONE")
+
 
     def windcorr(self):
         jindx = self.data_domain.idx[0]

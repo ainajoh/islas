@@ -1,13 +1,11 @@
+'''
+Containing useful functions
+'''
+
 import datetime as dt
 import numpy as np
-from netCDF4 import Dataset                     #For reading netcdf files.
 import math
 
-
-#INPUT OF PRESSURE HAS TO BE IN Pa NOT hPa
-#all pressure returned in Pa.
-#Many variables are calulated twice as they are needed to get other variables.
-#would be better having a class setting var self.var and checking if it excist and if not do the calculation.
 def round_up(n, decimals=0):
     multiplier = 10 ** decimals
     return math.ceil(n * multiplier) / multiplier
