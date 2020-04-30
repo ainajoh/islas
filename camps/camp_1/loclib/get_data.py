@@ -30,15 +30,7 @@ filter_function_for_modelrun = lambda value: value \
 def filter_for_bad_combination(data_domain, model, mbrs, type, source, modelrun, fctime,height_ml, param_ML, param_SFC, param_sfx):
     if source=="thredds" and model=="MEPS" and mbrs != 0 and param_ML != None: #on thredds modellevels are not available for members on MEPS
         SomeError(ValueError, f'Bad combination: On thredds modellevels is not available for members not being the deterministic(mbrs=0)')
-def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 10, fill = '█', printEnd = "\r"):
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    out='\r'+ "|"+bar+"|"+ percent+"%  - "+ prefix + suffix
-    print( '{m: <100}'.format(m = out), end = '')
-    # Print New Line on Complete
-    if iteration == total:
-        print()
+
 class DATA():
 
     def __init__(self, data_domain, model="AromeArctic", mbrs=0, type ="full", source="thredds", modelrun="latest", fctime = [0,66],height_ml = [0,64], param_ML = None, param_SFC = None, param_sfx = None):
@@ -175,7 +167,6 @@ class DATA():
         prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time","x","y"]
 
         logging.info("-------> start retrieve from thredds")
-        printProgressBar(0, len(prm_fixed)+len(self.param_ML), prefix='Retrieve from thredds:')
         dataset = Dataset(url) #fast
         logging.info("-------> Getting variable: ")
         if self.model=="MEPS":
@@ -184,7 +175,6 @@ class DATA():
         for prm in prm_fixed:
             logging.info(prm)
             iteration +=1
-            printProgressBar(iteration, len(prm_fixed) + len(self.param_ML), prefix=prm)
 
             self.__dict__[prm] = dataset.variables[prm][:]
 
@@ -195,7 +185,6 @@ class DATA():
         if self.param_ML:
             for prm in self.param_ML:
                 iteration += 1
-                printProgressBar(iteration, len(prm_fixed) + len(self.param_ML), prefix=prm)
                 logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
         if self.param_SFC:
@@ -209,16 +198,15 @@ class DATA():
                 self.__dict__[prm] = dataset.variables[prm][:]
         dataset.close()
         iteration += 1
-        printProgressBar(iteration, len(prm_fixed) + len(self.param_ML), prefix="DONE")
 
 
     def windcorr(self):
         jindx = self.data_domain.idx[0]
         iindx = self.data_domain.idx[1]
         if self.model == "AromeArctic":
-            infile = "/Users/ainajoh/Documents/GitHub/islas/camps/camp_1/bin/alpha_full_AA.nc"
+            infile = "bin/alpha_full_AA.nc"
         elif self.model == "MEPS":
-            infile = "/Users/ainajoh/Documents/GitHub/islas/camps/camp_1/bin/alpha_full_MEPS.nc"
+            infile = "bin/alpha_full_MEPS.nc"
         alphadata = Dataset(infile)
         alpha = alphadata["alpha"][:]
         self.__dict__["alpha"] = alpha[jindx.min():jindx.max()+1,iindx.min():iindx.max()+1]
