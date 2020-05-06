@@ -106,7 +106,7 @@ class DATA():
 
         ###############################################################################
         if self.model == "AromeArctic":
-            file = self.available_files[1].copy()
+            file = self.available_files[0].copy()
 
             url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc[0].at['File']}?"
 
@@ -154,7 +154,7 @@ class DATA():
 
         if self.model == "MEPS":
             #############FILTER###########################
-            file = self.available_files[1].copy()
+            file = self.available_files[0].copy()
             #first filter
             logging.info(file)
             ####################################################################
@@ -225,6 +225,9 @@ class DATA():
                 logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
             for prm in self.param:
+                file = self.available_files[0].copy()
+
+                print(file.loc[0].at["var"][prm])
                 iteration += 1
                 logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]

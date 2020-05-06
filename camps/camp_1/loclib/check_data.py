@@ -89,13 +89,23 @@ def check_available(date, mbrs,levtype, param, model):
         df.loc[i].at["dim"] = dimdic
         i+=1
 
-    file_withparam = filter_param(df.copy(),param)
+    file_withparam = filter_param( df.copy(), param)
+    logging.info("file_param")
+
+    logging.info(file_withparam)
+
     file_corrtype = filter_type(df.copy(), mbrs,levtype)
-    file = file_withparam.assign(result=file_withparam['File'].isin(file_withparam['File']).astype(int))
+    logging.info("file_type")
+    logging.info(file_corrtype)
 
-    #file = filter_any(file)
+    #file = file_withparam.assign( result=file_withparam['File'].isin(file_corrtype['File']).astype(int))
+    file = file_withparam[file_withparam.File.isin(file_corrtype.File)]
+    file.reset_index(inplace=True, drop = True)
+
     logging.info("file")
+    #file = filter_any(file)
+    logging.info(file)
 
-    return df, file
+    return file, df
 
 #check_available(YYYY,MM,DD,HH, "temp", 0)
