@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 ##########################################################
 
-modelruntime="2020030800"
+modelruntime="2016120700"
 model="MEPS"
 data_domain = DOMAIN(modelruntime, model)
 data_domain.South_Norway()
@@ -18,9 +18,9 @@ param = ["air_temperature_2m"]
 #param_SFC = ["air_temperature_2m"]
 #param_sfx = ["SST", "H", "LE"]
 
-dmap_meps = DATA(model="MEPS", data_domain=data_domain, levtype= "ml", param = param, step=[0, lt], modelrun=modelruntime)
+dmap_meps = DATA(model="MEPS", data_domain=data_domain, param = param, step=[0, lt], modelrun=modelruntime)
 dmap_meps.retrieve()
-
+print(np.shape(dmap_meps.air_temperature_2m))
 #PLOT
 fig1, ax1 = plt.subplots(figsize=(7, 9))
 map = Basemap(llcrnrlon=lonlat[0], llcrnrlat=lonlat[2], urcrnrlon=lonlat[1], urcrnrlat=lonlat[3],
@@ -38,8 +38,8 @@ data_domain.South_Norway()
 lonlat = np.array(data_domain.lonlat)
 lt=1
 param = ["air_temperature_2m"]
-
-dmap_meps = DATA(model="MEPS", data_domain=data_domain, levtype= "ml", param = param, step=[0, lt], modelrun=modelruntime)
+#
+dmap_meps = DATA(model="MEPS", data_domain=data_domain, param = param, step=[0, lt], modelrun=modelruntime)
 dmap_meps.retrieve()
 
 #PLOT
@@ -61,7 +61,7 @@ lonlat = np.array(data_domain.lonlat)
 
 lt=1
 param = ["air_temperature_2m"]
-dmap_aa = DATA(model="AromeArctic", data_domain=data_domain, levtype= "ml", param = param, step=[0, lt], modelrun=modelruntime)
+dmap_aa = DATA(model="AromeArctic", data_domain=data_domain, param = param, step=[0, lt], modelrun=modelruntime)
 dmap_aa.retrieve()
 
 #PLOT
