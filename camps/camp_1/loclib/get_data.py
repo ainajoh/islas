@@ -225,10 +225,10 @@ class DATA():
             for prm in ["hybrid", "ap", "b" ]:
                 logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
-            for prm in self.param:
-                iteration += 1
-                logging.info(prm)
-                self.__dict__[prm] = dataset.variables[prm][:]
+        for prm in self.param:
+            iteration += 1
+            logging.info(prm)
+            self.__dict__[prm] = dataset.variables[prm][:]
 
         dataset.close()
         iteration += 1
