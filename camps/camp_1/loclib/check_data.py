@@ -25,10 +25,11 @@ def filter_type(file,mbrs,levtype):
         file = file[file["ml_bool"] == True]
     elif levtype == "pl":
         file = file[file["pl_bool"] == True]
+
     # third filter, what to choose when we have all options
-    if len(file) > 1:
-        if mbrs == 0:  # choose the determenistic, smallest one.
-            file = file[file["mbr_bool"] == False]
+    #if len(file) > 1:
+    #    if mbrs == 0:  # choose the determenistic, smallest one.
+    #        file = file[file["mbr_bool"] == False]
 
     file.reset_index(inplace=True, drop=True)
     logging.info(file)

@@ -11,7 +11,7 @@ from loclib.check_data import *  # require netcdf4
 import re
 model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
-levtype = ["","pl","ml"] #include pl here aswell.
+levtype = [None,"pl","ml"] #include pl here aswell.
 
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
@@ -40,9 +40,10 @@ def filter_for_bad_combination(data_domain, model, mbrs, levtype, source, modelr
     #if source=="thredds" and model=="MEPS" and mbrs != 0 and levtype== "ML": #on thredds modellevels are not available for members on MEPS
     #   SomeError(ValueError, f'Bad combination: On thredds modellevels is not available for members not being the deterministic(mbrs=0)')
 
+
 class DATA():
 
-    def __init__(self, data_domain, modelrun, param,  step, levtype="", level = [0], mbrs=0, model="AromeArctic", source="thredds", ):
+    def __init__(self, data_domain, modelrun, param,  step, levtype=None, level = [0,30], mbrs=0, model="AromeArctic", source="thredds", ):
         logging.info("START")
         self.data_domain = data_domain
         self.source = source
@@ -225,9 +226,6 @@ class DATA():
                 logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
             for prm in self.param:
-                file = self.available_files[0].copy()
-
-                print(file.loc[0].at["var"][prm])
                 iteration += 1
                 logging.info(prm)
                 self.__dict__[prm] = dataset.variables[prm][:]
