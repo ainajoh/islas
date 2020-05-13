@@ -33,24 +33,26 @@ def idx2lonlat(idx, url):
 
 
 class DOMAIN():
-    def __init__(self, modelruntime, model, lonlat=None, idx=None):
+    def __init__(self, modelruntime, model, file, lonlat=None, idx=None):
         self.modelruntime = modelruntime
         self.model = model
         self.lonlat = lonlat
         self.idx = idx
-
+        self.file = file.loc[0].at['File']
         YYYY = self.modelruntime[0:4]
         MM = self.modelruntime[4:6]
         DD = self.modelruntime[6:8]
         HH = self.modelruntime[8:10]
-        url = ""#((YYYY==2018 and MM>=9) or (YYYY>2018)) and not (YYYY>=2020 and MM>=2 and DD>=4)
-        if self.model == "MEPS" and ( (int(YYYY)==2018 and int(MM)<9) or ( int(YYYY)<2018 ) ):
-            url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_mbr0_extracted_backup_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
+        url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
 
-        elif self.model == "MEPS" and ( (int(YYYY)==2018 and int(MM)>=9) or (int(YYYY)>2018 )) and ((int(YYYY)==2020 and int(MM)<=2 and int(DD)<4)):
-            url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_mbr0_extracted_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
-        else:
-            url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_det_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
+        #url = ""#((YYYY==2018 and MM>=9) or (YYYY>2018)) and not (YYYY>=2020 and MM>=2 and DD>=4)
+        #if self.model == "MEPS" and ( (int(YYYY)==2018 and int(MM)<9) or ( int(YYYY)<2018 ) ):
+        #    url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_mbr0_extracted_backup_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
+        #
+        #elif self.model == "MEPS" and ( (int(YYYY)==2018 and int(MM)>=9) or (int(YYYY)>2018 )) and ((int(YYYY)==2020 and int(MM)<=2 and int(DD)<4)):
+        #    url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_mbr0_extracted_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
+        #else:
+        #    url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_det_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
 
         self.url = url
 

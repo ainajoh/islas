@@ -6,20 +6,30 @@ import numpy as np
 import pandas as pd
 from netCDF4 import Dataset
 import logging
+logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
+
+def SomeError( exception = Exception, message = "Something did not go well" ):
+    logging.error(exception(message))
+    #source: https://softwareengineering.stackexchange.com/questions/222586/how-should-you-cleanly-restrict-object-property-types-and-values-in-python
+    if isinstance( exception.args, tuple ):
+        raise exception
+    else:
+        raise exception(message)
 
 def filter_param(file,param):
-    for i in range(0, len(file)):
-        param_bool = np.array([key in file.loc[i].at["var"].keys() for key in param])
-        if all(param_bool) == False:
-            file.drop([i], inplace=True)
-            # print(self.param[ ~param_bool ] )
+    if param:
+        for i in range(0, len(file)):
+            param_bool = np.array([key in file.loc[i].at["var"].keys() for key in param])
+            if all(param_bool) == False:
+                file.drop([i], inplace=True)
+                # print(self.param[ ~param_bool ] )
     file.reset_index(inplace=True, drop=True)
     logging.info(file)
     return file
 
 def filter_type(file,mbrs,levtype):
     # secondfilter
-    if mbrs != 0:
+    if mbrs != 0 and mbrs != None:
         file = file[file["mbr_bool"] == True]
     if levtype == "ml":
         file = file[file["ml_bool"] == True]
@@ -32,7 +42,6 @@ def filter_type(file,mbrs,levtype):
     #        file = file[file["mbr_bool"] == False]
 
     file.reset_index(inplace=True, drop=True)
-    logging.info(file)
     return file
 
 def filter_any(file):
@@ -41,7 +50,7 @@ def filter_any(file):
         file.reset_index(inplace=True, drop=True)
     return file
 
-def check_available(date, mbrs,levtype, param, model):
+def check_available(date,model,param=None, mbrs=None,levtype=None ):
     YYYY = date[0:4]
     MM = date[4:6]
     DD = date[6:8]
@@ -90,9 +99,9 @@ def check_available(date, mbrs,levtype, param, model):
         df.loc[i].at["dim"] = dimdic
         i+=1
 
+
     file_withparam = filter_param( df.copy(), param)
     logging.info("file_param")
-
     logging.info(file_withparam)
 
     file_corrtype = filter_type(df.copy(), mbrs,levtype)
@@ -106,7 +115,8 @@ def check_available(date, mbrs,levtype, param, model):
     logging.info("file")
     #file = filter_any(file)
     logging.info(file)
-
-    return file, df
+    if len(file) ==0:#SomeError(ValueError, f'Type not found: choices:{levtype}')
+        SomeError( ValueError,  f"File does noes not exist. Try again (You might want to split up the request). Available files are: \n {df}")
+    return file
 
 #check_available(YYYY,MM,DD,HH, "temp", 0)

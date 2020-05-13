@@ -7,7 +7,9 @@ from netCDF4 import Dataset
 import numpy as np
 import logging
 import pandas as pd
-from loclib.check_data import *  # require netcdf4
+#from loclib.check_data import *  # require netcdf4
+from loclib.domain import *  # require netcdf4
+
 import re
 model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
@@ -15,6 +17,7 @@ levtype = [None,"pl","ml"] #include pl here aswell.
 
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
+
 #Nice error messeges.
 def SomeError( exception = Exception, message = "Something did not go well" ):
     logging.error(exception(message))
@@ -23,6 +26,7 @@ def SomeError( exception = Exception, message = "Something did not go well" ):
         raise exception
     else:
         raise exception(message)
+
 filter_function_for_type= lambda value: value if value in levtype else SomeError(ValueError, f'Type not found: choices:{levtype}')
 filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choices:{model}')
 filter_function_for_source = lambda value: value if value in source else SomeError(ValueError, f'Source not found: choices:{source}')
@@ -43,7 +47,7 @@ def filter_for_bad_combination(data_domain, model, mbrs, levtype, source, modelr
 
 class DATA():
 
-    def __init__(self, data_domain, modelrun, param,  step, levtype=None, level = [0,30], mbrs=0, model="AromeArctic", source="thredds", ):
+    def __init__(self, data_domain, modelrun, param, file, step, levtype=None, level = [0,30], mbrs=0, model="AromeArctic", source="thredds", ):
         logging.info("START")
         self.data_domain = data_domain
         self.source = source
@@ -54,12 +58,13 @@ class DATA():
         self.levtype =  levtype
         self.level =  level
         self.param = param
-        self.available_files = check_available(self.modelrun, self.mbrs,self.levtype, self.param, self.model)
+        self.file = file
+        #self.available_files = check_available(self.modelrun, self.mbrs,self.levtype, self.param, self.model)
         filter_for_bad_combination(self.data_domain, self.model, self.mbrs, self.levtype, self.source, self.modelrun, self.step, self.level, self.param)
 
     def __setattr__(self, key, value):
         #Here you can set the value of each parameter or alter the parameter from a userfriendly to pythonfriendly code.
-        if key=="available_files":
+        if key=="file":
             self.__dict__[key] = value
         if key=='levtype':
             value = filter_function_for_type(value)
@@ -83,6 +88,8 @@ class DATA():
         if key == "level":  # or else obj would not be properly set...
             self.__dict__[key] = value
         if key == "mbrs":
+            if value == None:
+                value = 0
             self.__dict__[key] = value
 
 
@@ -107,7 +114,7 @@ class DATA():
 
         ###############################################################################
         if self.model == "AromeArctic":
-            file = self.available_files[0].copy()
+            file = self.file.copy()
 
             url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc[0].at['File']}?"
 
@@ -155,7 +162,7 @@ class DATA():
 
         if self.model == "MEPS":
             #############FILTER###########################
-            file = self.available_files[0].copy()
+            file = self.file.copy()
             #first filter
             logging.info(file)
             ####################################################################
