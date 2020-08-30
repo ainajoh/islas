@@ -19,10 +19,9 @@ def SomeError( exception = Exception, message = "Something did not go well" ):
 def filter_param(file,param):
     if param:
         for i in range(0, len(file)):
-            param_bool = np.array([key in file.loc[i].at["var"].keys() for key in param])
+            param_bool = np.array([key in file.loc[i,"var"].keys() for key in param])
             if all(param_bool) == False:
                 file.drop([i], inplace=True)
-                # print(self.param[ ~param_bool ] )
     file.reset_index(inplace=True, drop=True)
     logging.info(file)
     return file
@@ -55,7 +54,7 @@ def check_available(date,model,param=None, mbrs=None,levtype=None ):
     MM = date[4:6]
     DD = date[6:8]
     HH = date[8:10]
-
+    base_url=""
     if model=="MEPS":
         base_url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/"   #info about date, years and filname of our model
         base_urlfile = "https://thredds.met.no/thredds/dodsC/meps25epsarchive/" #info about variables in each file
@@ -74,14 +73,13 @@ def check_available(date,model,param=None, mbrs=None,levtype=None ):
     ff= pd.DataFrame( data = list(filter(pattern.match,ff)), columns=["File"])
     drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
     df = ff.copy()[~ff["File"].str.contains('|'.join(drop_files))] #(drop_files)])
-    #print(df)
 
     df.reset_index(inplace=True, drop = True)
-    df["var"] =None
+    df["var"] = None
     df["dim"] = None
-    df["mbr_bool"] = None
-    df["ml_bool"] = None
-    df["pl_bool"] = None
+    df["mbr_bool"] = False
+    df["ml_bool"] = False
+    df["pl_bool"] = False
     i=0
     while i<len(df):
         file=df["File"][i]
@@ -89,16 +87,19 @@ def check_available(date,model,param=None, mbrs=None,levtype=None ):
         dn = dataset.dimensions.keys()
         ds = [dataset.dimensions[d].size for d in dn  ]
         dimdic = dict(zip(dn,ds))
-        df.loc[i].at["mbr_bool"] = ("ensemble_member" in dimdic) and (dimdic["ensemble_member"]>=10)
-        df.loc[i].at["ml_bool"] = ("hybrid" in dimdic) and (dimdic["hybrid"]>=65)
-        df.loc[i].at["pl_bool"] = ("pressure" in dimdic) and (dimdic["pressure"]>=10)
+        
+        df.loc[i,"mbr_bool"] = ("ensemble_member" in dimdic) and (dimdic["ensemble_member"]>=10)
+        df.loc[i,"ml_bool"] = ("hybrid" in dimdic) and (dimdic["hybrid"]>=65)
+        df.loc[i,"pl_bool"] = ("pressure" in dimdic) and (dimdic["pressure"]>=10)
 
         dv = dataset.variables.keys()
         dvs = [dataset.variables[d].shape for d in dv  ]
         vardic = dict(zip(dv, dvs))
-        df.loc[i].at["var"] = vardic
-        df.loc[i].at["dim"] = dimdic
+        #print(vardic.keys())
+        df.loc[i,"var"] = [vardic]
+        df.loc[i,"dim"] = [dimdic]
         i+=1
+
 
 
     file_withparam = filter_param( df.copy(), param)

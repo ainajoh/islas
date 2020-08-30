@@ -7,10 +7,14 @@ from netCDF4 import Dataset
 import numpy as np
 import logging
 import pandas as pd
+import os
 #from loclib.check_data import *  # require netcdf4
 from loclib.domain import *  # require netcdf4
-
 import re
+
+#mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/scripts/FC-system")
+
+
 model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 levtype = [None,"pl","ml"] #include pl here aswell.
@@ -123,7 +127,8 @@ class DATA():
                 f"longitude{y}{x}," +\
                 f"x{x},"+ \
                 f"y{y}," + \
-                f"forecast_reference_time"
+                f"forecast_reference_time, "+ \
+                f"projection_lambert"
 
             if self.levtype=="ml":
                 url += f",hybrid{level}," + \
@@ -132,7 +137,7 @@ class DATA():
             startsub = ""
             for prm in self.param:
                 url += f",{prm}"
-                vardim = len(file.loc[0].at["var"][prm])
+                vardim = len(file.loc[0, "var"][prm])
                 if (vardim == 0):
                     startsub = f""
                 if (vardim == 1):
@@ -146,8 +151,11 @@ class DATA():
                         startsub = f"{step}{mbrs}{y}{x}"
                     elif (re.match("^.*_ml|^.*_pl", prm)):
                         startsub = f"{step}{level}{y}{x}"
-                    else:
+                    elif (file.loc[0, "var"][prm][1] == 1):
                         startsub = f"{step}{non}{y}{x}"
+                    else:
+                        startsub = f"{step}{level}{y}{x}"
+                        
                 if (vardim == 5):
                     if (file.loc[0].at["mbr_bool"] == True):
                         startsub = f"{step}{mbrs}{non}{y}{x}"
@@ -215,7 +223,7 @@ class DATA():
         return url
 
     def thredds(self, url):
-        prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time","x","y"]
+        prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time","x","y", "projection_lambert"]
 
         logging.info("-------> start retrieve from thredds")
         dataset = Dataset(url) #fast
