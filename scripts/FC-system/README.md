@@ -1,2 +1,3 @@
 Content
-https://github.com/ainajoh/islas.wiki.git
+
+https://github.com/ainajoh/islas/wiki/
