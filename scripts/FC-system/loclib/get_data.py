@@ -51,9 +51,10 @@ def filter_for_bad_combination(file, data_domain, model, mbrs, levtype, source, 
 
 class DATA():
 
-    def __init__(self, data_domain, modelrun, param, file, step, levtype=None, level = None, mbrs=0, model="AromeArctic", source="thredds", ):
+    def __init__(self, modelrun, param, file, step, data_domain=None, levtype=None, level = None, mbrs=0, model="AromeArctic", source="thredds", ):
         logging.info("START")
-        self.data_domain = data_domain
+
+
         self.source = source
         self.model = model
         self.mbrs = mbrs
@@ -63,22 +64,40 @@ class DATA():
         self.level =  level
         self.param = param
         self.file = file
+
+        if data_domain:
+            #self.data_domain = data_domain
+            self.idx = data_domain.idx
+            self.lonlat = data_domain.lonlat
+        else:
+            xmax = file["var"][0]["x"][0]-1
+            ymax=  file["var"][0]["y"][0]-1
+            self.idx = ( np.array([0,ymax]), np.array([0,xmax]) )
+            self.lonlat = None
+
+
         if levtype =="pl" and self.level == None:
             maxlvl = file["var"][0]["pressure"][0] - 1
             self.level = [0,maxlvl]
         if levtype == "ml" and self.level == None:
             maxlvl = file["var"]["hybrid"][0] -1
             self.level = [0,maxlvl]
+
+
             #self.level = f"[0:1:{file['hybrid'][0]-1}]"
         #if levtype == None and self.level == None:
         #    # maxlvl = file["pressure"][0]
         #    self.level = f"[0:1:0]"
 
             #self.available_files = check_available(self.modelrun, self.mbrs,self.levtype, self.param, self.model)
-        filter_for_bad_combination(self.file, self.data_domain, self.model, self.mbrs, self.levtype, self.source, self.modelrun, self.step, self.level, self.param)
+        filter_for_bad_combination(self.file, data_domain, self.model, self.mbrs, self.levtype, self.source, self.modelrun, self.step, self.level, self.param)
 
     def __setattr__(self, key, value):
         #Here you can set the value of each parameter or alter the parameter from a userfriendly to pythonfriendly code.
+        if key=="idx":
+            self.__dict__[key] = value
+        if key=="lonlat":
+            self.__dict__[key] = value
         if key=="file":
             self.__dict__[key] = value
         if key=='levtype':
@@ -94,8 +113,20 @@ class DATA():
             #if value !="latest":
             #    value = filter_function_for_modelrun(value)
             self.__dict__[key] = value
-        if key=="data_domain": #or else obj would not be properly set...
-            self.__dict__[key] = value
+        #if key=="data_domain": #or else obj would not be properly set...
+        #    if value != None:
+        #        self.__setattr__("idx", value.idx)
+        #        self.__setattr__("lonlat", value.lonlat)
+        #    else:
+        #        xmax = file["var"][0]["x"][0]
+        #        ymax=  file["var"][0]["y"][0]
+        #        self.__setattr__("idx",(np.array(0,ymax), np.array(0,ymax) ) )
+        #        self.__setattr__("lonlat", None)
+        #    #if value==None:
+        #    #    value = np.array([[0,0],[0,0]])
+        #    #self.idx= value.idx
+        #    #self.lonlat=value.lonlat
+        #    self.__dict__[key] = value
         if key == "param":  # or else obj would not be properly set...
             self.__dict__[key] = np.array(value)
         if key == "step":  # or else obj would not be properly set...
@@ -114,8 +145,8 @@ class DATA():
         '''
         Makes the OPENDAP url for the user specified model and parameters in a specific domain and time
         '''
-        jindx = self.data_domain.idx[0]
-        iindx = self.data_domain.idx[1]
+        jindx = self.idx[0]
+        iindx = self.idx[1]
 
         YYYY = self.modelrun[0:4]
         MM = self.modelrun[4:6]
@@ -263,8 +294,8 @@ class DATA():
 
 
     def windcorr(self):
-        jindx = self.data_domain.idx[0]
-        iindx = self.data_domain.idx[1]
+        jindx = self.idx[0]
+        iindx = self.idx[1]
         if self.model == "AromeArctic":
             infile = "bin/alpha_full_AA.nc"
         elif self.model == "MEPS":
