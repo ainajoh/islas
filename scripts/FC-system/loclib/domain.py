@@ -44,6 +44,12 @@ class DOMAIN():
         DD = self.modelruntime[6:8]
         HH = self.modelruntime[8:10]
         url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+        self.url = url
+
+        #if self.lonlat:
+        #    self.idx = lonlat2idx(self.lonlat, self.url)
+        #if self.idx:
+        #    self.lonlat = idx2lonlat(self.idx, url)  # rough
 
         #url = ""#((YYYY==2018 and MM>=9) or (YYYY>2018)) and not (YYYY>=2020 and MM>=2 and DD>=4)
         #if self.model == "MEPS" and ( (int(YYYY)==2018 and int(MM)<9) or ( int(YYYY)<2018 ) ):
@@ -54,7 +60,8 @@ class DOMAIN():
         #else:
         #    url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_det_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
 
-        self.url = url
+
+
 
     def MEPS(self):
         self.lonlat = [ -1, 60., 49., 72]
