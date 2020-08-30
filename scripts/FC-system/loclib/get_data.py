@@ -8,7 +8,7 @@ import numpy as np
 import logging
 import pandas as pd
 import os
-#from loclib.check_data import *  # require netcdf4
+from loclib.check_data import *  # require netcdf4
 from loclib.domain import *  # require netcdf4
 import re
 
@@ -39,10 +39,10 @@ filter_function_for_modelrun = lambda value: value \
     and ( int(value[6:8]) in range(1,32)) and ( int(value[9:10]) in range(0,25)) \
     else SomeError(ValueError, f'Modelrun wrong: Either; "latest or date on the form: YYYYMMDDHH')
 
-def filter_for_bad_combination(data_domain, model, mbrs, levtype, source, modelrun, step,level, param):
+def filter_for_bad_combination(file, data_domain, model, mbrs, levtype, source, modelrun, step,level, param):
     if source=="thredds" and model=="ooo": #on thredds modellevels are not available for members on MEPS
         check_available(modelrun)
-
+    #if leveltype = "pl" and level > :
         #SomeError(ValueError, f'Bad combination: On thredds modellevels is not available for members not being the deterministic(mbrs=0)')
 
     #if source=="thredds" and model=="MEPS" and mbrs != 0 and levtype== "ML": #on thredds modellevels are not available for members on MEPS
@@ -51,7 +51,7 @@ def filter_for_bad_combination(data_domain, model, mbrs, levtype, source, modelr
 
 class DATA():
 
-    def __init__(self, data_domain, modelrun, param, file, step, levtype=None, level = [0,30], mbrs=0, model="AromeArctic", source="thredds", ):
+    def __init__(self, data_domain, modelrun, param, file, step, levtype=None, level = None, mbrs=0, model="AromeArctic", source="thredds", ):
         logging.info("START")
         self.data_domain = data_domain
         self.source = source
@@ -63,8 +63,19 @@ class DATA():
         self.level =  level
         self.param = param
         self.file = file
-        #self.available_files = check_available(self.modelrun, self.mbrs,self.levtype, self.param, self.model)
-        filter_for_bad_combination(self.data_domain, self.model, self.mbrs, self.levtype, self.source, self.modelrun, self.step, self.level, self.param)
+        if levtype =="pl" and self.level == None:
+            maxlvl = file["var"][0]["pressure"][0] - 1
+            self.level = [0,maxlvl]
+        if levtype == "ml" and self.level == None:
+            maxlvl = file["var"]["hybrid"][0] -1
+            self.level = [0,maxlvl]
+            #self.level = f"[0:1:{file['hybrid'][0]-1}]"
+        #if levtype == None and self.level == None:
+        #    # maxlvl = file["pressure"][0]
+        #    self.level = f"[0:1:0]"
+
+            #self.available_files = check_available(self.modelrun, self.mbrs,self.levtype, self.param, self.model)
+        filter_for_bad_combination(self.file, self.data_domain, self.model, self.mbrs, self.levtype, self.source, self.modelrun, self.step, self.level, self.param)
 
     def __setattr__(self, key, value):
         #Here you can set the value of each parameter or alter the parameter from a userfriendly to pythonfriendly code.
@@ -90,6 +101,8 @@ class DATA():
         if key == "step":  # or else obj would not be properly set...
             self.__dict__[key] = value
         if key == "level":  # or else obj would not be properly set...
+            #if value == None  ype(dii["pressure"][0])
+
             self.__dict__[key] = value
         if key == "mbrs":
             if value == None:
