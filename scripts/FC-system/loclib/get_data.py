@@ -153,8 +153,14 @@ class DATA():
                        f"ap{level}," + \
                        f"b{level}"
             startsub = ""
+
             for prm in self.param:
                 url += f",{prm}"
+                #dim = file["var"][0][prm]
+                #dim = file["dim"]
+                #print(dim)
+                #startsub = f""
+
                 vardim = len(file.loc[0, "var"][prm])
                 if (vardim == 0):
                     startsub = f""

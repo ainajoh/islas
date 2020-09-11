@@ -1,0 +1,6 @@
+
+
+wind2alpha.py: ALpha for adjusting wind. From met.no
+
+scrap4filevariable.R, Collecting filenames(that changes with time)
+scrap4filename.R, Collecting variablename (than changes with time)
