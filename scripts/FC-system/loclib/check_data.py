@@ -1,3 +1,4 @@
+
 from urllib.request import urlopen
 from requests import get
 from bs4 import BeautifulSoup
@@ -63,25 +64,55 @@ class check_data():
         self.file = file
         self.numbervar = numbervar
         self.search = search
+
         if date != None:
             self.file = self.check_files(date, model, param,  mbrs,levtype)
-
         if self.param == None and self.date != None:
             self.param = self.check_variable(self.file, self.search)
 
-        if self.date == None:
+        if self.date == None and self.param ==None:
             self.param = self.check_variable_all(self.model, self.numbervar, self.search)
+            self.date = self.check_available_date(self.model)
+
+    def check_available_date(self, model):
+        df = pd.read_csv(f"bin/{model}_filesandvar.csv")
+        dfc = df.copy()  # df['base_name'] = [re.sub(r'_[0-9]*T[0-9]*Z.nc','', str(x)) for x in df['File']]
+        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
+        df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
+        dfc["base_name"] = df_base["base_name"]
+        dfc = dfc[~dfc["base_name"].str.contains('|'.join(drop_files))]  # (drop_files)])
+        dfc.reset_index(inplace=True, drop=True)
+        #df_base = dfc['var'].str.replace(" ", "").str.split(",")  # , expand = True)
+        dateti = dfc[["Date","Hour"]].copy()
+        dateti.drop_duplicates(keep='first', inplace=True)
+        dateti.reset_index(inplace=True, drop=True)
+
+        #print(dfc)
+        return dateti
 
     def check_filecontainingvar(self, model, numbervar, search ):
         #NOT IN USE
         #Nice to have a list of the files containing that var, but that means scraping the web too often.
-        #Maybe add on file. scraping only new dates...
+        #Maybe add on file. scraping only new dates...DID It! Just need to update this function to find file containing: Then another function saying at what date.
+
         # Todo: update R scripts to only add new lines in filevar info
         df = pd.read_csv(f"bin/{model}_filesandvar.csv")
         dfc = df.copy()
         drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
         df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
         dfc["base_name"] = df_base["base_name"]
+        dfc = dfc[~dfc["base_name"].str.contains('|'.join(drop_files))]  # (drop_files)])
+
+        df_base = dfc['var'].str.replace(" ", "").str.split(",")  # , expand = True)
+        search = "wind"
+        #param = df_base[df_base.apply(lambda x: x.str.contains(search)).any(axis=1)]
+        test = ["heipadeg", "du", "hei du"]
+        print("hei" in test)
+        print( [ df_base["pressure" in s] for s in df_base] ) #s.isin(['a'])
+        flattened = [val for sublist in df_base[:] for val in sublist]
+
+        print(param)
+
 
     def check_variable_all(self, model, numbervar, search ):
         df = pd.read_csv(f"bin/{model}_filesandvar.csv")
@@ -91,7 +122,6 @@ class check_data():
         dfc["base_name"] = df_base["base_name"]
         dfc = dfc[~dfc["base_name"].str.contains('|'.join(drop_files))]  # (drop_files)])
         df_base = dfc['var'].str.replace(" ", "").str.split(",")  # , expand = True)
-
         flattened = [val for sublist in df_base[:] for val in sublist]
         if search:
             flattened = [s for s in flattened if str(search) in s]
@@ -114,7 +144,10 @@ class check_data():
 
         param = pd.concat(param, axis = 1, join = "outer", sort=True)
         if search:
-            param = param[param.apply(lambda x: x.str.contains(search)).any(axis=1)]
+            param = param[param.apply(lambda x: x.str.contains(search))]#.any(axis=1)]
+            param = param.dropna(how='all')
+            #param = param[param.str.contains("wind")]
+            #df1[df1['col'].str.contains(r'foo(?!$)')]
 
         return param.to_string()
 
@@ -187,7 +220,7 @@ class check_data():
         #file = filter_any(file)
         logging.info(file)
         if len(file) ==0:#SomeError(ValueError, f'Type not found: choices:{levtype}')
-            SomeError( ValueError,  f"File does noes not exist. Try again (You might want to split up the request). Available files are: \n {df}")
+            SomeError( ValueError,  f"File does noes not exist at date: {self.date} for model {self.model} and. Try again (You might want to split up the request). Available files are: \n {df}")
         return file
 
 #check_available(YYYY,MM,DD,HH, "temp", 0)
