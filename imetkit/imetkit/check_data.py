@@ -1,23 +1,6 @@
 ########################################################################
 # File name: check_data.py
-# This file is part of: FCsystem
-#
-# LICENSE
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program.  If not, see
-# <http://www.gnu.org/licenses/>.
-#
+# This file is part of: imetkit
 ########################################################################
 from requests import get
 from bs4 import BeautifulSoup
@@ -27,46 +10,58 @@ import pandas as pd
 from netCDF4 import Dataset
 import logging
 from collections import Counter
+"""
+###################################################################
+This module checks what data is available, gives information on the dataset 
+and choose the user prefered dataset.
+------------------------------------------------------------------------------
+Usage:
+------
+check = check_data(model, date = None, param=None, mbrs=None,levtype=None, file = None, numbervar = 100, search = None)
 
+Returns:
+------
+Object with properties
+"""
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
 def SomeError( exception = Exception, message = "Something did not go well" ):
-    logging.error(exception(message))
     #source: https://softwareengineering.stackexchange.com/questions/222586/how-should-you-cleanly-restrict-object-property-types-and-values-in-python
+    logging.error(exception(message))
     if isinstance( exception.args, tuple ):
         raise exception
     else:
         raise exception(message)
 
 def filter_param(file,param):
-    if param:
-        for i in range(0, len(file)):
+    """Used by check_data: Remove files not containing a givet set of parameters.
+    Returns only files containing all the user defined parameters."""
+    if param:  #If a user param is given
+        for i in range(0, len(file)): # go through all files,
             param_bool = np.array([key in file.loc[i,"var"].keys() for key in param])
-            if all(param_bool) == False:
+            if all(param_bool) == False:  #remove those files not having that parameter.
                 file.drop([i], inplace=True)
     file.reset_index(inplace=True, drop=True)
     logging.info(file)
     return file
 
 def filter_type(file,mbrs,levtype):
-    # secondfilter
+    """Used by check_data: Remove files not having the userdefined mbrs and levtype
+    Returns only files containing all the user defined preferences."""
     if mbrs != 0 and mbrs != None:
         file = file[file["mbr_bool"] == True]
     if levtype == "ml":
         file = file[file["ml_bool"] == True]
     elif levtype == "pl":
         file = file[file["pl_bool"] == True]
-
-    # third filter, what to choose when we have all options
-    #if len(file) > 1:
-    #    if mbrs == 0:  # choose the determenistic, smallest one.
-    #        file = file[file["mbr_bool"] == False]
-
     file.reset_index(inplace=True, drop=True)
     return file
 
 def filter_any(file):
+    """Used by check_data: Remove random files until only one left
+    Returns only one file.
+    Todo: find a better way as this might not be what the use expect"""
     if len(file) > 1:  # want to end up with only one file.
         file = file[0]
         file.reset_index(inplace=True, drop=True)
@@ -74,7 +69,20 @@ def filter_any(file):
 
 
 class check_data():
+
     def __init__(self, model, date = None,param=None, mbrs=None,levtype=None, file = None, numbervar = 100, search = None):
+        """
+        Parameters
+        ----------
+        model: Weathermodel, either: MEPS, AromeArctic
+        date:  Modelrun as string in format YYYYMMDDHH
+        param: Parameters as strings in a list
+        mbrs:  Which ensemble member
+        levtype: What type of vertical level
+        file:    If you already know the filename you want
+        numbervar: max number of listed pameter, for searching.
+        search: Parameter to search for.
+        """
         self.date = date
         self.model = model
         self.param = param

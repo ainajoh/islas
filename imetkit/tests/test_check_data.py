@@ -1,10 +1,10 @@
 import numpy as np
 import unittest
-from FCsystem.check_data import check_data
+from imetkit.check_data import check_data
 from datetime import timedelta
 from datetime import datetime
 
-
+#MethodName_StateUnderTest_ExpectedBehavior
 
 class TestThredds(unittest.TestCase):
     #def setUpClass(cls):
@@ -28,18 +28,14 @@ class TestThredds(unittest.TestCase):
         #runs before every test
         pass
     def tearDown(self):
+        #remove logging perhaps
         #runs after every test
         #you could delete all created files forexample.
         pass
 
+    def test_ModelParam_OnlyModelInput_ShowMostUsedParam(self):
+        #Idea: To easily find naming convention for that model
 
-    def test_available_variables_mostused(self):
-        self.assertTrue(self.checkOnlyModelMEPS.param != None)
-        self.assertTrue(type(self.checkOnlyModelMEPS.param)==str)
-
-        self.assertTrue(self.checkOnlyModelAA.param != None)
-        self.assertTrue(type(self.checkOnlyModelAA.param) == str)
-        #One known output
         output ="""0                       time
 1    forecast_reference_time
 2         projection_lambert
@@ -48,11 +44,12 @@ class TestThredds(unittest.TestCase):
         self.assertEqual(self.checkOnlyModelMEPS.param, output)
         self.assertEqual(self.checkOnlyModelAA.param, output)
 
-    def test_available_variables_search(self):
+    def test_SearchModel_OnlyModelInputSearchParam_ShowsAllParamWithSearchedString(self):
+        #Idea: To easily find naming convention for that model
 
-        self.assertTrue(self.checkSearchAA.param != None)
+        self.assertIsNotNone(self.checkSearchAA.param)
         self.assertTrue(type(self.checkSearchAA.param) == str)
-        self.assertTrue(self.checkSearchMEPS.param != None)
+        self.assertIsNotNone(self.checkSearchMEPS.param != None)
         self.assertTrue(type(self.checkSearchMEPS.param) == str)
 
         #One known output
@@ -74,8 +71,8 @@ class TestThredds(unittest.TestCase):
 15    y_wind_at_maximum_wind_speed_level"""
         self.assertEqual(self.checkSearchAA.param, output)
 
-    def test_available_variables_search4specdate(self):
-
+    def test_searchDate_Search4specDate_ShowParamAndFileName(self):
+        #Idea: They can then pick the file that has the parameter they want.
         self.assertTrue(self.checkSearchMEPSonDate.param != None)
         self.assertTrue(type(self.checkSearchMEPSonDate.param) == str)
         self.assertTrue(self.checkSearchAAonDate.param != None)
@@ -97,13 +94,10 @@ class TestThredds(unittest.TestCase):
         self.assertEqual(self.checkSearchAAonDate.param, output)
 
     def ifmodelisavailableevery6hours(self):
+        #Should test if there is missing date/hours.
         pass
-        #normalhours = ["00", "06", "12", "18"]
-        #checkaa = check_data(model="AromeArctic")
-        #modelrun = checkaa.date['Date'].astype(str) + checkaa.date['Hour'].astype(str).str.zfill(2)  # + str(check.date['Hour'])
-        #startmodelrun = modelrun[0]
 
-    def test_availabledate(self):
+    def test_AvailableDate_(self):
         self.assertEqual(self.checkOnlyModelAA.date.at[0,"Date"], 20151021)
         self.assertEqual(self.checkOnlyModelAA.date.at[0, "Hour"], 15)
         self.assertEqual(self.checkOnlyModelAA.date.at[14085,"Date"], 20200910)
