@@ -1,8 +1,10 @@
 import numpy as np
 import unittest
-from FCsystem import check_data
+from FCsystem.check_data import check_data
 from datetime import timedelta
 from datetime import datetime
+
+
 
 class TestThredds(unittest.TestCase):
     #def setUpClass(cls):
