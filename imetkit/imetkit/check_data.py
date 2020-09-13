@@ -52,6 +52,7 @@ def filter_type(file,mbrs,levtype):
     if mbrs != 0 and mbrs != None:
         file = file[file["mbr_bool"] == True]
     if levtype == "ml":
+        print("in ml")
         file = file[file["ml_bool"] == True]
     elif levtype == "pl":
         file = file[file["pl_bool"] == True]

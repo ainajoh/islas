@@ -13,6 +13,7 @@ class TestThredds(unittest.TestCase):
     #def tarDownClass(cls):
     #    print("tarDownClass")
     def setUp(self):
+        self.date = "2020010100"
         self.checkOnlyModelMEPS = check_data(model="MEPS",numbervar=5)
         self.checkOnlyModelAA = check_data(model="AromeArctic",numbervar=5)
 
@@ -25,7 +26,8 @@ class TestThredds(unittest.TestCase):
         self.checkSearchMEPS = check_data(model="MEPS", search="wind")
         self.checkSearchAA = check_data(model="AromeArctic",search="wind")
 
-        #runs before every test
+
+        #runs before every testwind_speed
         pass
     def tearDown(self):
         #remove logging perhaps
@@ -134,33 +136,29 @@ class TestThredds(unittest.TestCase):
         self.assertEqual(self.checkMEPSonDate.file["File"].to_string(), output)
 
     def test_availablefiles4setparameter(self):
-        pass
+        checkSearchMEPS = check_data(model="MEPS", date=self.date, param=["wind_speed", "air_temperature_pl"])
+        checkSearchAA = check_data(model="AromeArctic", date=self.date, param=["wind_speed", "air_temperature_pl"])
+
+        self.assertEqual(checkSearchAA.file["File"][0], "arome_arctic_extracted_2_5km_20200101T00Z.nc")
+        self.assertEqual(checkSearchMEPS.file["File"][0], "meps_mbr0_extracted_2_5km_20200101T00Z.nc")
+
+
     def test_availablefiles4setleveltype(self):
-        pass
+        checkSearchMEPS = check_data(model="MEPS", date=self.date, param=["air_temperature_pl"], levtype="pl")
+        checkSearchAA = check_data(model="AromeArctic", date=self.date, param=["air_temperature_pl"], levtype="pl")
+
+        self.assertEqual(checkSearchAA.file["File"][0], "arome_arctic_extracted_2_5km_20200101T00Z.nc")
+        self.assertEqual(checkSearchMEPS.file["File"][0], "meps_mbr0_extracted_2_5km_20200101T00Z.nc")
+
 
     def test_availablefiles4setensmember(self):
-        pass
+        checkSearchMEPS = check_data(model="MEPS", date=self.date, param=["wind_speed"], mbrs=3)
+        self.assertEqual(checkSearchMEPS.file["File"][0], "meps_extracted_2_5km_20200101T00Z.nc")
 
     # def test_availablefiles4seteverything(self):
         #check_data(model, date=None, param=None, mbrs=None, levtype=None, file=None, numbervar=100,
         #                search=None)
         #print(check.file)
-
-
-    def test_check_data(self):
-        pass
-        #Find available variables
-        # YYYY = ["2016","2017","2018","2019"]
-        # MM = ["12"],
-        #modelruntime = "2020030800"
-        #param = ["surface_aerosol_sea"]
-        #levtype = "ml"
-        #mbrs=0
-        #model = "MEPS"
-        #files = check_data(date=modelruntime, mbrs=mbrs, levtype=levtype, param = param, model=model)
-
-
-
     #def test_monthly_scedule(self):
     #    #with patch("employee.requests.get") as mocked_get: #incase webpage is down.. not ur fault
     #    #    mocked_get.return_value.ok = True

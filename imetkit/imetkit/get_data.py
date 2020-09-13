@@ -8,8 +8,8 @@ import numpy as np
 import logging
 import pandas as pd
 import os
-from loclib.check_data import *  # require netcdf4
-from loclib.domain import *  # require netcdf4
+from imetkit.check_data import *  # require netcdf4
+from imetkit.domain import *  # require netcdf4
 import re
 
 #mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/scripts/FC-system")
@@ -34,14 +34,14 @@ def SomeError( exception = Exception, message = "Something did not go well" ):
 filter_function_for_type= lambda value: value if value in levtype else SomeError(ValueError, f'Type not found: choices:{levtype}')
 filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choices:{model}')
 filter_function_for_source = lambda value: value if value in source else SomeError(ValueError, f'Source not found: choices:{source}')
-filter_function_for_modelrun = lambda value: value \
+filter_function_for_date = lambda value: value \
     if ( len(value) == 10 ) and ( int(value[0:4]) in range(2000,2021) ) and ( int(value[4:6]) in range(0,13) ) \
     and ( int(value[6:8]) in range(1,32)) and ( int(value[9:10]) in range(0,25)) \
     else SomeError(ValueError, f'Modelrun wrong: Either; "latest or date on the form: YYYYMMDDHH')
 
-def filter_for_bad_combination(file, data_domain, model, mbrs, levtype, source, modelrun, step,level, param):
+def filter_for_bad_combination(file, data_domain, model, mbrs, levtype, source, date, step,level, param):
     if source=="thredds" and model=="ooo": #on thredds modellevels are not available for members on MEPS
-        check_available(modelrun)
+        check_available(date)
     #if leveltype = "pl" and level > :
         #SomeError(ValueError, f'Bad combination: On thredds modellevels is not available for members not being the deterministic(mbrs=0)')
 
@@ -49,14 +49,14 @@ def filter_for_bad_combination(file, data_domain, model, mbrs, levtype, source, 
     #   SomeError(ValueError, f'Bad combination: On thredds modellevels is not available for members not being the deterministic(mbrs=0)')
 
 
-class DATA():
+class get_data():
 
-    def __init__(self, model, modelrun, param, file, step, data_domain=None, levtype=None, level = None, mbrs=0, source="thredds" ):
+    def __init__(self, model, date, param, file, step, data_domain=None, levtype=None, level = None, mbrs=0, source="thredds" ):
         logging.info("START")
         self.source = source
         self.model = model
         self.mbrs = mbrs
-        self.modelrun = modelrun
+        self.date = date
         self.step = step
         self.levtype =  levtype
         self.level =  level
@@ -80,7 +80,7 @@ class DATA():
             maxlvl = file["var"]["hybrid"][0] -1
             self.level = [0,maxlvl]
 
-        filter_for_bad_combination(self.file, data_domain, self.model, self.mbrs, self.levtype, self.source, self.modelrun, self.step, self.level, self.param)
+        filter_for_bad_combination(self.file, data_domain, self.model, self.mbrs, self.levtype, self.source, self.date, self.step, self.level, self.param)
 
     def __setattr__(self, key, value):
         #Here you can set the value of each parameter or alter the parameter from a userfriendly to pythonfriendly code.
@@ -99,7 +99,7 @@ class DATA():
         if key=='source':
             value = filter_function_for_source(value)
             self.__dict__[key] = value
-        if key=='modelrun':
+        if key=='date':
             self.__dict__[key] = value
         if key == "param":  # or else obj would not be properly set...
             self.__dict__[key] = np.array(value)
@@ -122,10 +122,10 @@ class DATA():
         jindx = self.idx[0]
         iindx = self.idx[1]
 
-        YYYY = self.modelrun[0:4]
-        MM = self.modelrun[4:6]
-        DD = self.modelrun[6:8]
-        HH = self.modelrun[8:10]
+        YYYY = self.date[0:4]
+        MM = self.date[4:6]
+        DD = self.date[6:8]
+        HH = self.date[8:10]
 
         step = f"[{np.min(self.step)}:1:{np.max(self.step)}]"
         level = f"[{np.min(self.level)}:1:{np.max(self.level)}]"
@@ -233,7 +233,7 @@ class DATA():
                         startsub = f"{step}{non}{y}{x}"
                 if (vardim == 5):
                     if (file.loc[0].at["mbr_bool"]==True):
-                        startsub = f"{step}{mbrs}{non}{y}{x}"
+                        startsub = f"{step}{non}{mbrs}{y}{x}"
                         if (re.match("^.*_ml|^.*_pl", prm)):
                             startsub = f"{step}{level}{mbrs}{y}{x}"
                     elif (re.match("^.*_ml|^.*_pl", prm)):
