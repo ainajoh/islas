@@ -1,8 +1,6 @@
 import numpy as np
-from loclib.domain import *  # require netcdf4
-from loclib.get_data import *
 import unittest
-from loclib.check_data import *  # require netcdf4
+from FCsystem import check_data
 from datetime import timedelta
 from datetime import datetime
 

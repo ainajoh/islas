@@ -1,5 +1,3 @@
-
-from urllib.request import urlopen
 from requests import get
 from bs4 import BeautifulSoup
 import re
@@ -10,7 +8,7 @@ import logging
 from collections import Counter
 import os
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
-mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/scripts/FC-system")
+#mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/scripts/FCsystem")
 
 def SomeError( exception = Exception, message = "Something did not go well" ):
     logging.error(exception(message))
