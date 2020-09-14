@@ -21,6 +21,7 @@ data_domain.South_Norway()
 lonlat = np.array(data_domain.lonlat)
 
 dmap_meps = DATA(model="MEPS", data_domain=data_domain, param = param, file =file, step=[0, lt], modelrun=modelruntime)
+
 dmap_meps.retrieve()
 
 #print(np.shape(dmap_meps.air_temperature_2m))

@@ -79,7 +79,8 @@ class get_data():
         if levtype == "ml" and self.level == None:
             maxlvl = file["var"]["hybrid"][0] -1
             self.level = [0,maxlvl]
-
+        if self.source == "thredds":
+            self.url = self.make_url()
         filter_for_bad_combination(self.file, data_domain, self.model, self.mbrs, self.levtype, self.source, self.date, self.step, self.level, self.param)
 
     def __setattr__(self, key, value):
@@ -205,7 +206,8 @@ class get_data():
                     f"longitude{y}{x}," + \
                     f"x{x}," + \
                     f"y{y}," + \
-                    f"forecast_reference_time"
+                    f"forecast_reference_time," \
+                    f"projection_lambert"
 
             if self.levtype=="ml":
                 url += f",hybrid{level}," + \
@@ -251,22 +253,43 @@ class get_data():
 
         logging.info("-------> start retrieve from thredds")
         dataset = Dataset(url) #fast
+        for k in dataset.__dict__.keys():
+            ss = f"{k}"
+            print(ss)
+            self.__dict__[ss] = dataset.__dict__[k]
         logging.info("-------> Getting variable: ")
         if self.model=="MEPS":
-            prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time", "x", "y"]
+            prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time", "x", "y","projection_lambert"]
         iteration =-1
         for prm in prm_fixed:
             logging.info(prm)
             iteration +=1
+             #dataset.__dict__.keys()
+            for k in dataset.variables[prm].__dict__.keys():
+                ss = f"{k}.{prm}"
+                print(ss)
+                self.__dict__[ss] = dataset.variables[prm].__dict__[k]
+
+            #self.__dict__[k for k in dataset.__dict__.keys()] = dataset.variables[prm].units
             self.__dict__[prm] = dataset.variables[prm][:]
 
         if self.levtype=="ml":
             for prm in ["hybrid", "ap", "b" ]:
                 logging.info(prm)
+                for k in dataset.variables[prm].__dict__.keys():
+                    ss = f"{k}.{prm}"
+                    print(ss)
+                    self.__dict__[ss] = dataset.variables[prm].__dict__[k]
+                #self.__dict__[f"unit_{prm}"] = dataset.variables[prm].units
                 self.__dict__[prm] = dataset.variables[prm][:]
         for prm in self.param:
             iteration += 1
             logging.info(prm)
+            for k in dataset.variables[prm].__dict__.keys():
+                ss = f"{k}_{prm}"
+                print(ss)
+                self.__dict__[ss] = dataset.variables[prm].__dict__[k]
+            #self.__dict__[f"unit_{prm}"] = dataset.variables[prm].units
             self.__dict__[prm] = dataset.variables[prm][:]
 
         dataset.close()
@@ -287,7 +310,37 @@ class get_data():
 
     def retrieve(self):
         if self.source == "thredds":
-            url = self.make_url()
-            self.thredds(url)
+            #self.url = self.make_url()
+            self.thredds(self.url)
         self.windcorr()
+
+    def info(self):
+        prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time", "x", "y", "projection_lambert"]
+
+        logging.info("-------> start retrieve from thredds")
+        dataset = Dataset(self.url)  # fast
+        self.info = dataset
+        logging.info("-------> Getting variable: ")
+        if self.model == "MEPS":
+            prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time", "x", "y"]
+        iteration = -1
+        for prm in prm_fixed:
+            logging.info(prm)
+            iteration += 1
+            self.__dict__[prm] = dataset.variables[prm]
+
+        if self.levtype == "ml":
+            for prm in ["hybrid", "ap", "b"]:
+                logging.info(prm)
+                self.__dict__[prm] = dataset.variables[prm]
+        for prm in self.param:
+            iteration += 1
+            logging.info(prm)
+            self.__dict__[prm] = dataset.variables[prm]
+
+        #self.info = dataset
+        dataset.close()
+        iteration += 1
+
+
 
