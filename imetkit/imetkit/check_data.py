@@ -224,21 +224,41 @@ class check_data():
             dn = dataset.dimensions.keys()
             ds = [dataset.dimensions[d].size for d in dn  ]
             dimdic = dict(zip(dn,ds))
+            dimframe = pd.DataFrame(ds, index = dn,columns=["shape"])
+
 
             df.loc[i,"mbr_bool"] = ("ensemble_member" in dimdic) and (dimdic["ensemble_member"]>=10)
             df.loc[i,"ml_bool"] = ("hybrid" in dimdic) and (dimdic["hybrid"]>=65)
             df.loc[i,"pl_bool"] = ("pressure" in dimdic) and (dimdic["pressure"]>=10)
 
             dv = dataset.variables.keys()
-            dvs = [dataset.variables[d].shape for d in dv  ]
 
+            #for k in lambda x in dataset.variables.__dict__.keys():
+            #    print(k)
+            #    ss = f"{k}.{prm}"
+            #    # print(ss)
+            #    self.__dict__[ss] = dataset.variables[prm].__dict__[k]
+
+            dv_shape = [dataset.variables[d].shape for d in dv  ]
+            dv_dim = [dataset.variables[d].dimensions for d in dv]
+            #dv_units = [dataset.variables[d].units for d in dv]
             #dddd = dataset.variables[d].shape for d in dv
-            vardic = dict(zip(dv, dvs))
-            #print(vardic.keys())
-            df.loc[i,"var"] = [vardic]
-            df.loc[i,"dim"] = [dimdic]
+            #vardic = dict(zip(dv, dv_shape))
+            varlist = list(zip(dv_shape,dv_dim))
+            varframe = pd.DataFrame(varlist, index = dv,columns=["shape", "dim"])
+            #varframe = pd.DataFrame(vardic , columns=[dv])
+
+            #df = pd.DataFrame({'idx':[1,2,3], 'dfs':[df1, df2, df3]})
+
+            #res = [{a: {b: c}} for (var, shape, c) in zip(dv, dv_shape, test_list3)]
+            df.loc[i,"var"] = [varframe.to_dict(orient='index')]
+            df.loc[i,"dim"] = [dimframe.to_dict(orient='index')]#[dimframe.to_dict(orient='index')]
+
+            #print(df)
+            #print(df["var"][0]["x_wind_pl"])
             i+=1
 
+            #nested_dict = { 'dictA': {'key_1': 'value_1'},
 
 
         file_withparam = filter_param( df.copy(), param)

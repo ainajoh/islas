@@ -74,16 +74,16 @@ class get_data():
             self.idx = data_domain.idx
             self.lonlat = data_domain.lonlat
         else:
-            xmax = file["var"][0]["x"][0]-1
-            ymax=  file["var"][0]["y"][0]-1
+            xmax = file["var"][0]["x"]["shape"][0]-1
+            ymax=  file["var"][0]["y"]["shape"][0]-1
             self.idx = ( np.array([0,ymax]), np.array([0,xmax]) )
             self.lonlat = None
 
         if levtype =="pl" and self.level == None:
-            maxlvl = file["var"][0]["pressure"][0] - 1
+            maxlvl = file["var"][0]["pressure"]["shape"][0] - 1
             self.level = [0,maxlvl]
         if levtype == "ml" and self.level == None:
-            maxlvl = file["var"]["hybrid"][0] -1
+            maxlvl = file["var"]["hybrid"]["shape"][0] -1
             self.level = [0,maxlvl]
         if self.source == "thredds":
             self.url = self.make_url()
@@ -159,49 +159,26 @@ class get_data():
                 url += f",hybrid{level}," + \
                        f"ap{level}," + \
                        f"b{level}"
-            startsub = ""
 
+                startsub = ""
             for prm in self.param:
                 url += f",{prm}"
-                #dim = file["var"][0][prm]
-                #dim = file["dim"]
-                #print(dim)
-                #startsub = f""
-
-                vardim = len(file.loc[0, "var"][prm])
-                if (vardim == 0):
-                    startsub = f""
-                if (vardim == 1):
-                    startsub = f"{step}"
-                if (vardim == 2):
-                    startsub = f"{y}{x}"
-                if (vardim == 3):
-                    startsub = f"{step}{y}{x}"
-                if (vardim == 4):
-                    if (file.loc[0].at["mbr_bool"] == True):
-                        startsub = f"{step}{mbrs}{y}{x}"
-                    elif (re.match("^.*_ml|^.*_pl", prm)):
-                        startsub = f"{step}{level}{y}{x}"
-                    elif (file.loc[0, "var"][prm][1] == 1):
-                        startsub = f"{step}{non}{y}{x}"
-                    else:
-                        startsub = f"{step}{level}{y}{x}"
-                        
-                if (vardim == 5):
-                    if (file.loc[0].at["mbr_bool"] == True):
-                        startsub = f"{step}{mbrs}{non}{y}{x}"
-                        if (re.match("^.*_ml|^.*_pl", prm)):
-                            startsub = f"{step}{level}{mbrs}{y}{x}"
-                    elif (re.match("^.*_ml|^.*_pl", prm)):
-                        startsub = f"{step}{level}{non}{y}{x}"
-                    else:
-                        startsub = f"{step}{non}{non}{y}{x}"
+                indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
+                           "pressure": level, "hybrid": level, "hybrid0": non,
+                           "height0": non, "height1": non, "height2": non, "height3": non,
+                          'height_above_msl': non}
+                dimlist = list(file["var"][0][prm]["dim"])  # ('time', 'pressure', 'ensemble_member', 'y', 'x')
+                # print(file["dim"][0])
+                newlist = [indexidct[i] for i in dimlist]
+                startsub = ''.join(newlist)
                 url += startsub
+
         ###############################################################################
 
         if self.model == "MEPS":
             #############FILTER###########################
             file = self.file.copy()
+            #print()
             #first filter
             logging.info(file)
             ####################################################################
@@ -223,31 +200,13 @@ class get_data():
             startsub=""
             for prm in self.param:
                 url += f",{prm}"
-                vardim = len(file.loc[0].at["var"][prm])
-                if (vardim == 0):
-                    startsub = f""
-                if (vardim == 1):
-                    startsub = f"{step}"
-                if (vardim == 2):
-                    startsub = f"{y}{x}"
-                if (vardim == 3):
-                    startsub = f"{step}{y}{x}"
-                if ( vardim == 4):
-                    if (file.loc[0].at["mbr_bool"]==True):
-                        startsub = f"{step}{mbrs}{y}{x}"
-                    elif (re.match("^.*_ml|^.*_pl", prm)):
-                        startsub = f"{step}{level}{y}{x}"
-                    else:
-                        startsub = f"{step}{non}{y}{x}"
-                if (vardim == 5):
-                    if (file.loc[0].at["mbr_bool"]==True):
-                        startsub = f"{step}{non}{mbrs}{y}{x}"
-                        if (re.match("^.*_ml|^.*_pl", prm)):
-                            startsub = f"{step}{level}{mbrs}{y}{x}"
-                    elif (re.match("^.*_ml|^.*_pl", prm)):
-                        startsub = f"{step}{level}{non}{y}{x}"
-                    else:
-                        startsub = f"{step}{non}{non}{y}{x}"
+                indexidct = {"time":step, "y":y, "x":x,"ensemble_member":mbrs,
+                             "pressure":level, "hybrid":level, "hybrid0":non,
+                             "height0": non, "height1": non, "height2": non, "height3": non, 'height_above_msl': non }
+                dimlist = list(file["var"][0][prm]["dim"])  #('time', 'pressure', 'ensemble_member', 'y', 'x')
+                #print(file["dim"][0])
+                newlist = [indexidct[i] for i in dimlist]
+                startsub = ''.join(newlist)
                 url+= startsub
 
         logging.info(url)
