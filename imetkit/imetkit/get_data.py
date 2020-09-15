@@ -67,7 +67,7 @@ class get_data():
         webcheck = requests.head(url)
         if webcheck.status_code != 200:  # SomeError(ValueError, f'Type not found: choices:{levtype}')
             SomeError(ConnectionError, f"Website {url} is down with {webcheck}; . Wait until it is up again")
-        return file
+
 
         if data_domain:
             #self.data_domain = data_domain
