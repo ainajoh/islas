@@ -2,7 +2,7 @@
 # File name: check_data.py
 # This file is part of: imetkit
 ########################################################################
-from requests import get
+import requests
 from bs4 import BeautifulSoup
 import re
 import numpy as np
@@ -92,6 +92,13 @@ class check_data():
         self.file = file
         self.numbervar = numbervar
         self.search = search
+
+        url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
+        webcheck = requests.head(url)
+        if webcheck.status_code != 200:  # SomeError(ValueError, f'Type not found: choices:{levtype}')
+            SomeError(ConnectionError, f"Website {url} is down with {webcheck}; . Wait until it is up again")
+        return file
+
 
         if date != None:
             self.file = self.check_files(date, model, param,  mbrs,levtype)
@@ -195,7 +202,7 @@ class check_data():
             pass
         #Find what files exist at that date
 
-        page = get(base_url + YYYY+"/"+MM+"/"+DD+ "/catalog.html")
+        page = requests.get(base_url + YYYY+"/"+MM+"/"+DD+ "/catalog.html")
         soup = BeautifulSoup(page.text, 'html.parser')
         rawfiles= soup.table.find_all("a")
         ff =[i.text for i in rawfiles]
@@ -224,6 +231,8 @@ class check_data():
 
             dv = dataset.variables.keys()
             dvs = [dataset.variables[d].shape for d in dv  ]
+
+            #dddd = dataset.variables[d].shape for d in dv
             vardic = dict(zip(dv, dvs))
             #print(vardic.keys())
             df.loc[i,"var"] = [vardic]

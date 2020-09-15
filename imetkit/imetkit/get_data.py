@@ -63,6 +63,12 @@ class get_data():
         self.param = param
         self.file = file
 
+        url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
+        webcheck = requests.head(url)
+        if webcheck.status_code != 200:  # SomeError(ValueError, f'Type not found: choices:{levtype}')
+            SomeError(ConnectionError, f"Website {url} is down with {webcheck}; . Wait until it is up again")
+        return file
+
         if data_domain:
             #self.data_domain = data_domain
             self.idx = data_domain.idx
@@ -255,7 +261,7 @@ class get_data():
         dataset = Dataset(url) #fast
         for k in dataset.__dict__.keys():
             ss = f"{k}"
-            print(ss)
+            #print(ss)
             self.__dict__[ss] = dataset.__dict__[k]
         logging.info("-------> Getting variable: ")
         if self.model=="MEPS":
@@ -267,7 +273,7 @@ class get_data():
              #dataset.__dict__.keys()
             for k in dataset.variables[prm].__dict__.keys():
                 ss = f"{k}.{prm}"
-                print(ss)
+                #print(ss)
                 self.__dict__[ss] = dataset.variables[prm].__dict__[k]
 
             #self.__dict__[k for k in dataset.__dict__.keys()] = dataset.variables[prm].units
@@ -278,7 +284,7 @@ class get_data():
                 logging.info(prm)
                 for k in dataset.variables[prm].__dict__.keys():
                     ss = f"{k}.{prm}"
-                    print(ss)
+                    #print(ss)
                     self.__dict__[ss] = dataset.variables[prm].__dict__[k]
                 #self.__dict__[f"unit_{prm}"] = dataset.variables[prm].units
                 self.__dict__[prm] = dataset.variables[prm][:]
@@ -287,7 +293,7 @@ class get_data():
             logging.info(prm)
             for k in dataset.variables[prm].__dict__.keys():
                 ss = f"{k}_{prm}"
-                print(ss)
+                #print(ss)
                 self.__dict__[ss] = dataset.variables[prm].__dict__[k]
             #self.__dict__[f"unit_{prm}"] = dataset.variables[prm].units
             self.__dict__[prm] = dataset.variables[prm][:]
