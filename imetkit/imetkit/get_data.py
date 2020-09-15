@@ -114,18 +114,19 @@ class get_data():
             self.__dict__[key] = value
         if key == "level":  # or else obj would not be properly set...
             #if value == None  ype(dii["pressure"][0])
-
+            value = 0
             self.__dict__[key] = value
         if key == "mbrs":
             if value == None:
                 value = 0
             self.__dict__[key] = value
-
-
+    def handle_noneinputs(self):
+        pass
     def make_url(self):
         '''
         Makes the OPENDAP url for the user specified model and parameters in a specific domain and time
         '''
+
         jindx = self.idx[0]
         iindx = self.idx[1]
 
@@ -140,37 +141,35 @@ class get_data():
         y = f"[{jindx.min()}:1:{jindx.max()}]"
         x = f"[{iindx.min()}:1:{iindx.max()}]"
         non = f"[0:1:0]"
+        indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
+                     "pressure": level, "hybrid": level, "hybrid0": non,
+                     "height0": non, "height1": non, "height2": non,
+                     "height3": non, "height7": non, 'height_above_msl': non}
 
+        fixed_var = np.array(["latitude","longitude","forecast_reference_time","projection_lambert", "ap","b"]) #if excicst use.
+        fixed_var = fixed_var[np.isin(fixed_var,list(self.file["var"][0].keys()))]
+        self.param = np.append(self.param, fixed_var)
+        #print(varinfile)
         ###############################################################################
         if self.model == "AromeArctic":
             file = self.file.copy()
-
+            param = self.param.copy()
             url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc[0].at['File']}?"
-
-            url += f"time{step}," + \
-                f"latitude{y}{x}," + \
-                f"longitude{y}{x}," +\
-                f"x{x},"+ \
-                f"y{y}," + \
-                f"forecast_reference_time, "+ \
-                f"projection_lambert"
-
-            if self.levtype=="ml":
-                url += f",hybrid{level}," + \
-                       f"ap{level}," + \
-                       f"b{level}"
-
-                startsub = ""
-            for prm in self.param:
-                url += f",{prm}"
-                indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
-                           "pressure": level, "hybrid": level, "hybrid0": non,
-                           "height0": non, "height1": non, "height2": non, "height3": non,
-                          'height_above_msl': non}
+            startsub = ""
+            for prm in param:
+                #print(prm)
+                url += f"{prm}"
                 dimlist = list(file["var"][0][prm]["dim"])  # ('time', 'pressure', 'ensemble_member', 'y', 'x')
                 # print(file["dim"][0])
                 newlist = [indexidct[i] for i in dimlist]
-                startsub = ''.join(newlist)
+                startsub = ''.join(newlist) + ","
+                #np.setdiff1d(list_2, list_1)
+                for dimen in np.setdiff1d(file["var"][0][prm]["dim"], self.param):
+                    #self.__setattr__(self, param, value)
+                    self.param = np.append(self.param, dimen)
+                    startsub += dimen
+                    startsub += indexidct[dimen]+ ","
+
                 url += startsub
 
         ###############################################################################
@@ -184,75 +183,42 @@ class get_data():
             ####################################################################
             url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{file.loc[0].at['File']}?"
             #for param in fixed_param:
-            url += f"time{step}," + \
-                    f"latitude{y}{x}," + \
-                    f"longitude{y}{x}," + \
-                    f"x{x}," + \
-                    f"y{y}," + \
-                    f"forecast_reference_time," \
-                    f"projection_lambert"
-
-            if self.levtype=="ml":
-                url += f",hybrid{level}," + \
-                       f"ap{level}," + \
-                       f"b{level}"
 
             startsub=""
             for prm in self.param:
-                url += f",{prm}"
-                indexidct = {"time":step, "y":y, "x":x,"ensemble_member":mbrs,
-                             "pressure":level, "hybrid":level, "hybrid0":non,
-                             "height0": non, "height1": non, "height2": non, "height3": non, 'height_above_msl': non }
+                url += f"{prm}"
                 dimlist = list(file["var"][0][prm]["dim"])  #('time', 'pressure', 'ensemble_member', 'y', 'x')
                 #print(file["dim"][0])
                 newlist = [indexidct[i] for i in dimlist]
                 startsub = ''.join(newlist)
+                for dimen in np.setdiff1d(file["var"][0][prm]["dim"], self.param):
+                    self.param = np.append(self.param, dimen)
+                    startsub += dimen
+                    startsub += indexidct[dimen] + ","
+
                 url+= startsub
 
+        url = url.rstrip(",")
         logging.info(url)
         self.__dict__["url"] = url
-        return url
+
+        return url#.rstrip(',')
 
     def thredds(self, url):
-        prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time","x","y", "projection_lambert"]
 
         logging.info("-------> start retrieve from thredds")
         dataset = Dataset(url) #fast
         for k in dataset.__dict__.keys():
             ss = f"{k}"
-            #print(ss)
             self.__dict__[ss] = dataset.__dict__[k]
         logging.info("-------> Getting variable: ")
-        if self.model=="MEPS":
-            prm_fixed = ["time", "latitude", "longitude", "forecast_reference_time", "x", "y","projection_lambert"]
         iteration =-1
-        for prm in prm_fixed:
-            logging.info(prm)
-            iteration +=1
-             #dataset.__dict__.keys()
-            for k in dataset.variables[prm].__dict__.keys():
-                ss = f"{k}.{prm}"
-                #print(ss)
-                self.__dict__[ss] = dataset.variables[prm].__dict__[k]
 
-            #self.__dict__[k for k in dataset.__dict__.keys()] = dataset.variables[prm].units
-            self.__dict__[prm] = dataset.variables[prm][:]
-
-        if self.levtype=="ml":
-            for prm in ["hybrid", "ap", "b" ]:
-                logging.info(prm)
-                for k in dataset.variables[prm].__dict__.keys():
-                    ss = f"{k}.{prm}"
-                    #print(ss)
-                    self.__dict__[ss] = dataset.variables[prm].__dict__[k]
-                #self.__dict__[f"unit_{prm}"] = dataset.variables[prm].units
-                self.__dict__[prm] = dataset.variables[prm][:]
         for prm in self.param:
             iteration += 1
             logging.info(prm)
             for k in dataset.variables[prm].__dict__.keys():
                 ss = f"{k}_{prm}"
-                #print(ss)
                 self.__dict__[ss] = dataset.variables[prm].__dict__[k]
             #self.__dict__[f"unit_{prm}"] = dataset.variables[prm].units
             self.__dict__[prm] = dataset.variables[prm][:]

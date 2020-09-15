@@ -10,7 +10,7 @@ import datetime
 mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/scripts/FC-system")
 
 lt = 7
-lvl = 5#64
+lvl = 64#64#64
 modelruntime = "2020070118"
 model = "AromeArctic"
 xres=1
@@ -118,28 +118,34 @@ def set_variable2d():
 
 
     #2dArome
+    print("retrive 2darome")
     param2d_arome = [*variable2d_arome.keys()]
     file_arome2d = check_available(date=modelruntime, model=model, param=param2d_arome)
-    data_domain = DOMAIN(modelruntime, model, file=file_arome2d)
-    data_domain.KingsBay()
-    dmap_arome2d = DATA(model=model, data_domain=data_domain, file=file_arome2d, param=param2d_arome, step=[0, lt],modelrun=modelruntime)
+    #data_domain = DOMAIN(modelruntime, model, file=file_arome2d)
+    #data_domain.AromeArctic()
+    dmap_arome2d = DATA(model=model, file=file_arome2d, param=param2d_arome, step=[0, lt],modelrun=modelruntime)
+    #dmap_arome2d = DATA(model=model, data_domain=data_domain, file=file_arome2d, param=param2d_arome, step=[0, lt],modelrun=modelruntime)
     dmap_arome2d.retrieve()
 
+    print("retrive 3darome")
     # 3dArome This can be included in 2darome for timeefficency
     param3d_arome = [*variable3d_arome.keys()]
     file_arome3d = check_available(date=modelruntime, model=model, param=param3d_arome)
-    data_domain = DOMAIN(modelruntime, model, file=file_arome3d)
-    data_domain.KingsBay()
-    dmap_arome3d = DATA(model=model, data_domain=data_domain, file=file_arome3d, param=param3d_arome, step=[0, lt],
+    #data_domain = DOMAIN(modelruntime, model, file=file_arome3d)
+    #data_domain.AromeArctic()
+    print(file_arome3d)
+    dmap_arome3d = DATA(model=model, file=file_arome3d, param=param3d_arome, step=[0, lt],
                         modelrun=modelruntime,  level=[0, lvl], levtype="ml")
+    print(dmap_arome3d)
     dmap_arome3d.retrieve()
 
+    print("retrive sfxarome")
     #2dsfx
     param2d_sfx = [*variable2d_sfx.keys()]
     file_sfx2d = check_available(date=modelruntime, model=model, param=param2d_sfx)
-    data_domain = DOMAIN(modelruntime, model, file=file_sfx2d)
-    data_domain.KingsBay()
-    dmap_sfx2d = DATA(model=model, data_domain=data_domain, file=file_sfx2d, param=param2d_sfx, step=[0, lt],modelrun=modelruntime)
+    #data_domain = DOMAIN(modelruntime, model, file=file_sfx2d)
+    #data_domain.AromeArctic()
+    dmap_sfx2d = DATA(model=model, file=file_sfx2d, param=param2d_sfx, step=[0, lt],modelrun=modelruntime)
     dmap_sfx2d.retrieve()
     #print(dmap_sfx2d.x ==dmap_arome2d.x)
     #print(len(dmap_arome2d.x))
@@ -155,6 +161,7 @@ def set_variable2d():
 
 
     for t in range( 0, len(dmap_arome2d.time )):
+        print("Inside for loop")
         output = "/Users/ainajoh/Documents/GitHub/islas/scripts/flexpart_arome/"
         validdate = datetime.datetime(int(modelruntime[0:4]), int(modelruntime[4:6]), int(modelruntime[6:8]), int(modelruntime[8:10])) + datetime.timedelta(hours=t)
         date_time = validdate.strftime("%Y%m%d_%H")
@@ -162,21 +169,21 @@ def set_variable2d():
         attr['reference_lon'] = proj.getncattr("longitude_of_central_meridian")
         attr['ydim'] = np.long(len(dmap_arome2d.y[::yres]))#np.long(dataset.variables["y"].getncattr("_ChunkSizes"))  # Use: None
         attr['forecast'] = validdate.strftime("%H")  # 23
-        attr['x_resolution'] = np.double("2500.0")*xres  # Use: None
+        attr['x_resolution'] = np.double("2.5") #np.double("2500.0")*xres  # Use: None
         attr['center_lon'] = proj.getncattr("longitude_of_central_meridian")
         attr['rotation_radian'] = 0.0
         attr['xdim'] = np.long(len(dmap_arome2d.x[::xres]))#np.long(dataset.variables["x"].getncattr("_ChunkSizes"))  # Use: None
         attr['input_lat'] = proj.getncattr("latitude_of_projection_origin")  # Use: None
         attr['reference_lat'] = proj.getncattr("latitude_of_projection_origin")
-        attr['y_resolution'] = np.double("2500.0")*yres   # Use: None
+        attr['y_resolution'] = np.double("2.5") #np.double("2500.0")*yres   # Use: None
         attr['date'] =  validdate.strftime("%Y%m%d") # "20180331"
         attr['input_lon'] = proj.getncattr("longitude_of_central_meridian")  # Use: None
         attr['input_position'] = (794.0, 444.0)  # ??  # Use: None
-        attr['geoid'] = proj.getncattr("earth_radius")
+        attr['geoid'] = proj.getncattr("earth_radius") #6370000#6371229.0 #
         attr['center_lat'] = proj.getncattr("latitude_of_projection_origin")
 
+        print("Create netcdf")
         ncid.setncatts(attr)
-
         x = ncid.createDimension('X', len(dmap_arome2d.x[::xres]))
         y = ncid.createDimension('Y', len(dmap_arome2d.y[::yres]))
         level = ncid.createDimension('level', len(dmap_arome3d.hybrid))
@@ -186,12 +193,6 @@ def set_variable2d():
         ys = ncid.createVariable('Y', 'i4', ('Y',))
         ys.units = 'none'
         ys[:] = range(1, len(dmap_arome2d.y[::yres]) + 1)
-        vid = ncid.createVariable('LON', 'f4', ('Y', 'X'), zlib=True)
-        vid.description = 'longitude of the center grid'
-        vid[:] = dmap_arome2d.longitude[::xres,::yres]
-        vid = ncid.createVariable('LAT', 'f4', ('Y', 'X'), zlib=True)
-        vid.description = 'latitude of the center grid'
-        vid[:] = dmap_arome2d.latitude[::xres,::yres]
 
         levels = ncid.createVariable('level', 'i4', ('level',))
         levels.units = 'none'
@@ -204,12 +205,31 @@ def set_variable2d():
         nc_bk.units = 'none'
         nc_bk[:] = dmap_arome3d.b
 
+        vid = ncid.createVariable('LON', 'f4', ('Y', 'X'), zlib=True)
+        vid.description = 'longitude of the center grid'
+        vid[:] = dmap_arome2d.longitude[::xres,::yres]
+        vid = ncid.createVariable('LAT', 'f4', ('Y', 'X'), zlib=True)
+        vid.description = 'latitude of the center grid'
+        vid[:] = dmap_arome2d.latitude[::xres,::yres]
+        print(param3d_arome)
+        for param in param3d_arome:
+            vid = ncid.createVariable(variable3d_arome[param]['name'], 'f4',('level','Y','X'),zlib=True)
+            vid.units = variable3d_arome[param]['units']
+            vid.description = variable3d_arome[param]['description']
+            expressiondata = f"dmap_arome3d.{param}[{t},:,::{xres},::{yres}]"
+            data = eval(expressiondata)
+            vid[:] = data
+
+        print(param2d_arome)
         for param in param2d_arome:
             vid = ncid.createVariable(variable2d_arome[param]['name'], 'f4', ('Y', 'X'), zlib=True)
             vid.units = variable2d_arome[param]['units']
             vid.description = variable2d_arome[param]['description']
             expressiondata = f"dmap_arome2d.{param}[{t},0,::{xres},::{yres}]"
             data = eval(expressiondata)
+            if param =="surface_air_pressure":
+                print(param)
+                data = np.log(data)
             vid[:] = data
         for param in param2d_sfx:
             vid = ncid.createVariable(variable2d_sfx[param]['name'], 'f4', ('Y', 'X'), zlib=True)
@@ -219,20 +239,6 @@ def set_variable2d():
             data = eval(expressiondata)
             vid[:] = data
 
-        for param in param3d_arome:
-            #if param=="x_wind_ml" or param=="y_wind_ml":
-            #    vid = ncid.createVariable(variable3d_arome[param]['name'], 'f4', ('level', 'Y', 'X'), zlib=True)
-            #    vid.units = variable3d_arome[param]['units']
-            #    vid.description = variable3d_arome[param]['description']
-            #    expressiondata = f"dmap_arome3d.{param}[{t},:,::{xres},::{yres}]"
-            #    data = eval(expressiondata)
-            #    vid[:] = data
-            vid = ncid.createVariable(variable3d_arome[param]['name'], 'f4',('level','Y','X'),zlib=True)
-            vid.units = variable3d_arome[param]['units']
-            vid.description = variable3d_arome[param]['description']
-            expressiondata = f"dmap_arome3d.{param}[{t},:,::{xres},::{yres}]"
-            data = eval(expressiondata)
-            vid[:] = data
 
         ncid.close()
 
