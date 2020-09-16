@@ -11,10 +11,8 @@ import os
 from imetkit.check_data import *  # require netcdf4
 from imetkit.domain import *  # require netcdf4
 import re
-
-#mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/scripts/FC-system")
-
-
+import pkgutil
+package_path = os.path.dirname(__file__)
 model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 levtype = [None,"pl","ml"] #include pl here aswell.
@@ -231,9 +229,9 @@ class get_data():
         jindx = self.idx[0]
         iindx = self.idx[1]
         if self.model == "AromeArctic":
-            infile = "bin/alpha_full_AA.nc"
+            infile = package_path + "/data/alpha_full_AA.nc"
         elif self.model == "MEPS":
-            infile = "bin/alpha_full_MEPS.nc"
+            infile = package_path + "/data/alpha_full_MEPS.nc"
         alphadata = Dataset(infile)
         alpha = alphadata["alpha"][:]
         self.__dict__["alpha"] = alpha[jindx.min():jindx.max()+1,iindx.min():iindx.max()+1]
