@@ -75,6 +75,10 @@ class DOMAIN():
         self.lonlat = [4., 9.18, 58.01, 62.2]  # lonmin,lonmax,latmin,latmax,
         self.idx = lonlat2idx(self.lonlat, self.url)
 
+    def West_Norway(self):
+        self.lonlat = [2., 12., 53., 64.]  # lonmin,lonmax,latmin,latmax,
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
     def AromeArctic(self):
         #self.lonlat = [-10,60,30,90] #lonmin,lonmax,latmin,latmax,
         self.lonlat = [-30,90,10,91] #lonmin,lonmax,latmin,latmax,
