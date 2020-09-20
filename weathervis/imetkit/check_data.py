@@ -10,6 +10,7 @@ import pandas as pd
 from netCDF4 import Dataset
 import logging
 from collections import Counter
+import os
 """
 ###################################################################
 This module checks what data is available, gives information on the dataset 
@@ -23,6 +24,9 @@ Returns:
 ------
 Object with properties
 """
+package_path = os.path.dirname(__file__)
+
+
 model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 levtype = [None,"pl","ml"] #include pl here aswell.
@@ -101,6 +105,12 @@ class check_data():
         self.p_level = p_level
         self.m_level = m_level
 
+        if levtype == None:
+            if p_level:
+                levtype="pl"
+            if m_level:
+                levtype="ml"
+
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
         webcheck = requests.head(url)
         if webcheck.status_code != 200:  # SomeError(ValueError, f'Type not found: choices:{levtype}')
@@ -118,7 +128,8 @@ class check_data():
             self.date = self.check_available_date(self.model)
 
     def check_available_date(self, model):
-        df = pd.read_csv(f"bin/{model}_filesandvar.csv")
+        df = pd.read_csv(f"{package_path}/data/{model}_filesandvar.csv")
+
         dfc = df.copy()  # df['base_name'] = [re.sub(r'_[0-9]*T[0-9]*Z.nc','', str(x)) for x in df['File']]
         drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
         df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
@@ -155,7 +166,7 @@ class check_data():
 
 
     def check_variable_all(self, model, numbervar, search ):
-        df = pd.read_csv(f"bin/{model}_filesandvar.csv")
+        df = pd.read_csv(f"{package_path}/data/{model}_filesandvar.csv")
         dfc = df.copy()  # df['base_name'] = [re.sub(r'_[0-9]*T[0-9]*Z.nc','', str(x)) for x in df['File']]
         drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
         df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
