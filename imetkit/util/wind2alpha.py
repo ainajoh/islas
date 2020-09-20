@@ -16,8 +16,11 @@ import math
 # In and outfiles
 # url = "http://thredds.met.no/thredds/dodsC/meps25files/meps_det_extracted_2_5km_latest.nc"
 #infile = "http://thredds.met.no/thredds/dodsC/meps25epsarchive/2016/11/29/meps_subset_2_5km_20161129T00Z.nc"
-infile = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc"
-outfile = "alpha_full_AA.nc"
+#infile = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc"
+#outfile = "alpha_full_AA.nc"
+infile = "https://thredds.met.no/thredds/dodsC/mepslatest/meps_lagged_6_h_latest_2_5km_latest.nc"
+outfile = "alpha_full_MEPS.nc"
+
 
 
 def distance(origin, destination):

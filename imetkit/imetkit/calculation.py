@@ -153,9 +153,11 @@ def lapserate(air_temperature_ml, heighttoreturn):
 
 def precip_acc(precip, acc=1):
     precipacc = np.full(np.shape(precip), np.nan)
+    #precipacc = np.zeros(np.shape(precip))
     for t in range(0 + acc, np.shape(precip)[0] ):
         precipacc[t, 0, :, :] = precip[t, 0, :, :] - precip[t - acc, 0, :, :]
         #Set negative values to 0, but I fixed it in plot instead.
+    #precipacc = np.ma.masked_where(precipacc ==np.nan, precipacc)
 
     return precipacc
 
@@ -206,12 +208,52 @@ def timestamp2utc(timestamp):
     time_utc = [dt.datetime.utcfromtimestamp(x) for x in timestamp]
     return time_utc
 
+####################################################################################################################
+# WIND HANDLING
+#####################################################################################################################
+# The wind calculations are validated with the use of parameters:
+# x_wind_10m, y_wind_10m, wind_speed(height3=10m), wind_direction(height3=10m)
+#   u10, v10  = xwind2uwind(tmap_meps.x_wind_10m, tmap_meps.y_wind_10m, tmap_meps.alpha)
+#   wsfromuv = wind_speed(u10,v10)
+#   wsfromxy = wind_speed(tmap_meps.x_wind_10m, tmap_meps.y_wind_10m)
+#   wdfromuv = (np.pi/2 - np.arctan2(v10,u10) + np.pi)*180/np.pi %360
+#   wdfromxy =  wind_dir(tmap_meps.x_wind_10m,tmap_meps.y_wind_10m,tmap_meps.alpha)
+# Result is true with approx deviaton error of 0.002 or less.
+# wsfromuv[0,0,0,0] == wsfromxy[0,0,0,0] == wind_speed[0,0,0,0]
+# wdfromuv[0,0,0,0] == wdfromxy[0,0,0,0] == wind_direction[0,0,0,0]
+#####################################################################################################################
 def xwind2uwind(xwind,ywind, alpha):
-    u = xwind.copy()
-    v = ywind.copy()
-    for t in range(0,np.shape(u)[0]):
-        for k in range(0, np.shape(u)[1]):
-            u[t,k,:,:] = u[t,k,:,:]  * np.cos(np.deg2rad(alpha[:,:])) - v[t,k,:,:]  * np.sin(np.deg2rad(alpha[:,:]))
-            v[t,k,:,:]  = v[t,k,:,:]  * np.cos(np.deg2rad(alpha[:,:])) + u[t,k,:,:]  * np.sin(np.deg2rad(alpha[:,:]))
+    #source: https://www-k12.atmos.washington.edu/~ovens/wrfwinds.html
+    #source: https://github.com/metno/NWPdocs/wiki/From-x-y-wind-to-wind-direction
+    u = np.zeros(shape=np.shape(xwind))
+    v = np.zeros(shape=np.shape(ywind))
+    for t in range(0,np.shape(xwind)[0]):
+        for k in range(0, np.shape(xwind)[1]):
+            absdeg2rad = np.abs((alpha)*np.pi/180)
+            u[t, k, :, :] = xwind[t, k, :, :] * np.cos(absdeg2rad[:,:]) - ywind[t, k, :, :] * np.sin(absdeg2rad[:,:])
+            v[t, k, :, :] = ywind[t, k, :, :] * np.cos(absdeg2rad[:,:]) + xwind[t, k, :, :] * np.sin(absdeg2rad[:,:])
 
     return u,v
+
+def wind_speed(xwind,ywind):
+    #no matter if in modelgrid or earthrelativegrid
+    ws = np.sqrt(xwind**2 + ywind**2)
+    return ws
+
+def wind_dir(xwind,ywind, alpha):
+    #source: https://www-k12.atmos.washington.edu/~ovens/wrfwinds.html
+    #https://github.com/metno/NWPdocs/wiki/From-x-y-wind-to-wind-direction
+    #https://stackoverflow.com/questions/21484558/how-to-calculate-wind-direction-from-u-and-v-wind-components-in-r
+
+    wdir = np.zeros(shape=np.shape(xwind))
+    for t in range(0,np.shape(wdir)[0]):
+        for k in range(0, np.shape(wdir)[1]):
+                    #websais:
+                    #wdir[t,k,:,:] =  alpha[:,:] + 90 - np.arctan2(ywind[t,k,:,:],xwind[t,k,:,:])
+                    #Me:
+                    a = ( np.arctan2(ywind[t,k,:,:],xwind[t,k,:,:])*180/np.pi) #mathematical wind angle in modelgrid pointing with the wind
+                    b = a + 180  # mathematical wind angle pointing where the wind comes FROM
+                    c = 90 - b   # math coordinates(North is 90) to cardinal coordinates(North is 0).
+                    wdir[t,k,:,:] =  c + alpha[:,:] #add rotation of modelgrid(alpha).
+                    wdir = wdir %360 #making sure is between 0 and 360 with Modulo
+    return wdir
