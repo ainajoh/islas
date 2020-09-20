@@ -1,7 +1,7 @@
 
 import numpy as np
 from netCDF4 import Dataset
-
+import pandas as pd
 #Preset domain.
 if __name__ == "__main__":
     print("Run by itself")
@@ -14,7 +14,11 @@ def lonlat2idx(lonlat, url):
     # DOMAIN FOR SHOWING GRIDPOINT:: MANUALLY ADJUSTED
     idx = np.where((lat > lonlat[2]) & (lat < lonlat[3]) & \
                    (lon >= lonlat[0]) & (lon <= lonlat[1]))
-    dataset.close()
+
+    idx = np.where((lat > lonlat[2]) & (lat < lonlat[3]) & \
+                   (lon >= lonlat[0]) & (lon <= lonlat[1]))
+    dataset.close()  #        self.lonlat = [0,30, 73, 82]  #
+
     return idx
 
 def idx2lonlat(idx, url):
@@ -32,18 +36,27 @@ def idx2lonlat(idx, url):
     return latlon
 
 
-class DOMAIN():
+class domain():
     def __init__(self, modelruntime, model, file, lonlat=None, idx=None):
         self.modelruntime = modelruntime
         self.model = model
         self.lonlat = lonlat
         self.idx = idx
-        self.file = file.loc[0].at['File']
+        self.domain_name = None
+        if type(file)==pd.core.frame.DataFrame:
+            self.file = file.loc[0,'File']
+        else:
+            self.file = file.loc['File']
+
         YYYY = self.modelruntime[0:4]
         MM = self.modelruntime[4:6]
         DD = self.modelruntime[6:8]
         HH = self.modelruntime[8:10]
-        url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+        if model == "AromeArctic":
+            url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+        elif model == "MEPS":
+            url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+
         self.url = url
 
         #if self.lonlat:
@@ -99,8 +112,8 @@ class DOMAIN():
         self.idx = lonlat2idx(self.lonlat,url)# RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
     def Svalbard(self): #data
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
-
-        self.lonlat = [15,25, 75, 83]  #
+        self.domain_name = "Svalbard"
+        self.lonlat = [-8,30, 73, 82]  #
         self.idx = lonlat2idx(self.lonlat,url)# RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def KingsBay(self): #bigger data

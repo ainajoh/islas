@@ -23,6 +23,9 @@ Returns:
 ------
 Object with properties
 """
+model = ["AromeArctic", "MEPS"] #ECMWF later
+source = ["thredds"] # later"netcdf", "grib" 2019120100
+levtype = [None,"pl","ml"] #include pl here aswell.
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
@@ -52,12 +55,15 @@ def filter_type(file,mbrs,levtype):
     if mbrs != 0 and mbrs != None:
         file = file[file["mbr_bool"] == True]
     if levtype == "ml":
-        print("in ml")
         file = file[file["ml_bool"] == True]
     elif levtype == "pl":
-        file = file[file["pl_bool"] == True]
+        file = file[file["p_levels"] != None]
     file.reset_index(inplace=True, drop=True)
     return file
+
+filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choices:{model}')
+filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choices:{model}')
+
 
 def filter_any(file):
     """Used by check_data: Remove random files until only one left
@@ -71,7 +77,7 @@ def filter_any(file):
 
 class check_data():
 
-    def __init__(self, model, date = None,param=None, mbrs=None,levtype=None, file = None, numbervar = 100, search = None):
+    def __init__(self, model, date = None,param=None, mbrs=None,levtype=None, p_level= None, m_level=None,file = None, numbervar = 100, search = None):
         """
         Parameters
         ----------
@@ -92,6 +98,8 @@ class check_data():
         self.file = file
         self.numbervar = numbervar
         self.search = search
+        self.p_level = p_level
+        self.m_level = m_level
 
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
         webcheck = requests.head(url)
@@ -122,7 +130,6 @@ class check_data():
         dateti.drop_duplicates(keep='first', inplace=True)
         dateti.reset_index(inplace=True, drop=True)
 
-        #print(dfc)
         return dateti
 
     def check_filecontainingvar(self, model, numbervar, search ):
@@ -142,11 +149,9 @@ class check_data():
         search = "wind"
         #param = df_base[df_base.apply(lambda x: x.str.contains(search)).any(axis=1)]
         test = ["heipadeg", "du", "hei du"]
-        print("hei" in test)
-        print( [ df_base["pressure" in s] for s in df_base] ) #s.isin(['a'])
+
         flattened = [val for sublist in df_base[:] for val in sublist]
 
-        print(param)
 
 
     def check_variable_all(self, model, numbervar, search ):
@@ -216,50 +221,43 @@ class check_data():
         df["dim"] = None
         df["mbr_bool"] = False
         df["ml_bool"] = False
-        df["pl_bool"] = False
+        df["p_levels"] = False
         i=0
         while i<len(df):
             file=df["File"][i]
-            dataset = Dataset(base_urlfile + YYYY+"/"+MM+"/"+DD+ "/"+ file)
+            url = base_urlfile + YYYY+"/"+MM+"/"+DD+ "/"+ file
+            dataset = Dataset(url)
+            #for all independent var (dimensions) make a column with dict
             dn = dataset.dimensions.keys()
-            ds = [dataset.dimensions[d].size for d in dn  ]
+            ds = [dataset.dimensions[d].size for d in dn]
+            valued = np.full(np.shape(ds), np.nan)
             dimdic = dict(zip(dn,ds))
-            dimframe = pd.DataFrame(ds, index = dn,columns=["shape"])
+            dimlist =  list(zip(ds, valued))
 
-
+            dimframe = pd.DataFrame(dimlist,index = dn, columns=["shape","value"])
+            #dimframe = pd.DataFrame(ds, index = dn,columns=["shape"])
+            #check leveltype
             df.loc[i,"mbr_bool"] = ("ensemble_member" in dimdic) and (dimdic["ensemble_member"]>=10)
             df.loc[i,"ml_bool"] = ("hybrid" in dimdic) and (dimdic["hybrid"]>=65)
-            df.loc[i,"pl_bool"] = ("pressure" in dimdic) and (dimdic["pressure"]>=10)
+            df['p_levels'] = df['p_levels'].astype(object)
+            df.at[i,"p_levels"] =  [int(x) for x in dataset.variables["pressure"][:]] if "pressure" in dimdic and dimdic["pressure"]>=1 else None
+            #df.loc[i,"p_levels"] = ("pressure" in dimdic) and (dimdic["pressure"]>=10)
+            av_pl_levels = dataset.variables["pressure"][:] if "pressure" in dimdic else None
+            if "pressure" in dimdic:
+                dimframe.loc["pressure","value"] = ",".join(str(int(x)) for x in av_pl_levels)
 
+            #Go through all variables
             dv = dataset.variables.keys()
-
-            #for k in lambda x in dataset.variables.__dict__.keys():
-            #    print(k)
-            #    ss = f"{k}.{prm}"
-            #    # print(ss)
-            #    self.__dict__[ss] = dataset.variables[prm].__dict__[k]
-
-            dv_shape = [dataset.variables[d].shape for d in dv  ]
-            dv_dim = [dataset.variables[d].dimensions for d in dv]
-            #dv_units = [dataset.variables[d].units for d in dv]
-            #dddd = dataset.variables[d].shape for d in dv
-            #vardic = dict(zip(dv, dv_shape))
+            dv_shape = [dataset.variables[d].shape for d in dv]    #save var shape
+            dv_dim = [dataset.variables[d].dimensions for d in dv] #save var dimensions / what it depends on
             varlist = list(zip(dv_shape,dv_dim))
             varframe = pd.DataFrame(varlist, index = dv,columns=["shape", "dim"])
-            #varframe = pd.DataFrame(vardic , columns=[dv])
 
-            #df = pd.DataFrame({'idx':[1,2,3], 'dfs':[df1, df2, df3]})
-
-            #res = [{a: {b: c}} for (var, shape, c) in zip(dv, dv_shape, test_list3)]
             df.loc[i,"var"] = [varframe.to_dict(orient='index')]
-            df.loc[i,"dim"] = [dimframe.to_dict(orient='index')]#[dimframe.to_dict(orient='index')]
+            df.loc[i,"dim"] = [dimframe.to_dict(orient='index')]
+            #df.loc[i, "dim"]["pressure"]["value"] = av_pl_levels if df.loc[i,"p_levels"] == True else None
 
-            #print(df)
-            #print(df["var"][0]["x_wind_pl"])
             i+=1
-
-            #nested_dict = { 'dictA': {'key_1': 'value_1'},
-
 
         file_withparam = filter_param( df.copy(), param)
         logging.info("file_param")
@@ -272,6 +270,7 @@ class check_data():
         #file = file_withparam.assign( result=file_withparam['File'].isin(file_corrtype['File']).astype(int))
         file = file_withparam[file_withparam.File.isin(file_corrtype.File)]
         file.reset_index(inplace=True, drop = True)
+
 
         logging.info("file")
         #file = filter_any(file)
