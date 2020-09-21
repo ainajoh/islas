@@ -53,15 +53,15 @@ def filter_param(file,param):
     logging.info(file)
     return file
 
-def filter_type(file,mbrs,levtype):
+def filter_type(file,mbrs,levtype, p_level,m_level):
     """Used by check_data: Remove files not having the userdefined mbrs and levtype
     Returns only files containing all the user defined preferences."""
     if mbrs != 0 and mbrs != None:
         file = file[file["mbr_bool"] == True]
-    if levtype == "ml":
+    if m_level != None:
         file = file[file["ml_bool"] == True]
-    elif levtype == "pl":
-        file = file[file["p_levels"] != None]
+    elif p_level != None:
+        file = file[pd.DataFrame(file.p_levels.tolist()).isin(p_level).sum(axis=1)==len(p_level)]
     file.reset_index(inplace=True, drop=True)
     return file
 
@@ -108,7 +108,9 @@ class check_data():
         if levtype == None:
             if p_level:
                 levtype="pl"
+                self.p_level = np.array([p_level])
             if m_level:
+                self.m_level = np.array([m_level])
                 levtype="ml"
 
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
@@ -274,7 +276,7 @@ class check_data():
         logging.info("file_param")
         logging.info(file_withparam)
 
-        file_corrtype = filter_type(df.copy(), mbrs,levtype)
+        file_corrtype = filter_type(df.copy(), mbrs,levtype, self.p_level,self.m_level)
         logging.info("file_type")
         logging.info(file_corrtype)
 
