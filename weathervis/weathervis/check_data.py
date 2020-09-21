@@ -105,15 +105,15 @@ class check_data():
         self.p_level = p_level
         self.m_level = m_level
 
-        if levtype == None:
-            if p_level:
-                levtype="pl"
-                if type(p_level) != list:
+        if p_level:
+            self.levtype="pl"
+            if type(p_level) != list:
                     self.p_level = [p_level]
-            if m_level:
-                levtype="ml"
-                if type(p_level) != list:
-                    self.m_level = [m_level]
+        if m_level:
+            self.levtype = "ml"
+            if type(p_level) != list:
+                self.m_level = [m_level]
+
 
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
         webcheck = requests.head(url)

@@ -19,9 +19,9 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
   if domain_name or domain_lonlat:
     if domain_lonlat:
       print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-      data_domain = DOMAIN(dt, model, file=file, lonlat=domain_lonlat)
+      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
     else:
-      data_domain = DOMAIN(dt, model, file=file)
+      data_domain = domain(dt, model, file=file)
 
     if domain_name != None and domain_name in dir(data_domain):
       print(f"\n####### Setting up domain: {domain_name} ##########")

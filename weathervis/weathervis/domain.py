@@ -37,8 +37,8 @@ def idx2lonlat(idx, url):
 
 
 class domain():
-    def __init__(self, modelruntime, model, file, lonlat=None, idx=None):
-        self.modelruntime = modelruntime
+    def __init__(self, date, model, file, lonlat=None, idx=None):
+        self.date = date
         self.model = model
         self.lonlat = lonlat
         self.idx = idx
@@ -48,10 +48,10 @@ class domain():
         else:
             self.file = file.loc['File']
 
-        YYYY = self.modelruntime[0:4]
-        MM = self.modelruntime[4:6]
-        DD = self.modelruntime[6:8]
-        HH = self.modelruntime[8:10]
+        YYYY = self.date[0:4]
+        MM = self.date[4:6]
+        DD = self.date[6:8]
+        HH = self.date[8:10]
         if model == "AromeArctic":
             url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
         elif model == "MEPS":
