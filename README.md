@@ -2,4 +2,4 @@
 
 Repository containing the work for my PhD.
 
-[My Awesome Wiki](../../wiki/introduction)
+For information about this project, [See My Wiki](../../wiki/introduction)
