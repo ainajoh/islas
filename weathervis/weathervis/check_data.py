@@ -60,7 +60,7 @@ def filter_type(file,mbrs,levtype, p_level,m_level):
         file = file[file["mbr_bool"] == True]
     if m_level != None:
         file = file[file["ml_bool"] == True]
-    elif p_level != None:
+    elif p_level:
         file = file[pd.DataFrame(file.p_levels.tolist()).isin(p_level).sum(axis=1)==len(p_level)]
     file.reset_index(inplace=True, drop=True)
     return file
@@ -108,10 +108,12 @@ class check_data():
         if levtype == None:
             if p_level:
                 levtype="pl"
-                self.p_level = np.array([p_level])
+                if type(p_level) != list:
+                    self.p_level = [p_level]
             if m_level:
-                self.m_level = np.array([m_level])
                 levtype="ml"
+                if type(p_level) != list:
+                    self.m_level = [m_level]
 
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
         webcheck = requests.head(url)
