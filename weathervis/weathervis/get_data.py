@@ -94,6 +94,7 @@ class get_data():
         #If No member is wanted, we take the control (mbr=0)
         self.mbrs = 0 if self.mbrs == None else mbrs
         self.url = url
+        self.units = self.dummyobject()
 
         #Check and filter for valid settings. If any of these result in a error, this script stops
         check_if_thredds_is_down("https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html")
@@ -227,11 +228,16 @@ class get_data():
         for prm in self.param:
             iteration += 1
             logging.info(prm)
-            for k in dataset.variables[prm].__dict__.keys(): #info of variable
-                ss = f"{k}_{prm}"
-                self.__dict__[ss] = dataset.variables[prm].__dict__[k]
-            #self.__dict__[f"unit_{prm}"] = dataset.variables[prm].units
-
+            if "units" in dataset.variables[prm].__dict__.keys():
+                self.units.__dict__[prm] = dataset.variables[prm].__dict__["units"]
+                #now we can use it like: data.units.x_wind_pl
+            #under for loop activate if other atributes are wantes/ units might be called other names
+            #for k in dataset.variables[prm].__dict__.keys(): #info of variable
+                #ss = f"{k}_{prm}"
+                # self.__dict__[ss] = dataset.variables[prm].__dict__[k] #worked
+                #UNDER is failed attempt to get multiple objects for each variable info. Long_name etc.
+                #self.__dict__[k] = self.dummyobject()
+                #self.units.__dict__[prm] = dataset.variables[prm].__dict__[k]
             varvar = dataset.variables[prm][:]
             dimlist = np.array(list(file["var"][prm]["dim"]))  # ('time', 'pressure', 'ensemble_member', 'y', 'x')
             if not self.mbrs_bool and any(np.isin(dimlist, "ensemble_member")):#"ensemble_member" in dimlist:
@@ -259,5 +265,6 @@ class get_data():
         self.thredds(self.url, self.file)
         self.windcorr()
 
+    class dummyobject: pass
 
 
