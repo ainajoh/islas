@@ -1,14 +1,14 @@
 ########################################################################
 # File name: get_data.py
-# This file is part of: imetkit
+# This file is part of: weathervis
 ########################################################################
 from netCDF4 import Dataset
 import numpy as np
 import logging
 import pandas as pd
 import os
-from imetkit.check_data import *  # require netcdf4
-from imetkit.domain import *  # require netcdf4
+from weathervis.check_data import *  # require netcdf4
+from weathervis.domain import *  # require netcdf4
 import re
 import pkgutil
 

@@ -2,10 +2,10 @@
 #python T850_RH.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 #
 import cartopy.crs as ccrs
-from imetkit.domain import *  # require netcdf4
-from imetkit.check_data import *
-from imetkit.get_data import *
-from imetkit.calculation import *
+from weathervis.domain import *  # require netcdf4
+from weathervis.check_data import *
+from weathervis.get_data import *
+from weathervis.calculation import *
 import matplotlib.pyplot as plt
 import warnings
 import cartopy.feature as cfeature

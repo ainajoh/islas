@@ -1,10 +1,10 @@
 # %%
 # python Z500_VEL.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
-from imetkit.check_data import *
-from imetkit.domain import *
-from imetkit.get_data import *
-from imetkit.calculation import *
+from weathervis.check_data import *
+from weathervis.domain import *
+from weathervis.get_data import *
+from weathervis.calculation import *
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
