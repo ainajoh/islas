@@ -105,7 +105,6 @@ class get_data():
         filter_function_for_p_level(np.array([self.p_level]),self.file) if self.p_level != None else None
         filter_function_for_m_level(np.array(self.m_level),self.file) if self.m_level != None and self.file.ml_bool else None
         filter_function_for_param(self.param, self.file) #this is kind of checked in check_data.py already.
-
         #Adjusting some parameters.
         #This is an option since users might not now how many pressure/model levels the model has and just want all.
         if self.p_level == None:
@@ -113,7 +112,7 @@ class get_data():
             if "pressure" in self.file["dim"].keys() :
                 self.p_level = self.file["p_levels"]
             else: #if no parameter depends on pressure p_level = 0
-                self.p_level = [0]
+                self.p_level = None#[0]
 
         if self.m_level == None:
             # If no model level is defined initially, we get all model levels for the paramter that depends on modellevels.
@@ -124,6 +123,7 @@ class get_data():
                 self.m_level = [0]
         #Make a url depending on preferences if no url is defined already.
         self.url = self.make_url() if self.url == None else url
+
     def make_url(self):
         """
         Makes the OPENDAP url for the user specified model and parameters in a specific domain and time

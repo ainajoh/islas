@@ -34,7 +34,6 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
       print(f"No domain found with that name; {domain_name}")
   else:
     data_domain=None
-
   return data_domain
 
 def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False):
