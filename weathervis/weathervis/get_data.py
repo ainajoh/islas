@@ -230,6 +230,11 @@ class get_data():
             logging.info(prm)
             if "units" in dataset.variables[prm].__dict__.keys():
                 self.units.__dict__[prm] = dataset.variables[prm].__dict__["units"]
+            if prm == "projection_lambert":
+                for k in dataset.variables[prm].__dict__.keys():
+                    ss = f"{k}_{prm}"
+                    self.__dict__[ss] = dataset.variables[prm].__dict__[k]
+
                 #now we can use it like: data.units.x_wind_pl
             #under for loop activate if other atributes are wantes/ units might be called other names
             #for k in dataset.variables[prm].__dict__.keys(): #info of variable

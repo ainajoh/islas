@@ -34,7 +34,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
 
   return data_domain
 
-def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False):
+def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save=True):
   for dt in datetime: #modelrun at time..
     date = dt[0:-2]
     hour = int(dt[-2:])
@@ -152,16 +152,18 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
         plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
                  fontsize=7)#, bbox=dict(facecolor='white', alpha=0.5))
 
-      fig2 = plt.figure(figsize=(2, 1.25))
-      fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
-                              f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
-                              f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
-      fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model),bbox_inches="tight", dpi=200)
-      ##########################################################
+      if save:
+        fig2 = plt.figure(figsize=(2, 1.25))
+        fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
+                               f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
+                                f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
+        fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model),bbox_inches="tight", dpi=200)
+        ##########################################################
 
-      #plt.show()
-      fig1.savefig("../../../output/{0}_T850_RH_{1}+{2:02d}.png".format(model,dt, tim),bbox_inches="tight", dpi=200)
-
+        #plt.show()
+        fig1.savefig("../../../output/{0}_T850_RH_{1}+{2:02d}.png".format(model,dt, tim),bbox_inches="tight", dpi=200)
+      else:
+        return fig1
 if __name__ == "__main__":
   import argparse
   parser = argparse.ArgumentParser()

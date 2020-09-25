@@ -144,6 +144,7 @@ def ml2pl( ap, b, surface_air_pressure ):
     https://github.com/metno/NWPdocs/wiki/Calculating-model-level-height/_compare/041362b7f5fdc02f5e1ee3dea00ffc9d8d47c2bc...f0b453779e547d96f44bf17803d845061627f7a8
 
     """
+
     p = ml2plhalf( ap, b, surface_air_pressure )
     return p
 
@@ -303,7 +304,7 @@ def ml2alt_gl( surface_geopotential, air_temperature_ml, specific_humidity_ml, p
     """
     Parameters
     ----------
-    p: [Pa] pressure on each FULL modellevel: p = ap + b * surface_air_pressure
+    p: [Pa] pressure on each FULL modellevel:
     surface_geopotential:[m^2/s^2] Surface geopotential (fis)
     air_temperature_ml: [K] temperature on every model level.
     specific_humidity_ml: [kg/kg] specific humidity on everymodellevel
@@ -331,30 +332,24 @@ def ml2alt_gl( surface_geopotential, air_temperature_ml, specific_humidity_ml, p
     p_low = p[:, levelSize - 1, :, :]  # Pa lowest modellecel is 64
     #     geotoreturn_m[:,k,:,:] = geotoreturn_m[:,k+1,:,:] + (Rd * t_v_level[:,k,:,:] / g)* ln(p[:,k+1,:,:] / p[:,k,:,:])
 
-
-    z_h = 0 # we want value from ground so here lowestmodellevel geopotential is set to 0.
+    psi_lower = 0    # we want value from ground so here lowestmodellevel geopotential is set to 0.
     for k in levels_r: #64, 63, 63
         k_upper = k-1 #61 dont have value for geo. 
         k_lower = k   #62
         k_lowest = k+1 #63
         t_v_level[:, k, :, :] = air_temperature_ml[:, k, :, :] * (1. + 0.609133 * specific_humidity_ml[:, k, :, :])
 
+        if k ==levelSize-1: #lowest level = 64
+            psi_lower = 0# 0 at first run (k=64)
+        else:
+            dlogP = np.log( np.divide(p[:, k+1, :, :] , p[:, k, :, :] ) )
+            TRd = t_v_level[:, k, :, :] * Rd
+            psi_lower = geotoreturn_m[:, k + 1, :, :] + (TRd * dlogP)
 
-        geotoreturn_m[:, k, :, :] = geotoreturn_m[:, k + 1, :, :] + (Rd * t_v_level[:, k, :, :] / g) * ln(p[:, k + 1, :, :] / p[:, k, :, :])
-        #if k == 0:  # top of atmos, last loop round
-        #    dlogP = np.log(p_low / 0.1)
-        #    alpha = np.log(2)
-        #else:
-        dlogP = np.log(np.divide(p_low, p_top))
-        dP = p_low - p_top  # positive
-        heighttoreturn[:, k, :, :] = z_h / g  # m
+        geotoreturn_m[:, k, :, :] = psi_lower
 
-        TRd = t_v_level[:, k, :, :] * Rd
-        # update for next level
-        z_h = z_h + (TRd * dlogP)
-        p_low = p_top
-
-    return heighttoreturn
+    geotoreturn_m[:, k, :, :] = geotoreturn_m[:, k, :, :]/g #convert to meter
+    return geotoreturn_m
 
 
 def ml2alt_sl( air_temperature_ml, specific_humidity_ml,p=None ):     #https://confluence.ecmwf.int/pages/viewpage.action?pageId=68163209

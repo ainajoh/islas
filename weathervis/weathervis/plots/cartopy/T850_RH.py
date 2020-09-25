@@ -37,7 +37,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False):
+def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True):
   for dt in datetime: #modelrun at time..
     print(dt)
     date = dt[0:-2]
@@ -98,7 +98,6 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
     # plot map
     fig1 = plt.figure(figsize=(7, 9))
-
 
     lonlat = [dmap_meps.longitude[0,0], dmap_meps.longitude[-1,-1], dmap_meps.latitude[0,0], dmap_meps.latitude[-1,-1]]
     print(lonlat)
@@ -163,20 +162,24 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       ##########################################################
 
       #plt.show()
-      fig1.savefig("../../../output/{0}_T850_RH_{1}+{2:02d}.png".format(model,dt, tim),bbox_inches="tight", dpi=200)
-      ax1.cla()
+      if save == True:
+        fig1.savefig("../../../output/{0}_T850_RH_{1}+{2:02d}.png".format(model,dt, tim),bbox_inches="tight", dpi=200)
+        ax1.cla()
 
-    proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
-             for pc in CF_RH.collections]
-    proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
-              plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
-              plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
-    proxy.extend(proxy1)
-    fig2 = plt.figure(figsize=(2, 1.25))
-    fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
-                       f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
-                        f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
-    fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+        proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
+               for pc in CF_RH.collections]
+        proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
+                plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
+                plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
+        proxy.extend(proxy1)
+        fig2 = plt.figure(figsize=(2, 1.25))
+        fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
+                         f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
+                          f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
+        fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+
+      else:
+        return fig1
 
 
 if __name__ == "__main__":
@@ -190,8 +193,17 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
+  print(args.__dict__)
   T850_RH(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
           domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info)
   #datetime, step=4, model= "MEPS", domain = None
+
+
+#class T850_RH():
+#  def __init__(self,datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True):
+#    self.fig = T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True)
+#    return self.fig
+  #def do_something(self):
+  #  return self.fig
 
 
