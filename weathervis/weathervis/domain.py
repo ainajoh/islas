@@ -59,8 +59,8 @@ class domain():
 
         self.url = url
 
-        #if self.lonlat:
-        #    self.idx = lonlat2idx(self.lonlat, self.url)
+        if self.lonlat and not self.idx:
+            self.idx = lonlat2idx(self.lonlat, self.url)
         #if self.idx:
         #    self.lonlat = idx2lonlat(self.idx, url)  # rough
 

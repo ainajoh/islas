@@ -157,7 +157,7 @@ class get_data():
         indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
                      "pressure": pl_idx, "hybrid": m_level, "hybrid0": non,
                      "height0": non, "height1": non, "height2": non,
-                     "height3": non, "height7": non, 'height_above_msl': non}
+                     "height3": non, "height7": non, 'height_above_msl': non, "mean_sea_level":non}
 
         # fixed_var: The fixed variables we always want
         fixed_var = np.array(["latitude","longitude","forecast_reference_time","projection_lambert", "ap","b"])
