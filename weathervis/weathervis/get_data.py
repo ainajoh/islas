@@ -80,7 +80,7 @@ class get_data():
         self.mbrs = mbrs
         self.date = date
         self.step = step
-        self.p_level = p_level
+        self.p_level = p_level if type(p_level)==list else list(p_level)
         self.m_level = m_level
         self.param = param
         self.data_domain = data_domain
@@ -102,7 +102,9 @@ class get_data():
         filter_function_for_mbrs(np.array(self.mbrs), self.file) if self.mbrs != None and self.mbrs_bool else None
         filter_function_for_date(self.date)
         filter_function_for_step(self.step,self.file)
-        filter_function_for_p_level(np.array([self.p_level]),self.file) if self.p_level != None else None
+        #print(np.array([self.p_level]))
+        #print(self.file["p_levels"])
+        filter_function_for_p_level(np.array(self.p_level),self.file) if self.p_level != None else None
         filter_function_for_m_level(np.array(self.m_level),self.file) if self.m_level != None and self.file.ml_bool else None
         filter_function_for_param(self.param, self.file) #this is kind of checked in check_data.py already.
         #Adjusting some parameters.
@@ -120,7 +122,12 @@ class get_data():
                 maxpl = self.file["dim"]["hybrid"]["shape"] -1
                 self.m_level = [0,maxpl]
             else: #if no parameter depends on modellevel set it to 0
+                maxpl = 0
                 self.m_level = [0]
+            if "hybrid2" in self.file["dim"].keys() and maxpl <=1:
+                maxpl = self.file["dim"]["hybrid2"]["shape"] -1
+                self.m_level = [0,maxpl]
+
         #Make a url depending on preferences if no url is defined already.
         self.url = self.make_url() if self.url == None else url
 
@@ -155,12 +162,12 @@ class get_data():
         non = f"[0:1:0]"
         #indexidct Keeps track of dimensions for the different independent variables.
         indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
-                     "pressure": pl_idx, "hybrid": m_level, "hybrid0": non,
+                     "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level,"hybrid0": non,
                      "height0": non, "height1": non, "height2": non,
                      "height3": non, "height7": non, 'height_above_msl': non, "mean_sea_level":non}
 
         # fixed_var: The fixed variables we always want
-        fixed_var = np.array(["latitude","longitude","forecast_reference_time","projection_lambert", "ap","b"])
+        fixed_var = np.array(["latitude","longitude","forecast_reference_time","projection_lambert", "ap","b", "ap2","b2"])
         # keep only the fixed variables that are actually available in the file.
         fixed_var = fixed_var[np.isin(fixed_var, list(self.file["var"].keys()))]
         # update global variable to include fixed var
