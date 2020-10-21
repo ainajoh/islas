@@ -61,7 +61,10 @@ def filter_type(file,mbrs,levtype, p_level,m_level):
     if m_level != None:
         file = file[file["ml_bool"] == True]
     elif p_level:
-        file = file[pd.DataFrame(file.p_levels.tolist()).isin(p_level).sum(axis=1)==len(p_level)]
+        file = file[~file.p_levels.isnull()]
+        file.reset_index(inplace=True)
+        ll = file.p_levels.tolist()
+        file = file[pd.DataFrame(ll).isin(p_level).sum(axis=1)==len(p_level)]
     file.reset_index(inplace=True, drop=True)
     return file
 
@@ -129,17 +132,27 @@ class check_data():
 
         if self.date == None and self.param ==None:
             self.param = self.check_variable_all(self.model, self.numbervar, self.search)
-            self.date = self.check_available_date(self.model)
+            if self.search:
+                self.date = self.check_available_date(self.model, self.search)
+            else:
+                self.date = self.check_available_date(self.model)
 
-    def check_available_date(self, model):
+
+    def check_available_date(self, model, search = None):
         df = pd.read_csv(f"{package_path}/data/{model}_filesandvar.csv")
 
         dfc = df.copy()  # df['base_name'] = [re.sub(r'_[0-9]*T[0-9]*Z.nc','', str(x)) for x in df['File']]
         drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
         df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
         dfc["base_name"] = df_base["base_name"]
+
         dfc = dfc[~dfc["base_name"].str.contains('|'.join(drop_files))]  # (drop_files)])
+        if search:
+            dfc = dfc[dfc["var"].str.contains(search)==True]
         dfc.reset_index(inplace=True, drop=True)
+
+
+        #print(dfc)
         #df_base = dfc['var'].str.replace(" ", "").str.split(",")  # , expand = True)
         dateti = dfc[["Date","Hour"]].copy()
         dateti.drop_duplicates(keep='first', inplace=True)

@@ -97,7 +97,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     # convert fields
     dmap_meps.air_pressure_at_sea_level/=100
     #dmap_meps.precipitation_amount_acc*=1000.0
-    print(dmap_meps.units_precipitation_amount_acc)
+    print(dmap_meps.units.precipitation_amount_acc)
     tmap_meps.geopotential_pl/=10.0
     u,v = xwind2uwind(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl, tmap_meps.alpha)
     vel = wind_speed(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl)
@@ -174,7 +174,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         except:
           pass
         lg = ax1.legend(proxy, [f"Wind strength [m/s] at {dmap_meps.pressure[plev2]:.0f} hPa",
-                               f"Geopotential [{tmap_meps.units_geopotential_pl}] at {dmap_meps.pressure[plev2]:.0f} hPa"])
+                               f"Geopotential [{tmap_meps.units.geopotential_pl}] at {dmap_meps.pressure[plev2]:.0f} hPa"])
         frame = lg.get_frame()
         frame.set_facecolor('white')
         frame.set_alpha(1)
@@ -192,7 +192,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
              plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
     fig2 = plt.figure(figsize=(2, 1.25))
     fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
-                              f"Geopotential [{tmap_meps.units_geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
+                              f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
 
     fig2.savefig("../../../output/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
 
