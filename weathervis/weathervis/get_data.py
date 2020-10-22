@@ -80,7 +80,7 @@ class get_data():
         self.mbrs = mbrs
         self.date = date
         self.step = step
-        self.p_level = p_level if type(p_level)==list else list(p_level)
+        self.p_level = p_level if type(p_level)==list or p_level==None else list(p_level)
         self.m_level = m_level
         self.param = param
         self.data_domain = data_domain
@@ -149,7 +149,7 @@ class get_data():
         HH = self.date[8:10]
 
         if self.p_level:
-            idx = np.where( np.array(self.file["p_levels"])[:, None] == np.array([self.p_level])[None, :])[0]
+            idx = np.where( np.array(self.file["p_levels"])[:, None] == np.array(self.p_level)[None, :])[0]
         else:
             idx=0
         #Sets up the userdefined range of value in thredds format [start:step:stop]
