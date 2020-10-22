@@ -116,8 +116,21 @@ def potential_temperatur(temperature, pressure):
     Rd = 287.05  #[J/kg K] Gas constant for dry air
     cp = 1004.  #[J/kg] specific heat for dry air (WH)
     theta = np.full(np.shape(temperature), np.nan)
-    for i in range(0,len(pressure)):
-        theta[:,i,:,:] = temperature[:,i,:,:]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
+    print(np.shape(theta))
+    print(len(np.shape(theta)))
+    if len(np.shape(theta)) ==4:
+        for i in range(0,len(pressure)):
+            theta[:,i,:,:] = temperature[:,i,:,:]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
+    elif len(np.shape(theta)) ==1:
+        for i in range(0,len(pressure)):
+            theta[i] = temperature[i]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
+    elif len(np.shape(theta)) ==3:
+        print(np.shape(pressure))
+        print(np.shape(temperature))
+        theta = temperature  * (p0 / pressure) ** (Rd/cp) #[K]
+
+
+
     return theta
 def density(Tv, p):
     """
