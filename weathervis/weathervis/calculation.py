@@ -115,7 +115,9 @@ def potential_temperatur(temperature, pressure):
     p0 = 100000  #[Pa]
     Rd = 287.05  #[J/kg K] Gas constant for dry air
     cp = 1004.  #[J/kg] specific heat for dry air (WH)
-    theta = temperature * (p0 / pressure) ** (Rd/cp) #[K]
+    theta = np.full(np.shape(temperature), np.nan)
+    for i in range(0,len(pressure)):
+        theta[:,i,:,:] = temperature[:,i,:,:]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
     return theta
 def density(Tv, p):
     """
@@ -279,7 +281,40 @@ def ml2pl_full2half( ap, b, surface_air_pressure ):
     -------
     p(n,k,j,i) = ap(k) + b(k)*ps(n,j,i)
     p [Pa] pressure on each half modellevel.
+     Ah(k-1) = 2*Af(k) - Ah(k)
+     Bunnen i halvnivåer er Ps, da må Ah(65) = 0 og Bh(65) = 1
     """
+    levels = np.arange(0, 64)  # index of heighlevels from top(lvl = 0) to bottom(lvl=64)
+    levels_r = levels[::-1]
+    timeSize = np.shape(surface_air_pressure)[0]
+    levelSize = np.shape(ap)[0]
+    ySize = np.shape(surface_air_pressure)[2]  # lat in y
+    xSize = np.shape(surface_air_pressure)[3]  # lon in x
+
+    ah = np.zeros(shape=np.shape(ap))
+    bh = np.zeros(shape=np.shape(b))
+    ph = np.zeros(shape=(timeSize, levelSize, ySize, xSize))
+
+    ah[64] = 0
+    bh[64] = 1
+    ph[:,64,:,:] = surface_air_pressure[:, 0, :, :]
+    for k in levels_r:
+        print(k)
+        ah[k-1]= 2*ap[k]/101320 - ah[k]
+        bh[k-1]= 2*b[k] - bh[k]
+        print(ah[k-1])
+        print(bh[k - 1])
+        print(b[k])
+        #pfull[:, k, :, :] = 0.5*( phalf[:, k-1, :, :] + phalf[:, k, :, :] )
+
+        ph[:,k-1,:,:]= ah[k-1]*101320 + bh[k-1]*surface_air_pressure[:, 0, :, :]
+
+    return ph
+
+
+
+
+
     print("Not implemented yet")
 def ml2pl( ap, b, surface_air_pressure, inputlevel="full", returnlevel="full"):
     """
@@ -386,7 +421,7 @@ def pl2alt_half2full_gl( air_temperature_ml, specific_humidity_ml, p): #or heigh
         TRd = t_v_level[:, k, :, :] * Rd
         z_f = z_h + (TRd * alpha)
 
-        geotoreturn_m[:, k, :, :] = z_f + surface_geopotential[:, 0, :, :]
+        geotoreturn_m[:, k, :, :] = z_f #+ surface_geopotential[:, 0, :, :]
 
         geotoreturn_m[:, k, :, :] = geotoreturn_m[:, k, :, :]/g
 
@@ -417,32 +452,59 @@ def pl2alt_full2full_gl( air_temperature_ml, specific_humidity_ml,p): #or height
 
     Rd = 287.06 #[J/kg K] Gas constant for dry air
     g = 9.80665
+    z_h = 0  # 0 since geopotential is 0 at sea level
+
     timeSize, levelSize, ySize, xSize = np.shape(p)
     geotoreturn_m = np.zeros(shape=(timeSize, levelSize, ySize, xSize))
     t_v_level = np.zeros(shape=(timeSize, levelSize, ySize, xSize))
 
-    levels = np.arange(0, levelSize)  #index of heighlevels from top(lvl = 0) to bottom(lvl=64)
+    levels = np.arange(0, levelSize-1)  #index of heighlevels from top(lvl = 0) to bottom(lvl=64)
     levels_r = levels[::-1]  # bottom (lvl=64) to top(lvl = 0) of atmos
-    p_low = p[:, levelSize - 1, :, :]  # Pa lowest modellecel is 64
+    p_lowf = p[:, levelSize-1, :, :]  # Pa lowest modellecel is 64
+    t_v_level= virtual_temp(air_temperature_ml, specific_humidity_ml)
     #     geotoreturn_m[:,k,:,:] = geotoreturn_m[:,k+1,:,:] + (Rd * t_v_level[:,k,:,:] / g)* ln(p[:,k+1,:,:] / p[:,k,:,:])
 
-    psi_lower = 0    # we want value from ground so here lowestmodellevel geopotential is set to 0.
     for k in levels_r: #64, 63, 63
-        k_upper = k-1 #61 dont have value for geo.
-        k_lower = k   #62
-        k_lowest = k+1 #63
-        t_v_level[:, k, :, :] = air_temperature_ml[:, k, :, :] * (1. + 0.609133 * specific_humidity_ml[:, k, :, :])
+        p_topf = p[:, k - 1, :, :]     #Pressure at the top of that layer63
 
-        if k ==levelSize-1: #lowest level = 64
-            psi_lower = 0# 0 at first run (k=64)
+        p_top= (p_lowf-p_topf)/np.log(p_lowf/p_topf)
+        p_low=p_lowf
+        tv_top = t_v_level[:, k - 1, :, :]
+        tv_low= t_v_level[:, k , :, :]
+
+        if k == 0:  # top of atmos, last loop round
+            dlogP = np.log(p_low / 0.1)
+            alpha = np.log(2)
         else:
-            dlogP = np.log( np.divide(p[:, k+1, :, :] , p[:, k, :, :] ) )
-            TRd = t_v_level[:, k, :, :] * Rd
-            psi_lower = geotoreturn_m[:, k + 1, :, :] + (TRd * dlogP)
+            dlogP = np.log(np.divide(p_low, p_top))
+            tv = tv_top
+            TRd = tv * Rd
+            dP = p_low - p_top
+            alpha = 1. - ((p_top / dP) * dlogP)
+        #for t in range(0, np.shape(t_v_level)[0]):  # 0,1,2
+        #    t_v_level[t, 0:idx_tk[t]] = np.nan
+        #    dp[t, 0:idx_tk[t]] = np.nan
+        #    dlogP[t, 0:idx_tk[t]] = np.nan
 
-        geotoreturn_m[:, k, :, :] = psi_lower
+        #tvdlogP = np.multiply(tv_low, alpha)
+        #T_vmean = np.divide(np.nansum(tvdlogP, axis=1), np.nansum(dlogP, axis=1))
+        #H = Rd * T_vmean / g  # scale height
+        #p_low = pp[:, levelSize - 1:, :, :]
+        #p_top = pp[:, levelSize - 2:, :, :]
+        #z_f = z_h + H * np.log(p_low / p_top)
 
-    geotoreturn_m[:, k, :, :] = geotoreturn_m[:, k, :, :]/g #convert to meter
+
+        z_f = z_h + (TRd * alpha)
+
+        #psi_lower = geotoreturn_m[:, k + 1, :, :] + (TRd * dlogP)
+
+        geotoreturn_m[:, k, :, :] = z_f
+        geotoreturn_m[:, k, :, :] = geotoreturn_m[:, k, :, :] / g
+
+        z_h = z_f#z_h + (TRd * dlogP)
+        p_low = p_top
+
+    #geotoreturn_m[:, k, :, :] = geotoreturn_m[:, k, :, :]/g #convert to meter
     return geotoreturn_m
 def pl2alt_half2half_gl( air_temperature_ml, specific_humidity_ml,p): #or heighttoreturn
     """
@@ -474,10 +536,13 @@ def ml2alt_gl( air_temperature_ml, specific_humidity_ml, ap, b, surface_air_pres
         gph_m = pl2alt_half2half_gl( air_temperature_ml, specific_humidity_ml, p )
     elif inputlevel == "half" and returnlevel == "full":
         p     = ml2pl_half2full( ap, b, surface_air_pressure )
+
         gph_m = pl2alt_half2full_gl( air_temperature_ml, specific_humidity_ml, p )
     elif inputlevel == "full" and returnlevel == "half":
         p     = ml2pl_full2half( ap, b, surface_air_pressure )
-        gph_m = pl2alt_full2half_gl( air_temperature_ml, specific_humidity_ml, p)
+        gph_m = pl2alt_full2full_gl( air_temperature_ml, specific_humidity_ml, p )
+
+        #gph_m = pl2alt_full2half_gl( air_temperature_ml, specific_humidity_ml, p)
 
     return gph_m
 def ml2alt_sl( surface_geopotential, air_temperature_ml, specific_humidity_ml, ap, b, surface_air_pressure, inputlevel="full", returnlevel="full"):     #https://confluence.ecmwf.int/pages/viewpage.action?pageId=68163209
