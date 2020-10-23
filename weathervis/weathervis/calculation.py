@@ -119,8 +119,14 @@ def potential_temperatur(temperature, pressure):
     print(np.shape(theta))
     print(len(np.shape(theta)))
     if len(np.shape(theta)) ==4:
-        for i in range(0,len(pressure)):
-            theta[:,i,:,:] = temperature[:,i,:,:]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
+        if len(np.shape(pressure)) ==1:
+            for i in range(0,len(pressure)):
+                theta[:,i,:,:] = temperature[:,i,:,:]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
+        else:
+            for i in range(0,np.shape(pressure)[1]):
+                theta[:,i,:,:] = temperature[:,i,:,:]  * (p0 / pressure[:,i,:,:]) ** (Rd/cp) #[K]
+
+
     elif len(np.shape(theta)) ==1:
         for i in range(0,len(pressure)):
             theta[i] = temperature[i]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
@@ -130,7 +136,7 @@ def potential_temperatur(temperature, pressure):
         theta = temperature  * (p0 / pressure) ** (Rd/cp) #[K]
 
 
-
+    print(theta)
     return theta
 def density(Tv, p):
     """

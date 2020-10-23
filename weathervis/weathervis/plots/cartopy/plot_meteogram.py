@@ -46,8 +46,6 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
 
 def plot_meteogram_vertical(dmet, dmet_sfx, dmet_ml,jindx, iindx, dirName_b1, figname_b1, ip):
     #correct units:
-
-
     # Correct unit for proper display
     p = dmet_ml.p / 100
     specific_humidity_ml =dmet_ml.specific_humidity_ml*1000
@@ -718,6 +716,10 @@ def calculate_data(dmet,dmet_ml,dmet_sfx):
     dmet_ml.geotoreturn = ml2alt_sl(dmet.surface_geopotential, air_temperature_ml=dmet_ml.air_temperature_ml,
                             specific_humidity_ml=dmet_ml.specific_humidity_ml, ap=dmet_ml.ap, b=dmet_ml.b,
                             surface_air_pressure=dmet.surface_air_pressure)
+    dmet_ml.heighttoreturnhalf = ml2alt_gl(air_temperature_ml=dmet_ml.air_temperature_ml,
+                                       specific_humidity_ml=dmet_ml.specific_humidity_ml, ap=dmet_ml.ap, b=dmet_ml.b,
+                                       surface_air_pressure=dmet.surface_air_pressure,inputlevel="half", returnlevel="full")
+
 
     dmet_ml.t_v_level = virtual_temp(dmet_ml.air_temperature_ml, dmet_ml.specific_humidity_ml)
     dmet_ml.dtdz = lapserate(dmet_ml.air_temperature_ml, dmet_ml.heighttoreturn)

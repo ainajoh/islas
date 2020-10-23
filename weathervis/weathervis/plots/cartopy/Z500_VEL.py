@@ -44,10 +44,11 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     param_sfc = ["air_pressure_at_sea_level", "precipitation_amount_acc", "surface_geopotential"]
     param_pl = ["x_wind_pl", "y_wind_pl", "geopotential_pl"]
     param = param_sfc + param_pl
+    plevel = [500]
     split = False
     print("\n######## Checking if your request is possibel ############")
     try:
-      check_all = check_data(date=dt, model=model, param=param, levtype="pl", p_level=500.0)
+      check_all = check_data(date=dt, model=model, param=param, levtype="pl", p_level=plevel)
       print(check_all.file)
 
     except ValueError:
@@ -55,7 +56,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       try:
         print("--------> Splitting up your request to find match ############")
         check_sfc = check_data(date=dt, model=model, param=param_sfc)
-        check_pl = check_data(date=dt, model=model, param=param_pl, levtype="pl", p_level=500)
+        check_pl = check_data(date=dt, model=model, param=param_pl, levtype="pl", p_level=plevel)
         print(check_pl.file)
       except ValueError:
         print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
@@ -71,7 +72,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       #lonlat = np.array(data_domain.lonlat)
       print(file_all)
       dmap_meps = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=steps,
-                           date=dt, p_level=500)
+                           date=dt, p_level=plevel)
       print("\n######## Retriving data ############")
       print(f"--------> from: {dmap_meps.url} ")
       dmap_meps.retrieve()
@@ -88,7 +89,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
 
       # get pressure level data
       file_pl = check_pl.file.loc[0]
-      tmap_meps = get_data(model=model, data_domain=data_domain, param=param_pl, file=file_pl, step=steps, date=dt, p_level=500)
+      tmap_meps = get_data(model=model, data_domain=data_domain, param=param_pl, file=file_pl, step=steps, date=dt, p_level=plevel)
       print("\n######## Retriving data ############")
       print(f"--------> from: {tmap_meps.url} ")
       tmap_meps.retrieve()
