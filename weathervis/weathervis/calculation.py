@@ -718,6 +718,7 @@ def BL_height_sl(atmosphere_boundary_layer_thickness, surface_geopotential):
 #todo: AINA: alpha: for changing domain, for changing height?
 #####################################################################################################################
 def xwind2uwind( xwind, ywind, alpha ):
+    # u,v = xwind2uwind( data.xwind, data.ywind, data.alpha )
     #source: https://www-k12.atmos.washington.edu/~ovens/wrfwinds.html
     #source: https://github.com/metno/NWPdocs/wiki/From-x-y-wind-to-wind-direction
     u = np.zeros(shape=np.shape(xwind))

@@ -1,0 +1,1 @@
+from weathervis.config import *

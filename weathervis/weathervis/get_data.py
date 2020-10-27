@@ -250,6 +250,7 @@ class get_data():
                 #UNDER is failed attempt to get multiple objects for each variable info. Long_name etc.
                 #self.__dict__[k] = self.dummyobject()
                 #self.units.__dict__[prm] = dataset.variables[prm].__dict__[k]
+            #print(dataset.variables[prm])
             varvar = dataset.variables[prm][:]
             dimlist = np.array(list(file["var"][prm]["dim"]))  # ('time', 'pressure', 'ensemble_member', 'y', 'x')
             if not self.mbrs_bool and any(np.isin(dimlist, "ensemble_member")):#"ensemble_member" in dimlist:

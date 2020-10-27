@@ -1,5 +1,5 @@
-#from weathervis.config import *  # require netcdf4
-from weathervis.domain import *  # require netcdf4
+from weathervis.config import *
+from weathervis.domain import *
 from weathervis.get_data import *
 from weathervis.calculation import *
 import os

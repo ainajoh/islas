@@ -1,6 +1,7 @@
 # %%
 # python Z500_VEL.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
+from weathervis.config import *
 from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.get_data import *
