@@ -68,6 +68,15 @@ def filter_type(file,mbrs,levtype, p_level,m_level):
     file.reset_index(inplace=True, drop=True)
     return file
 
+def filter_step(file,maxstep):
+    if maxstep != None:
+        for i in range(0, len(file)): # go through all files,
+            step_bool = int(file.loc[i,"dim"]["time"]["shape"]) >= maxstep
+            if step_bool == False:
+                file.drop([i], inplace=True)
+    file.reset_index(inplace=True, drop=True)
+    return file
+
 filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choices:{model}')
 filter_function_for_models = lambda value: value if value in model else SomeError(ValueError, f'Model not found: choices:{model}')
 
@@ -84,7 +93,7 @@ def filter_any(file):
 
 class check_data():
 
-    def __init__(self, model, date = None,param=None, mbrs=None,levtype=None, p_level= None, m_level=None,file = None, numbervar = 100, search = None):
+    def __init__(self, model, date = None,param=None, step=None, mbrs=None,levtype=None, p_level= None, m_level=None,file = None, numbervar = 100, search = None):
         """
         Parameters
         ----------
@@ -107,6 +116,8 @@ class check_data():
         self.search = search
         self.p_level = p_level
         self.m_level = m_level
+        self.maxstep = np.max(step) if step != None or type(step) != float or type(step) != int else step
+
 
         if p_level:
             self.levtype="pl"
@@ -299,6 +310,9 @@ class check_data():
         file = file_withparam[file_withparam.File.isin(file_corrtype.File)]
         file.reset_index(inplace=True, drop = True)
 
+        file = filter_step(file,self.maxstep)
+
+        #file = file
 
         logging.info("file")
         #file = filter_any(file)
