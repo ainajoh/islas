@@ -144,7 +144,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         #cmap =  mcolors.ListedColormap('hsv', 'hsv') #plt.get_cmap("hsv")PuBu
         #TP.filled(np.nan) #fill mask with nan to avoid:  UserWarning: Warning: converting a masked element to nan.
         CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, TP, zorder=10,
-                               cmap=cmap, norm = norm, alpha=0.4, antialiased=True,
+                               cmap=cmap, norm = norm, alpha=0.6, antialiased=True,
                                levels=lvl, extend = "max")#
       except:
         pass
@@ -172,7 +172,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
         try:
-          plt.colorbar(CF_prec, fraction=0.046, pad=0.04)
+          cb = plt.colorbar(CF_prec, fraction=0.046, pad=0.04, label ="test")
         except:
           pass
         lg = ax1.legend(proxy, [f"Wind strength [m/s] at {dmap_meps.pressure[plev2]:.0f} hPa",
