@@ -270,7 +270,9 @@ class get_data():
             infile = package_path + "/data/alpha_full_MEPS.nc"
         alphadata = Dataset(infile)
         alpha = alphadata["alpha"][:]
+        print(infile)
         self.__dict__["alpha"] = alpha[jindx.min():jindx.max()+1,iindx.min():iindx.max()+1]
+
         alphadata.close()
 
     def retrieve(self):
