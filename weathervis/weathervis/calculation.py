@@ -116,8 +116,8 @@ def potential_temperatur(temperature, pressure):
     Rd = 287.05  #[J/kg K] Gas constant for dry air
     cp = 1004.  #[J/kg] specific heat for dry air (WH)
     theta = np.full(np.shape(temperature), np.nan)
-    print(np.shape(theta))
-    print(len(np.shape(theta)))
+    #print(np.shape(theta))
+    #print(len(np.shape(theta)))
     if len(np.shape(theta)) ==4:
         if len(np.shape(pressure)) ==1:
             for i in range(0,len(pressure)):
@@ -131,12 +131,12 @@ def potential_temperatur(temperature, pressure):
         for i in range(0,len(pressure)):
             theta[i] = temperature[i]  * (p0 / pressure[i]) ** (Rd/cp) #[K]
     elif len(np.shape(theta)) ==3:
-        print(np.shape(pressure))
-        print(np.shape(temperature))
+        #print(np.shape(pressure))
+        #print(np.shape(temperature))
         theta = temperature  * (p0 / pressure) ** (Rd/cp) #[K]
 
 
-    print(theta)
+    #print(theta)
     return theta
 def density(Tv, p):
     """
@@ -178,7 +178,7 @@ def virtual_temp(air_temperature_ml, specific_humidity_ml):
         t_v_level[:, k, :, :] = air_temperature_ml[:, k, :, :] * (1. + 0.609133 * specific_humidity_ml[:, k, :, :])
 
     return t_v_level
-def lapserate(air_temperature_ml, heighttoreturn):
+def lapserate(T_ml, z, srf_T = None):
     """
     AINA:todo IDEA look at the diana code for comparison. They make dt/dz, but from specific arome files vc I think.
     NB! understand before use. This takes dt and dz over some define modelstep.
@@ -193,18 +193,44 @@ def lapserate(air_temperature_ml, heighttoreturn):
     -------
     lapserate [K/km].
     """
-    timeSize, levelSize, ySize, xSize = np.shape(air_temperature_ml)
+
+
+    timeSize, levelSize, ySize, xSize = np.shape(T_ml)
 
     dt_levels = np.full((timeSize, levelSize, ySize, xSize), np.nan)
     dz_levels = np.full((timeSize, levelSize, ySize, xSize), np.nan)
     dtdz = np.full( (timeSize, levelSize, ySize, xSize), np.nan)
-    step = 5 #5 before
+    step = 1 #5 before average over
     for k in range(0, levelSize - step):
         k_next = k + step
-        dt_levels[:, k, :, :] = air_temperature_ml[:, k, :, :] - air_temperature_ml[:, k_next, :,:]  # over -under
-        dz_levels[:, k, :, :] = heighttoreturn[:, k, :, :] - heighttoreturn[:, k_next, :, :]  # over -under
+
+        dt_levels[:, k, :, :] = T_ml[:, k, :, :] - T_ml[:, k_next, :,:]  # over -under
+        dz_levels[:, k, :, :] = z[:, k, :, :] - z[:, k_next, :, :]  # over -under
+
+
 
     dtdz[:, :, :, :] = np.divide(dt_levels, dz_levels) * 1000  # /km
+
+    if srf_T is not None:
+        ii = levelSize - step
+        dt = T_ml[:, ii, :, :] - srf_T[:, 0, :, :]
+        dz = z[:, ii, :, :] - 0
+        val = np.divide(dt, dz) * 1000
+
+        for k in range(ii,levelSize):
+            #print("inside level")
+            dtdz[:, k, :, :] =  val
+
+    #from scipy.interpolate import griddata
+
+    # target grid to interpolate to
+    #zi = np.arange(0, 1.01, 0.01)
+    #dtdz_i = griddata(zi, dtdz, (i, method='linear')
+
+    #xi, yi = np.meshgrid(xi, yi)
+
+
+
     return dtdz
 
 ####################################################################################################################
@@ -318,12 +344,12 @@ def ml2pl_full2half( ap, b, surface_air_pressure ):
     bh[64] = 1
     ph[:,64,:,:] = surface_air_pressure[:, 0, :, :]
     for k in levels_r:
-        print(k)
+        #print(k)
         ah[k-1]= 2*ap[k]/101320 - ah[k]
         bh[k-1]= 2*b[k] - bh[k]
-        print(ah[k-1])
-        print(bh[k - 1])
-        print(b[k])
+        #print(ah[k-1])
+        #print(bh[k - 1])
+        #print(b[k])
         #pfull[:, k, :, :] = 0.5*( phalf[:, k-1, :, :] + phalf[:, k, :, :] )
 
         ph[:,k-1,:,:]= ah[k-1]*101320 + bh[k-1]*surface_air_pressure[:, 0, :, :]
@@ -595,7 +621,7 @@ def sl2gl(surface_geopotential, gph_m_sl):
     return gph_m_gl
 
 #altitude to pressure level
-def alt_gl2pl(surface_air_pressure,t_v_level, alt_gl, outshape=None ):
+def alt_gl2pl(surface_air_pressure,tv, alt_gl, outshape=None ):
     Rd = 287.06
     g = 9.80665
 
@@ -603,7 +629,7 @@ def alt_gl2pl(surface_air_pressure,t_v_level, alt_gl, outshape=None ):
     #    alt_gl = np.full(np.shape(data_altitude_sl[:, :, jindx, iindx]), float(alt_gl))
     #else: #if height is changes with time it comes as a array or list
     #    alt_gl = np.repeat(point_alt, repeats=len(data_altitude_sl[0, :, jindx, iindx]), axis=0).reshape(np.shape(data_altitude_sl[:, :, jindx, iindx]))
-
+    #virtual_temp(air_temperature_ml, specific_humidity_ml)
     tvdlogP = np.multiply(tv, dlogP)
     T_vmean = np.divide( np.nansum(tvdlogP, axis=1), np.nansum(dlogP, axis=1) )
     H = Rd * T_vmean / g  # scale height
@@ -746,6 +772,16 @@ def wind_speed(xwind,ywind):
     #no matter if in modelgrid or earthrelativegrid
     ws = np.sqrt(xwind**2 + ywind**2)
     return ws
+
+def relative_humidity(temp,q,p):
+    temp = temp-273.15 #Kelvin to Celcius
+    w=q/(1-q)
+    es =  6.112 * np.exp((17.67 * temp)/(temp + 243.5))*100
+    ws = 0.622*es/p
+    rh = w/ws
+    rh[rh > 1] =  1
+    rh[rh < 0] =  0
+    return rh*100
 
 def wind_dir(xwind,ywind, alpha):
     #source: https://www-k12.atmos.washington.edu/~ovens/wrfwinds.html

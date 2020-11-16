@@ -53,11 +53,13 @@ filter_function_for_step=lambda value, file: value if np.max(value) < file.dim["
 filter_function_for_p_level=lambda value, file: value if set(value).issubset(set(file["p_levels"])) else SomeError(ValueError, f' p_level input outside range of model')
 filter_function_for_m_level=lambda value, file: value if np.max(value) < file.dim["hybrid"]["shape"] else SomeError(ValueError, f' m_level input outside range of model')
 filter_function_for_param=lambda value, file: value if set(value).issubset(set(file["var"].keys())) else SomeError(ValueError, f' param input not possible for this file')
+filter_function_for_file=lambda value: value if value is not None else SomeError(ValueError, f' File has to be given (see check_data(()')
+
 #filter_function_for_domain=lambda value: value if value in np.array(dir(domain))  else SomeError(ValueError, f'Domain name not found')
 #Domain filter not needed as it should be handled in domain itself
 class get_data():
 
-    def __init__(self, model, date, param, file, step, data_domain=None, p_level = None, m_level = None, mbrs=None, url=None):
+    def __init__(self, model=None, date=None, param=None, file=None, step=None, data_domain=None, p_level = None, m_level = None, mbrs=None, url=None):
         """
 
         Parameters - Type - Info - Example
@@ -96,40 +98,106 @@ class get_data():
         self.url = url
         self.units = self.dummyobject()
 
+
         #Check and filter for valid settings. If any of these result in a error, this script stops
         check_if_thredds_is_down("https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html")
-        filter_function_for_models(self.model)
-        filter_function_for_mbrs(np.array(self.mbrs), self.file) if self.mbrs != None and self.mbrs_bool else None
-        filter_function_for_date(self.date)
-        filter_function_for_step(self.step,self.file)
-        #print(np.array([self.p_level]))
-        #print(self.file["p_levels"])
-        filter_function_for_p_level(np.array(self.p_level),self.file) if self.p_level != None else None
-        filter_function_for_m_level(np.array(self.m_level),self.file) if self.m_level != None and self.file.ml_bool else None
-        filter_function_for_param(self.param, self.file) #this is kind of checked in check_data.py already.
-        #Adjusting some parameters.
-        #This is an option since users might not now how many pressure/model levels the model has and just want all.
-        if self.p_level == None:
-        #    # If no pressure level is defined initially, we get all pressure levels for the paramter that depends on pressure.
-            if "pressure" in self.file["dim"].keys() :
-                self.p_level = self.file["p_levels"]
-            else: #if no parameter depends on pressure p_level = 0
-                self.p_level = None#[0]
+        if self.url is None:
+            filter_function_for_file(self.file)
+            filter_function_for_models(self.model)
+            filter_function_for_mbrs(np.array(self.mbrs), self.file) if self.mbrs != None and self.mbrs_bool else None
+            filter_function_for_date(self.date)
+            filter_function_for_step(self.step,self.file)
+            #print(np.array([self.p_level]))
+            #print(self.file["p_levels"])
+            filter_function_for_p_level(np.array(self.p_level),self.file) if self.p_level != None else None
+            filter_function_for_m_level(np.array(self.m_level),self.file) if self.m_level != None and self.file.ml_bool else None
+            filter_function_for_param(self.param, self.file) #this is kind of checked in check_data.py already.
 
-        if self.m_level == None:
-            # If no model level is defined initially, we get all model levels for the paramter that depends on modellevels.
-            if "hybrid" in self.file["dim"].keys() :
-                maxpl = self.file["dim"]["hybrid"]["shape"] -1
-                self.m_level = [0,maxpl]
-            else: #if no parameter depends on modellevel set it to 0
-                maxpl = 0
-                self.m_level = [0]
-            if "hybrid2" in self.file["dim"].keys() and maxpl <=1:
-                maxpl = self.file["dim"]["hybrid2"]["shape"] -1
-                self.m_level = [0,maxpl]
+            #Adjusting some parameters.
+            #This is an option since users might not now how many pressure/model levels the model has and just want all.
+            if self.p_level == None:
+                # If no pressure level is defined initially, we get all pressure levels for the paramter that depends on pressure.
+                if "pressure" in self.file["dim"].keys() :
+                    self.p_level = self.file["p_levels"]
+                else: #if no parameter depends on pressure p_level = 0
+                    self.p_level = None#[0]
+
+            if self.m_level == None:
+                # If no model level is defined initially, we get all model levels for the paramter that depends on modellevels.
+                if "hybrid" in self.file["dim"].keys() :
+                    maxpl = self.file["dim"]["hybrid"]["shape"] -1
+                    self.m_level = [0,maxpl]
+                else: #if no parameter depends on modellevel set it to 0
+                    maxpl = 0
+                    self.m_level = [0]
+                if "hybrid2" in self.file["dim"].keys() and maxpl <=1:
+                    maxpl = self.file["dim"]["hybrid2"]["shape"] -1
+                    self.m_level = [0,maxpl]
 
         #Make a url depending on preferences if no url is defined already.
-        self.url = self.make_url() if self.url == None else url
+        self.url = self.make_url() if self.url == None else self.adjust_user_url()
+
+    def adjust_user_url(self):
+        if self.param is None and self.steps is None and self.data_domain is None and self.p_level is None and self.m_level is None and self.mbrs is None:
+            return self.url
+
+        jindx = self.idx[0]
+        iindx = self.idx[1]
+
+        if self.p_level:
+            idx = np.where( np.array(self.file["p_levels"])[:, None] == np.array(self.p_level)[None, :])[0]
+        else:
+            idx=0
+
+        # Sets up the userdefined range of value in thredds format [start:step:stop]
+        step = f"[{np.min(self.step)}:1:{np.max(self.step)}]"
+        pl_idx = f"[{np.min(idx)}:1:{np.max(idx)}]"
+        m_level = f"[{np.min(self.m_level)}:1:{np.max(self.m_level)}]"
+        mbrs = f"[{np.min(self.mbrs)}:1:{np.max(self.mbrs)}]"
+        y = f"[{jindx.min()}:1:{jindx.max()}]"
+        x = f"[{iindx.min()}:1:{iindx.max()}]"
+        non = f"[0:1:0]"
+
+        # indexidct Keeps track of dimensions for the different independent variables.
+        indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
+                     "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level, "hybrid0": non,
+                     "height0": non, "height1": non, "height2": non,
+                     "height3": non, "height7": non, "height6": non, 'height_above_msl': non, "mean_sea_level": non,
+                     "atmosphere_as_single_layer": non}
+        # fixed_var: The fixed variables we always want
+        fixed_var = np.array(
+            ["latitude", "longitude", "forecast_reference_time", "projection_lambert", "ap", "b", "ap2", "b2"])
+        # keep only the fixed variables that are actually available in the file.
+        fixed_var = fixed_var[np.isin(fixed_var, list(self.file["var"].keys()))]
+        # update global variable to include fixed var
+        self.param = np.append(self.param, fixed_var)  # Contains absolutely all variables we want
+
+        file = self.file.copy()
+        param = self.param.copy()
+        logging.info(file)
+        url = f"{self.url}?"
+        for prm in param:  # loop that updates the url to include each parameter with its dimensions
+            url += f"{prm}"  # example:  url =url+x_wind_pl
+            dimlist = list(file["var"][prm][
+                               "dim"])  # List of the variables the param depends on ('time', 'pressure', 'ensemble_member', 'y', 'x')
+            newlist = [indexidct[i] for i in
+                       dimlist]  # convert dependent variable name to our set values. E.g: time = step = [0:1:0]
+            startsub = ''.join(
+                newlist) + ","  # example: ('time', 'pressure','ensemble_member','y','x') = [0:1:0][0:1:1][0:1:10][0:1:798][0:1:978]
+            for dimen in np.setdiff1d(file["var"][prm]["dim"], self.param):
+                # includes the dim parameters like, pressure, hybrid, height as long as we havent already gone through them
+                self.param = np.append(self.param,
+                                       dimen)  # update global param with the var name so that we do not go through it multiple time.
+                startsub += dimen
+                startsub += indexidct[dimen] + ","
+            url += startsub
+
+        url = url.rstrip(",")  # if url ends with , it creates error so remove.
+        logging.info(url)
+        # self.__dict__["url"] = url
+        return url  # returns the url that will be set to global url.
+
+
 
     def make_url(self):
         """
@@ -164,7 +232,8 @@ class get_data():
         indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
                      "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level,"hybrid0": non,
                      "height0": non, "height1": non, "height2": non,
-                     "height3": non, "height7": non, 'height_above_msl': non, "mean_sea_level":non}
+                     "height3": non, "height7": non, "height6": non,'height_above_msl': non, "mean_sea_level":non,
+                     "atmosphere_as_single_layer":non}
 
         # fixed_var: The fixed variables we always want
         fixed_var = np.array(["latitude","longitude","forecast_reference_time","projection_lambert", "ap","b", "ap2","b2"])
