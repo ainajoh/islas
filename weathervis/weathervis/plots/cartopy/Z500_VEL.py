@@ -49,15 +49,15 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     split = False
     print("\n######## Checking if your request is possibel ############")
     try:
-      check_all = check_data(date=dt, model=model, param=param, levtype="pl", p_level=plevel)
+      check_all = check_data(date=dt, model=model, param=param, levtype="pl", p_level=plevel, step=steps)
       print(check_all.file)
 
     except ValueError:
       split = True
       try:
         print("--------> Splitting up your request to find match ############")
-        check_sfc = check_data(date=dt, model=model, param=param_sfc)
-        check_pl = check_data(date=dt, model=model, param=param_pl, levtype="pl", p_level=plevel)
+        check_sfc = check_data(date=dt, model=model, param=param_sfc, step=steps)
+        check_pl = check_data(date=dt, model=model, param=param_pl, levtype="pl", p_level=plevel, step=steps)
         print(check_pl.file)
       except ValueError:
         print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
@@ -115,13 +115,12 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     parallels = dmap_meps.standard_parallel_projection_lambert
 
     # setting up projection
-    # #LambertConformal(central_longitude=-96.0, central_latitude=39.0, false_easting=0.0, false_northing=0.0, secant_latitudes=None, standard_parallels=None, globe=None, cutoff=-30)[source]
-    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels)
-    ax1 = plt.subplot(projection=crs)
-    # ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]), crs=crs) #(x0, x1, y0, y1)
+    globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
+    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
+                                globe=globe)
 
-    print(steps)
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
+      ax1 = plt.subplot(projection=crs)
       ttt = tim #+ np.min(steps)
       tidx = tim - np.min(steps)
       print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
@@ -143,7 +142,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         #https://github.com/SciTools/cartopy/issues/1290
         #cmap =  mcolors.ListedColormap('hsv', 'hsv') #plt.get_cmap("hsv")PuBu
         #TP.filled(np.nan) #fill mask with nan to avoid:  UserWarning: Warning: converting a masked element to nan.
-        CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, TP, zorder=10,
+        CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, TP, zorder=1,
                                cmap=cmap, norm = norm, alpha=0.6, antialiased=True,
                                levels=lvl, extend = "max")#
       except:
@@ -172,7 +171,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
         try:
-          cb = plt.colorbar(CF_prec, fraction=0.046, pad=0.04, label ="test")
+          cb = plt.colorbar(CF_prec, fraction=0.046, pad=0.01, aspect=25, label ="1h acc. prec.", extend="both")
         except:
           pass
         lg = ax1.legend(proxy, [f"Wind strength [m/s] at {dmap_meps.pressure[plev2]:.0f} hPa",
@@ -188,6 +187,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       #plt.show()
       fig1.savefig("../../../output/{0}_Z500_VEL_P_{1}+{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
+      plt.clf()
 
 
     proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
@@ -205,9 +205,10 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       fig3.savefig("../../../output/{0}_Z500_VEL_P_COLORBAR.png".format(model), bbox_inches="tight", dpi=200)
     except:
       pass
+    ax1.cla()
+    plt.clf()
 
 
-plt.clf()
 # fin
 
 if __name__ == "__main__":

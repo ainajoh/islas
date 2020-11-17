@@ -50,13 +50,13 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     split = False
     print("\n######## Checking if your request is possibel ############")
     try:
-      check_all = check_data(date=dt, model=model, param=param, p_level = 850)
+      check_all = check_data(date=dt, model=model, param=param, p_level = 850, step=steps)
     except ValueError:
       split = True
       try:
         print("--------> Splitting up your request to find match ############")
-        check_sfc = check_data(date=dt, model=model, param=param_sfc)
-        check_pl = check_data(date=dt, model=model, param=param_pl, p_level=850)
+        check_sfc = check_data(date=dt, model=model, param=param_sfc,step=steps)
+        check_pl = check_data(date=dt, model=model, param=param_pl, p_level=850,step=steps)
       except ValueError:
         print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
         break
@@ -69,7 +69,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
       #lonlat = np.array(data_domain.lonlat)
       dmap_meps = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=steps,
-                           date=dt, p_level=850)
+                           date=dt, p_level=[850])
       print("\n######## Retriving data ############")
       print(f"--------> from: {dmap_meps.url} ")
       dmap_meps.retrieve()
@@ -109,12 +109,13 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
 
     # setting up projection
-    # #LambertConformal(central_longitude=-96.0, central_latitude=39.0, false_easting=0.0, false_northing=0.0, secant_latitudes=None, standard_parallels=None, globe=None, cutoff=-30)[source]
-    crs = ccrs.LambertConformal(central_longitude=lon0,central_latitude=lat0, standard_parallels=parallels)
-    ax1 = plt.subplot(projection=crs)
-    #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]), crs=crs) #(x0, x1, y0, y1)
+    globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
+    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
+                                globe=globe)
 
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
+      ax1 = plt.subplot(projection=crs)
+
       tidx = tim - np.min(steps)
 
       print('Plotting {0} + {1:02d} UTC'.format(dt,tim))
@@ -163,24 +164,25 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       ##########################################################
 
       #plt.show()
-      if save == True:
-        fig1.savefig("../../../output/{0}_T850_RH_{1}+{2:02d}.png".format(model,dt, tim),bbox_inches="tight", dpi=200)
-        ax1.cla()
 
-        proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
-               for pc in CF_RH.collections]
-        proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
-                plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
-                plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
-        proxy.extend(proxy1)
-        fig2 = plt.figure(figsize=(2, 1.25))
-        fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
-                         f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
-                          f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
-        fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+      fig1.savefig("../../../output/{0}_T850_RH_{1}+{2:02d}.png".format(model,dt, tim),bbox_inches="tight", dpi=200)
+      ax1.cla()
+      plt.clf()
 
-      else:
-        return fig1
+      proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
+             for pc in CF_RH.collections]
+      proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
+              plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
+              plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
+      proxy.extend(proxy1)
+      fig2 = plt.figure(figsize=(2, 1.25))
+      fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
+                       f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
+                        f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
+      fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+
+      ax1.cla()
+      plt.clf()
 
 
 if __name__ == "__main__":

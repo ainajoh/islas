@@ -522,7 +522,9 @@ def plot_maplocation(dmet, data_domain, close2point, dirName_b2, figname_b2, sit
     parallels = dmet.standard_parallel_projection_lambert
 
     figm2 = plt.figure(figsize=(12, 14))
-    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels)
+    globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
+    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
+                                globe=globe)
     ax = figm2.add_subplot(projection=crs)
 
     ip = 0
@@ -885,6 +887,8 @@ def read_data(dt, steps, model, domain_name, domain_lonlat):
     if not split:
         file_all = check_all.file.loc[0]
         data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_all)
+
+        print(data_domain.idx)
         dmet = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=steps, date=dt)
         print("dmet success")
         file_sfx = check_sfx.file.loc[0]

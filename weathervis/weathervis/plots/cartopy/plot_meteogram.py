@@ -18,6 +18,7 @@ import matplotlib.patheffects as pe
 from cartopy.io import shapereader              #For reading shapefiles containg high-resolution coastline.
 from copy import deepcopy
 
+#(camp1) c02z62belvdl:cartopy ainajoh$ python plot_meteogram.py --datetime 2018031700 --point_num 1 --steps 0 60 --model AromeArctic --domain_lonlat 15.8 16.4 69.2 69.4 --point_lonlat 16.120 69.310
 
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
@@ -135,6 +136,7 @@ def plot_meteogram_vertical(dmet, dmet_sfx, dmet_ml,jindx, iindx, dirName_b1, fi
     # Wind
     # Wind
     n = 4
+    n = 4
     wspeed = np.sqrt(dmet.x_wind_ml[:, :, jindx, iindx] ** 2 + dmet.y_wind_ml[:, :, jindx, iindx] ** 2)
     cmap = plt.cm.RdYlBu_r  # plt.cm.jet RdYlBu
 
@@ -146,7 +148,7 @@ def plot_meteogram_vertical(dmet, dmet_sfx, dmet_ml,jindx, iindx, dirName_b1, fi
     p_p = p[:, :, jindx, iindx]
     axm2.barbs(tx[points], p_p[points], uml_p[points] * 1.943844,
                vml_p[points] * 1.943844, length=5, zorder=1000)
-    lvl = np.array([3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])
+    lvl = np.array([3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])
     CF_WS = axm2.contourf(tx[:, :], p[:, :, jindx, iindx], wspeed, cmap=cmap, alpha=0.8, levels=lvl, extend="both", zorder=1)
     axm2.contour(tx[:, :], p[:, :, jindx, iindx], wspeed, levels=[13.], linestyles="dashed", colors="black", linewidth=2, alpha=0.8,  zorder=1)
 
@@ -637,24 +639,25 @@ def read_data(dt,steps,model,domain_name,domain_lonlat):
     split = False
     print("\n######## Checking if your request is possibel ############")
     try:
-        check_all = check_data(date=dt, model=model, param=param)
+        check_all = check_data(date=dt, model=model, param=param,step=steps)
     except ValueError:
         split = True
         try:
             print("--------> Splitting up your request to find match ############")
-            check_sfc = check_data(date=dt, model=model, param=param_SFC)
-            check_ml = check_data(date=dt, model=model, param=param_ML)
+            check_sfc = check_data(date=dt, model=model, param=param_SFC, step=steps)
+            check_ml = check_data(date=dt, model=model, param=param_ML, step=steps)
         except ValueError:
             print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
             sys.exit(1)
             #break
     print("--------> Found match for your request ############")
+    print(check_all.file)
     try:
-        check_sfx = check_data(date=dt, model=model, param=param_sfx)
+        check_sfx = check_data(date=dt, model=model, param=param_sfx,step=steps)
     except ValueError:
         param_sfx = ["SFX_SST", "SFX_H", "SFX_LE", "SFX_TS"]
         try:
-            check_sfx = check_data(date=dt, model=model, param=param_sfx)
+            check_sfx = check_data(date=dt, model=model, param=param_sfx,step=steps)
         except ValueError:
             print("!!!!! Missing surfex data. Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
             sys.exit(1)

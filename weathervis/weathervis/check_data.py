@@ -153,7 +153,7 @@ class check_data():
         df = pd.read_csv(f"{package_path}/data/{model}_filesandvar.csv")
 
         dfc = df.copy()  # df['base_name'] = [re.sub(r'_[0-9]*T[0-9]*Z.nc','', str(x)) for x in df['File']]
-        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
+        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk","_preop_"]
         df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
         dfc["base_name"] = df_base["base_name"]
 
@@ -179,7 +179,7 @@ class check_data():
         # Todo: update R scripts to only add new lines in filevar info
         df = pd.read_csv(f"bin/{model}_filesandvar.csv")
         dfc = df.copy()
-        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
+        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk","_preop_"]
         df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
         dfc["base_name"] = df_base["base_name"]
         dfc = dfc[~dfc["base_name"].str.contains('|'.join(drop_files))]  # (drop_files)])
@@ -196,7 +196,7 @@ class check_data():
     def check_variable_all(self, model, numbervar, search ):
         df = pd.read_csv(f"{package_path}/data/{model}_filesandvar.csv")
         dfc = df.copy()  # df['base_name'] = [re.sub(r'_[0-9]*T[0-9]*Z.nc','', str(x)) for x in df['File']]
-        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
+        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk","_preop_"]
         df_base = pd.DataFrame([re.sub(r'_[0-9]*T[0-9]*Z.nc', '', str(x)) for x in df['File']], columns=["base_name"])
         dfc["base_name"] = df_base["base_name"]
         dfc = dfc[~dfc["base_name"].str.contains('|'.join(drop_files))]  # (drop_files)])
@@ -252,7 +252,7 @@ class check_data():
         ff =[i.text for i in rawfiles]
         pattern=re.compile(f'.*{YYYY}{MM}{DD}T{HH}Z.nc')
         ff= pd.DataFrame( data = list(filter(pattern.match,ff)), columns=["File"])
-        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk"]
+        drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk","_preop_"]
         df = ff.copy()[~ff["File"].str.contains('|'.join(drop_files))] #(drop_files)])
 
         df.reset_index(inplace=True, drop = True)

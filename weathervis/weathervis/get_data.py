@@ -84,7 +84,7 @@ class get_data():
         self.step = step
         self.p_level = p_level if type(p_level)==list or p_level==None else list(p_level)
         self.m_level = m_level
-        self.param = param
+        self.param = np.unique(param).tolist()
         self.data_domain = data_domain
         #If file comes in as a dataframe with possibly multiple rows, choose one and make it a Series
         self.file = file.loc[0] if type(file) == pd.core.frame.DataFrame else file
@@ -241,6 +241,8 @@ class get_data():
         fixed_var = fixed_var[np.isin(fixed_var, list(self.file["var"].keys()))]
         # update global variable to include fixed var
         self.param = np.append(self.param, fixed_var) #Contains absolutely all variables we want.
+        self.param = np.unique(self.param).tolist()
+
         ###############################################################################
         if self.model == "AromeArctic":
             file = self.file.copy()
