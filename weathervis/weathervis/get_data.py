@@ -302,7 +302,6 @@ class get_data():
             self.__dict__[ss] = dataset.__dict__[k]
         logging.info("-------> Getting variable: ")
         iteration =-1
-        print(self.param)
         for prm in self.param:
             iteration += 1
             logging.info(prm)
@@ -315,12 +314,9 @@ class get_data():
             print(prm)
             varvar = dataset.variables[prm][:] ##
             dimlist = np.array(list(file["var"][prm]["dim"]))  # ('time', 'pressure', 'ensemble_member', 'y', 'x')
-            print(self.mbrs_bool)
             if not self.mbrs_bool and any(np.isin(dimlist, "ensemble_member")):#"ensemble_member" in dimlist:
                 indxmember = np.where(dimlist == "ensemble_member")[0][0]
-                print(indxmember)
                 varvar = dataset.variables[prm][:].squeeze(axis=indxmember)
-                print(varvar)
             self.__dict__[prm] = varvar
         dataset.close()
         iteration += 1

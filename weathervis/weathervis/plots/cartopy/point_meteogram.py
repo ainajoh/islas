@@ -101,6 +101,16 @@ class PMET():
                           "low_type_cloud_area_fraction","rainfall_amount","snowfall_amount","graupelfall_amount",
                           "land_area_fraction"]
         self.param_sfx = ["H", "LE"]
+
+        #self.param_ml = ["air_temperature_ml", "specific_humidity_ml"]
+        #self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m",
+        #                  "air_temperature_2m",
+        #                  "relative_humidity_2m", "x_wind_gust_10m", "y_wind_gust_10m", "x_wind_10m", "y_wind_10m",
+        #                  "specific_humidity_2m", "precipitation_amount_acc", "convective_cloud_area_fraction",
+        #                  "cloud_area_fraction", "high_type_cloud_area_fraction", "medium_type_cloud_area_fraction",
+        #                  "low_type_cloud_area_fraction","land_area_fraction"]
+        #self.param_sfx = []#["H", "LE"]
+
         self.param = self.param_ml + self.param_pl + self.param_sfc + self.param_sfx
         self.p_level = None
         self.m_level = [64]
@@ -231,10 +241,12 @@ class PMET():
         split = False
         print("\n######## Checking if your request is possibel ############")
         self.param = self.param_pl + self.param_ml + self.param_sfc + self.param_sfx
-        dmet = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps, p_level=self.p_level, m_level=self.m_level,
-                                   mbrs=self.mbrs)
+        dmet,data_domain = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps,
+                                     p_level=self.p_level, m_level=self.m_level,mbrs=self.mbrs,
+                                     domain_name=self.domain_name, domain_lonlat=self.domain_lonlat)
 
-        #return dmet, data_domain
+        self.dmet = dmet
+        self.data_domain = data_domain
 
     def calculations(self):
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
@@ -248,6 +260,7 @@ class PMET():
             ind_list = nearest_neighbour(point_lonlat[0], point_lonlat[1], dmet.longitude, dmet.latitude, num_point)
         else:
             sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+            print(sites)
             ind_list = nearest_neighbour(sites.loc[self.point_name].lon, sites.loc[self.point_name].lat, dmet.longitude,
                                          dmet.latitude, num_point)
             point_lonlat = [sites.loc[self.point_name].lon, sites.loc[self.point_name].lat]

@@ -23,32 +23,77 @@ import matplotlib as mpl
 
 import itertools
 
-abspath = os.path.abspath(__file__)
-dname = os.path.dirname(abspath)
-os.chdir(dname)
+
+def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
+
+    if domain_name or domain_lonlat:
+        if domain_lonlat:
+            print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
+            data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
+        else:
+            data_domain = domain(dt, model, file=file)
+
+        if domain_name != None and domain_name in dir(data_domain):
+            print(f"\n####### Setting up domain: {domain_name} ##########")
+            domain_name = domain_name.strip()
+            if re.search("\(\)$", domain_name):
+                func = f"data_domain.{domain_name}"
+            else:
+                func = f"data_domain.{domain_name}()"
+            eval(func)
+    else:
+        data_domain = None
+    return data_domain
+
+# if len(param_we_want_that_areNOT_available) != 0:
+#        print(f"The requested parameters are not all available. Missing: {param_we_want_that_areNOT_available}")
+#            raise ValueError
+#            break
 
 def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):    #how many ways ca we split up all the possible balls between these kids?
     m_level = 60 if m_level is None else max(m_level)
     filenames = []#all_balls
     tot_param_we_want_that_are_available = []
+    tot_param_we_want_that_areNOT_available = []
     for i in range(0, len(fileobj)):
         param_available= [*fileobj.loc[i].loc["var"].keys()]
         param_we_want_that_are_available = [x for x in param_available if x in all_param]
+        param_we_want_that_areNOT_available = [x for x in all_param if x not in param_we_want_that_are_available]
+        tot_param_we_want_that_areNOT_available += [param_we_want_that_areNOT_available]
         tot_param_we_want_that_are_available+= [param_we_want_that_are_available]
         filenames += [fileobj.loc[i].loc["File"]]
+
+    #getting the unique flattened version of the total parameter that was available and that was not.
+    tot_unique_avalable = []
+    for sublist in tot_param_we_want_that_are_available:
+        for item in sublist:
+            if item not in tot_unique_avalable:
+                tot_unique_avalable.append(item)
+    tot_NOTunique_avalable = []
+    for sublist in tot_param_we_want_that_areNOT_available:
+        for item in sublist:
+            if item not in tot_NOTunique_avalable:
+                tot_NOTunique_avalable.append(item)
+    #Contains the parameters not found in any file.
+    not_available_at_all = [x for x in tot_NOTunique_avalable if x not in tot_unique_avalable]
+    if len(not_available_at_all) != 0:
+        print(f"The requested parameters are not all available. Missing: {not_available_at_all}")
+        raise ValueError
     config_overrides_r = dict(zip(filenames, tot_param_we_want_that_are_available))
-    print("eTOOOTeee")
     print(tot_param_we_want_that_are_available)
+
     def filer_param_by_modellevels(config_overrides_r,tot_param_we_want_that_are_available):
         print(len(fileobj))
         for i in range(0,len(fileobj)):
             thisfileobj = fileobj.loc[i]
             varname = tot_param_we_want_that_are_available[i]
-            if len(varname) == 0:
+            if len(varname) == 0: #jump over file if no parameter needed in it
                 continue
             var = pd.DataFrame.from_dict(thisfileobj.loc["var"], orient="index")
+            varname = [varname] if type(varname) is not list else varname
             pandas_df = var.loc[varname]
             f = pandas_df[pandas_df.dim.astype(str).str.contains("hybrid")] #keep only ml variables.
+
             if len(f) != 0:
                 dimen = [f.apply(lambda row: dict(zip(row['dim'],row['shape'])), axis=1)][0]#.loc["dim"]
                 dimofmodellevel = [dimen.apply(lambda row: [value for key, value in row.items() if 'hybrid' in key.lower()])][0]#.loc["dim
@@ -65,11 +110,14 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
     for key, value in config_overrides_r.items():
          for prm in value:
              config_overrides.setdefault(prm, []).append(key)
-
     keys, values = zip(*config_overrides.items())
-    possible_combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    possible_combinations = [dict(zip(keys, v)) for v in itertools.product(*values)][:10]
     ppd = pd.DataFrame([], columns=["file", "keys", "len", "combo"])
+    ppd.sort_values(by='len', inplace=True)
+
     iii = 0
+    #This for loop takes time if it is many combinations, therefore reduces combinations.
+    # bUT IT CAN BLE glitchy because I CAN NOT sort it based on how many files, but seems python might do this automatically..
     for combination in possible_combinations:
         filesincombination = [*combination.values()]
         uniquelistoffiles = list(set(filesincombination))
@@ -81,42 +129,58 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
     ppd.sort_values(by='len', inplace=True)
     ppd.reset_index(inplace=True)
     our_choice = ppd.loc[0] #The best combination retrieving from least amount of files.
+    print(ppd)
     return ppd
 
-def retrievenow(our_choice):
+def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None):
+    print("HEEEE")
     for i in range(0,len(our_choice.file)):
         ourfilename = our_choice.file[i]
         combo = our_choice.combo
         ourparam = [k for k, v in combo.items() if v == ourfilename]
         ourfileobj = fileobj[fileobj["File"].isin([ourfilename])]
         ourfileobj.reset_index(inplace=True, drop=True)
-        dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date)
+        print("data_domain")
+        print(ourfileobj)
+        data_domain = domain_input_handler(dt=date, model=model, domain_name=domain_name, domain_lonlat=domain_lonlat, file =ourfileobj)
+        dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date,m_level=m_level,data_domain=data_domain)
+        print("real retriete")
+        print(dmet.url)
         dmet.retrieve()
+        print("retriete done ")
+
         if i >= 1: #sec run
+            print("stat merging objects")
             for pm in dmet_old.param:
                 setattr(dmet, pm, getattr(dmet_old, pm))
-                #add unit later
+            print("done objects")
+        #add unit later
         dmet_old = dmet
-    return dmet
+    return dmet, data_domain
 
-def checkget_data_handler(all_param, model, date, step, mbrs=None,levtype=None, p_level= None, m_level=None, file = None):
-
+def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=None, mbrs=None, domain_name=None, domain_lonlat=None):
     fileobj = check_data(model, date=date, step=step).file
     print(fileobj)
     print(all_param)
+    print("start finding choices")
     all_choices = find_best_combinationoffiles(all_param=all_param, fileobj=fileobj,m_level=m_level,p_level=p_level)
     print(all_choices)
+    print("stopped finding choices")
+
     # RETRIEVE FROM THE BEST COMBINATIONS AND TOWARDS WORSE COMBINATION IF ANY ERROR
     for i in range(0, len(all_choices)):
+
         try:
-            dmet = retrievenow(all_choices.loc[i])
+            print("getting data")#our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None
+            dmet,data_domain = retrievenow(our_choice = all_choices.loc[i],model=model,step=step, date=date,fileobj=fileobj,
+                               m_level=m_level,domain_name=domain_name, domain_lonlat=domain_lonlat)
             break
         except:
-            del (dmet)
+            #del (dmet)
             print("Oops!", sys.exc_info()[0], "occurred.")
             print("Next entry.")
             print(" ")
-    return dmet
+    return dmet,data_domain
 
 if __name__ == "__main__":
     import argparse
@@ -127,7 +191,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", default="AromeArctic", help="MEPS or AromeArctic")
     parser.add_argument("--domain_name", default=None, help="see domain.py")
     parser.add_argument("--domain_lonlat", default=None, nargs="+", type=float, help="lonmin lonmax latmin latmax")
-    parser.add_argument("--param_all", default=None, nargs="+", type=string)
+    parser.add_argument("--param_all", default=None, nargs="+", type=str)
     parser.add_argument("--point_name", default=None, help="see sites.csv")
     parser.add_argument("--point_lonlat", default=None, nargs="+", type=float, help="lon lat")
     parser.add_argument("--point_num", default=1, type=int)
@@ -147,16 +211,16 @@ if __name__ == "__main__":
     param_sfc = ["specific_humidity_2m"]
     all_param = param_sfc + param_ml + param_pl
 
-    fileobj = check_data(model, date=date, step=step).file
+    fileobj = check_data(args.model, date=str(args.datetime[0]), step=args.steps).file
     all_choices = find_best_combinationoffiles(all_param, fileobj)
 
     #RETRIEVE FROM THE BEST COMBINATIONS AND TOWARDS WORSE COMBINATION IF ANY ERROR
     for i in range(0, len(all_choices)):
         try:
-            dmet = retrievenow(all_choices.loc[i])
+            dmet = retrievenow(all_choices.loc[i],args.model,args.steps, str(args.datetime[0]))
             break
         except:
-            del(dmet)
+            #del(dmet)
             print("Oops!", sys.exc_info()[0], "occurred.")
             print("Next entry.")
             print(" ")
