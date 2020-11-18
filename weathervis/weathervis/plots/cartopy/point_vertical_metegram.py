@@ -134,6 +134,10 @@ class VERT_MET():
         dmet_ml = None;
         dmet_pl = None;
         dmet_sfc = None;
+        check_all=None
+        check_pl = None
+        check_sfc = None
+        check_ml = None
         dmet = None
         split = False
         print("\n######## Checking if your request is possibel ############")
@@ -150,16 +154,15 @@ class VERT_MET():
                                       p_level=self.p_level,
                                       mbrs=self.mbrs) if self.param_pl is not None else None
                 check_sfc = check_data(date=self.date, model=self.model, param=self.param_sfc, step=self.steps,
-                                       mbrs=mbrs) if param_sfc is not None else None
+                                       mbrs=self.mbrs) if self.param_sfc is not None else None
                 check_ml = check_data(date=self.date, model=self.model, param=self.param_ml, step=self.steps,
                                       m_level=self.m_level,
-                                      mbrs=self.mbrs) if param_ml is not None else None
+                                      mbrs=self.mbrs) if self.param_ml is not None else None
             except ValueError:
                 print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
                 sys.exit(1)
                 # break
         print("--------> Found match for your request ############")
-        print(check_all.file)
         if self.param_sfx:
             print("\n######## Checking if your sfx request is possibel ############")
             try:
@@ -190,28 +193,30 @@ class VERT_MET():
                             step=self.steps, date=self.date, p_level=self.p_level, m_level=self.m_level, mbrs=self.mbrs)
             print("\n######## Retriving data ############")
             print(f"--------> from: {dmet.url} ")
-            dmet.retrieve()
-            dmet_ml = dmet  # two names for same value, no copying done.
-            dmet_pl = dmet
-            dmet_sfc = dmet
+            #dmet_ml = dmet  # two names for same value, no copying done.
+            #dmet_pl = dmet
+            #dmet_sfc = dmet
 
         else:
             # get sfc level data
+            fixed_var = np.array(["ap","b", "ap2","b2", "hybrid","hybrid2"])
             file_sfc = check_sfc.file.loc[0]
-            data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_sfc)
-            dmet_sfc = get_data(model=model, param=param_sfc, file=file_sfc, step=steps, date=dt,
-                                data_domain=data_domain, mbrs=mbrs)
-
+            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat, file_sfc)
+            dmet_sfc = get_data(model=self.model, param=self.param_sfc, file=file_sfc, step=self.steps, date=self.date,
+                                data_domain=data_domain, mbrs=self.mbrs)
+            #remove param we do not want overwritten
+            for val in fixed_var: dmet_sfc.param = np.delete(dmet_sfc.param, np.where(dmet_sfc.param==val)) if val in dmet_sfc.param else dmet_sfc.param
+            #print(dmet_sfc.param)
             file_pl = check_pl.file.loc[0]
             # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_pl)
-            dmet_pl = get_data(model=model, param=param_pl, file=file_pl, step=steps, date=dt,
-                               data_domain=data_domain, p_level=p_level, mbrs=mbrs)
+            dmet_pl = get_data(model=self.model, param=self.param_pl, file=file_pl, step=self.steps, date=self.date,
+                               data_domain=data_domain, p_level=self.p_level, mbrs=self.mbrs)
+            for val in fixed_var: dmet_pl.param = np.delete(dmet_pl.param, np.where(dmet_pl.param==val)) if val in dmet_pl.param else dmet_pl.param
 
             file_ml = check_ml.file.loc[0]
             # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_ml)
-            dmet_ml = get_data(model=model, param=param_ml, file=file_ml, step=steps, date=dt,
-                               data_domain=data_domain, m_level=m_level, mbrs=mbrs)
-
+            dmet_ml = get_data(model=self.model, param=self.param_ml, file=file_ml, step=self.steps, date=self.date,
+                               data_domain=data_domain, m_level=self.m_level, mbrs=self.mbrs)
             print("\n######## Retriving data ############")
             print(f"--------> from: {dmet_pl.url} ")
             dmet_pl.retrieve()
@@ -221,9 +226,22 @@ class VERT_MET():
             print("\n######## Retriving data ############")
             print(f"--------> from: {dmet_sfc.url} ")
             dmet_sfc.retrieve()
+            dmet = dmet_ml
 
-        for pm in self.param_sfx:
-            setattr(dmet, pm, getattr(dmet_sfx, pm))
+        if dmet_sfx is not None:
+            for pm in dmet_sfx.param:
+                setattr(dmet, pm, getattr(dmet_sfx, pm))
+                #setattr(dmet, pm, getattr(dmet_sfx, pm))
+                #units
+        if dmet_pl is not None:
+            for pm in dmet_pl.param:
+                setattr(dmet, pm, getattr(dmet_pl, pm))
+        #if dmet_ml is not None:
+        #    for pm in dmet_ml.param:
+        #        setattr(dmet, pm, getattr(dmet_ml, pm))
+        if dmet_sfc is not None:
+            for pm in dmet_sfc.param:
+                setattr(dmet, pm, getattr(dmet_sfc, pm))
 
         self.dmet = dmet
         self.data_domain = data_domain
@@ -231,12 +249,15 @@ class VERT_MET():
 
     def calculations(self):
         self.dmet.p = ml2pl(self.dmet.ap, self.dmet.b, self.dmet.surface_air_pressure)
+        print(np.shape(self.dmet.ap))
+
         self.dmet.u,self.dmet.v = xwind2uwind(self.dmet.x_wind_ml, self.dmet.y_wind_ml, self.dmet.alpha)
         self.dmet.velocity = wind_speed(self.dmet.x_wind_ml, self.dmet.y_wind_ml)
         self.dmet.heighttoreturn = ml2alt_gl(air_temperature_ml=self.dmet.air_temperature_ml,
                                            specific_humidity_ml=self.dmet.specific_humidity_ml, ap=self.dmet.ap,
                                            b=self.dmet.b,
                                            surface_air_pressure=self.dmet.surface_air_pressure)
+        print(np.shape(self.dmet.heighttoreturn))
         self.dmet.dtdz = lapserate(self.dmet.air_temperature_ml, self.dmet.heighttoreturn, self.dmet.air_temperature_0m)
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
         self.dmet.theta = potential_temperatur(self.dmet.air_temperature_ml, self.dmet.p)

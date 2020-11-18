@@ -2,6 +2,8 @@ from weathervis.config import *
 from weathervis.domain import *
 from weathervis.get_data import *
 from weathervis.calculation import *
+from weathervis.checkget_data_handler import *
+
 import os
 import matplotlib.pyplot as plt
 import matplotlib
@@ -108,7 +110,7 @@ class PMET():
         self.num_point = num_point
         date = str(date)
 
-    def retrieve_handler(self):
+    def retrieve_handler_old(self):
         dmet_sfx = None;
         dmet_ml = None;
         dmet_pl = None;
@@ -127,15 +129,14 @@ class PMET():
                 check_pl = check_data(date=self.date, model=self.model, param=self.param_pl, step=self.steps, p_level=self.p_level,
                                       mbrs=self.mbrs) if self.param_pl is not None else None
                 check_sfc = check_data(date=self.date, model=self.model, param=self.param_sfc, step=self.steps,
-                                       mbrs=mbrs) if param_sfc is not None else None
+                                       mbrs=self.mbrs) if self.param_sfc is not None else None
                 check_ml = check_data(date=self.date, model=self.model, param=self.param_ml, step=self.steps, m_level=self.m_level,
-                                      mbrs=self.mbrs) if param_ml is not None else None
+                                      mbrs=self.mbrs) if self.param_ml is not None else None
             except ValueError:
                 print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
                 sys.exit(1)
                 # break
         print("--------> Found match for your request ############")
-        print(check_all.file)
         if self.param_sfx:
             print("\n######## Checking if your sfx request is possibel ############")
             try:
@@ -173,19 +174,22 @@ class PMET():
         else:
             # get sfc level data
             file_sfc = check_sfc.file.loc[0]
-            data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_sfc)
-            dmet_sfc = get_data(model=model, param=param_sfc, file=file_sfc, step=steps, date=dt,
-                                data_domain=data_domain, mbrs=mbrs)
+            fixed_var = np.array(["ap", "b", "ap2", "b2", "hybrid", "hybrid2"])
+            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat, file_sfc)
+            dmet_sfc = get_data(model=self.model, param=self.param_sfc, file=file_sfc, step=self.steps, date=dt,
+                                data_domain=data_domain, mbrs=self.mbrs)
+            for val in fixed_var: dmet_sfc.param = np.delete(dmet_sfc.param, np.where(dmet_sfc.param==val)) if val in dmet_sfc.param else dmet_sfc.param
 
             file_pl = check_pl.file.loc[0]
             # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_pl)
-            dmet_pl = get_data(model=model, param=param_pl, file=file_pl, step=steps, date=dt,
-                               data_domain=data_domain, p_level=p_level, mbrs=mbrs)
+            dmet_pl = get_data(model=self.model, param=self.param_pl, file=file_pl, step=self.steps, date=dt,
+                               data_domain=data_domain, p_level=self.p_level, mbrs=self.mbrs)
+            for val in fixed_var: dmet_pl.param = np.delete(dmet_pl.param, np.where(dmet_pl.param==val)) if val in dmet_pl.param else dmet_pl.param
 
             file_ml = check_ml.file.loc[0]
             # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_ml)
-            dmet_ml = get_data(model=model, param=param_ml, file=file_ml, step=steps, date=dt,
-                               data_domain=data_domain, m_level=m_level, mbrs=mbrs)
+            dmet_ml = get_data(model=self.model, param=self.param_ml, file=file_ml, step=self.steps, date=dt,
+                               data_domain=data_domain, m_level=self.m_level, mbrs=self.mbrs)
 
             print("\n######## Retriving data ############")
             print(f"--------> from: {dmet_pl.url} ")
@@ -196,12 +200,40 @@ class PMET():
             print("\n######## Retriving data ############")
             print(f"--------> from: {dmet_sfc.url} ")
             dmet_sfc.retrieve()
+            dmet = dmet_ml
 
-        for pm in self.param_sfx:
-            setattr(dmet, pm, getattr(dmet_sfx, pm))
+        if dmet_sfx is not None:
+            for pm in dmet_sfx.param:
+                setattr(dmet, pm, getattr(dmet_sfx, pm))
+                # setattr(dmet, pm, getattr(dmet_sfx, pm))
+                # units
+        if dmet_pl is not None:
+            for pm in dmet_pl.param:
+                setattr(dmet, pm, getattr(dmet_pl, pm))
+            # if dmet_ml is not None:
+            #    for pm in dmet_ml.param:
+            #        setattr(dmet, pm, getattr(dmet_ml, pm))
+        if dmet_sfc is not None:
+            for pm in dmet_sfc.param:
+                setattr(dmet, pm, getattr(dmet_sfc, pm))
+
 
         self.dmet = dmet
         self.data_domain = data_domain
+        #return dmet, data_domain
+
+    def retrieve_handler(self):
+        dmet_sfx = None;
+        dmet_ml = None;
+        dmet_pl = None;
+        dmet_sfc = None;
+        dmet = None
+        split = False
+        print("\n######## Checking if your request is possibel ############")
+        self.param = self.param_pl + self.param_ml + self.param_sfc + self.param_sfx
+        dmet = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps, p_level=self.p_level, m_level=self.m_level,
+                                   mbrs=self.mbrs)
+
         #return dmet, data_domain
 
     def calculations(self):
@@ -216,10 +248,10 @@ class PMET():
             ind_list = nearest_neighbour(point_lonlat[0], point_lonlat[1], dmet.longitude, dmet.latitude, num_point)
         else:
             sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
-            ind_list = nearest_neighbour(sites.loc[point_name].lon, sites.loc[point_name].lat, dmet.longitude,
+            ind_list = nearest_neighbour(sites.loc[self.point_name].lon, sites.loc[self.point_name].lat, dmet.longitude,
                                          dmet.latitude, num_point)
-            point_lonlat = [sites.loc[point_name].lon, sites.loc[point_name].lat]
-        poi = ind_list[0:num_point]
+            point_lonlat = [sites.loc[self.point_name].lon, sites.loc[self.point_name].lat]
+        poi = ind_list[0:self.num_point]
         indx_sea = np.where(dmet.land_area_fraction[0][0][:][:] == 0)
         indx_land = np.where(dmet.land_area_fraction[0][0][:][:] == 1)
         indx_alldomain = np.where(dmet.latitude != None)

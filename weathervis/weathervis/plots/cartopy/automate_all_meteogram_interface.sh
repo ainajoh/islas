@@ -4,7 +4,7 @@
 #############################################################################
 modelrun=("2018031700")
 point_num=1
-steps=(0 4)
+steps=(0 66)
 model="AromeArctic"
 #NB: point_name and domain_name has to be equal length, so if u want to run another point in the same domain you dublicate the domain_name
 point_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso-Holt" "Bjornoya" "NYAlesund" "MetBergen")

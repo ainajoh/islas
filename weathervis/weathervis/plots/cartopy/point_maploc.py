@@ -105,8 +105,6 @@ class MAP():
         self.date = date
 
 
-
-
     def points(self):
         point_lonlat = self.point_lonlat; dmet = self.dmet; num_point = self.num_point
         ind_list = []
