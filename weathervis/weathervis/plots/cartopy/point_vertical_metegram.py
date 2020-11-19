@@ -258,6 +258,7 @@ class VERT_MET():
                                            b=self.dmet.b,
                                            surface_air_pressure=self.dmet.surface_air_pressure)
         print(np.shape(self.dmet.heighttoreturn))
+
         self.dmet.dtdz = lapserate(self.dmet.air_temperature_ml, self.dmet.heighttoreturn, self.dmet.air_temperature_0m)
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
         self.dmet.theta = potential_temperatur(self.dmet.air_temperature_ml, self.dmet.p)

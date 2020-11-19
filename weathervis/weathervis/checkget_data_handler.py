@@ -76,11 +76,11 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
                 tot_NOTunique_avalable.append(item)
     #Contains the parameters not found in any file.
     not_available_at_all = [x for x in tot_NOTunique_avalable if x not in tot_unique_avalable]
-    if len(not_available_at_all) != 0:
-        print(f"The requested parameters are not all available. Missing: {not_available_at_all}")
-        raise ValueError
+    #UNCOMMENT IF YOU WANT IT TO STOP WHEN PARAM YOU WANT IS NOT FOUND AT ALL
+    #if len(not_available_at_all) != 0:
+    #    print(f"The requested parameters are not all available. Missing: {not_available_at_all}")
+    #    raise ValueError #what if we set these variables to None such that no error eill occur with plotting, only blanks
     config_overrides_r = dict(zip(filenames, tot_param_we_want_that_are_available))
-    print(tot_param_we_want_that_are_available)
 
     def filer_param_by_modellevels(config_overrides_r,tot_param_we_want_that_are_available):
         print(len(fileobj))
@@ -94,13 +94,14 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
             pandas_df = var.loc[varname]
             f = pandas_df[pandas_df.dim.astype(str).str.contains("hybrid")] #keep only ml variables.
 
-            if len(f) != 0:
+            if len(f) != 0: #if var depends on hybrid.
                 dimen = [f.apply(lambda row: dict(zip(row['dim'],row['shape'])), axis=1)][0]#.loc["dim"]
                 dimofmodellevel = [dimen.apply(lambda row: [value for key, value in row.items() if 'hybrid' in key.lower()])][0]#.loc["dim
                 removethese = dimofmodellevel[dimofmodellevel.apply(lambda row: row[0]<m_level)]#.loc["dim"]
                 val = [*removethese.index]
                 key = thisfileobj["File"]
                 config_overrides_r[key] = [x for x in config_overrides_r[key] if x not in val]
+
             return config_overrides_r
 
     config_overrides_r = filer_param_by_modellevels(config_overrides_r,tot_param_we_want_that_are_available)
@@ -130,10 +131,21 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
     ppd.reset_index(inplace=True)
     our_choice = ppd.loc[0] #The best combination retrieving from least amount of files.
     print(ppd)
-    return ppd
+    return ppd,not_available_at_all
 
-def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None):
+def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None,bad_param=[]):
     print("HEEEE")
+    fixed_var = ["ap", "b", "ap2", "b2", "pressure", "hybrid", "hybrid2","hybrid0"]  # this should be gotten from get_data
+    #indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
+    #             "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level, "hybrid0": non,
+    #             "height0": non, "height1": non, "height2": non,
+    #             "height3": non, "height7": non, "height6": non, 'height_above_msl': non, "mean_sea_level": non,
+    #             "atmosphere_as_single_layer": non}
+    ap_prev = 0
+    b_prev = 0
+    ap2_prev = 0
+    b2_prev = 0
+
     for i in range(0,len(our_choice.file)):
         ourfilename = our_choice.file[i]
         combo = our_choice.combo
@@ -148,22 +160,62 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, d
         print(dmet.url)
         dmet.retrieve()
         print("retriete done ")
-
+        #for pm in dmet_new:
         if i >= 1: #sec run
             print("stat merging objects")
             for pm in dmet_old.param:
+                #The if statements should be done more auto, maybe a dictionary.
+                if pm in fixed_var:
+                    ap_prev = len(getattr(dmet_old, pm)) if pm in dmet_old.param else 0
+                    ap_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
+                    if ap_next > ap_prev:  # if next is bigger dont overwrite with old one
+                        continue
+
+                #if pm == "ap":
+                #    print("inside aaaap ")
+                #    ap_prev = len(getattr(dmet_old, pm))
+                #    ap_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
+                #    if ap_next > ap_prev: #if next is bigger dont overwrite with old one
+                #        continue
+                #    #ap_prev = ap_next
+                #if pm == "b":
+                #    b_prev = len(getattr(dmet_old, pm))
+                ##    b_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
+                 #   if b_next > b_prev:
+                 #       continue
+                 #   #b_prev = b_next
+                #if pm == "ap2":
+                 #   ap2_prev = len(getattr(dmet_old, pm))
+                 #   ap2_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
+                 #   if ap2_next > ap2_prev:
+                 #       continue
+                    #ap2_prev = ap2_next
+
+                #if pm == "b2":
+                #    b2_prev = len(getattr(dmet_old, pm))
+                #    b2_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
+
+                #    if b2_next > b2_prev:
+                #        continue
+                    #b2_prev = b2_next
+
                 setattr(dmet, pm, getattr(dmet_old, pm))
             print("done objects")
         #add unit later
         dmet_old = dmet
-    return dmet, data_domain
+    for bparam in bad_param:
+        setattr(dmet, bparam, None)
+
+
+
+    return dmet, data_domain,bad_param
 
 def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=None, mbrs=None, domain_name=None, domain_lonlat=None):
     fileobj = check_data(model, date=date, step=step).file
     print(fileobj)
     print(all_param)
     print("start finding choices")
-    all_choices = find_best_combinationoffiles(all_param=all_param, fileobj=fileobj,m_level=m_level,p_level=p_level)
+    all_choices, bad_param  = find_best_combinationoffiles(all_param=all_param, fileobj=fileobj,m_level=m_level,p_level=p_level)
     print(all_choices)
     print("stopped finding choices")
 
@@ -172,15 +224,17 @@ def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=N
 
         try:
             print("getting data")#our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None
-            dmet,data_domain = retrievenow(our_choice = all_choices.loc[i],model=model,step=step, date=date,fileobj=fileobj,
-                               m_level=m_level,domain_name=domain_name, domain_lonlat=domain_lonlat)
+            dmet,data_domain,bad_param = retrievenow(our_choice = all_choices.loc[i],model=model,step=step, date=date,fileobj=fileobj,
+                               m_level=m_level,domain_name=domain_name, domain_lonlat=domain_lonlat, bad_param = bad_param)
             break
         except:
             #del (dmet)
             print("Oops!", sys.exc_info()[0], "occurred.")
             print("Next entry.")
             print(" ")
-    return dmet,data_domain
+    #for i in range(0,bad_param):
+
+    return dmet,data_domain,bad_param
 
 if __name__ == "__main__":
     import argparse
@@ -212,7 +266,7 @@ if __name__ == "__main__":
     all_param = param_sfc + param_ml + param_pl
 
     fileobj = check_data(args.model, date=str(args.datetime[0]), step=args.steps).file
-    all_choices = find_best_combinationoffiles(all_param, fileobj)
+    all_choices, bad_param = find_best_combinationoffiles(all_param, fileobj)
 
     #RETRIEVE FROM THE BEST COMBINATIONS AND TOWARDS WORSE COMBINATION IF ANY ERROR
     for i in range(0, len(all_choices)):
