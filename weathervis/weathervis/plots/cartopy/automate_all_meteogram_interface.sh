@@ -3,19 +3,24 @@
 #These two python scripts runs again: point_maploc.py, point_vertical_meteogram.py and point_meteogram.py
 #############################################################################
 modelrun=("2018031700")
+modelrun=("2020022200")
 point_num=1
-steps=(0 66)
-model="AromeArctic"
+steps=(0 24)
+model="AromeArctic"    #"AromeArctic"
 #NB: point_name and domain_name has to be equal length, so if u want to run another point in the same domain you dublicate the domain_name
-point_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso-Holt" "Bjornoya" "NYAlesund" "MetBergen")
-domain_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso-Holt" "Bjornoya" "NYAlesund" "MetBergen")
+#point_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN" "MetBergen")
+#domain_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN" "MetBergen")
+point_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN")
+domain_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN")
+#point_name=("MetBergen")
+#domain_name=("MetBergen")
 #Make overview map
 map_loc="python point_maploc.py --datetime ${modelrun[0]} --point_name ${point_name[@]}"
 echo $map_loc
 $map_loc
 
 for dt in $modelrun; do
-  runstring="python all_meteogram_interface.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model "
+  runstring="python all_meteogram_interface.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"
   for ((i=0;i<${#point_name[@]};++i)); do
     runstring="$runstring --domain_name ${domain_name[i]} --point_name ${point_name[i]}"
     echo $runstring

@@ -133,17 +133,17 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
 
 
-      cmap = plt.get_cmap("viridis")# PuBuGn PuBuGn, nipy_spectral twilight  , plasma, gist_ncar viridis  inferno ,,,rainbow
-      #lvl = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000]
-      lvl = [ 0.01, 0.2, 0.5, 1, 3, 5, 10, 15, 20, 25, 30]
+      cmap = plt.get_cmap("tab20c")
+      lvl = [0.01, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, 25, 30]
       norm = mcolors.BoundaryNorm(lvl, cmap.N)
+
 
       try: #workaround for a stupid matplotlib error not handling when all values are outside of range in lvl or all just nans..
         #https://github.com/SciTools/cartopy/issues/1290
         #cmap =  mcolors.ListedColormap('hsv', 'hsv') #plt.get_cmap("hsv")PuBu
         #TP.filled(np.nan) #fill mask with nan to avoid:  UserWarning: Warning: converting a masked element to nan.
         CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, TP, zorder=1,
-                               cmap=cmap, norm = norm, alpha=0.6, antialiased=True,
+                               cmap=cmap, norm = norm, alpha=0.4, antialiased=True,
                                levels=lvl, extend = "max")#
       except:
         pass

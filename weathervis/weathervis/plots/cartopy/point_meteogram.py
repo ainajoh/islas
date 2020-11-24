@@ -110,118 +110,6 @@ class PMET():
         self.num_point = num_point
         date = str(date)
 
-    def retrieve_handler_old(self):
-        dmet_sfx = None;
-        dmet_ml = None;
-        dmet_pl = None;
-        dmet_sfc = None;
-        dmet = None
-        split = False
-        print("\n######## Checking if your request is possibel ############")
-        try:
-            self.param = self.param_pl + self.param_ml + self.param_sfc
-            check_all = check_data(date=self.date, model=self.model, param=self.param, step=self.steps, p_level=self.p_level, m_level=self.m_level,
-                                   mbrs=self.mbrs)
-        except ValueError:
-            split = True
-            try:
-                print("--------> Splitting up your request to find match ############")
-                check_pl = check_data(date=self.date, model=self.model, param=self.param_pl, step=self.steps, p_level=self.p_level,
-                                      mbrs=self.mbrs) if self.param_pl is not None else None
-                check_sfc = check_data(date=self.date, model=self.model, param=self.param_sfc, step=self.steps,
-                                       mbrs=self.mbrs) if self.param_sfc is not None else None
-                check_ml = check_data(date=self.date, model=self.model, param=self.param_ml, step=self.steps, m_level=self.m_level,
-                                      mbrs=self.mbrs) if self.param_ml is not None else None
-            except ValueError:
-                print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
-                sys.exit(1)
-                # break
-        print("--------> Found match for your request ############")
-        if self.param_sfx:
-            print("\n######## Checking if your sfx request is possibel ############")
-            try:
-                check_sfx = check_data(date=self.date, model=self.model, param=self.param_sfx, step=self.steps)
-            except ValueError:
-                param_sfx = ["SFX_SST", "SFX_H", "SFX_LE", "SFX_TS"]
-                try:
-                    check_sfx = check_data(date=self.date, model=self.model, param=self.param_sfx, step=self.steps)
-                except ValueError:
-                    print(
-                        "!!!!! Missing surfex data. Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
-                    sys.exit(1)
-                    # break
-            print("--------> Found match for your sfx request ############")
-            print(check_sfx.file)
-            print("\n######## Retriving sfx data ############")
-            file_sfx = check_sfx.file.loc[0]
-            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat, file_sfx)
-            dmet_sfx = get_data(model=self.model, data_domain=data_domain, param=self.param_sfx, file=file_sfx, step=self.steps,
-                                date=self.date)
-            dmet_sfx.retrieve()
-
-        if not split:
-            file_all = check_all.file.loc[0]
-            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat,file_all)
-            dmet = get_data(model=self.model, data_domain=data_domain, param=self.param, file=file_all,
-                            step=self.steps, date=self.date, p_level=self.p_level, m_level=self.m_level, mbrs=self.mbrs)
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet.url} ")
-            dmet.retrieve()
-            dmet_ml = dmet  # two names for same value, no copying done.
-            dmet_pl = dmet
-            dmet_sfc = dmet
-
-        else:
-            # get sfc level data
-            file_sfc = check_sfc.file.loc[0]
-            fixed_var = np.array(["ap", "b", "ap2", "b2", "hybrid", "hybrid2"])
-            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat, file_sfc)
-            dmet_sfc = get_data(model=self.model, param=self.param_sfc, file=file_sfc, step=self.steps, date=dt,
-                                data_domain=data_domain, mbrs=self.mbrs)
-            for val in fixed_var: dmet_sfc.param = np.delete(dmet_sfc.param, np.where(dmet_sfc.param==val)) if val in dmet_sfc.param else dmet_sfc.param
-
-            file_pl = check_pl.file.loc[0]
-            # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_pl)
-            dmet_pl = get_data(model=self.model, param=self.param_pl, file=file_pl, step=self.steps, date=dt,
-                               data_domain=data_domain, p_level=self.p_level, mbrs=self.mbrs)
-            for val in fixed_var: dmet_pl.param = np.delete(dmet_pl.param, np.where(dmet_pl.param==val)) if val in dmet_pl.param else dmet_pl.param
-
-            file_ml = check_ml.file.loc[0]
-            # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_ml)
-            dmet_ml = get_data(model=self.model, param=self.param_ml, file=file_ml, step=self.steps, date=dt,
-                               data_domain=data_domain, m_level=self.m_level, mbrs=self.mbrs)
-
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet_pl.url} ")
-            dmet_pl.retrieve()
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet_ml.url} ")
-            dmet_ml.retrieve()
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet_sfc.url} ")
-            dmet_sfc.retrieve()
-            dmet = dmet_ml
-
-        if dmet_sfx is not None:
-            for pm in dmet_sfx.param:
-                setattr(dmet, pm, getattr(dmet_sfx, pm))
-                # setattr(dmet, pm, getattr(dmet_sfx, pm))
-                # units
-        if dmet_pl is not None:
-            for pm in dmet_pl.param:
-                setattr(dmet, pm, getattr(dmet_pl, pm))
-            # if dmet_ml is not None:
-            #    for pm in dmet_ml.param:
-            #        setattr(dmet, pm, getattr(dmet_ml, pm))
-        if dmet_sfc is not None:
-            for pm in dmet_sfc.param:
-                setattr(dmet, pm, getattr(dmet_sfc, pm))
-
-
-        self.dmet = dmet
-        self.data_domain = data_domain
-        #return dmet, data_domain
-
     def retrieve_handler(self):
         dmet_sfx = None;
         dmet_ml = None;
@@ -231,7 +119,7 @@ class PMET():
         split = False
         print("\n######## Checking if your request is possibel ############")
         self.param = self.param_pl + self.param_ml + self.param_sfc + self.param_sfx
-        dmet,data_domain = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps,
+        dmet,data_domain,bad_param = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps,
                                      p_level=self.p_level, m_level=self.m_level,mbrs=self.mbrs,
                                      domain_name=self.domain_name, domain_lonlat=self.domain_lonlat)
 
@@ -386,7 +274,7 @@ class PMET():
                 if maxq > 1.5:
                     topidx = round_up(maxq, 1)
                 axm2.set_ylim(bottom=0, top=topidx + 0.10 * topidx)
-            return axm2, subplot1_labels, labeltext
+            return axm2, subplot2_labels, labeltext2
         def CloudType(subplot2_labels=[],labeltext2=[]):
             axm2_1 = axm2.twinx()
             if dmet.cloud_area_fraction is not None:
@@ -394,7 +282,7 @@ class PMET():
                                         zorder=1, color="gray", alpha=0.6)
                 tot_clf = axm2_1.plot(dmet.time_normal, dmet.cloud_area_fraction[:, -1, jindx, iindx] * 100, zorder=1,
                               color="k")
-                tot_patch = mpl.patches.Patch(color='r', alpha=0.5, linewidth=0)
+                tot_patch = mpl.patches.Patch(color='gray', alpha=0.5, linewidth=0)
                 subplot2_labels += [(tot_clf[0], tot_patch)]
                 labeltext2 += ["tot.cloud"]
 
@@ -415,9 +303,9 @@ class PMET():
                 axm2_1.set_ylabel('Cloud cover %', color="k")
                 axm2_1.tick_params(axis="y", colors="k")
                 # label
-            return axm2_1, subplot2_labels, labeltext
-        axm2, subplot2_labels, labeltext = q(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
-        axm2_1, subplot2_labels, labeltext = CloudType(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
+            return axm2_1, subplot2_labels, labeltext2
+        axm2, subplot2_labels, labeltext2 = q(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
+        axm2_1, subplot2_labels, labeltext2 = CloudType(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
         axm2_1.legend(subplot2_labels,labeltext2,loc='upper left').set_zorder(99999)
 
         #PLOT3##################################################################################################
@@ -454,8 +342,8 @@ class PMET():
             subplot3_labels += [P[0]]
             labeltext3 += ["mean. surf. pressure"]
             return axm3_2, subplot3_labels, labeltext3
-        axm3, subplot3_labels, labeltext = wind(subplot3_labels, labeltext3)
-        axm3_2, subplot3_labels, labeltext = pressure(subplot3_labels, labeltext3)
+        axm3, subplot3_labels, labeltext3 = wind(subplot3_labels, labeltext3)
+        axm3_2, subplot3_labels, labeltext3 = pressure(subplot3_labels, labeltext3)
         axm3_2.legend(subplot3_labels, labeltext3, loc='upper left').set_zorder(99999)
 
         #PLOT4##################################################################################################
@@ -662,15 +550,15 @@ class PMET():
                 ws_mean = np.mean(wspeed, axis=(1))
                 WIND_MEAN = axma3.plot(dmet.time_normal, ws_mean, zorder=1, color="darkmagenta", linewidth=3, alpha=1)
                 WIND = axma3.plot(dmet.time_normal, wspeed, zorder=1, color="darkmagenta", linewidth=0.2, alpha=0.7)
-                subplot3_labels = [WIND_MEAN[0]]
-                labeltext3 = ["10m wind (10min mean)"]
+                subplot3_labels += [WIND_MEAN[0]]
+                labeltext3 += ["10m wind (10min mean)"]
             if dmet.y_wind_gust_10m is not None:
                 wspeed_gust = np.sqrt(dmet.x_wind_gust_10m[:, 0, indx[0], indx[1]] ** 2 + dmet.y_wind_gust_10m[:, 0, indx[0],indx[1]] ** 2)
                 wsg_mean = np.mean(wspeed_gust, axis=(1))
                 GUST_MEAN = axma3.plot(dmet.time_normal, wsg_mean, zorder=0, color="magenta", linewidth=3, alpha=1)
                 GUST = axma3.plot(dmet.time_normal, wspeed_gust, zorder=0, color="magenta", linewidth=0.2, alpha=0.7)
-                subplot3_labels = [GUST_MEAN[0]]
-                labeltext3 = ["10m wind gust"]
+                subplot3_labels += [GUST_MEAN[0]]
+                labeltext3 += ["10m wind gust"]
 
             if dmet.y_wind_10m is None and dmet.y_wind_gust_10m is None:
                 print("No wind available")
@@ -685,8 +573,8 @@ class PMET():
                 p_mean = np.mean(dmet.surface_air_pressure[:, 0, indx[0], indx[1]], axis=(1))
                 PP = axma3_3.plot(dmet.time_normal, p_mean / 100, zorder=1, color="k", linewidth=3)
                 axma3_3.set_ylabel(' Surface Pressure (hPa)')
-                subplot3_labels = [PP[0]]
-                labeltext3 = ["mean surf. pressure"]
+                subplot3_labels += [PP[0]]
+                labeltext3 += ["mean surf. pressure"]
             return axma3_3,subplot3_labels,labeltext3
         axma3, subplot3_labels, labeltext3 = wind(subplot3_labels=subplot3_labels, labeltext3=labeltext3)
         axma3_3, subplot3_labels, labeltext3 = pressure(subplot3_labels=subplot3_labels, labeltext3=labeltext3)
@@ -733,7 +621,7 @@ class PMET():
                 labeltext4 += ["Rain", "Snow", "Graupel"]
             return axma4_1, subplot4_labels, labeltext4
         axma4, subplot4_labels, labeltext4 = fluxes(subplot4_labels=subplot4_labels, labeltext4=labeltext4)
-        axma4_1,subplot4_labels, labeltext4 = precip_type(subplot4_labels=subplot4_labels, labeltext4=subplot4_labels)
+        axma4_1,subplot4_labels, labeltext4 = precip_type(subplot4_labels=subplot4_labels, labeltext4=labeltext4)
         axma4_1.legend(subplot4_labels,labeltext4, loc='upper left').set_zorder(99999)
 
         #################################

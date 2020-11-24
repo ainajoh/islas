@@ -75,7 +75,9 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
             if item not in tot_NOTunique_avalable:
                 tot_NOTunique_avalable.append(item)
     #Contains the parameters not found in any file.
-    not_available_at_all = [x for x in tot_NOTunique_avalable if x not in tot_unique_avalable]
+    bad_param = [x for x in tot_NOTunique_avalable if x not in tot_unique_avalable]
+    #if bad_param:
+
     #UNCOMMENT IF YOU WANT IT TO STOP WHEN PARAM YOU WANT IS NOT FOUND AT ALL
     #if len(not_available_at_all) != 0:
     #    print(f"The requested parameters are not all available. Missing: {not_available_at_all}")
@@ -131,9 +133,9 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
     ppd.reset_index(inplace=True)
     our_choice = ppd.loc[0] #The best combination retrieving from least amount of files.
     print(ppd)
-    return ppd,not_available_at_all
+    return ppd,bad_param
 
-def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None,bad_param=[]):
+def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None,bad_param=[],bad_param_sfx=[]):
     print("HEEEE")
     fixed_var = ["ap", "b", "ap2", "b2", "pressure", "hybrid", "hybrid2","hybrid0"]  # this should be gotten from get_data
     #indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
@@ -170,41 +172,20 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, d
                     ap_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
                     if ap_next > ap_prev:  # if next is bigger dont overwrite with old one
                         continue
-
-                #if pm == "ap":
-                #    print("inside aaaap ")
-                #    ap_prev = len(getattr(dmet_old, pm))
-                #    ap_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
-                #    if ap_next > ap_prev: #if next is bigger dont overwrite with old one
-                #        continue
-                #    #ap_prev = ap_next
-                #if pm == "b":
-                #    b_prev = len(getattr(dmet_old, pm))
-                ##    b_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
-                 #   if b_next > b_prev:
-                 #       continue
-                 #   #b_prev = b_next
-                #if pm == "ap2":
-                 #   ap2_prev = len(getattr(dmet_old, pm))
-                 #   ap2_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
-                 #   if ap2_next > ap2_prev:
-                 #       continue
-                    #ap2_prev = ap2_next
-
-                #if pm == "b2":
-                #    b2_prev = len(getattr(dmet_old, pm))
-                #    b2_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
-
-                #    if b2_next > b2_prev:
-                #        continue
-                    #b2_prev = b2_next
-
                 setattr(dmet, pm, getattr(dmet_old, pm))
             print("done objects")
         #add unit later
         dmet_old = dmet
     for bparam in bad_param:
         setattr(dmet, bparam, None)
+
+    good_sfx = np.setdiff1d(["SFX_"+b for b in bad_param],bad_param_sfx)
+    print(good_sfx)
+    for gprmsfx in good_sfx:
+        gprm = gprmsfx.replace("SFX_","")
+        setattr(dmet, gprm, getattr(dmet,gprmsfx))
+
+
 
 
 
@@ -216,6 +197,14 @@ def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=N
     print(all_param)
     print("start finding choices")
     all_choices, bad_param  = find_best_combinationoffiles(all_param=all_param, fileobj=fileobj,m_level=m_level,p_level=p_level)
+    bad_param_sfx=[]
+    if bad_param:
+        new_bad = ["SFX_"+x for x in bad_param]
+        all_param = all_param + new_bad
+        all_choices, bad_param_sfx = find_best_combinationoffiles(all_param=all_param, fileobj=fileobj, m_level=m_level,
+                                                              p_level=p_level)
+        #Ass SFX_param to it and try again.
+
     print(all_choices)
     print("stopped finding choices")
 
@@ -225,7 +214,7 @@ def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=N
         try:
             print("getting data")#our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None
             dmet,data_domain,bad_param = retrievenow(our_choice = all_choices.loc[i],model=model,step=step, date=date,fileobj=fileobj,
-                               m_level=m_level,domain_name=domain_name, domain_lonlat=domain_lonlat, bad_param = bad_param)
+                               m_level=m_level,domain_name=domain_name, domain_lonlat=domain_lonlat, bad_param = bad_param,bad_param_sfx = bad_param_sfx)
             break
         except:
             #del (dmet)

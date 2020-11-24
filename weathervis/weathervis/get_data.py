@@ -163,7 +163,7 @@ class get_data():
                      "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level, "hybrid0": non,
                      "height0": non, "height1": non, "height2": non,
                      "height3": non, "height7": non, "height6": non, 'height_above_msl': non, "mean_sea_level": non,
-                     "atmosphere_as_single_layer": non}
+                     "atmosphere_as_single_layer": non,"top_of_atmosphere":non}
         # fixed_var: The fixed variables we always want
         fixed_var = np.array(
             ["latitude", "longitude", "forecast_reference_time", "projection_lambert", "ap", "b", "ap2", "b2"])
@@ -233,7 +233,7 @@ class get_data():
                      "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level,"hybrid0": non,
                      "height0": non, "height1": non, "height2": non,
                      "height3": non, "height7": non, "height6": non,'height_above_msl': non, "mean_sea_level":non,
-                     "atmosphere_as_single_layer":non}
+                     "atmosphere_as_single_layer":non,"top_of_atmosphere":non}
 
         # fixed_var: The fixed variables we always want
         fixed_var = np.array(["latitude","longitude","forecast_reference_time","projection_lambert", "ap","b", "ap2","b2"])

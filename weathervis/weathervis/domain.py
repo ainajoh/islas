@@ -241,6 +241,15 @@ class domain():
         maxlat = float(plat + 0.09)
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
-
-
+    def Olsnesnipa(self): #PAraglidingstart
+        point_name = "Olsnesnipa"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.22)
+        maxlon = float(plon + 0.18)
+        minlat = float(plat - 0.08)
+        maxlat = float(plat + 0.05)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
 

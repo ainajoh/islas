@@ -20,6 +20,8 @@ from copy import deepcopy
 import numpy as np
 import matplotlib.colors as colors
 import matplotlib as mpl
+from weathervis.checkget_data_handler import *
+
 
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
@@ -118,7 +120,7 @@ class VERT_MET():
         self.param_pl = []
         self.param_ml = ["air_temperature_ml", "specific_humidity_ml", "x_wind_ml", "y_wind_ml",
                           "cloud_area_fraction_ml"]
-        self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m"]
+        self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m","atmosphere_boundary_layer_thickness","surface_geopotential"]
         self.param_sfx = []
         self.param = self.param_ml + self.param_pl + self.param_sfc + self.param_sfx
         self.p_level = None
@@ -130,123 +132,18 @@ class VERT_MET():
         date = str(date)
 
     def retrieve_handler(self):
-        dmet_sfx = None;
-        dmet_ml = None;
-        dmet_pl = None;
-        dmet_sfc = None;
-        check_all=None
-        check_pl = None
-        check_sfc = None
-        check_ml = None
-        dmet = None
-        split = False
+
         print("\n######## Checking if your request is possibel ############")
-        try:
-            self.param = self.param_pl + self.param_ml + self.param_sfc
-            check_all = check_data(date=self.date, model=self.model, param=self.param, step=self.steps,
-                                   p_level=self.p_level, m_level=self.m_level,
-                                   mbrs=self.mbrs)
-        except ValueError:
-            split = True
-            try:
-                print("--------> Splitting up your request to find match ############")
-                check_pl = check_data(date=self.date, model=self.model, param=self.param_pl, step=self.steps,
-                                      p_level=self.p_level,
-                                      mbrs=self.mbrs) if self.param_pl is not None else None
-                check_sfc = check_data(date=self.date, model=self.model, param=self.param_sfc, step=self.steps,
-                                       mbrs=self.mbrs) if self.param_sfc is not None else None
-                check_ml = check_data(date=self.date, model=self.model, param=self.param_ml, step=self.steps,
-                                      m_level=self.m_level,
-                                      mbrs=self.mbrs) if self.param_ml is not None else None
-            except ValueError:
-                print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
-                sys.exit(1)
-                # break
-        print("--------> Found match for your request ############")
-        if self.param_sfx:
-            print("\n######## Checking if your sfx request is possibel ############")
-            try:
-                check_sfx = check_data(date=self.date, model=self.model, param=self.param_sfx, step=self.steps)
-            except ValueError:
-                param_sfx = ["SFX_SST", "SFX_H", "SFX_LE", "SFX_TS"]
-                try:
-                    check_sfx = check_data(date=self.date, model=self.model, param=self.param_sfx, step=self.steps)
-                except ValueError:
-                    print(
-                        "!!!!! Missing surfex data. Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
-                    sys.exit(1)
-                    # break
-            print("--------> Found match for your sfx request ############")
-            print(check_sfx.file)
-            print("\n######## Retriving sfx data ############")
-            file_sfx = check_sfx.file.loc[0]
-            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat, file_sfx)
-            dmet_sfx = get_data(model=self.model, data_domain=data_domain, param=self.param_sfx, file=file_sfx,
-                                step=self.steps,
-                                date=self.date)
-            dmet_sfx.retrieve()
-
-        if not split:
-            file_all = check_all.file.loc[0]
-            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat, file_all)
-            dmet = get_data(model=self.model, data_domain=data_domain, param=self.param, file=file_all,
-                            step=self.steps, date=self.date, p_level=self.p_level, m_level=self.m_level, mbrs=self.mbrs)
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet.url} ")
-            #dmet_ml = dmet  # two names for same value, no copying done.
-            #dmet_pl = dmet
-            #dmet_sfc = dmet
-
-        else:
-            # get sfc level data
-            fixed_var = np.array(["ap","b", "ap2","b2", "hybrid","hybrid2"])
-            file_sfc = check_sfc.file.loc[0]
-            data_domain = domain_input_handler(self.date, self.model, self.domain_name, self.domain_lonlat, file_sfc)
-            dmet_sfc = get_data(model=self.model, param=self.param_sfc, file=file_sfc, step=self.steps, date=self.date,
-                                data_domain=data_domain, mbrs=self.mbrs)
-            #remove param we do not want overwritten
-            for val in fixed_var: dmet_sfc.param = np.delete(dmet_sfc.param, np.where(dmet_sfc.param==val)) if val in dmet_sfc.param else dmet_sfc.param
-            #print(dmet_sfc.param)
-            file_pl = check_pl.file.loc[0]
-            # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_pl)
-            dmet_pl = get_data(model=self.model, param=self.param_pl, file=file_pl, step=self.steps, date=self.date,
-                               data_domain=data_domain, p_level=self.p_level, mbrs=self.mbrs)
-            for val in fixed_var: dmet_pl.param = np.delete(dmet_pl.param, np.where(dmet_pl.param==val)) if val in dmet_pl.param else dmet_pl.param
-
-            file_ml = check_ml.file.loc[0]
-            # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_ml)
-            dmet_ml = get_data(model=self.model, param=self.param_ml, file=file_ml, step=self.steps, date=self.date,
-                               data_domain=data_domain, m_level=self.m_level, mbrs=self.mbrs)
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet_pl.url} ")
-            dmet_pl.retrieve()
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet_ml.url} ")
-            dmet_ml.retrieve()
-            print("\n######## Retriving data ############")
-            print(f"--------> from: {dmet_sfc.url} ")
-            dmet_sfc.retrieve()
-            dmet = dmet_ml
-
-        if dmet_sfx is not None:
-            for pm in dmet_sfx.param:
-                setattr(dmet, pm, getattr(dmet_sfx, pm))
-                #setattr(dmet, pm, getattr(dmet_sfx, pm))
-                #units
-        if dmet_pl is not None:
-            for pm in dmet_pl.param:
-                setattr(dmet, pm, getattr(dmet_pl, pm))
-        #if dmet_ml is not None:
-        #    for pm in dmet_ml.param:
-        #        setattr(dmet, pm, getattr(dmet_ml, pm))
-        if dmet_sfc is not None:
-            for pm in dmet_sfc.param:
-                setattr(dmet, pm, getattr(dmet_sfc, pm))
+        self.param = self.param_pl + self.param_ml + self.param_sfc + self.param_sfx
+        dmet,data_domain,bad_param = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps,
+                                     p_level=self.p_level, m_level=self.m_level,mbrs=self.mbrs,
+                                     domain_name=self.domain_name, domain_lonlat=self.domain_lonlat)
 
         self.dmet = dmet
         self.data_domain = data_domain
-        # return dmet, data_domain
+        print("DATA RETRIEVED")
 
+        return dmet, data_domain,bad_param
     def calculations(self):
         self.dmet.p = ml2pl(self.dmet.ap, self.dmet.b, self.dmet.surface_air_pressure)
         print(np.shape(self.dmet.ap))
@@ -257,11 +154,15 @@ class VERT_MET():
                                            specific_humidity_ml=self.dmet.specific_humidity_ml, ap=self.dmet.ap,
                                            b=self.dmet.b,
                                            surface_air_pressure=self.dmet.surface_air_pressure)
-        print(np.shape(self.dmet.heighttoreturn))
 
         self.dmet.dtdz = lapserate(self.dmet.air_temperature_ml, self.dmet.heighttoreturn, self.dmet.air_temperature_0m)
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
         self.dmet.theta = potential_temperatur(self.dmet.air_temperature_ml, self.dmet.p)
+
+        #self.dmet.geotoreturn = ml2alt_sl(self.dmet.p, self.dmet.surface_geopotential, self.dmet.air_temperature_ml,
+        #                                  self.dmet.specific_humidity_ml)
+        #self.dmet.t_v_level = virtual_temp(self.dmet.air_temperature_ml, self.dmet.specific_humidity_ml)
+        #self.dmet.BLH = BL_height_sl(self.dmet.atmosphere_boundary_layer_thickness, self.dmet.surface_geopotential)
 
     def points(self):
         point_lonlat = self.point_lonlat; dmet = self.dmet; num_point = self.num_point
@@ -353,7 +254,9 @@ class VERT_MET():
         cbar = nice_vprof_colorbar(CF=CF_WS, ax=axm2,ticks=ticks, lvl=lvl, label = 'Wind Speed [m/s]', highlight_val = [13] )
 
         # potential temp.
-        lvl = np.linspace(np.min(dmet.theta[:, :, jindx, iindx]), np.max(dmet.theta[:, :, jindx, iindx]), 200)
+        #lvl = np.linspace(np.min(dmet.theta[:, :, jindx, iindx]), np.max(dmet.theta[:, :, jindx, iindx]), 200)
+        lvl = np.arange(np.min(dmet.theta[:, :, jindx, iindx]), np.max(dmet.theta[:, :, jindx, iindx]), 2)
+
         CS = axm2.contour(tx, p_p, dmet.theta[:, :, jindx, iindx], colors="black", levels=lvl,
                           zorder=2)
         axm2.clabel(CS, [*CS.levels[2:5:1], *CS.levels[5:10:2], *CS.levels[15:20:5]], inline=True,
@@ -432,6 +335,27 @@ class VERT_MET():
         #RH
         C = axm2.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(0,100,10),colors="green") #dtdz_p
         axm2.clabel(C, inline=True, fmt='%1.0f')  # '%1.0fK')
+        #BLH
+        #BL = dmet.BLH[:, 0, jindx, iindx]
+        #print(np.shape(dmet.BLH)) #(11, 1, 11, 14)
+        #print(np.shape(BL)) #(11,)
+        #print(tx)
+
+        #h_gl = dmet.atmosphere_boundary_layer_thickness[:, 0, jindx, iindx]
+        #h_sl = h_gl + dmet.surface_geopotential[:, 0, jindx, iindx] / 9.08
+        #
+
+        #h = np.repeat(h_sl, repeats=len(dmet.hybrid), axis=0).reshape(
+        #    np.shape(dmet.specific_humidity_ml[:, :, jindx, iindx]))
+        #BL = point_alt_sl2pres_old(jindx, iindx,
+        #                   h,
+        #                   dmet.geotoreturn, dmet.t_v_level, p, dmet.surface_air_pressure,
+        #                   dmet.surface_geopotential)
+        #BL = point_alt_sl2pres(jindx, iindx, h, geotoreturn, t_v_level, p, dmet.surface_air_pressure, dmet.surface_geopotential)
+        #BL = BL/100
+        #P_BL = axm2.plot(tx, BL, "X-", color="black", linewidth=3, zorder=1000)  # (67, 1, 949, 739)
+        #axm2.annotate("BLH", (tx[1], BL[1]), color="black", zorder=1000)
+        #axm2.clabel(C, inline=True, fmt='%1.0f')  # '%1.0fK')
 
         #adjust axis
         axm2.invert_yaxis()
