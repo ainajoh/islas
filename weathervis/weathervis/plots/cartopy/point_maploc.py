@@ -93,7 +93,7 @@ class MAP():
         self.point_lonlat = point_lonlat
         self.param_pl  = param_pl
         self.param_ml  = param_ml
-        self.param_sfc = np.unique(["x","y","latitude","land_area_fraction"] + param_sfc).tolist()
+        self.param_sfc = np.unique(["x","y","latitude","land_area_fraction", "surface_geopotential"] + param_sfc).tolist()
         self.param_sfx = param_sfx
         self.param = self.param_ml + self.param_pl + self.param_sfc + self.param_sfx
         self.p_level = p_level
@@ -231,7 +231,7 @@ class MAP():
         lon0 = dmet.longitude_of_central_meridian_projection_lambert
         lat0 = dmet.latitude_of_projection_origin_projection_lambert
         parallels = dmet.standard_parallel_projection_lambert
-
+        h_terrain = dmet.surface_geopotential / 9.80665
         globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                     globe=globe)
@@ -256,10 +256,12 @@ class MAP():
         mainpoint = ax.scatter(plons, plats, c=values[0:len(plons)], s=15**2, transform=ccrs.PlateCarree(),cmap=mpl.colors.ListedColormap(col[0:len(plons)]), zorder=1000, edgecolors="red",linewidths=3)
         plt.legend(handles = mainpoint.legend_elements()[0], labels= self.point_name)
 
-        CC = plt.contour(dmet.longitude, dmet.latitude, dmet.land_area_fraction[0, 0, :, :], alpha=0.6, zorder=2,
+        CC = plt.contour(dmet.longitude, dmet.latitude, dmet.land_area_fraction[0, 0, :, :], alpha=0.0, zorder=2,
                         levels=[0.9, 1, 1.1],
                         colors="b", linewidths=5, transform=ccrs.PlateCarree())
-
+        #h_terrain
+        CT = plt.contour(dmet.longitude, dmet.latitude, h_terrain[0,0,:,:] ,levels=np.arange(5,1000,10), alpha=1, zorder=10,
+                        colors="b", linewidths=1, transform=ccrs.PlateCarree())
         figm2.tight_layout()
         plt.savefig(dirName_b2 + figname_b2 + ".png", dpi=200)
 

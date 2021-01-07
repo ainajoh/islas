@@ -101,6 +101,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     #dmap_meps.precipitation_amount_acc*=1000.0
     print(dmap_meps.units.precipitation_amount_acc)
     tmap_meps.geopotential_pl/=10.0
+    tmap_meps.units.geopotential_pl ="m"
     u,v = xwind2uwind(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl, tmap_meps.alpha)
     vel = wind_speed(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl)
 
@@ -128,11 +129,14 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       embr = 0
       ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
       MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-      TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=1)[tidx, 0, :,:].squeeze()
+      acc=1
+      TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=acc)[tidx, 0, :,:].squeeze()
       VEL = (vel[tidx, plev2, :, :]).squeeze()
       Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
-
-
+      Ux = u[tidx, 0,:, :].squeeze()
+      Vx = v[tidx, 0,:, :].squeeze()
+      uxx = tmap_meps.x_wind_pl[tidx, 0,:, :].squeeze()
+      vxx = tmap_meps.y_wind_pl[tidx, 0,:, :].squeeze()
       cmap = plt.get_cmap("tab20c")
       lvl = [0.01, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, 25, 30]
       norm = mcolors.BoundaryNorm(lvl, cmap.N)
@@ -155,9 +159,19 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
                         levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
                         colors='grey', linewidths=1.0)
       ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+      ####REMOVE LATER 60.2;5.4166666666667;60;None;N
+      lat_p = 78.9243
+      lon_p = 11.9312
+      mainpoint = ax1.scatter(lon_p,lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),
+                             color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
 
-      CS = ax1.contour(dmap_meps.x, dmap_meps.y, VEL, zorder=3, alpha=1.0,
-                         levels=np.arange(-80, 80, 5), colors="green", linewidths=0.7)
+
+      skip=20
+      skip = (slice(40, -40, 50), slice(40, -40, 50)) #70
+      xm,ym=np.meshgrid(dmap_meps.x, dmap_meps.y)
+      CVV = ax1.barbs( xm[skip], ym[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, zorder=5)
+      #CS = ax1.contour(dmap_meps.x, dmap_meps.y, VEL, zorder=3, alpha=1.0,
+      #                   levels=np.arange(-80, 80, 5), colors="green", linewidths=0.7)
       # geopotential
       CS = ax1.contour(dmap_meps.x, dmap_meps.y, Z, zorder=3, alpha=1.0,
                         levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
@@ -166,16 +180,18 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
 
       ##########################################################
-
+      legend = True
       if legend:
-        proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
+        proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="gray"),
         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
         try:
-          cb = plt.colorbar(CF_prec, fraction=0.046, pad=0.01, aspect=25, label ="1h acc. prec.", extend="both")
+          cb = plt.colorbar(CF_prec, fraction=0.046, pad=0.01, aspect=25, label =f"{acc}h acc. prec. [mm/{acc}h]", extend="both")
+
         except:
           pass
-        lg = ax1.legend(proxy, [f"Wind strength [m/s] at {dmap_meps.pressure[plev2]:.0f} hPa",
-                               f"Geopotential [{tmap_meps.units.geopotential_pl}] at {dmap_meps.pressure[plev2]:.0f} hPa"])
+        lg = ax1.legend(proxy, [f"MSLP [hPa]",
+                               f"Geopotential height[{tmap_meps.units.geopotential_pl}] at {dmap_meps.pressure[plev2]:.0f} hPa"],
+                        loc="upper right")
         frame = lg.get_frame()
         frame.set_facecolor('white')
         frame.set_alpha(1)
@@ -185,7 +201,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         #           fontsize=7)  # , bbox=dict(facecolor='white', alpha=0.5))
 
       #plt.show()
-      fig1.savefig("../../../output/{0}_Z500_VEL_P_{1}+{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      fig1.savefig("../../../output/{0}_Z500_VEL_P_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 

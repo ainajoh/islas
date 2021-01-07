@@ -1,25 +1,21 @@
-#Made 20201117
-#Runs all_meteogram_interface.py and point_maploc.py
-#These two python scripts runs again: point_maploc.py, point_vertical_meteogram.py and point_meteogram.py
-#############################################################################
-modelrun=("2018031700")
-modelrun=("2020022200")
+
+modelrun=("2020100312")
+modelrun=("2020100412" "2020100512" "2020100612" "2020100712" "2020100812" "2020100912" "2020101012" "2020101112" "2020101212" "2020101312" "2020101412")
+
 point_num=1
-steps=(0 24)
-model="AromeArctic"    #"AromeArctic"
-#NB: point_name and domain_name has to be equal length, so if u want to run another point in the same domain you dublicate the domain_name
-#point_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN" "MetBergen")
-#domain_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN" "MetBergen")
-point_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN")
-domain_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN")
-#point_name=("MetBergen")
-#domain_name=("MetBergen")
+steps=("0" "24")
+model="MEPS"
+point_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN" "Janmayen" "Norwegiansea" "CAO")
+domain_name=("Andenes" "VARLEGENHUKEN" "HOPEN" "BODO" "Tromso" "Bjornoya" "NYAlesund" "LONGERYBYEN" "Janmayen" "Norwegiansea" "CAO")
+point_name=("GEOF322")
+domain_name=("GEOF322")
 #Make overview map
 map_loc="python point_maploc.py --datetime ${modelrun[0]} --point_name ${point_name[@]}"
 echo $map_loc
 $map_loc
 
-for dt in $modelrun; do
+for dt in ${modelrun[@]}; do #${StringArray[@]}
+  #runstring="python point_meteogram.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"
   runstring="python all_meteogram_interface.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"
   for ((i=0;i<${#point_name[@]};++i)); do
     runstring="$runstring --domain_name ${domain_name[i]} --point_name ${point_name[i]}"

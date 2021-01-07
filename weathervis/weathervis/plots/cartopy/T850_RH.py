@@ -43,7 +43,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     print(dt)
     date = dt[0:-2]
     hour = int(dt[-2:])
-    param_sfc = ["air_pressure_at_sea_level", "air_temperature_2m", "precipitation_amount_acc", "surface_geopotential"]
+    param_sfc = ["air_pressure_at_sea_level", "air_temperature_2m", "surface_geopotential"]
     param_pl = ["air_temperature_pl", "relative_humidity_pl"]
     param = param_sfc + param_pl
     #print(type(steps))
@@ -98,7 +98,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     tmap_meps.relative_humidity_pl *= 100.0
 
     # plot map
-    fig1 = plt.figure(figsize=(7, 9))
+
 
     lonlat = [dmap_meps.longitude[0,0], dmap_meps.longitude[-1,-1], dmap_meps.latitude[0,0], dmap_meps.latitude[-1,-1]]
     print(lonlat)
@@ -112,6 +112,8 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
+
+    fig1 = plt.figure(figsize=(7, 9))
 
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
       ax1 = plt.subplot(projection=crs)
@@ -137,11 +139,20 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       # air temperature (C)
       C_T = ax1.contour(dmap_meps.x, dmap_meps.y, TA, zorder=3, alpha=1.0,
                          levels=np.arange(-50, 30, 0.5), colors="red", linewidths=0.7)
+      ax1.clabel(C_T, C_T.levels[::3], inline=True, fmt="%3.0f", fontsize=10)
+
       # relative humidity above 80%
       CF_RH = ax1.contourf(dmap_meps.x, dmap_meps.y, RH, zorder=1, alpha=0.1,
                         levels=np.arange(80, 120, 20), colors="blue", linewidths=0.7,label = "RH >80% [%]")
+
+      #lat_p = 60.2
+      #lon_p = 5.4167
+      #mainpoint = ax1.scatter(lon_p, lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),
+      #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
+
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  #‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
 
+      legend=True
       if legend:
         proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
                 for pc in CF_RH.collections]
@@ -165,24 +176,30 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
       #plt.show()
 
-      fig1.savefig("../../../output/{0}_T850_RH_{1}+{2:02d}.png".format(model,dt, tim),bbox_inches="tight", dpi=200)
+
+      #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
+      #          dmap_meps.latitude[-1, -1]]
+      # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
+      # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
+      #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
+      fig1.savefig("../../../output/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 
-      proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
-             for pc in CF_RH.collections]
-      proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
-              plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
-              plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
-      proxy.extend(proxy1)
-      fig2 = plt.figure(figsize=(2, 1.25))
-      fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
-                       f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
-                        f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
-      fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+    #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
+    #        for pc in CF_RH.collections]
+    #proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
+    #         plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
+    #         plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
+    #proxy.extend(proxy1)
+    #fig2 = plt.figure(figsize=(2, 1.25))
+    #fig2.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
+    #                 f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
+    #                  f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
+    #fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
 
-      ax1.cla()
-      plt.clf()
+    ax1.cla()
+    plt.clf()
 
 
 if __name__ == "__main__":

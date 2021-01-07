@@ -194,7 +194,7 @@ class PMET():
                 min = np.min([dmet.air_temperature_ml[:, -1, jindx, iindx]]) - 273.15
                 max = np.max([dmet.air_temperature_ml[:, -1, jindx, iindx]]) - 273.15
                 subplot1_labels += [TML0[0]]
-                labeltext += ["ml0 Temp."]
+                labeltext += ["10m Temp."]
 
             if dmet.air_temperature_0m is not None:
                 TS = axm1.plot(dmet.time_normal, dmet.air_temperature_0m[:, -1, jindx, iindx] - 273.15, "-.", color="brown")
@@ -262,7 +262,7 @@ class PMET():
                                  alpha=0.8)
                 maxq = np.max(dmet.specific_humidity_ml[:, -1, jindx, iindx] * 1000)
                 subplot2_labels += [QML0[0]]
-                labeltext2 += ["ml0 Spec.Hum."]
+                labeltext2 += ["10m Spec.Hum."]
 
 
             if dmet.specific_humidity_2m is not None and dmet.specific_humidity_ml is not None:
@@ -286,17 +286,17 @@ class PMET():
                 subplot2_labels += [(tot_clf[0], tot_patch)]
                 labeltext2 += ["tot.cloud"]
 
-            if dmet.convective_cloud_area_fraction is not None:
-                conv_clf = axm2_1.plot(dmet.time_normal, dmet.convective_cloud_area_fraction[:, -1, jindx, iindx] * 100,
-                               zorder=2, color="pink")
+            if dmet.high_type_cloud_area_fraction is not None:
+                #conv_clf = axm2_1.plot(dmet.time_normal, dmet.convective_cloud_area_fraction[:, -1, jindx, iindx] * 100,
+                #               zorder=2, color="pink")
                 high_clf = axm2_1.plot(dmet.time_normal, dmet.high_type_cloud_area_fraction[:, -1, jindx, iindx] * 100,
                                zorder=2, color="lightblue", marker=r"$C_H$", markersize=12)
                 med_clf = axm2_1.plot(dmet.time_normal, dmet.medium_type_cloud_area_fraction[:, -1, jindx, iindx] * 100,
                               zorder=2, color="blue", marker=r"$C_M$", markersize=12)
                 low_clf = axm2_1.plot(dmet.time_normal, dmet.low_type_cloud_area_fraction[:, -1, jindx, iindx] * 100, zorder=2,
                               color="red", marker=r"$C_L$", markersize=12)
-                subplot2_labels += [high_clf[0], med_clf[0], low_clf[0], conv_clf[0]]
-                labeltext2 += ["hi. cloud", "med. cloud", "low cloud", "conv. cloud"]
+                subplot2_labels += [high_clf[0], med_clf[0], low_clf[0]] #, conv_clf[0]
+                labeltext2 += ["hi. cloud", "med. cloud", "low cloud"] #, "conv. cloud"
             if dmet.convective_cloud_area_fraction is not None and dmet.cloud_area_fraction is not None:
                 print("NO cloudType aval.")
             else:
@@ -351,8 +351,8 @@ class PMET():
         labeltext4 = []
         def fluxes(subplot4_labels = [], labeltext4 = []):
             if dmet.H is not None:
-                P_SH = axm4.plot(dmet.time_normal, dmet.H[:, jindx, iindx], zorder=0, color="blue")
-                P_LH = axm4.plot(dmet.time_normal, dmet.LE[:, jindx, iindx], zorder=0, color="orange")
+                P_SH = axm4.plot(dmet.time_normal, dmet.H[:, jindx, iindx], zorder=1, color="blue")
+                P_LH = axm4.plot(dmet.time_normal, dmet.LE[:, jindx, iindx], zorder=1, color="orange")
                 axm4.set_ylabel('Heat Fluxes (W/m$^2$)')
                 subplot4_labels += [P_SH[0], P_LH[0]]
                 labeltext4 += ["Sensible H.Flux", "Latent H.Flux"]
@@ -367,12 +367,22 @@ class PMET():
                 snow_frac = ((dmet.snowfall_amount[:, -1, jindx, iindx]) / tot) * 100
                 graupel_frac = ((dmet.graupelfall_amount[:, -1, jindx, iindx]) / tot) * 100
 
-                rain_in = axm4_1.plot(dmet.time_normal, rain_frac, zorder=1, color="red", linestyle='dashed', marker='o')
-                snow_in = axm4_1.plot(dmet.time_normal, snow_frac, zorder=1, color="gray", linestyle='dashed', marker='*')
-                graupel_in = axm4_1.plot(dmet.time_normal, graupel_frac, zorder=1, color="lightblue", linestyle='dashed',
-                                 marker='D')
-                subplot4_labels = [rain_in[0], snow_in[0], graupel_in[0]]
-                labeltext4 = [ "Rain", "Snow", "Graupel"]
+                #P_bar = axm1_3.bar(dmet.time_normal, dmet.precip1h[:, 0, jindx, iindx], color="blue", alpha=0.8,
+                #                   width=wd / 4,
+                #                   align="edge")
+                wd = -0.125
+                p1 = axm4_1.bar(dmet.time_normal, rain_frac,width=wd / 4,alpha=0.3, color="red", zorder=0)
+                p2 = axm4_1.bar(dmet.time_normal, snow_frac,width=wd / 4, bottom=rain_frac,alpha=0.3, color="aqua", zorder=0)
+                p3 = axm4_1.bar(dmet.time_normal, graupel_frac,width=wd / 4, bottom=rain_frac+snow_frac,alpha=0.3, color="gray", zorder=0)
+
+                #rain_in = axm4_1.plot(dmet.time_normal, rain_frac, zorder=1, color="red", linestyle='dashed', marker='o')
+                #snow_in = axm4_1.plot(dmet.time_normal, snow_frac, zorder=1, color="gray", linestyle='dashed', marker='*')
+                #graupel_in = axm4_1.plot(dmet.time_normal, graupel_frac, zorder=1, color="lightblue", linestyle='dashed',
+                #                 marker='D')
+                subplot4_labels += [p1[0], p2[0], p3[0]]
+                labeltext4 += [ "Rain", "Snow", "Graupel"]
+
+
             return axm4_1, subplot4_labels, labeltext4
         axm4, subplot4_labels, labeltext4 = fluxes(subplot4_labels, labeltext4)
         axm4_1, subplot4_labels, labeltext4 = precip_type(subplot4_labels, labeltext4)
@@ -526,7 +536,7 @@ class PMET():
                 tot_clf = axma2_1.plot(dmet.time_normal, tot_all * 100, zorder=1, color="k")
                 tot_patch = mpl.patches.Patch(color='gray', alpha=0.6, linewidth=0)
 
-                conv_clf = axma2_1.plot(dmet.time_normal, all_conv_clf * 100, zorder=2, color="pink")
+                #conv_clf = axma2_1.plot(dmet.time_normal, all_conv_clf * 100, zorder=2, color="pink")
                 high_clf = axma2_1.plot(dmet.time_normal, all_high_clf * 100, zorder=2, color="lightblue", marker=r"$C_H$",
                                 markersize=12)
                 med_clf = axma2_1.plot(dmet.time_normal, all_mid_clf * 100, zorder=2, color="blue", marker=r"$C_M$",
@@ -535,8 +545,8 @@ class PMET():
                                markersize=12)
                 axma2_1.set_ylabel('Cloud cover %', color="k")
                 axma2_1.tick_params(axis="y", colors="k")
-                subplot2_labels += [(tot_clf[0], tot_patch), high_clf[0], med_clf[0], low_clf[0], conv_clf[0]]
-                labeltext2 += ["tot.cloud", "hi. cloud", "med. cloud", "low cloud", "conv. cloud"]
+                subplot2_labels += [(tot_clf[0], tot_patch), high_clf[0], med_clf[0], low_clf[0]] # conv_clf[0]
+                labeltext2 += ["tot.cloud", "hi. cloud", "med. cloud", "low cloud"] #, "conv. cloud"
             return axma2_1, subplot2_labels, labeltext2
         axma2, subplot2_labels, labeltext2 = q(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
         axma2_1, subplot2_labels, labeltext2 = CloudType(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
@@ -587,16 +597,16 @@ class PMET():
             if dmet.H is not None:
                 SH_mean = np.mean(dmet.H[:, indx[0], indx[1]], axis=(1))
                 LH_mean = np.mean(dmet.LE[:, indx[0], indx[1]], axis=(1))
-                P_SH_MEAN = axma4.plot(dmet.time_normal, SH_mean, zorder=0, color="blue", linewidth=3, alpha=1)
-                P_SH = axma4.plot(dmet.time_normal, dmet.H[:, indx[0], indx[1]], zorder=0, color="blue", linewidth=0.2,
+                P_SH_MEAN = axma4.plot(dmet.time_normal, SH_mean, zorder=1, color="blue", linewidth=3, alpha=1)
+                P_SH = axma4.plot(dmet.time_normal, dmet.H[:, indx[0], indx[1]], zorder=1, color="blue", linewidth=0.2,
                           alpha=0.7)
-                P_LH_MEAN = axma4.plot(dmet.time_normal, LH_mean, zorder=0, color="orange", linewidth=3, alpha=1)
-                P_LH = axma4.plot(dmet.time_normal, dmet.LE[:, indx[0], indx[1]], zorder=0, color="orange", linewidth=0.2,
+                P_LH_MEAN = axma4.plot(dmet.time_normal, LH_mean, zorder=1, color="orange", linewidth=3, alpha=1)
+                P_LH = axma4.plot(dmet.time_normal, dmet.LE[:, indx[0], indx[1]], zorder=1, color="orange", linewidth=0.2,
                           alpha=0.7)
                 axma4.set_ylabel('Fluxes (W/m$^2$)')
-                axma4.legend([P_SH_MEAN[0], P_LH_MEAN[0]], ["Sensible Heat Flux", "Latent Heat Flux"],
-                        loc='upper left').set_zorder(99999)
-                subplot4_labels = [P_SH[0], P_LH[0]]
+                #axma4.legend([P_SH_MEAN[0], P_LH_MEAN[0]], ["Sensible Heat Flux", "Latent Heat Flux"],
+                #        loc='upper left').set_zorder(99999)
+                subplot4_labels = [P_SH_MEAN[0], P_SH_MEAN[0]]
                 labeltext4 = ["Sensible H.Flux", "Latent H.Flux"]
             return axma4,subplot4_labels,labeltext4
         def precip_type(subplot4_labels=[], labeltext4=[]):
@@ -611,14 +621,26 @@ class PMET():
                 snow_frac = (tot_snow / tot) * 100
                 graupel_frac = (tot_graupel / tot) * 100
 
-                rain_in = axma4_1.plot(dmet.time_normal, rain_frac, zorder=1, color="red", linestyle='dashed', marker='o')
-                snow_in = axma4_1.plot(dmet.time_normal, snow_frac, zorder=1, color="gray", linestyle='dashed', marker='*')
-                graupel_in = axma4_1.plot(dmet.time_normal, graupel_frac, zorder=1, color="lightblue", linestyle='dashed',
-                                  marker='D')
+                #rain_in = axma4_1.plot(dmet.time_normal, rain_frac, zorder=1, color="red", linestyle='dashed', marker='o')
+                #snow_in = axma4_1.plot(dmet.time_normal, snow_frac, zorder=1, color="gray", linestyle='dashed', marker='*')
+                #graupel_in = axma4_1.plot(dmet.time_normal, graupel_frac, zorder=1, color="lightblue", linestyle='dashed',
+                #                  marker='D')
+
+                wd = -0.125
+                p1 = axma4_1.bar(dmet.time_normal, rain_frac, width=wd / 4, alpha=0.3, color="red", zorder=0)
+                p2 = axma4_1.bar(dmet.time_normal, snow_frac, width=wd / 4, bottom=rain_frac, alpha=0.3, color="aqua",
+                                zorder=0)
+                p3 = axma4_1.bar(dmet.time_normal, graupel_frac, width=wd / 4, bottom=rain_frac + snow_frac, alpha=0.3,
+                                color="gray", zorder=0)
+
+                subplot4_labels += [p1[0], p2[0], p3[0]]
+                labeltext4 += ["Rain", "Snow", "Graupel"]
+
+
                 axma4_1.tick_params(axis="y", colors="k")
                 axma4_1.set_ylabel('% of instantaneous precip. type')
-                subplot4_labels += [rain_in[0], snow_in[0], graupel_in[0]]
-                labeltext4 += ["Rain", "Snow", "Graupel"]
+                #subplot4_labels += [rain_in[0], snow_in[0], graupel_in[0]]
+                #labeltext4 += ["Rain", "Snow", "Graupel"]
             return axma4_1, subplot4_labels, labeltext4
         axma4, subplot4_labels, labeltext4 = fluxes(subplot4_labels=subplot4_labels, labeltext4=labeltext4)
         axma4_1,subplot4_labels, labeltext4 = precip_type(subplot4_labels=subplot4_labels, labeltext4=labeltext4)

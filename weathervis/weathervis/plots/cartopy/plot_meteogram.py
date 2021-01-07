@@ -384,6 +384,7 @@ def plot_maplocation(dmet,data_domain, close2point, dirName_b2, figname_b2, site
     lon0 = dmet.longitude_of_central_meridian_projection_lambert
     lat0 = dmet.latitude_of_projection_origin_projection_lambert
     parallels = dmet.standard_parallel_projection_lambert
+    #h = (dmet.surface_air_pressure[:, 0, jindx, iindx] / 100) - (dmet.air_pressure_at_sea_level[:, 0, jindx, iindx] / 100)
 
     figm2 = plt.figure(figsize=(12, 14))
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels)
@@ -421,6 +422,7 @@ def plot_maplocation(dmet,data_domain, close2point, dirName_b2, figname_b2, site
 
         #print(point_lonlat[0])
         #print(point_lonlat[1])
+
         mainpoint = ax.plot(point_lonlat[0], point_lonlat[1], marker='.', markersize=5.0, markeredgewidth=4, transform=ccrs.PlateCarree(),
                          markerfacecolor='blue', markeredgecolor='blue', zorder=1000, linestyle='None')
 

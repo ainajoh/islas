@@ -38,8 +38,6 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-
-
 def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False):
 
   for dt in datetime: #modelrun at time..
@@ -50,6 +48,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
     param_pl = []
     param = param_sfc + param_pl
     split = False
+    sfx=False
     print("\n######## Checking if your request is possibel ############")
     try:
       check_all = check_data(date=dt, model=model, param=param, step=steps)
@@ -58,8 +57,14 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       print(check_all.file)
 
     except ValueError:
-        print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
-        break
+        try:
+          sfx = True
+          param_sfx = ["SFX_LE", "SFX_H", "SFX_SST"]
+          check_all = check_data(date=dt, model=model, param=param, step=steps)
+          check_sfx = check_data(date=dt, model=model, param=param_sfx, step=steps)
+        except ValueError:
+          print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
+          break
     print("--------> Found match for your request ############")
 
 
@@ -80,6 +85,15 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       dmap_meps.retrieve()
       tmap_meps = dmap_meps # two names for same value, no copying done.
       dmap_meps_sfx.retrieve()
+      if sfx:#["SFX_LE", "SFX_H", "SFX_SST"]
+        dmap_meps_sfx.LE = dmap_meps_sfx.SFX_LE
+        dmap_meps_sfx.H = dmap_meps_sfx.SFX_H
+        dmap_meps_sfx.SST = dmap_meps_sfx.SFX_SST
+        dmap_meps_sfx.units.LE = dmap_meps_sfx.units.SFX_LE
+        dmap_meps_sfx.units.H = dmap_meps_sfx.units.SFX_H
+        dmap_meps_sfx.units.SST = dmap_meps_sfx.units.SFX_SST
+
+
 
 
     # convert fields
@@ -108,7 +122,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       tidx = tim - np.min(steps)
       print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
       ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
-      #MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+      MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
       #TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=1)[tidx, 0, :,:].squeeze()
       L = dmap_meps_sfx.LE[tidx,:,:].squeeze()
       L = np.where(ZS < 3000, L, np.NaN).squeeze()
@@ -118,68 +132,106 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       Ux = dmap_meps.x_wind_10m[tidx, 0, :, :].squeeze()
       Vx = dmap_meps.y_wind_10m[tidx, 0, :, :].squeeze()
       xm,ym = np.meshgrid(dmap_meps.x, dmap_meps.y)
+      uxx = dmap_meps.x_wind_10m[tidx, 0, :, :].squeeze()
+      vxx = dmap_meps.y_wind_10m[tidx, 0, :, :].squeeze()
 
       #VELOCITY
-      new_x, new_y, new_u, new_v, = vector_scalar_to_grid(src_crs= data, target_proj= crs_lon,regrid_shape = np.shape(Ux), x= dmap_meps.x, y= dmap_meps.y, u= Ux, v= Vx)
-      magnitude = (new_u ** 2 + new_v ** 2) ** 0.5
-      cmap = plt.get_cmap("viridis") #cividis copper
-      wii = Axes.streamplot(ax1, new_x, new_y, new_u, new_v, density=4,zorder=4,transform=crs_lon, linewidth=0.7, color=magnitude, cmap=cmap)
+      #new_x, new_y, new_u, new_v, = vector_scalar_to_grid(src_crs= data, target_proj= crs_lon,regrid_shape = np.shape(Ux), x= dmap_meps.x, y= dmap_meps.y, u= Ux, v= Vx)
+      #magnitude = (new_u ** 2 + new_v ** 2) ** 0.5
+      #cmap = plt.get_cmap("viridis") #cividis copper
+      #wii = plt.quiver(new_x, new_y, new_u, new_v)
+      #wii = ax1.quiver(xm, ym, Ux, Vx)
+
+      #wii = Axes.streamplot(ax1, new_x, new_y, new_u, new_v, density=4,zorder=4,transform=crs_lon, linewidth=0.7, color=magnitude, cmap=cmap)
+
       #LATENT
-      levelspos=np.arange(80, round(np.nanmax(L), -1) + 10, 40)
-      levelsneg = np.arange(-300, -9, 10)
-      levels = np.append(levelsneg, levelspos)
-      CL = ax1.contour(dmap_meps.x, dmap_meps.y, L, zorder=3, alpha=1.0, colors="red", linewidths=0.7, levels=levels, transform=data)
-      ax1.clabel(CL, CL.levels[::2], inline=True, fmt="%3.0f", fontsize=10)
-      xx = np.where(L < -10, xm, np.NaN).squeeze()
-      yy = np.where(L < -10, ym, np.NaN).squeeze()
-      skip = (slice(None, None, 4), slice(None, None, 4))
-      ax1.scatter(xx[skip][skip], yy[skip][skip], s=20, zorder=2, marker='x', linewidths=0.9,
-                              c="white", alpha=0.7, transform=data)
-      xx = np.where(L > 80, xm, np.NaN).squeeze()
-      yy = np.where(L > 80, ym, np.NaN).squeeze()
-      skip = (slice(None, None, 4), slice(None, None, 4))
-      ax1.scatter(xx[skip][skip], yy[skip][skip], s=20, zorder=2, marker='.', linewidths=0.9,
-                  c="black", alpha=0.7, transform=data)
+      #levelspos=np.arange(80, round(np.nanmax(L), -1) + 10, 40)
+      #levelsneg = np.arange(-300, -9, 10)
+      #levels = np.append(levelsneg, levelspos)
+      #CL = ax1.contour(dmap_meps.x, dmap_meps.y, L, zorder=3, alpha=1.0, colors="red", linewidths=0.7, levels=levels, transform=data)
+      #ax1.clabel(CL, CL.levels[::2], inline=True, fmt="%3.0f", fontsize=10)
+      #xx = np.where(L < -10, xm, np.NaN).squeeze()
+      #yy = np.where(L < -10, ym, np.NaN).squeeze()
+      #skip = (slice(None, None, 4), slice(None, None, 4))
+      #ax1.scatter(xx[skip][skip], yy[skip][skip], s=20, zorder=2, marker='x', linewidths=0.9,
+      #                        c="white", alpha=0.7, transform=data)
+      #xx = np.where(L > 80, xm, np.NaN).squeeze()
+      #yy = np.where(L > 80, ym, np.NaN).squeeze()
+      #skip = (slice(None, None, 4), slice(None, None, 4))
+      #ax1.scatter(xx[skip][skip], yy[skip][skip], s=20, zorder=2, marker='.', linewidths=0.9,
+      #            c="black", alpha=0.7, transform=data)
 
 
       #SENSIBLE
-      levelspos = np.arange(80, round(np.nanmax(SH), -1) + 10, 40)
-      levelsneg = np.arange(-300, -9, 10)
+      levelspos = np.arange(20, round(np.nanmax(SH), -10) + 10, 40)
+      levelsneg = np.arange(-300, -19, 40)
       levels = np.append(levelsneg, levelspos)
-      CSH = ax1.contour(dmap_meps.x, dmap_meps.y, SH, zorder=3, alpha=1.0, colors="blue", linewidths=0.7, levels=levels, transform=data)
-      ax1.clabel(CSH, CSH.levels[1::2], inline=True, fmt="%3.0f", fontsize=10)
-      xx = np.where(SH < -10, xm, np.NaN).squeeze()
-      yy = np.where(SH < -10, ym, np.NaN).squeeze()
-      skip = (slice(None, None, 4), slice(None, None, 4))
-      ax1.scatter(xx[skip][skip],yy[skip][skip],s=20, zorder=2, marker='x',linewidths=0.9, c= "white", alpha=0.7, transform=data)
+      levels = np.linspace(-300,300,30)
+      CSH = plt.contour(dmap_meps.x, dmap_meps.y, SH, alpha=1.0, colors="blue", linewidths=0.7, levels=levels)
+      #ax1.clabel(CSH, CSH.levels[1::2], inline=True, fmt="%3.0f", fontsize=10)
+      #xx = np.where(SH < -10, xm, np.NaN).squeeze()
+      #yy = np.where(SH < -10, ym, np.NaN).squeeze()
+      #skip = (slice(None, None, 4), slice(None, None, 4))
+      #ax1.scatter(xx[skip][skip],yy[skip][skip],s=20, zorder=2, marker='x',linewidths=0.9, c= "white", alpha=0.7, transform=data)
 
-      xx = np.where(SH >80, xm, np.NaN).squeeze()
-      yy = np.where(SH >80, ym, np.NaN).squeeze()
-      skip = (slice(None, None, 4), slice(None, None, 4))
-      ax1.scatter(xx[skip][skip], yy[skip][skip], s=20, zorder=2, marker='.', linewidths=0.9, c="black", alpha=0.7,
-                  transform=data)
+      #xx = np.where(SH >80, xm, np.NaN).squeeze()
+      #yy = np.where(SH >80, ym, np.NaN).squeeze()
+      #skip = (slice(None, None, 4), slice(None, None, 4))
+      #ax1.scatter(xx[skip][skip], yy[skip][skip], s=20, zorder=2, marker='.', linewidths=0.9, c="black", alpha=0.7,
+      #            transform=data)
 
-      #SST
-      levels=np.arange(270,294,2)
+      #SST_new
+      #levels=np.arange(270,294,2)
+      SST = SST - 273.15
+      levels = [np.min(SST), np.max(SST), 3]
+      levels = [-2,0,2,4,6,8,10,12,14,16,18,20,22,24]
+      C_SS = ax1.contour(dmap_meps.x, dmap_meps.y, SST, colors="k", linewidths=2, levels =levels, zorder=9)
+      ax1.clabel(C_SS, C_SS.levels, inline=True, fmt="%3.0f", fontsize=10 )
+
+
+      #MSLP
+      #MSLP with contour labels every 10 hPa
+      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=10, alpha=1.0,
+                        levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
+                        colors='grey', linewidths=0.5)
+      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=10, alpha=1.0,
+                        levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
+                        colors='grey', linewidths=1.0, label="MSLP [hPa]")
+      ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+
+      #wind#
+      #skip = (slice(50, -50, 50), slice(50, -50, 50))
+      skip = (slice(40, -40, 50), slice(40, -40, 50)) #70
+      CVV = ax1.barbs(xm[skip], ym[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, zorder=10)
+
+      #lat_p = 60.2
+      #lon_p = 5.4167
+      #mainpoint = ax1.scatter(lon_p, lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),
+      #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
+
+
+      #LATENT_new
+      #levels=np.arange(270,294,2)
       cmap = plt.get_cmap("coolwarm")
-      CSST = ax1.contourf(dmap_meps.x, dmap_meps.y, SST, zorder=1, alpha=0.7, cmap = cmap, levels=levels, extend = "both", transform=data)
+      levels = np.linspace(-100,300,7)
 
-
+      CSST = ax1.contourf(dmap_meps.x, dmap_meps.y, L, zorder=1, levels=levels, alpha=0.7, cmap = cmap, extend = "both", transform=data)
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="whitesmoke")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
       ##########################################################
       #handles, labels = ax1.get_legend_handles_labels()
       legend=True
       if legend:
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="blue"),
-                 plt.axhline(y=0, xmin=1, xmax=1, color="red")]
-        lg = plt.legend(proxy, [f"Sensible heat [{dmap_meps_sfx.units.H}] ", f"Latent heat [{dmap_meps_sfx.units.LE}]"],loc=1)
+                 plt.axhline(y=0, xmin=1, xmax=1, color="black")]
+        lg = plt.legend(proxy, [f"Sensible heat [{dmap_meps_sfx.units.H}] ", f"SST [C]"],loc=1)
 
-        cb = plt.colorbar(CSST, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label ="SST [K]", extend = "both")
+        cb = plt.colorbar(CSST, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
         frame = lg.get_frame()
+        lg.set_zorder(102)
         frame.set_facecolor('lightgray')
         frame.set_alpha(1)
-
-      fig1.savefig("../../../output/{0}_surf_{1}+{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+        #plt.title("{0}_surf_{1}+{2:02d}.png".format(model, dt, ttt))
+      fig1.savefig("../../../output/{0}_surf_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       #cb.remove()
       #lg.remove()

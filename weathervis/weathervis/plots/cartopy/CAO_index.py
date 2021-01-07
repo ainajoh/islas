@@ -185,7 +185,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
 
       ##########################################################
-
+      legend=True
       if legend:
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="grey"),
                 plt.axhline(y=0, xmin=1, xmax=1, color="black",linewidth=4)]

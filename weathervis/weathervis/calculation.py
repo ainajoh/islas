@@ -635,7 +635,6 @@ def alt_gl2pl(surface_air_pressure,tv, alt_gl, outshape=None ):
     H = Rd * T_vmean / g  # scale height
     pl = surface_air_pressure[:, -1, jindx, iindx] * np.exp(-(np.array(alt_gl) / H))
     return pl
-
 def alt_sl2pl(surface_air_pressure, alt_sl ):
     Rd = 287.06
     g = 9.80665
@@ -646,7 +645,6 @@ def alt_sl2pl(surface_air_pressure, alt_sl ):
     H = Rd * T_vmean / g  # scale height
     pl = surface_air_pressure[:, -1, jindx, iindx] * np.exp(-(np.array(point_alt_gl) / H))
     return pl
-
 def point_alt_sl2pres_old(jindx, iindx, point_alt, data_altitude_sl, t_v_level, p, surface_air_pressure, surface_geopotential):
     """
     Converts height from sealevel to pressure.
@@ -707,8 +705,6 @@ def point_alt_sl2pres_old(jindx, iindx, point_alt, data_altitude_sl, t_v_level, 
     p_point = surface_air_pressure[:, -1, jindx, iindx] * np.exp(-(np.array(point_alt_gl) / H))
 
     return p_point
-
-
 #Special height calc
 def BL_height_sl(atmosphere_boundary_layer_thickness, surface_geopotential):
     """
@@ -724,9 +720,6 @@ def BL_height_sl(atmosphere_boundary_layer_thickness, surface_geopotential):
     hgl = atmosphere_boundary_layer_thickness #groundlevel
     hsl = hgl + (surface_geopotential / g)    #
     return hsl
-
-
-
 
 ####################################################################################################################
 # WIND HANDLING
@@ -748,7 +741,6 @@ def windfromspeed_dir(wind_speed,wind_direction ):
     v = -wind_speed * np.cos(np.deg2rad(wind_direction))  # m/s v wind
 
     return u,v
-
 def xwind2uwind( xwind, ywind, alpha ):
     # u,v = xwind2uwind( data.xwind, data.ywind, data.alpha )
     #source: https://www-k12.atmos.washington.edu/~ovens/wrfwinds.html
@@ -767,12 +759,10 @@ def xwind2uwind( xwind, ywind, alpha ):
             v[t, k, :, :] = ywind[t, k, :, :] * np.cos(absdeg2rad[:,:]) + xwind[t, k, :, :] * np.sin(absdeg2rad[:,:])
 
     return u,v
-
 def wind_speed(xwind,ywind):
     #no matter if in modelgrid or earthrelativegrid
     ws = np.sqrt(xwind**2 + ywind**2)
     return ws
-
 def relative_humidity(temp,q,p):
     temp = temp-273.15 #Kelvin to Celcius
     w=q/(1-q)
@@ -782,28 +772,48 @@ def relative_humidity(temp,q,p):
     rh[rh > 1] =  1
     rh[rh < 0] =  0
     return rh*100
-
-def wind_dir(xwind,ywind, alpha):
+def wind_dir(xwind,ywind, alpha=None):
     #source: https://www-k12.atmos.washington.edu/~ovens/wrfwinds.html
     #https://github.com/metno/NWPdocs/wiki/From-x-y-wind-to-wind-direction
     #https://stackoverflow.com/questions/21484558/how-to-calculate-wind-direction-from-u-and-v-wind-components-in-r
     u = np.zeros(shape=np.shape(xwind))
     v = np.zeros(shape=np.shape(ywind))
+    wdir = np.empty( shape=np.shape(xwind) )
 
-    wdir = np.zeros(shape=np.shape(xwind))
-    for t in range(0,np.shape(wdir)[0]):
-        for k in range(0, np.shape(wdir)[1]):
-                    #websais:
-                    #wdir[t,k,:,:] =  alpha[:,:] + 90 - np.arctan2(ywind[t,k,:,:],xwind[t,k,:,:])
-                    #Me:
+    if len(np.shape(xwind)) <= 1:
 
-                    a =  np.arctan2( ywind[t,k,:,:], xwind[t,k,:,:] )  #mathematical wind angle in modelgrid pointing with the wind
-                    #a = a * (a >= 0) + (a + 2 * np.pi) * (a < 0)
-                    #a =  np.mod(a,np.pi)
-                    b = a*180./np.pi + 180.  # mathematical wind angle pointing where the wind comes FROM
-                    c = 90. - b   # math coordinates(North is 90) to cardinal coordinates(North is 0).
+        a = np.arctan2(ywind, xwind) #radianse
+        #a= a % (2*np.pi)
+        b = a + np.pi
+        #b = b % (2*np.pi)
+        c = np.pi/2. - b
+        #c = c % (2*np.pi)
+        wdir = np.degrees(c)
+        wdir = wdir % 360
+        #print(wdir)
+        eps = 0.5 * 10**(-10)
+        wdir[(abs(xwind) < eps) & (abs(ywind) < eps) ] = np.nan
+
+        #while (wdir >= 360):
+        #    wdir = wdir - 360
+        #b = np.rad2deg(a) + 180
+        #b=b% 360
+        #b = (a * 180. / np.pi) + 180.
+        #c = 90. - b
+        #wdir = c % 360
+
+    if len(np.shape(xwind)) > 1:
+        for t in range(0,np.shape(wdir)[0]):
+            for k in range(0, np.shape(wdir)[1]):
+                #websais:#wdir[t,k,:,:] =  alpha[:,:] + 90 - np.arctan2(ywind[t,k,:,:],xwind[t,k,:,:])
+                #Me:
+                a =  np.arctan2( ywind[t,k,:,:], xwind[t,k,:,:] )  #mathematical wind angle in modelgrid pointing with the wind
+                #a = a * (a >= 0) + (a + 2 * np.pi) * (a < 0)
+                #a =  np.mod(a,np.pi)
+                b = a*180./np.pi + 180.  # mathematical wind angle pointing where the wind comes FROM
+                c = 90. - b   # math coordinates(North is 90) to cardinal coordinates(North is 0).
+                if alpha !=None or alpha !=0:
                     wdir[t,k,:,:] =  c[:,:] - alpha[:,:] #add rotation of modelgrid(alpha).
                     #wdir[t,k,:,:] = np.subtract(c%360, alpha%360)
-                    wdir = wdir % 360  # making sure is between 0 and 360 with Modulo
-
+                wdir = wdir % 360  # making sure is between 0 and 360 with Modulo
     return wdir
