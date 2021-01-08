@@ -4,10 +4,12 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
-
+print("configure")
 if "cyclone.hpc.uib.no" in platform.node():
     print("detected cyclone")
     cyclone()
+else:
+    print("local host detected")
 
 def cyclone():
     import importlib
