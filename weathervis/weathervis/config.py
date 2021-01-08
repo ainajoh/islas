@@ -6,6 +6,7 @@ dname = os.path.dirname(abspath)
 #os.chdir(dname)
 
 if "cyclone.hpc.uib.no" in platform.node():
+    print("detected cyclone")
     cyclone()
 
 def cyclone():
