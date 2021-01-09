@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import warnings
 import cartopy.feature as cfeature
 
-
+print("done")
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
 #warnings.filterwarnings("ignore", category=Downloading)
