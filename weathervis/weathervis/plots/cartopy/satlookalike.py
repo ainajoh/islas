@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
 from weathervis.config import *
+from weathervis.utils import *
 from weathervis.domain import *
 from weathervis.get_data import *
 from weathervis.check_data import *
@@ -34,8 +35,9 @@ def impact_OLR(data):
     ax = plt.subplot(projection=crs)
     ax.coastlines('10m')
     ax.pcolormesh(data.x,data.y,data.toa_outgoing_longwave_flux[0,0,:,:],vmin=-230,vmax=-110,cmap=plt.cm.Greys_r)
-    plt.savefig('Impact_OLR.png',\
-                bbox_inches = 'tight', dpi=200)
+    make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+    plt.savefig(make_modelrun_folder + "/{0}_OLR_{1}_{2:02d}.png".format(model, dt, tim), bbox_inches="tight",
+                 dpi=200)
 
 
 impact_OLR(data)

@@ -3,6 +3,7 @@
 
 from weathervis.config import *
 from weathervis.utils import *
+from weathervis.utils import *
 from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.get_data import *
