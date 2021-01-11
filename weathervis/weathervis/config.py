@@ -8,7 +8,7 @@ print(abspath)
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
 def setup_directory():
-    projectpath = "../../../../output/"
+    projectpath = dname+"/../../../../output/"
 
     if not os.path.exists(projectpath):
         os.makedirs(projectpath)
