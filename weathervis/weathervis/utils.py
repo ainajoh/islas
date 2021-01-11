@@ -1,5 +1,6 @@
 #Useful function for setup
-
+import platform
+import os
 def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
 
     if domain_name or domain_lonlat:
