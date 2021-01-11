@@ -187,7 +187,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
       #fig1.savefig("../../../../output/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
       make_modelrun_folder = setup_directory(projectpath, "{0}".format(dt))
-      fig1.savefig(make_modelrun_folder+"{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
+      fig1.savefig(make_modelrun_folder+"/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 
