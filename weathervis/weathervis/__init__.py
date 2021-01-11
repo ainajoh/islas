@@ -1,5 +1,4 @@
 from weathervis.config import *
-print(projectpath)
 
 #global wc
 #global projectpath
