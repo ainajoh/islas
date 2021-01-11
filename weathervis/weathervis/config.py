@@ -5,23 +5,23 @@ dname = os.path.dirname(abspath)
 print(dname)
 print(abspath)
 #global projectpath
-global projectpath
-projectpath = dname + "/../../../../../output/weathervis/"
+global OUTPUTPATH
+OUTPUTPATH = dname + "/../../../../../output/weathervis/"
 
 
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
 def setup_directory():
 
-    projectpath = dname+"/../../../../../output/weathervis/"
+    OUTPUTPATH = dname+"/../../../../../output/weathervis/"
 
-    if not os.path.exists(projectpath):
-        os.makedirs(projectpath)
-        print("Directory ", projectpath, " Created ")
+    if not os.path.exists(OUTPUTPATH):
+        os.makedirs(OUTPUTPATH)
+        print("Directory ", OUTPUTPATH, " Created ")
     else:
-        print("Directory ", projectpath, " already exists")
+        print("Directory ", OUTPUTPATH, " already exists")
 
-    return projectpath
+    return OUTPUTPATH
 
 
 
@@ -39,13 +39,13 @@ def cyclone():
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
-    projectpath = setup_directory()
-    return projectpath
+    OUTPUTPATH = setup_directory()
+    return OUTPUTPATH
 
 print("configure")
 if "cyclone.hpc.uib.no" in platform.node():
     print("detected cyclone")
-    projectpath = cyclone()
+    OUTPUTPATH = cyclone()
 
 else:
     print("local host detected")

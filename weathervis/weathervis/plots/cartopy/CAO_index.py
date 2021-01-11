@@ -2,6 +2,7 @@
 # python Z500_VEL.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
 from weathervis.config import *
+from weathervis.utils import *
 from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.get_data import *
@@ -200,7 +201,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         frame = lg.get_frame()
         frame.set_facecolor('white')
         frame.set_alpha(1)
-      fig1.savefig("../../../output/{0}_CAOi_{1}+{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+      fig1.savefig(make_modelrun_folder + "/{0}_CAOi_{1}+{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 # fin

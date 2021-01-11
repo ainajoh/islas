@@ -2,6 +2,7 @@
 # python Z500_VEL.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
 from weathervis.config import *
+from weathervis.utils import *
 from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.get_data import *
@@ -201,7 +202,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         #           fontsize=7)  # , bbox=dict(facecolor='white', alpha=0.5))
 
       #plt.show()
-      fig1.savefig("../../../output/{0}_Z500_VEL_P_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+      fig1.savefig(make_modelrun_folder + "/{0}_Z500_VEL_P_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 
@@ -211,14 +213,13 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     fig2 = plt.figure(figsize=(2, 1.25))
     fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
                               f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
-
-    fig2.savefig("../../../output/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+    fig2.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
 
     try:
       fig3, ax3 = plt.subplots()
       fig3.colorbar(CF_prec, fraction=0.046, pad=0.04)
       ax3.remove()
-      fig3.savefig("../../../output/{0}_Z500_VEL_P_COLORBAR.png".format(model), bbox_inches="tight", dpi=200)
+      fig3.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_COLORBAR.png".format(model), bbox_inches="tight", dpi=200)
     except:
       pass
     ax1.cla()

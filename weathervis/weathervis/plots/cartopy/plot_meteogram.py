@@ -1,4 +1,5 @@
 from weathervis.config import *
+from weathervis.utils import *
 from weathervis.domain import *
 from weathervis.get_data import *
 from weathervis.calculation import *
@@ -446,13 +447,13 @@ def plot_maplocation(dmet,data_domain, close2point, dirName_b2, figname_b2, site
 
 ##########################################################
 def setup_directory(modelrun,point_name, point_lonlat ):
-    projectpath = "../../../output/"
+    projectpath = setup_directory(OUTPUTPATH, "{0}".format(modelrun))
     figname = "fc_" + modelrun
     # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
-        dirName = projectpath + "result/" + "fc_" + modelrun[:-2] + "/"+str(point_lonlat)
+        dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/"+str(point_lonlat)
     else:
-        dirName = projectpath + "result/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
+        dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
 
     dirName_b1 = dirName + "met/"
     figname_b1 = "vmet_" + figname
