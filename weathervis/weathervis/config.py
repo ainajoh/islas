@@ -27,3 +27,4 @@ if "cyclone.hpc.uib.no" in platform.node():
 else:
     print("local host detected")
 
+
