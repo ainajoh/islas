@@ -2,6 +2,7 @@
 #python T850_RH.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 #
 from weathervis.config import *
+#import weathervis.config as wc
 import cartopy.crs as ccrs
 from weathervis.domain import *  # require netcdf4
 from weathervis.check_data import *
@@ -182,7 +183,8 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
       #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
-      fig1.savefig("../../../../output/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
+      #fig1.savefig("../../../../output/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
+      fig1.savefig(projectpath+"/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 
