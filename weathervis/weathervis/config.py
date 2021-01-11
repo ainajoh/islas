@@ -2,8 +2,21 @@ import platform
 import os
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
+print(dname)
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
+def setup_directory(modelrun,point_name, point_lonlat ):
+    projectpath = "../../../../output/"
+
+    if not os.path.exists(projectpath):
+        os.makedirs(projectpath)
+        print("Directory ", projectpath, " Created ")
+    #else:
+    #    print("Directory ", dirName_b1, " already exists")
+
+
+
+
 
 def cyclone():
     import importlib
