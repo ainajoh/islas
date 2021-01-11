@@ -9,12 +9,15 @@ proj="module load PROJ/5.0.0-foss-2018b" #for cartopy to work.
 wpath="/Data/gfi/isomet/projects/ISLAS_aina/tools/githubclones/islas/weathervis/"
 weathervispath="export PYTHONPATH=$PYTHONPATH:$wpath"
 wait
-
+echo "$py3"
 $py3
 wait
+echo "$dynlib3"
 $dynlib3
 wait
+echo "$proj"
 $proj
 wait
+echo "$weathervispath"
 $weathervispath
 
