@@ -13,7 +13,7 @@ projectpath = dname + "/../../../../../output/weathervis/"
 #os.chdir(dname)
 def setup_directory():
 
-    projectpath = dname+"/../../../../../output/weathervis"
+    projectpath = dname+"/../../../../../output/weathervis/"
 
     if not os.path.exists(projectpath):
         os.makedirs(projectpath)
