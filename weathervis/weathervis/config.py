@@ -3,18 +3,18 @@ import os
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 print(dname)
+print(abspath)
+
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
-def setup_directory(modelrun,point_name, point_lonlat ):
+def setup_directory():
     projectpath = "../../../../output/"
 
     if not os.path.exists(projectpath):
         os.makedirs(projectpath)
         print("Directory ", projectpath, " Created ")
-    #else:
-    #    print("Directory ", dirName_b1, " already exists")
-
-
+    else:
+        print("Directory ", projectpath, " already exists")
 
 
 
@@ -32,6 +32,7 @@ def cyclone():
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
+    setup_directory()
 
 print("configure")
 if "cyclone.hpc.uib.no" in platform.node():
