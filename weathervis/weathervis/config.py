@@ -6,14 +6,14 @@ print(dname)
 print(abspath)
 #global projectpath
 global projectpath
-projectpath = dname + "/../../../../../output/"
+projectpath = dname + "/../../../../../output/weathervis/"
 
 
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
 def setup_directory():
 
-    projectpath = dname+"/../../../../../output/"
+    projectpath = dname+"/../../../../../output/weathervis"
 
     if not os.path.exists(projectpath):
         os.makedirs(projectpath)
