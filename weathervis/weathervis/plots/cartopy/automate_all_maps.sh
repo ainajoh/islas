@@ -1,5 +1,5 @@
 
-cf = "source ../../data/config/config_cyclone.sh"
+cf="source ../../data/config/config_cyclone.sh"
 $cf
 #modelrun=("2018031912" "2018031900" "2018031812" "2018031800" "2018031712" "2018031700")
 #
