@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #Needed for module load to work
 get_module="source /etc/profile.d/z00_lmod.sh"
 echo "$get_module"
