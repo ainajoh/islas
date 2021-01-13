@@ -43,7 +43,10 @@ def cyclone():
     return OUTPUTPATH
 
 def islas_server():
-    cyclone_conf = dname + "/data/config/config_cyclone.sh"
+    import importlib
+    import sys
+    from subprocess import call
+    cyclone_conf = dname + "/data/config/config_islas_server.sh"
     call(f"source {cyclone_conf}", shell=True)
     OUTPUTPATH = setup_directory()
     print(OUTPUTPATH)
