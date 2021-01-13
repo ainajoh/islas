@@ -9,6 +9,13 @@ if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then
     fi
 
 $cf
+
+
+
+
+#domain_name="West_Norwa
+
+
 #modelrun=("2018031912" "2018031900" "2018031812" "2018031800" "2018031712" "2018031700")
 #
 #steps_max=(12 24 36 48 60 66)
@@ -29,6 +36,8 @@ yymmdd="${yy}${mm}${dd}"
 yymmddhh=${yymmdd}${inhh}
 modelrun=$yymmddhh
 
+#model=("AromeArctic")
+#steps_max=(1)
 domain_name="None"
 
 while [ $# -gt 0 ]; do
