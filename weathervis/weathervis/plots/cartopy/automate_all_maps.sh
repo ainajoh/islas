@@ -10,23 +10,6 @@ if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then
 
 $cf
 
-
-
-
-#domain_name="West_Norwa
-
-
-#modelrun=("2018031912" "2018031900" "2018031812" "2018031800" "2018031712" "2018031700")
-#
-#steps_max=(12 24 36 48 60 66)
-
-#set workingpath to where this file is located
-
-#fcday=$( date -u '+%Y%m%d' -d "-2 days" )
-#fcday=$( date -u '+%Y%m%d' -d "yesterday" )
-#fclagh=350 #3.5 hour before forecsast is issued
-#today=$( date -u '+%Y%m%d%H' )
-#bash_version=$BASH_VERSION
 #fclagh=350 #3.5 hour before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
@@ -36,8 +19,6 @@ else
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
-
-#
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
 dd=${modeldatehour:6:2}
@@ -47,8 +28,8 @@ yymmdd="${yy}${mm}${dd}"
 #yymmddhh=${yymmdd}${hh}
 modelrun_date=$yymmdd
 modelrun_hour="00"
-#model=("AromeArctic")
-#steps_max=(1)
+model=("AromeArctic")
+steps_max=(1)
 domain_name="None"
 
 while [ $# -gt 0 ]; do
