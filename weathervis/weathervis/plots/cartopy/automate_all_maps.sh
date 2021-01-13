@@ -1,12 +1,19 @@
-
 cf="source ../../data/config/config_cyclone.sh"
 $cf
 #modelrun=("2018031912" "2018031900" "2018031812" "2018031800" "2018031712" "2018031700")
 #
 #steps_max=(12 24 36 48 60 66)
 
-modelrun=("2021010100")
-#modelrun=("$1")
+#modelrun=("2021010100")
+#model=("AromeArctic")
+#steps_max=(1)
+#domain_name="West_Norway"
+
+model=("$1")
+modelrun=("$2")
+steps_max=($3)
+domain_name="$4" #West_Norway
+
 #modelrun=("2020100300") "2020021712" "2020021812" "2020021912"
 #modelrun=( "2020022712" "2020022812" "2020022912")
 #modelrun=("2020022012" "2020022112" )
@@ -23,14 +30,10 @@ modelrun=("2021010100")
 #modelrun=("2020101012")
 #modelrun=("2020101012")
 
-steps_max=(1)
-
 #steps=0
-model=("AromeArctic")
-domain_name="West_Norway"
 for md in ${model[@]}; do
   echo $md
-for ((i=0;i<${#modelrun[@]};++i)); do
+  for ((i = 0; i < ${#modelrun[@]}; ++i)); do
     runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
     runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
