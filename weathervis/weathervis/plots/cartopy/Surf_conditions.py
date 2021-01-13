@@ -2,8 +2,6 @@
 # python Z500_VEL.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
 from weathervis.config import *
-from weathervis.utils import *
-from weathervis.utils import *
 from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.get_data import *
@@ -233,8 +231,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
         frame.set_facecolor('lightgray')
         frame.set_alpha(1)
         #plt.title("{0}_surf_{1}+{2:02d}.png".format(model, dt, ttt))
-      make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      fig1.savefig(make_modelrun_folder + "/{0}_surf_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      fig1.savefig("../../../output/{0}_surf_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       #cb.remove()
       #lg.remove()
@@ -245,11 +242,15 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
 
 if __name__ == "__main__":
   import argparse
+  def none_or_str(value):
+    if value == 'None':
+      return None
+    return value
   parser = argparse.ArgumentParser()
   parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+")
   parser.add_argument("--steps", default=0, nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
   parser.add_argument("--model",default="MEPS", help="MEPS or AromeArctic")
-  parser.add_argument("--domain_name", default=None, help="MEPS or AromeArctic")
+  parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
