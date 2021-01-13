@@ -45,7 +45,7 @@ check_if_thredds_is_down = lambda value:value if requests.head(value) != 200 els
 filter_function_for_type= lambda value: value if value in levtype else SomeError(ValueError, f'Type not found: choices:{levtype}')
 filter_function_for_models = lambda value: value if value in available_models else SomeError(ValueError, f'Model not found: choices:{model}')
 filter_function_for_date = lambda value: value \
-    if ( len(value) == 10 ) and ( int(value[0:4]) in range(2000,2021) ) and ( int(value[4:6]) in range(0,13) ) \
+    if ( len(value) == 10 ) and ( int(value[0:4]) in range(2000,2030) ) and ( int(value[4:6]) in range(0,13) ) \
     and ( int(value[6:8]) in range(1,32)) and ( int(value[9:10]) in range(0,25)) \
     else SomeError(ValueError, f'Modelrun wrong: Either; "latest or date on the form: YYYYMMDDHH')
 filter_function_for_mbrs=lambda value, file: value if max(value) < file.dim["ensemble_member"]["shape"] else SomeError(ValueError, f'Member input outside range of model')
