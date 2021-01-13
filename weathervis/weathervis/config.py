@@ -42,10 +42,19 @@ def cyclone():
     OUTPUTPATH = setup_directory()
     return OUTPUTPATH
 
+def islas_server():
+    OUTPUTPATH = setup_directory()
+    print(OUTPUTPATH)
+    return OUTPUTPATH
+
+
 print("configure")
 if "cyclone.hpc.uib.no" in platform.node():
     print("detected cyclone")
     OUTPUTPATH = cyclone()
+elif "islas-forecasts-testing.novalocal" in platform.node():
+    print("detect islas-forecasts-testing.novalocal")
+
 
 else:
     print("local host detected")
