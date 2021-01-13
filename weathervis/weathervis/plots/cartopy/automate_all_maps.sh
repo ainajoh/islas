@@ -1,4 +1,13 @@
-cf="source ../../data/config/config_cyclone.sh"
+
+#echo $hostname
+cf=""
+if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then shift; fi # Value is next arg if no `=`
+    cf="source ../../data/config/config_cyclone.sh"
+    ;;
+if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then shift; fi # Value is next arg if no `=`
+    cf="source ../../data/config/config_islas_server.sh"
+    ;;
+
 $cf
 #modelrun=("2018031912" "2018031900" "2018031812" "2018031800" "2018031712" "2018031700")
 #
