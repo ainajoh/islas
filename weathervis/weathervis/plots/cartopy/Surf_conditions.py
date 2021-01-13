@@ -2,6 +2,8 @@
 # python Z500_VEL.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
 from weathervis.config import *
+from weathervis.utils import *
+
 from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.get_data import *
@@ -231,9 +233,13 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
         frame.set_facecolor('lightgray')
         frame.set_alpha(1)
         #plt.title("{0}_surf_{1}+{2:02d}.png".format(model, dt, ttt))
-
-      make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+      #print("test")
+      #print(OUTPUTPATH)
+      #print("{0}".format(dt))
+      make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
       fig1.savefig(make_modelrun_folder + "/{0}_surf_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+
+
       ax1.cla()
       #cb.remove()
       #lg.remove()
