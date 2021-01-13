@@ -7,12 +7,17 @@ $cf
 #modelrun=("2021010100")
 #model=("AromeArctic")
 #steps_max=(1)
-#domain_name="West_Norway"
-
+#domain_name="West_Norwa
+domain_name=""
 model=("$1")
 modelrun=("$2")
 steps_max=($3)
-domain_name="$4" #West_Norway
+domain_name="None"
+if [$4]
+then
+  domain_name="$4" #West_Norway
+fi
+
 
 #modelrun=("2020100300") "2020021712" "2020021812" "2020021912"
 #modelrun=( "2020022712" "2020022812" "2020022912")
@@ -35,11 +40,11 @@ for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
     runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
-    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
+    runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
+    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_TOA="python TOA_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md"
-    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
+    runstring_TOA="python TOA_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
+    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
     #runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     #runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
