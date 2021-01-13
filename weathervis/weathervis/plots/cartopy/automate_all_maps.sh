@@ -26,16 +26,27 @@ $cf
 #fcday=$( date -u '+%Y%m%d' -d "yesterday" )
 #fclagh=350 #3.5 hour before forecsast is issued
 #today=$( date -u '+%Y%m%d%H' )
-modeldatehour=$(date -u -d "today - $((350*60/100)) minutes" +'%Y%m%d%H%M')
+#bash_version=$BASH_VERSION
+#fclagh=350 #3.5 hour before forecsast is issued
+
+if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
+  modeldatehour=$(date -u --date "today - $((350*60/100)) minutes" +'%Y%m%d%H%M')
+else
+  modeldatehour=$(date -v-$((350*60/100))M -u +%Y%m%d%H%M)
+  #date -v-60M -u +%Y%m%d%H%M
+fi
+
+
 #
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
 dd=${modeldatehour:6:2}
 hh=${modeldatehour:8:2}
 yymmdd="${yy}${mm}${dd}"
-yymmddhh=${yymmdd}${inhh}
-modelrun=$yymmddhh
 
+#yymmddhh=${yymmdd}${hh}
+modelrun_date=$yymmdd
+modelrun_hour="00"
 #model=("AromeArctic")
 #steps_max=(1)
 domain_name="None"
@@ -43,20 +54,31 @@ domain_name="None"
 while [ $# -gt 0 ]; do
   case "$1" in
     --model)
-    if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
+    if [[ "$1" != *=* ]]; then shift; # Value is next arg if no `=`
     model=("${1#*=}")
+    fi
     ;;
     --modelrun)
-    if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
-    modelrun=("${1#*=}")
+    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
+    echo "teeees"
+    modelrun_date=("${1#*=}")
+    fi
+    ;;
+    --modelrun_hour)
+    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
+    echo "teeees"
+    modelrun_hour=("${1#*=}")
+    fi
     ;;
     --steps_max)
-    if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
+    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
     steps_max=("${1#*=}")
+    fi
     ;;
     --domain_name)
-    if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
+    if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
     domain_name="${1#*=}"
+    fi
     ;;
     *)
       printf "***************************\n"
@@ -68,10 +90,12 @@ while [ $# -gt 0 ]; do
 done
 
 echo $model
-echo $modelrun
+echo $modelrun_date
+echo $modelrun_hour
 echo $steps_max
 echo $domain_name
-
+modelrun=${modelrun_date}${modelrun_hour}
+echo $modelrun
 #modelrun=("2021010100")
 #model=("AromeArctic")
 #steps_max=(1)

@@ -14,6 +14,7 @@ setup(
     'cartopy>=0.16.0',
     'numpy>=1.18.0',
     'pandas>=1.0.0',
-    'beautifulsoup4>=4.9.1'
+    'beautifulsoup4>=4.9.1',
+    'requests>=2.22.0'
     ]
 )
