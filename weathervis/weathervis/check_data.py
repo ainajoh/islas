@@ -135,8 +135,8 @@ class check_data():
             SomeError(ConnectionError, f"Website {url} is down with {webcheck}; . Wait until it is up again")
 
 
-
         if date != None:
+            print("CHECK_FILE STAAAART")
             self.file = self.check_files(date, model, param,  mbrs,levtype)
         if self.param == None and self.date != None:
             self.param = self.check_variable(self.file, self.search)
@@ -244,8 +244,11 @@ class check_data():
             base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearcticarchive/"
         else:
             pass
-        #Find what files exist at that date
+        print(base_url)
+        print("base_url SHOULD BE PRRRINTED")
 
+
+        #Find what files exist at that date
         page = requests.get(base_url + YYYY+"/"+MM+"/"+DD+ "/catalog.html")
         soup = BeautifulSoup(page.text, 'html.parser')
         rawfiles= soup.table.find_all("a")
