@@ -1,3 +1,5 @@
+#set workingpath to where this file is located
+cd "$(dirname "$0")"
 
 #echo $hostname
 cf=""

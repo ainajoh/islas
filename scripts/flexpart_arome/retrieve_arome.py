@@ -1,17 +1,17 @@
 #export PYTHONPATH=$PYTHONPATH:/Users/ainajoh/Documents/GitHub/islas/scripts/FC-system
-from loclib.domain import *  # require netcdf4
-from loclib.check_data import *
-from loclib.get_data import *
-from loclib.calculation import *
+from weathervis.domain import *  # require netcdf4
+from weathervis.check_data import *
+from weathervis.get_data import *
+from weathervis.calculation import *
 from netCDF4 import Dataset
 import os
 import datetime
 
-mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/scripts/FC-system")
+mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/weathervis/")
 
 lt = 7
 lvl = 64#64#64
-modelruntime = "2020070118"
+modelruntime = "2020031100"#Camp start 20.feb - 14.march
 model = "AromeArctic"
 xres=1
 yres=1
@@ -120,32 +120,39 @@ def set_variable2d():
     #2dArome
     print("retrive 2darome")
     param2d_arome = [*variable2d_arome.keys()]
-    file_arome2d = check_available(date=modelruntime, model=model, param=param2d_arome)
+    print(param2d_arome)
+    print("check 2d arome")
+    arome2d = check_data(date=modelruntime, model=model, param=param2d_arome)
+    #
+    print(arome2d)
+    file_arome2d= arome2d.file
+    print(arome2d.file)
     #data_domain = DOMAIN(modelruntime, model, file=file_arome2d)
     #data_domain.AromeArctic()
-    dmap_arome2d = DATA(model=model, file=file_arome2d, param=param2d_arome, step=[0, lt],modelrun=modelruntime)
-    #dmap_arome2d = DATA(model=model, data_domain=data_domain, file=file_arome2d, param=param2d_arome, step=[0, lt],modelrun=modelruntime)
+    dmap_arome2d = get_data(model=model, file=file_arome2d, param=param2d_arome, step=[0, lt],date=modelruntime)
     dmap_arome2d.retrieve()
 
     print("retrive 3darome")
     # 3dArome This can be included in 2darome for timeefficency
     param3d_arome = [*variable3d_arome.keys()]
-    file_arome3d = check_available(date=modelruntime, model=model, param=param3d_arome)
+    arome3d = check_data(date=modelruntime, model=model, param=param3d_arome)
+    file_arome3d = arome3d.file
     #data_domain = DOMAIN(modelruntime, model, file=file_arome3d)
     #data_domain.AromeArctic()
     print(file_arome3d)
-    dmap_arome3d = DATA(model=model, file=file_arome3d, param=param3d_arome, step=[0, lt],
-                        modelrun=modelruntime,  level=[0, lvl], levtype="ml")
+    dmap_arome3d = get_data(model=model, file=file_arome3d, param=param3d_arome, step=[0, lt],
+                        date=modelruntime,  m_level=[0, lvl])
     print(dmap_arome3d)
     dmap_arome3d.retrieve()
 
     print("retrive sfxarome")
     #2dsfx
     param2d_sfx = [*variable2d_sfx.keys()]
-    file_sfx2d = check_available(date=modelruntime, model=model, param=param2d_sfx)
+    sfx2d = check_data(date=modelruntime, model=model, param=param2d_sfx)
+    file_sfx2d=sfx2d.file
     #data_domain = DOMAIN(modelruntime, model, file=file_sfx2d)
     #data_domain.AromeArctic()
-    dmap_sfx2d = DATA(model=model, file=file_sfx2d, param=param2d_sfx, step=[0, lt],modelrun=modelruntime)
+    dmap_sfx2d = get_data(model=model, file=file_sfx2d, param=param2d_sfx, step=[0, lt],date=modelruntime)
     dmap_sfx2d.retrieve()
     #print(dmap_sfx2d.x ==dmap_arome2d.x)
     #print(len(dmap_arome2d.x))

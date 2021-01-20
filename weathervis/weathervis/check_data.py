@@ -130,9 +130,14 @@ class check_data():
 
 
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
-        webcheck = requests.head(url)
+        try:
+            webcheck = requests.head(url,timeout=5)
+        except requests.exceptions.Timeout as e:
+            print(e)
+            print("might be problems with the server; check out https://status.met.no")
+
         if webcheck.status_code != 200:  # SomeError(ValueError, f'Type not found: choices:{levtype}')
-            SomeError(ConnectionError, f"Website {url} is down with {webcheck}; . Wait until it is up again")
+            SomeError(ConnectionError, f"Website {url} is down with {webcheck}; . Wait until it is up again. Check https://status.met.no")
 
 
         if date != None:
