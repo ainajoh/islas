@@ -7,7 +7,7 @@ from netCDF4 import Dataset
 import os
 import datetime
 
-mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/weathervis/")
+#mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/weathervis/")
 
 lt = 7
 lvl = 64#64#64
