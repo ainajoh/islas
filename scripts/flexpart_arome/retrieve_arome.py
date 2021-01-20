@@ -169,7 +169,7 @@ def set_variable2d():
 
     for t in range( 0, len(dmap_arome2d.time )):
         print("Inside for loop")
-        output = "/Users/ainajoh/Documents/GitHub/islas/scripts/flexpart_arome/"
+        output = "./"
         validdate = datetime.datetime(int(modelruntime[0:4]), int(modelruntime[4:6]), int(modelruntime[6:8]), int(modelruntime[8:10])) + datetime.timedelta(hours=t)
         date_time = validdate.strftime("%Y%m%d_%H")
         ncid = Dataset(output+ 'AR' +  date_time + '.nc', 'w')
