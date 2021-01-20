@@ -142,7 +142,7 @@ def set_variable2d():
     print(file_arome3d)
     dmap_arome3d = get_data(model=model, file=file_arome3d, param=param3d_arome, step=[0, lt],
                         date=modelruntime,  m_level=[0, lvl])
-    print(dmap_arome3d)
+    #print(dmap_arome3d)
     dmap_arome3d.retrieve()
 
     print("retrive sfxarome")
@@ -172,6 +172,13 @@ def set_variable2d():
         output = "./"
         validdate = datetime.datetime(int(modelruntime[0:4]), int(modelruntime[4:6]), int(modelruntime[6:8]), int(modelruntime[8:10])) + datetime.timedelta(hours=t)
         date_time = validdate.strftime("%Y%m%d_%H")
+        #flexpart dont like 00, want 24
+        if validdate.hour==0:
+            dateminus1d=validdate - datetime.timedelta(days=1)
+            date_time=dateminus1d.strftime("%Y%m%d") + "_24"
+            #d = datetime.today() - timedelta(days=days_to_subtract)
+
+        print(date_time)
         ncid = Dataset(output+ 'AR' +  date_time + '.nc', 'w')
         attr['reference_lon'] = proj.getncattr("longitude_of_central_meridian")
         attr['ydim'] = np.long(len(dmap_arome2d.y[::yres]))#np.long(dataset.variables["y"].getncattr("_ChunkSizes"))  # Use: None
