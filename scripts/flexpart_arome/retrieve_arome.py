@@ -131,12 +131,13 @@ def set_variable2d():
     #data_domain.AromeArctic()
     dmap_arome2d = get_data(model=model, file=file_arome2d, param=param2d_arome, step=[0, lt],date=modelruntime)
     dmap_arome2d.retrieve()
-
+    print(dmap_arome2d.__dir__)
     print("retrive 3darome")
     # 3dArome This can be included in 2darome for timeefficency
     param3d_arome = [*variable3d_arome.keys()]
     arome3d = check_data(date=modelruntime, model=model, param=param3d_arome)
     file_arome3d = arome3d.file
+
     #data_domain = DOMAIN(modelruntime, model, file=file_arome3d)
     #data_domain.AromeArctic()
     print(file_arome3d)
@@ -144,7 +145,7 @@ def set_variable2d():
                         date=modelruntime,  m_level=[0, lvl])
     #print(dmap_arome3d)
     dmap_arome3d.retrieve()
-
+    print(dmap_arome3d.__dir__)
     print("retrive sfxarome")
     #2dsfx
     param2d_sfx = [*variable2d_sfx.keys()]
@@ -183,13 +184,13 @@ def set_variable2d():
         attr['reference_lon'] = proj.getncattr("longitude_of_central_meridian")
         attr['ydim'] = np.long(len(dmap_arome2d.y[::yres]))#np.long(dataset.variables["y"].getncattr("_ChunkSizes"))  # Use: None
         attr['forecast'] = validdate.strftime("%H")  # 23
-        attr['x_resolution'] = np.double("2.5") #np.double("2500.0")*xres  # Use: None
+        attr['x_resolution'] = np.double("2500.0") #np.double("2500.0")*xres  # Use: None
         attr['center_lon'] = proj.getncattr("longitude_of_central_meridian")
         attr['rotation_radian'] = 0.0
         attr['xdim'] = np.long(len(dmap_arome2d.x[::xres]))#np.long(dataset.variables["x"].getncattr("_ChunkSizes"))  # Use: None
         attr['input_lat'] = proj.getncattr("latitude_of_projection_origin")  # Use: None
         attr['reference_lat'] = proj.getncattr("latitude_of_projection_origin")
-        attr['y_resolution'] = np.double("2.5") #np.double("2500.0")*yres   # Use: None
+        attr['y_resolution'] = np.double("2500.0") #np.double("2500.0")*yres   # Use: None
         attr['date'] =  validdate.strftime("%Y%m%d") # "20180331"
         attr['input_lon'] = proj.getncattr("longitude_of_central_meridian")  # Use: None
         attr['input_position'] = (794.0, 444.0)  # ??  # Use: None
