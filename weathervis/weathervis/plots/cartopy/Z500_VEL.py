@@ -75,7 +75,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       print(file_all)
       dmap_meps = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=steps,
                            date=dt, p_level=plevel)
-      print("\n######## Retriving data ############")
+      print("\n######## Retrieving data ############")
       print(f"--------> from: {dmap_meps.url} ")
       dmap_meps.retrieve()
       tmap_meps = dmap_meps # two names for same value, no copying done.
@@ -85,14 +85,14 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_sfc)
       #lonlat = np.array(data_domain.lonlat)
       dmap_meps = get_data(model=model, param=param_sfc, file=file_sfc, step=steps, date=dt, data_domain=data_domain)
-      print("\n######## Retriving data ############")
+      print("\n######## Retrieving data ############")
       print(f"--------> from: {dmap_meps.url} ")
       dmap_meps.retrieve()
 
       # get pressure level data
       file_pl = check_pl.file.loc[0]
       tmap_meps = get_data(model=model, data_domain=data_domain, param=param_pl, file=file_pl, step=steps, date=dt, p_level=plevel)
-      print("\n######## Retriving data ############")
+      print("\n######## Retrieving data ############")
       print(f"--------> from: {tmap_meps.url} ")
       tmap_meps.retrieve()
 

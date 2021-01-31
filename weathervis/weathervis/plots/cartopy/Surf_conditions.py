@@ -82,7 +82,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
                            date=dt)
       dmap_meps_sfx = get_data(model=model, data_domain=data_domain, param=param_sfx, file=file_sfx, step=steps,
                            date=dt)
-      print("\n######## Retriving data ############")
+      print("\n######## Retrieving data ############")
       print(f"--------> from: {dmap_meps.url} ")
       dmap_meps.retrieve()
       tmap_meps = dmap_meps # two names for same value, no copying done.
