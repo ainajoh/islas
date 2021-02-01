@@ -57,8 +57,8 @@ print("configure")
 if "cyclone.hpc.uib.no" in platform.node():
     print("detected cyclone")
     OUTPUTPATH = cyclone()
-elif "islas-forecasts-testing.novalocal" in platform.node():
-    print("detect islas-forecasts-testing.novalocal")
+elif "islas-forecast.novalocal" in platform.node():
+    print("detect islas-forecast.novalocal")
     OUTPUTPATH = islas_server()
 
 else:
