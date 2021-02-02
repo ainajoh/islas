@@ -48,7 +48,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     param = param_sfc + param_pl
     plevel = [500]
     split = False
-    print("\n######## Checking if your request is possibel ############")
+    print("\n######## Checking if your request is possible ############")
     try:
       check_all = check_data(date=dt, model=model, param=param, levtype="pl", p_level=plevel, step=steps)
       print(check_all.file)
@@ -203,7 +203,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
 
       #plt.show()
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      fig1.savefig(make_modelrun_folder + "/{0}_Z500_VEL_P_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      fig1.savefig(make_modelrun_folder + "/{0}_{1}_Z500_VEL_P_{2}_{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 
@@ -219,7 +219,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       fig3, ax3 = plt.subplots()
       fig3.colorbar(CF_prec, fraction=0.046, pad=0.04)
       ax3.remove()
-      fig3.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_COLORBAR.png".format(model), bbox_inches="tight", dpi=200)
+      fig3.savefig(make_modelrun_folder+"/{0}_{1}_Z500_VEL_P_COLORBAR.png".format(model, domain_name), bbox_inches="tight", dpi=200)
     except:
       pass
     ax1.cla()

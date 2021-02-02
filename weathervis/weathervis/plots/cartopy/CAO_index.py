@@ -49,7 +49,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     p_levels = [850,1000]
     param = param_sfc + param_pl
     split = False
-    print("\n######## Checking if your request is possibel ############")
+    print("\n######## Checking if your request is possible ############")
     try:
       check_all = check_data(date=dt, model=model, param=param, levtype="pl", p_level=p_levels, step=steps)
       check_sfx = check_data(date=dt, model=model, param=param_sfx, step=steps)
@@ -202,7 +202,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         frame.set_facecolor('white')
         frame.set_alpha(1)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      fig1.savefig(make_modelrun_folder + "/{0}_CAOi_{1}+{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      print("filename: "+make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
+      fig1.savefig(make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 # fin

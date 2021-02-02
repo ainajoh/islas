@@ -51,7 +51,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
     param = param_sfc + param_pl
     split = False
     sfx=False
-    print("\n######## Checking if your request is possibel ############")
+    print("\n######## Checking if your request is possible ############")
     try:
       check_all = check_data(date=dt, model=model, param=param, step=steps)
       check_sfx = check_data(date=dt, model=model, param=param_sfx,step=steps)
@@ -237,7 +237,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #print(OUTPUTPATH)
       #print("{0}".format(dt))
       make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
-      fig1.savefig(make_modelrun_folder + "/{0}_surf_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      fig1.savefig(make_modelrun_folder + "/{0}_{1}_surf_{2}_{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
 
       ax1.cla()

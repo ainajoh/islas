@@ -134,7 +134,7 @@ class MAP():
         dmet_sfc = None;
         dmet = None
         split = False
-        print("\n######## Checking if your request is possibel ############")
+        print("\n######## Checking if your request is possible ############")
         try:
             self.param = self.param_pl + self.param_ml + self.param_sfc
             check_all = check_data(date=self.date, model=self.model, param=self.param, step=self.steps,

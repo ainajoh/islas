@@ -120,21 +120,21 @@ for md in ${model[@]}; do
     runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_TOA="python TOA_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
+    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
     runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
     #runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     #runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     #runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
     #runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    #runstring_TOA="python TOA_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
+    #runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     #runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     ##runstring_sat="python satlookalike --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
 
     echo $runstring_Z
     $runstring_Z
-    echo runstring_TOA
-    $runstring_TOA
+    echo runstring_OLR
+    $runstring_OLR
     echo $runstring_T
     $runstring_T
     echo $runstring_CAO

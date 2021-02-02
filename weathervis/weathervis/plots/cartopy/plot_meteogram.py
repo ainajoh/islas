@@ -640,7 +640,7 @@ def read_data(dt,steps,model,domain_name,domain_lonlat):
     param_sfx = ["SST", "H", "LE", "TS"]
 
     split = False
-    print("\n######## Checking if your request is possibel ############")
+    print("\n######## Checking if your request is possible ############")
     try:
         check_all = check_data(date=dt, model=model, param=param,step=steps)
     except ValueError:

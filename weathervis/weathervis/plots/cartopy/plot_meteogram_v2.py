@@ -858,7 +858,7 @@ def read_data(dt, steps, model, domain_name, domain_lonlat):
     #"mass_fraction_of_cloud_ice_in_air_ml","mass_fraction_of_snow_in_air_ml",
 
     split = False
-    print("\n######## Checking if your request is possibel ############")
+    print("\n######## Checking if your request is possible ############")
     try:
         check_all = check_data(date=dt, model=model, param=param, step=steps)
     except ValueError:

@@ -35,7 +35,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def TOA_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False):
+def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False):
 
   for dt in datetime: #modelrun at time..
     param = ["toa_outgoing_longwave_flux","air_pressure_at_sea_level","surface_geopotential"]
@@ -112,7 +112,7 @@ def TOA_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
       #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      fig.savefig(make_modelrun_folder + "/{0}_TOA_sat_{1}_{2:02d}.png".format(model, dt, ttt), bbox_inches="tight", dpi=200)
+      fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}_{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
       ax.cla()
       fig.clf()
@@ -138,6 +138,6 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
-  TOA_sat(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
+  OLR_sat(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
           domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info)
   #datetime, step=4, model= "MEPS", domain = None

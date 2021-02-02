@@ -134,7 +134,7 @@ class LOC_PLOTS:
 
     def retrieve_handler(self):
 
-        print("\n######## Checking if your request is possibel ############")
+        print("\n######## Checking if your request is possible ############")
         self.param = self.param_pl + self.param_ml + self.param_sfc + self.param_sfx
         dmet,data_domain,bad_param = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps,
                                      p_level=self.p_level, m_level=self.m_level,mbrs=self.mbrs,
