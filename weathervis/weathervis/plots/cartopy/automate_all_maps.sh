@@ -151,7 +151,7 @@ done
 cd ~/output/weathervis/$modelrun
 mkdir small
 for f in *.png; do 
-  convert -scale 50% $f small/$f
+  convert -scale 30% $f small/$f
 done
 mkdir ~/www/gfx/$modelrun
 cp small/* ~/www/gfx/$modelrun
