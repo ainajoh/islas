@@ -1,3 +1,6 @@
+#!/bin/bash
+source ~/.bashrc
+
 #set workingpath to where this file is located
 cd "$(dirname "$0")"
 
@@ -143,3 +146,15 @@ for md in ${model[@]}; do
 
   done
 done
+
+# convert to smaller image size and transfer to web disk
+cd ~/output/weathervis/$modelrun
+mkdir small
+for f in *.png; do 
+  convert -scale 50% $f small/$f
+done
+mkdir ~/www/gfx/$modelrun
+cp small/* ~/www/gfx/$modelrun
+rm -rf ~/output/weathervis/$modelrun
+
+# fin
