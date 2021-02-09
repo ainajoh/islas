@@ -168,7 +168,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       levelspos = np.arange(20, round(np.nanmax(SH), -10) + 10, 40)
       levelsneg = np.arange(-300, -19, 40)
       levels = np.append(levelsneg, levelspos)
-      levels = np.linspace(-300,300,30)
+      levels = np.linspace(-300,300,15)
       CSH = plt.contour(dmap_meps.x, dmap_meps.y, SH, alpha=1.0, colors="blue", linewidths=0.7, levels=levels)
       #ax1.clabel(CSH, CSH.levels[1::2], inline=True, fmt="%3.0f", fontsize=10)
       #xx = np.where(SH < -10, xm, np.NaN).squeeze()
@@ -218,7 +218,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       levels = np.linspace(-100,300,7)
 
       CSST = ax1.contourf(dmap_meps.x, dmap_meps.y, L, zorder=1, levels=levels, alpha=0.7, cmap = cmap, extend = "both", transform=data)
-      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="whitesmoke")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="whitesmoke",edgecolor="lightgray")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
       ##########################################################
       #handles, labels = ax1.get_legend_handles_labels()
       legend=True
@@ -237,7 +237,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #print(OUTPUTPATH)
       #print("{0}".format(dt))
       make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
-      fig1.savefig(make_modelrun_folder + "/{0}_{1}_surf_{2}_{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
+      fig1.savefig(make_modelrun_folder + "/{0}_{1}_surf_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
 
       ax1.cla()
