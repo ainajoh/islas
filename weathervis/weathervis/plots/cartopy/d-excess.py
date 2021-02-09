@@ -231,7 +231,7 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
             make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
             print("filename: " + make_modelrun_folder + "/{0}_{1}_dxsi_{2}+{3:02d}.png".format(model, domain_name, dt,
                                                                                                ttt))
-            fig1.savefig(make_modelrun_folder + "/{0}_{1}_dxsi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt),
+            fig1.savefig(make_modelrun_folder + "/{0}_{1}_dxs_{2}+{3:02d}.png".format(model, domain_name, dt, ttt),
                          bbox_inches="tight", dpi=200)
             ax1.cla()
             plt.clf()
