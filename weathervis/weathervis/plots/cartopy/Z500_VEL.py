@@ -203,7 +203,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
 
       #plt.show()
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      fig1.savefig(make_modelrun_folder + "/{0}_{1}_Z500_VEL_P_{2}_{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
+      fig1.savefig(make_modelrun_folder + "/{0}_{1}_Z500_VEL_P_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
 
