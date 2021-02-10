@@ -122,6 +122,7 @@ for md in ${model[@]}; do
     runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
     runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
+    runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
     #runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     #runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
@@ -143,6 +144,8 @@ for md in ${model[@]}; do
     $runstring_BLH
     echo $runstring_SURF
     $runstring_SURF
+    echo $runstring_dxs
+    $runstring_dxs
 
   done
 done

@@ -169,7 +169,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, DELTAPT, zorder=0,
                             antialiased=True,extend = "max", levels=lvl, colors=C, vmin=0, vmax=12)#
 
-      CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=1, linewidths=5, colors="black", levels=[0.1, 0.8, 0.99])  #
+      CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=1, linewidths=2.5, colors="black", levels=[0.1, 0.5])  #
       # MSLP with contour labels every 10 hPa
       C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=1, alpha=1.0,
                       levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),

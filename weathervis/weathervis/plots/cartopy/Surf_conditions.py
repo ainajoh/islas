@@ -218,7 +218,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       levels = np.linspace(-100,300,7)
 
       CSST = ax1.contourf(dmap_meps.x, dmap_meps.y, L, zorder=1, levels=levels, alpha=0.7, cmap = cmap, extend = "both", transform=data)
-      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="whitesmoke",edgecolor="lightgray")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="whitesmoke",edgecolor="gray")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
       ##########################################################
       #handles, labels = ax1.get_legend_handles_labels()
       legend=True
