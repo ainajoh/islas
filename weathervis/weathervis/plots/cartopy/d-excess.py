@@ -210,7 +210,7 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
             ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'), zorder=3,
                             facecolor="whitesmoke")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
             ax1.text(0, 1, "{0}_dxs_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
-                     transform=ax1.transAxes, color='dimgrey')
+                     transform=ax1.transAxes, color='black')
             ##########################################################
             # handles, labels = ax1.get_legend_handles_labels()
             legend = True

@@ -135,17 +135,17 @@ for md in ${model[@]}; do
     echo $runstring_Z
     $runstring_Z
     echo runstring_OLR
-    $runstring_OLR
+    #$runstring_OLR
     echo $runstring_T
-    $runstring_T
+    #$runstring_T
     echo $runstring_CAO
     $runstring_CAO
     echo $runstring_BLH
-    $runstring_BLH
+    #$runstring_BLH
     echo $runstring_SURF
-    $runstring_SURF
+    #$runstring_SURF
     echo $runstring_dxs
-    $runstring_dxs
+    #$runstring_dxs
 
   done
 done
@@ -157,7 +157,7 @@ for f in *.png; do
   convert -scale 40% $f small/$f
 done
 mkdir ~/www/gfx/$modelrun
-cp small/* ~/www/gfx/$modelrun
+mv small/* ~/www/gfx/$modelrun
 rm -rf ~/output/weathervis/$modelrun
 
 # fin
