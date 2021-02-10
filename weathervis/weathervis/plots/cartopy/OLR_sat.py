@@ -112,7 +112,7 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
       #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}_{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
+      fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
       ax.cla()
       fig.clf()

@@ -119,8 +119,8 @@ class domain():
 
     def North_Norway(self): #data
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
-        self.domain_name = "Svalbard"
-        self.lonlat = [-10,25, 65, 77]  #
+        self.domain_name = "North_Norway"
+        self.lonlat = [5,25, 65, 77]  #
         self.idx = lonlat2idx(self.lonlat,url)# RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def KingsBay(self): #bigger data
