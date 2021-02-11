@@ -11,6 +11,8 @@ from weathervis.calculation import *
 import matplotlib.pyplot as plt
 import warnings
 import cartopy.feature as cfeature
+from mpl_toolkits.axes_grid1 import make_axes_locatable ##__N
+
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -100,10 +102,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
     #tmap_meps.air_temperature_pl -= 273.15
     #tmap_meps.relative_humidity_pl *= 100.0
 
-    # plot map
-    print("\nplotting")
-    fig1 = plt.figure(figsize=(7, 9))
-    print("\nplotting")
+
 
     lonlat = [dmap_meps.longitude[0,0], dmap_meps.longitude[-1,-1], dmap_meps.latitude[0,0], dmap_meps.latitude[-1,-1]]
     print(lonlat)
@@ -116,9 +115,14 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
-
+    # plot map
+    print("\nplotting")
+    #fig1 = plt.figure(figsize=(7, 9), projection=crs)
+    print("\nplotting")
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
-      ax1 = plt.subplot(projection=crs)
+      #ax1 = plt.subplot(projection=crs)
+      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                             subplot_kw={'projection': crs})
       ttt = tim  # + np.min(steps)
 
       tidx = tim - np.min(steps)
@@ -148,11 +152,21 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       # boundary layer thickness
       CF_BLH = ax1.contourf(dmap_meps.x, dmap_meps.y, BLH, zorder=1, alpha=0.5,
                         levels=np.arange(500, 5000, 500), linewidths=0.7,label = "BLH", cmap = "summer",extend="both")
-      cb = plt.colorbar(CF_BLH, fraction=0.046, pad=0.01, aspect=25, label="Boundary layer thickness [m]", extend="both")
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))
+      #ax1.set_extent(data_domain.lonlat)
+
+      #divider = make_axes_locatable(ax1) ##__N
+      #ax_cb = divider.new_horizontal(size="5%", pad=0.1, axes_class=plt.Axes) ##__N
+      #fig1.add_axes(ax_cb) ##__N
+      ax_cb = adjustable_colorbar_cax(fig1,ax1)
+      cb= fig1.colorbar(CF_BLH, fraction=0.046, pad=0.01,aspect=25,cax=ax_cb, label="Boundary layer thickness [m]", extend="both") ##__N
+      #cb,fig1,ax1 = adjustable_colorbar(fig1,ax1,data= CF_BLH, fraction=0.046, pad=0.01,aspect=25, label="Boundary layer thickness [m]", extend="both")
       ax1.text(0, 1, "{0}_BLH_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
                transform=ax1.transAxes, color='dimgrey')
       legend=True
+
+
+
       if legend:
         #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
         #        for pc in CF_RH.collections]
@@ -175,11 +189,15 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       ##########################################################
 
       #plt.show()
+
+      #  print(data_domain.lonlat)
+      print(data_domain.lonlat)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
       print(
         "filename: " + make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt))
+      plt.show()
       fig1.savefig(make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt),
-                   bbox_inches="tight", dpi=200)
+                   bbox_inches="tight",dpi=200)
       ax1.cla()
       plt.clf()
 
