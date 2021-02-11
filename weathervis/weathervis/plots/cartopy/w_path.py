@@ -133,7 +133,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
                 plt.colorbar(CF_prec, fraction=0.046, pad=0.01, aspect=25, label=f"{vvar}[{ getattr(dmap_meps.units, vvar)}]",
                              extend="both")
                 ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
-
+                ax1.text(0, 1, "{0}_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
+                                     transform=ax1.transAxes, color='dimgrey')
                 make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
                 print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, vvar, dt, ttt))
                 fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, vvar, dt, ttt), bbox_inches="tight", dpi=200)

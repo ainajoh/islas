@@ -150,6 +150,8 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
                         levels=np.arange(500, 5000, 500), linewidths=0.7,label = "BLH", cmap = "summer",extend="both")
       cb = plt.colorbar(CF_BLH, fraction=0.046, pad=0.01, aspect=25, label="Boundary layer thickness [m]", extend="both")
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))
+      ax1.text(0, 1, "{0}_BLH_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
+               transform=ax1.transAxes, color='dimgrey')
       legend=True
       if legend:
         #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
