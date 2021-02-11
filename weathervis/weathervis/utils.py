@@ -1,6 +1,10 @@
 #Useful function for setup
 import platform
 import os
+from mpl_toolkits.axes_grid1 import make_axes_locatable ##__N
+import matplotlib.pyplot as plt
+
+
 def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
 
     if domain_name or domain_lonlat:
@@ -31,3 +35,14 @@ def setup_directory( path, folder_name):
         print("Directory ", projectpath, " already exists")
     return projectpath
 
+
+def adjustable_colorbar_cax(fig1,ax1):#,data, **kwargs):
+      #colorbars do not asjust byitself with set_extent when defining a figure size at the start.
+      # if u remove figure_size and it adjust, but labels and text will not be consistent.
+      # #Some old solutions dont work, this is the best I could find
+      divider = make_axes_locatable(ax1) ##__N
+      ax_cb = divider.new_horizontal(size="5%", pad=0.1, axes_class=plt.Axes) ##__N
+      fig1.add_axes(ax_cb) ##__N
+      #cb= fig1.colorbar(data, **kwargs)
+      #cb= fig1.colorbar(CF_BLH, fraction=0.046, pad=0.01,aspect=25,cax=ax_cb, label="Boundary layer thickness [m]", extend="both")
+      return ax_cb

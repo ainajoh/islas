@@ -184,6 +184,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       #ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
 
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+      ax1.text(0, 1, "{0}_CAOi_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
       ##########################################################
       legend=True
@@ -191,7 +192,9 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="grey"),
                 plt.axhline(y=0, xmin=1, xmax=1, color="black",linewidth=4)]
         try:
-          plt.colorbar(CF_prec, fraction=0.046, pad=0.01, aspect=25, label=r"$\theta_{SST}-\theta_{850}$", extend="both")
+          ax_cb = adjustable_colorbar_cax(fig1, ax1)
+
+          plt.colorbar(CF_prec,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25, label=r"$\theta_{SST}-\theta_{850}$", extend="both")
 
         except:
           pass
