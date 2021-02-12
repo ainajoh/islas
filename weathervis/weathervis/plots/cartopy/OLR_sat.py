@@ -35,7 +35,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False):
+def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
 
   for dt in datetime: #modelrun at time..
     param = ["toa_outgoing_longwave_flux","air_pressure_at_sea_level","surface_geopotential"]
@@ -88,6 +88,8 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #It is a bug in pcolormesh. supposedly newest is correct, but not older versions. Invalid corner values set to nan
       #https://github.com/matplotlib/basemap/issues/470
       x,y = np.meshgrid(dmap_meps.x, dmap_meps.y)
+      #dlon,dlat=  np.meshgrid(dmap_meps.longitude, dmap_meps.latitude)
+
       nx, ny = x.shape
       mask = (
               (x[:-1, :-1] > 1e20) |
@@ -111,30 +113,39 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
 
       ax.add_feature(cfeature.GSHHSFeature(scale='intermediate'),edgecolor="brown", linewidth=0.5)  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
-      #ax.outline_patch.set_linewidth(5)
+
+
       #distancerange="../../data/Table_circle_nm_Andenes.csv"
       #dist = pd.read_csv(distancerange)
       #lats = dist["lat_300nm"]
       #lons = dist["lon_300nm"]
+      #lons[dmap_meps.longitude]=np.nan
 
-      #C300 = ax.plot(lons,lats, transform = ccrs.PlateCarree())
+
+      #lons_mask = ma.masked_outside(lons, np.nanmin(dmap_meps.longitude), np.nanmax(dmap_meps.longitude))
+      #lats_mask = ma.masked_outside(lats, np.nanmin(dmap_meps.latitude), np.nanmax(dmap_meps.latitude))
+      #C300 = ax.plot(lons_mask,lats_mask, transform = ccrs.PlateCarree())
 
       #lats = dist["lat_400nm"]
       #lons = dist["lon_400nm"]
-      #C400 = ax.plot(lons, lats, transform=ccrs.PlateCarree())
+      #lons_mask = ma.masked_outside(lons, np.nanmin(dmap_meps.longitude), np.nanmax(dmap_meps.longitude))
+      #lats_mask = ma.masked_outside(lats, np.nanmin(dmap_meps.latitude), np.nanmax(dmap_meps.latitude))
+      #C300 = ax.plot(lons_mask, lats_mask, transform=ccrs.PlateCarree())
 
       #lats = dist["lat_500nm"]
       #lons = dist["lon_500nm"]
-      #C400 = ax.plot(lons, lats, transform=ccrs.PlateCarree())
+      #lons_mask = ma.masked_outside(lons, np.nanmin(dmap_meps.longitude), np.nanmax(dmap_meps.longitude))
+      #lats_mask = ma.masked_outside(lats, np.nanmin(dmap_meps.latitude), np.nanmax(dmap_meps.latitude))
+      #C300 = ax.plot(lons, lats, transform=ccrs.PlateCarree())
 
-      lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
-                dmap_meps.latitude[-1, -1]]
+      #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[0, -1], dmap_meps.latitude[0, 0],
+      #          dmap_meps.latitude[-1, -1]]
       #lonlat = [np.nanmin(dmap_meps.longitude), np.nanmax(dmap_meps.longitude), np.nanmin(dmap_meps.latitude),
       #         np.nanmax(dmap_meps.latitude)]
-      print(dmap_meps.longitude[-2, -2])
-      print(np.nanmax(dmap_meps.longitude))
-      #ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
-      #ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
+      #print(dmap_meps.longitude[-2, -2])
+      #print(np.nanmax(dmap_meps.longitude))
+      #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
+      #ax.set_extent([x[0,0], x[-1,-1], y[0,0], y[-1,-1]], projection=crs)  # (x0, x1, y0, y1)
       #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
       ax.text(0, 1, "{0}_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
@@ -145,7 +156,8 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax.set_extent((-18.0,80.0,62.0,88.0))  # (x0, x1, y0, y1)
 
       #ax.set_extent(data_domain.lonlat)
-
+      if grid:
+        nicegrid(ax=ax)
       fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
       ax.cla()
@@ -170,8 +182,10 @@ if __name__ == "__main__":
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
+  parser.add_argument("--grid", default=True, help="Display legend")
+
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   OLR_sat(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info)
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid)
   #datetime, step=4, model= "MEPS", domain = None

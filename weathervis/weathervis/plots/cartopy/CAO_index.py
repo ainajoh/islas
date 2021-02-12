@@ -38,7 +38,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False):
+def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
 
   for dt in datetime: #modelrun at time..
     date = dt[0:-2]
@@ -205,6 +205,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         frame.set_facecolor('white')
         frame.set_alpha(1)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+      if grid:
+        nicegrid(ax=ax1)
       print("filename: "+make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
       fig1.savefig(make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
@@ -224,6 +226,8 @@ if __name__ == "__main__":
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
+  parser.add_argument("--grid", default=True, help="Display legend")
+
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   Z500_VEL(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
