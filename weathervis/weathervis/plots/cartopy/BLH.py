@@ -191,6 +191,8 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       #plt.show()
       if grid:
         nicegrid(ax=ax1)
+      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+        ax1.set_extent(data_domain.lonlat)
       #  print(data_domain.lonlat)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
       print(
@@ -199,6 +201,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
                    bbox_inches="tight",dpi=200)
       ax1.cla()
       plt.clf()
+      plt.close(fig1)
 
       #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
       #       for pc in CF_RH.collections]
@@ -214,6 +217,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
 
     ax1.cla()
     plt.clf()
+  plt.close("all")
 
 
 if __name__ == "__main__":
