@@ -194,8 +194,8 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       #  print(data_domain.lonlat)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
       print(
-        "filename: " + make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt))
-      fig1.savefig(make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt),
+        "filename: " + make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt))
+      fig1.savefig(make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt),
                    bbox_inches="tight",dpi=200)
       ax1.cla()
       plt.clf()
