@@ -1,6 +1,7 @@
 #!/bin/bash
 source ~/.bashrc
 
+dirname=$( pwd )
 #set workingpath to where this file is located
 cd "$(dirname "$0")"
 
@@ -23,6 +24,8 @@ else
   modeldatehour=$(date -v-$((350*60/100))M -u +%Y%m%d%H%M)
   #date -v-60M -u +%Y%m%d%H%M
 fi
+
+#modeldatehour="2021021121"
 
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
@@ -161,7 +164,7 @@ for f in *.png; do
   convert -scale 40% $f small/$f
 done
 mkdir ~/www/gfx/$modelrun
-mv small/* ~/www/gfx/$modelrun
+cp small/* ~/www/gfx/$modelrun
 rm -rf ~/output/weathervis/$modelrun
 
 # fin

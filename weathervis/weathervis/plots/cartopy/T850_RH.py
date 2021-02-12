@@ -250,5 +250,3 @@ if __name__ == "__main__":
 #    return self.fig
   #def do_something(self):
   #  return self.fig
-
-
