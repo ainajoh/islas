@@ -120,7 +120,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
       ax1 = plt.subplot(projection=crs)
-
+      ttt = tim
       tidx = tim - np.min(steps)
 
       print('Plotting {0} + {1:02d} UTC'.format(dt,tim))
