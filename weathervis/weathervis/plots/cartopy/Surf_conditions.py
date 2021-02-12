@@ -40,7 +40,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True)
+def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
 
   for dt in datetime: #modelrun at time..
     date = dt[0:-2]
@@ -269,6 +269,6 @@ if __name__ == "__main__":
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   surf(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid,grid=args.grid)
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid)
   #datetime, step=4, model= "MEPS", domain = None
 # ax1.fill(xx[skip][skip], yy[skip][skip], color="none", hatch='X', edgecolor="b", linewidth=0.0)
