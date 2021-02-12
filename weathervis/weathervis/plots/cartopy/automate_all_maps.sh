@@ -25,7 +25,7 @@ else
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
-modeldatehour="2021021121"
+#modeldatehour="2021021121"
 
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
