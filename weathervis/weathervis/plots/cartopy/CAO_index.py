@@ -43,8 +43,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
   for dt in datetime: #modelrun at time..
     date = dt[0:-2]
     hour = int(dt[-2:])
-    param_sfc = ["air_temperature_2m", "air_pressure_at_sea_level", "surface_geopotential"]
-    param_pl = ["air_temperature_pl", "y_wind_pl", "x_wind_pl", "geopotential_pl"]
+    param_sfc = ["air_pressure_at_sea_level", "surface_geopotential"]
+    param_pl = ["air_temperature_pl", "geopotential_pl"]  #"air_temperature_2m",
     param_sfx = ["SST","SIC"] #add later
     p_levels = [850,1000]
     param = param_sfc + param_pl
@@ -106,8 +106,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       dmap_mepsdfx.retrieve()
 
     #CALCULATE
-    u, v = xwind2uwind(tmap_meps.x_wind_pl, tmap_meps.y_wind_pl, tmap_meps.alpha)
-    vel = wind_speed(tmap_meps.x_wind_pl, tmap_meps.y_wind_pl)
 
     pt = potential_temperatur(dmap_meps.air_temperature_pl, dmap_meps.pressure*100.)
     pt_sst = potential_temperatur(dmap_mepsdfx.SST, dmap_meps.air_pressure_at_sea_level[:,0,:,:])
@@ -120,8 +118,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     dmap_meps.air_pressure_at_sea_level/=100
     tmap_meps.geopotential_pl/=10.0
 
-    # plot map
-    fig1 = plt.figure(figsize=(7, 9))
 
     lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
     lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
@@ -134,8 +130,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
                                  globe=globe)
 
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      ax1 = plt.subplot(projection=crs)
-
+      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
       ttt = tim #+ np.min(steps)
       tidx = tim - np.min(steps)
       print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
@@ -143,7 +139,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       embr = 0
       ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
       MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-      VEL = (vel[tidx, plev2, :, :]).squeeze()
       Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
       DELTAPT=dpt[tidx, 0, :, :]
       DELTAPT = dpt_sst[tidx,:,:]
@@ -208,12 +203,15 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
       if grid:
         nicegrid(ax=ax1)
 
-      if not domain_name:
-        domain_name = model
+      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+        ax1.set_extent(data_domain.lonlat)
       print("filename: "+make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
       fig1.savefig(make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
+      plt.close(fig1)
+  plt.close("all")
+
 # fin
 
 if __name__ == "__main__":

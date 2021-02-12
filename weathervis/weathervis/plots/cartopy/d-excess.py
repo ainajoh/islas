@@ -113,7 +113,8 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
         crs_lon = ccrs.PlateCarree()
         # crs = ccrs.PlateCarree()
         for tim in np.arange(np.min(steps), np.max(steps) + 1, 1):
-            ax1 = plt.subplot(projection=crs)
+            fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                                     subplot_kw={'projection': crs})
 
             ttt = tim  # + np.min(steps)
             tidx = tim - np.min(steps)
@@ -235,10 +236,15 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                                                                                              ttt))
             if grid:
                 nicegrid(ax=ax1)
+            if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+                ax1.set_extent(data_domain.lonlat)
             fig1.savefig(make_modelrun_folder + "/{0}_{1}_dxs_{2}+{3:02d}.png".format(model, domain_name, dt, ttt),
                          bbox_inches="tight", dpi=200)
             ax1.cla()
             plt.clf()
+            plt.close(fig1)
+    plt.close("all")
+
 
 
 # fin

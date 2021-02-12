@@ -107,8 +107,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     vel = wind_speed(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl)
 
     # plot map
-    fig1 = plt.figure(figsize=(7, 9))
-
     lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
               dmap_meps.latitude[-1, -1]]
 
@@ -122,7 +120,9 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
                                 globe=globe)
 
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      ax1 = plt.subplot(projection=crs)
+      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
+
       ttt = tim #+ np.min(steps)
       tidx = tim - np.min(steps)
       print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
@@ -161,10 +161,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
                         colors='grey', linewidths=1.0)
       ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
       ####REMOVE LATER 60.2;5.4166666666667;60;None;N
-      lat_p = 78.9243
-      lon_p = 11.9312
-      mainpoint = ax1.scatter(lon_p,lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),
-                             color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
 
 
       skip=20
@@ -206,28 +202,33 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         #           fontsize=7)  # , bbox=dict(facecolor='white', alpha=0.5))
 
       #plt.show()
+      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+        ax1.set_extent(data_domain.lonlat)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
       fig1.savefig(make_modelrun_folder + "/{0}_{1}_Z500_VEL_P_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
+      plt.close(fig1)
 
-
-    proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
-             plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
-    fig2 = plt.figure(figsize=(2, 1.25))
-    fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
-                              f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
-    fig2.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
-
-    try:
-      fig3, ax3 = plt.subplots()
-      fig3.colorbar(CF_prec, fraction=0.046, pad=0.04)
-      ax3.remove()
-      fig3.savefig(make_modelrun_folder+"/{0}_{1}_Z500_VEL_P_COLORBAR.png".format(model, domain_name), bbox_inches="tight", dpi=200)
-    except:
-      pass
+    #proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
+    #         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
+    #fig2 = plt.figure(figsize=(2, 1.25))
+    #fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
+    #                          f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
+    #fig2.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+    #plt.close(fig2)
+    #try:
+    #  fig3, ax3 = plt.subplots()
+    #  fig3.colorbar(CF_prec, fraction=0.046, pad=0.04)
+    #  ax3.remove()
+    #  fig3.savefig(make_modelrun_folder+"/{0}_{1}_Z500_VEL_P_COLORBAR.png".format(model, domain_name), bbox_inches="tight", dpi=200)
+    #  plt.close(fig3)
+    #except:
+    #  pass
     ax1.cla()
     plt.clf()
+  plt.close("all")
+
 
 
 # fin

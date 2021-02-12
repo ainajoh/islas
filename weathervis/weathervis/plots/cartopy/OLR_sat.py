@@ -157,14 +157,16 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
       #ax.set_extent(data_domain.lonlat)
       if grid:
-        nicegrid(ax=ax)
+        nicegrid(ax=ax,color="orange")
       fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
       ax.cla()
       fig.clf()
+      plt.close(fig)
 
     ax.cla()
     plt.clf()
+  plt.close("all")
 
 
 # fin

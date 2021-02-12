@@ -115,11 +115,12 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
-
-    fig1 = plt.figure(figsize=(7, 9))
-
+    #fig1 = plt.figure(figsize=(7, 9))
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
-      ax1 = plt.subplot(projection=crs)
+      #ax1 = plt.subplot(projection=crs)
+
+      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
       ttt = tim
       tidx = tim - np.min(steps)
 
@@ -192,10 +193,13 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       if grid:
         nicegrid(ax=ax1)
 
+      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+        ax1.set_extent(data_domain.lonlat)
 
       fig1.savefig(make_modelrun_folder+"/{0}_{1}_T850_RH_{2}+{3:02d}.png".format(model, domain_name, dt, tim), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
+      plt.close(fig1)
 
     #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
     #        for pc in CF_RH.collections]
@@ -211,6 +215,8 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
     ax1.cla()
     plt.clf()
+
+  plt.close("all")
 
 
 if __name__ == "__main__":
