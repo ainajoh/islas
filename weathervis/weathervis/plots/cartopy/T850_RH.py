@@ -194,7 +194,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
     #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
     #        for pc in CF_RH.collections]
-    #proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
+    #proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),eee
     #         plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
     #         plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
     #proxy.extend(proxy1)
