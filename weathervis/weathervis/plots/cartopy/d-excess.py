@@ -221,8 +221,10 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                          ]
                 lg = plt.legend(proxy, ["d-xs=10", "MSLP [hPa]", "Sea Ice conc. >10%"], loc=1)
 
+
                 # cb = plt.colorbar(CSST, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label ="RH [%]", extend = "both")
-                cb = plt.colorbar(Cd, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label="d-excess [$\perthousand$]",
+                ax_cb = adjustable_colorbar_cax(fig1, ax1)
+                cb = plt.colorbar(Cd, fraction=0.046, pad=0.01, ax=ax1, aspect=25, cax= ax_cb, label="d-excess [$\perthousand$]",
                                   extend="both")
 
                 frame = lg.get_frame()

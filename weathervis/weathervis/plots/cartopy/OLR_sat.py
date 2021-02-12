@@ -51,19 +51,24 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
     lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
     parallels = dmap_meps.standard_parallel_projection_lambert
-    fig = plt.figure(figsize=(7, 9))
+
+    #fig = plt.figure(figsize=(7, 9))
     # setting up projection
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
 
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      ZS = dmap_meps.surface_geopotential[tim, 0, :, :]
-      MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tim, 0, :, :], np.NaN).squeeze()
+      fig, ax = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
 
-      ax = plt.subplot(projection=crs)
       ttt = tim
       tidx = tim - np.min(steps)
+      ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
+      MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+
+      #ax = plt.subplot(projection=crs)
+
       print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
       #ax.coastlines('10m')
       #ax.pcolormesh(dmap_meps.x, dmap_meps.y, dmap_meps.integral_of_toa_outgoing_longwave_flux_wrt_time[0, 0, :, :], vmin=-230,
@@ -80,9 +85,25 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                         colors='cyan', linewidths=1.0, label="MSLP [hPa]")
       ax.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
 
+      #It is a bug in pcolormesh. supposedly newest is correct, but not older versions. Invalid corner values set to nan
+      #https://github.com/matplotlib/basemap/issues/470
+      x,y = np.meshgrid(dmap_meps.x, dmap_meps.y)
+      nx, ny = x.shape
+      mask = (
+              (x[:-1, :-1] > 1e20) |
+              (x[1:, :-1] > 1e20) |
+              (x[:-1, 1:] > 1e20) |
+              (x[1:, 1:] > 1e20) |
+              (x[:-1, :-1] > 1e20) |
+              (x[1:, :-1] > 1e20) |
+              (x[:-1, 1:] > 1e20) |
+              (x[1:, 1:] > 1e20)
+      )
+      data =  dmap_meps.toa_outgoing_longwave_flux[tidx, 0,:nx - 1, :ny - 1].copy()
+      data[mask] = np.nan
+      #ax.pcolormesh(x, y, data[ :, :])#, cmap=plt.cm.Greys_r)
 
-
-      ax.pcolormesh(dmap_meps.x, dmap_meps.y, dmap_meps.toa_outgoing_longwave_flux[tidx, 0, :, :], vmin=-230,vmax=-110, cmap=plt.cm.Greys_r)
+      ax.pcolormesh(x, y, data[ :, :], vmin=-230,vmax=-110, cmap=plt.cm.Greys_r)
       #ax.pcolormesh(dmap_meps.x, dmap_meps.y, dmap_meps.toa_outgoing_longwave_flux[tidx, 0, :, :], cmap=plt.cm.Greys_r)
       #lat_p = 78.9243
       #lon_p = 11.9312
@@ -108,10 +129,23 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
       lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
                 dmap_meps.latitude[-1, -1]]
+      #lonlat = [np.nanmin(dmap_meps.longitude), np.nanmax(dmap_meps.longitude), np.nanmin(dmap_meps.latitude),
+      #         np.nanmax(dmap_meps.latitude)]
+      print(dmap_meps.longitude[-2, -2])
+      print(np.nanmax(dmap_meps.longitude))
       #ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       #ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
       #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+      ax.text(0, 1, "{0}_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
+               transform=ax.transAxes, color='dimgrey')
+      #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
+      #ax.set_extent([lonlat[0]+10, lonlat[1], lonlat[2]-2, lonlat[3]])  # (x0, x1, y0, y1)
+
+      #ax.set_extent((-18.0,80.0,62.0,88.0))  # (x0, x1, y0, y1)
+
+      #ax.set_extent(data_domain.lonlat)
+
       fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
       ax.cla()

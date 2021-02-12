@@ -113,13 +113,17 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         C = np.array(C)
         C = np.divide(C, 255.)  # RGB has to be between 0 and 1 in python
 
-        for vvar in ["LWP_35","IWP_35"]:
-            fig1 = plt.figure(figsize=(7, 9))
+        for vvar in ["IWP_35","LWP_35"]:
+            #fig1 = plt.figure(figsize=(7, 9))
             globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
             crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                          globe=globe)
             for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-                ax1 = plt.subplot(projection=crs)
+                #ax1 = plt.subplot(projection=crs)
+                fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                                         subplot_kw={'projection': crs})
+                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+
                 ttt = tim #+ np.min(steps)
                 tidx = tim - np.min(steps)
                 print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
@@ -130,10 +134,13 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
 
                 CF_prec = ax1.contourf(dmap_meps.x, dmap_meps.y, getattr(dmap_meps, vvar)[tidx, :, :] , levels=lvl, colors=C, zorder=0,
                                 antialiased=True,extend = "max")
-                plt.colorbar(CF_prec, fraction=0.046, pad=0.01, aspect=25, label=f"{vvar}[{ getattr(dmap_meps.units, vvar)}]",
+                ax_cb = adjustable_colorbar_cax(fig1, ax1)
+                cb=fig1.colorbar(CF_prec, cax=ax_cb,fraction=0.046, pad=0.01, aspect=25, label=f"{vvar}[{ getattr(dmap_meps.units, vvar)}]",
                              extend="both")
-                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
-                ax1.text(0, 1, "{0}_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
+                if data_domain: #weird bug.. cuts off when sees no data value
+                    ax1.set_extent(data_domain.lonlat)
+
+                ax1.text(0, 1, "{0}_OLR_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
                                      transform=ax1.transAxes, color='dimgrey')
                 make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
                 print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, vvar, dt, ttt))

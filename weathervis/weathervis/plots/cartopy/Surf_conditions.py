@@ -227,8 +227,8 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="blue"),
                  plt.axhline(y=0, xmin=1, xmax=1, color="black")]
         lg = plt.legend(proxy, [f"Sensible heat [{dmap_meps_sfx.units.H}] ", f"SST [C]"],loc=1)
-
-        cb = plt.colorbar(CSST, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
+        ax_cb = adjustable_colorbar_cax(fig1, ax1)
+        cb = plt.colorbar(CSST, cax= ax_cb, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
         frame = lg.get_frame()
         lg.set_zorder(102)
         frame.set_facecolor('lightgray')
