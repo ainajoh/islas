@@ -40,7 +40,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True:
+def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True)
 
   for dt in datetime: #modelrun at time..
     date = dt[0:-2]
