@@ -136,7 +136,7 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                 frame.set_facecolor('white')
                 frame.set_alpha(0.8)
 
-            fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "LWP_IWP", dt, ttt), bbox_inches="tight", dpi=200)
+            fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "clouds", dt, ttt), bbox_inches="tight", dpi=200)
             ax1.cla()
             plt.clf()
             plt.close(fig1)
