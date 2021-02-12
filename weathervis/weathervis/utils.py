@@ -3,7 +3,7 @@ import platform
 import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable ##__N
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
 
@@ -46,3 +46,11 @@ def adjustable_colorbar_cax(fig1,ax1):#,data, **kwargs):
       #cb= fig1.colorbar(data, **kwargs)
       #cb= fig1.colorbar(CF_BLH, fraction=0.046, pad=0.01,aspect=25,cax=ax_cb, label="Boundary layer thickness [m]", extend="both")
       return ax_cb
+
+def nicegrid(ax, xx = np.arange(-20, 80, 20),yy = np.arange(50, 90, 4), color='gray', alpha=0.5, linestyle='--'):
+    gl = ax.gridlines(draw_labels=True, linewidth=1, color=color, alpha=alpha, linestyle=linestyle)
+    gl.xlabels_top = False
+    import matplotlib.ticker as mticker
+    gl.xlocator = mticker.FixedLocator(xx)
+    gl.ylocator = mticker.FixedLocator(yy)
+
