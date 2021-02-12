@@ -126,6 +126,8 @@ for md in ${model[@]}; do
     runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
     runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 0 64"
+
 
     #runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     #runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
@@ -136,19 +138,21 @@ for md in ${model[@]}; do
     ##runstring_sat="python satlookalike --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
 
     echo $runstring_Z
-    $runstring_Z
+    #$runstring_Z
     echo runstring_OLR
-    $runstring_OLR
+    #$runstring_OLR
     echo $runstring_T
-    $runstring_T
+    #$runstring_T
     echo $runstring_CAO
-    $runstring_CAO
+    #$runstring_CAO
     echo $runstring_BLH
-    $runstring_BLH
+    #$runstring_BLH
     echo $runstring_SURF
-    $runstring_SURF
+    #$runstring_SURF
     echo $runstring_dxs
-    $runstring_dxs
+    #$runstring_dxs
+    echo $runstring_WC
+    $runstring_WC
 
   done
 done
