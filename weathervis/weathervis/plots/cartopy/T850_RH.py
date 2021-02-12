@@ -154,6 +154,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
 
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  #‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+      ax1.text(0, 1, "{0}_T850_RH_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
       legend=True
       if legend:
