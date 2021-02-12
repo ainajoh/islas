@@ -187,7 +187,9 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="gray"),
         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
         try:
-          cb = plt.colorbar(CF_prec, fraction=0.046, pad=0.01, aspect=25, label =f"{acc}h acc. prec. [mm/{acc}h]", extend="both")
+          ax_cb = adjustable_colorbar_cax(fig1, ax1)
+
+          cb = plt.colorbar(CF_prec, cax=ax_cb,fraction=0.046, pad=0.01, aspect=25, label =f"{acc}h acc. prec. [mm/{acc}h]", extend="both")
 
         except:
           pass
