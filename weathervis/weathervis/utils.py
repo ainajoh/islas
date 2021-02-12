@@ -50,7 +50,7 @@ def adjustable_colorbar_cax(fig1,ax1):#,data, **kwargs):
       return ax_cb
 
 def nicegrid(ax, xx = np.arange(-20, 80, 20),yy = np.arange(50, 90, 4), color='gray', alpha=0.5, linestyle='--'):
-    gl = ax.gridlines(draw_labels=True, linewidth=1, color=color, alpha=alpha, linestyle=linestyle)
+    gl = ax.gridlines(draw_labels=True, linewidth=1, color=color, alpha=alpha, linestyle=linestyle,zorder=10)
     gl.xlabels_top = False
     import matplotlib.ticker as mticker
     gl.xlocator = mticker.FixedLocator(xx)
