@@ -1,8 +1,10 @@
 #!/bin/bash
 source ~/.bashrc
 
-dirname=$( pwd )
+#dirname=$( pwd )
+dirname=""
 #set workingpath to where this file is located
+echo "$(dirname "$0")"
 cd "$(dirname "$0")"
 
 #echo $hostname
@@ -126,7 +128,7 @@ for md in ${model[@]}; do
     runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
     runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 60 64"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 30 64"
 
 
     #runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
@@ -163,8 +165,11 @@ mkdir small
 for f in *.png; do 
   convert -scale 40% $f small/$f
 done
-mkdir ~/www/gfx/$modelrun
+if ! [ -d ~/www/gfx/$modelrun ]; then
+  mkdir ~/www/gfx/$modelrun
+fi
 cp small/* ~/www/gfx/$modelrun
 rm -rf ~/output/weathervis/$modelrun
+chown -R centos:apache ~/www/gfx/$modelrun  
 
 # fin

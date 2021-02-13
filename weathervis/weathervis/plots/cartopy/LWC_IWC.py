@@ -119,7 +119,7 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
             ax1.text(0, 1, "{0}_LWC_IWC[[{1}]_{2}+{3:02d}".format(model,m_level, dt, ttt), ha='left', va='bottom', \
                                    transform=ax1.transAxes, color='dimgrey')
             make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-            print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "LWP_IWP", dt, ttt))
+            print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "LWP_IWP", dt, ttt))
             if grid:
                  nicegrid(ax=ax1)
 
@@ -136,7 +136,7 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                 frame.set_facecolor('white')
                 frame.set_alpha(0.8)
 
-            fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "clouds", dt, ttt), bbox_inches="tight", dpi=200)
+            fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "clouds", dt, ttt), bbox_inches="tight", dpi=200)
             ax1.cla()
             plt.clf()
             plt.close(fig1)
