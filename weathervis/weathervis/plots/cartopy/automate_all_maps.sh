@@ -140,21 +140,21 @@ for md in ${model[@]}; do
     ##runstring_sat="python satlookalike --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
 
     echo $runstring_Z
-    $runstring_Z
+    #$runstring_Z
     echo runstring_OLR
-    $runstring_OLR
+    #$runstring_OLR
     echo $runstring_T
-    $runstring_T
+    #$runstring_T
     echo $runstring_CAO
-    $runstring_CAO
+    #$runstring_CAO
     echo $runstring_BLH
-    $runstring_BLH
+    #$runstring_BLH
     echo $runstring_SURF
     $runstring_SURF
     echo $runstring_dxs
-    $runstring_dxs
+    #$runstring_dxs
     echo $runstring_WC
-    $runstring_WC
+    #$runstring_WC
 
   done
 done

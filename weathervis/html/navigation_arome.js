@@ -148,32 +148,28 @@ function getBasetime(row)
 	return bfill+btim;
 }
 
-function getFilename(n)
+function getFilename(n,k)
 {
-k=0;
-if (n>2) {
-  k=1;
-}
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(n)+getKind(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(k)+getKind(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
 }
 
 function prepareFigure(n) 
 {
 if (n==0 || n>1) {
-	document.getElementById("panel1").src=getFilename(vkind[0]);
-	document.getElementById("panel1").alt=getFilename(vkind[0]);
-	document.getElementById("panel2").src=getFilename(vkind[1]);
-	document.getElementById("panel2").alt=getFilename(vkind[1]);
-	document.getElementById("panel3").src=getFilename(vkind[2]);
-	document.getElementById("panel3").alt=getFilename(vkind[2]);
+	document.getElementById("panel1").src=getFilename(vkind[0],0);
+	document.getElementById("panel1").alt=getFilename(vkind[0],0);
+	document.getElementById("panel2").src=getFilename(vkind[1],0);
+	document.getElementById("panel2").alt=getFilename(vkind[1],0);
+	document.getElementById("panel3").src=getFilename(vkind[2],0);
+	document.getElementById("panel3").alt=getFilename(vkind[2],0);
 }
 if (n>=1) {
-	document.getElementById("panel4").src=getFilename(vkind[3]);
-	document.getElementById("panel4").alt=getFilename(vkind[3]);
-	document.getElementById("panel5").src=getFilename(vkind[4]);
-	document.getElementById("panel5").alt=getFilename(vkind[4]);
-	document.getElementById("panel6").src=getFilename(vkind[5]);
-	document.getElementById("panel6").alt=getFilename(vkind[5]);
+	document.getElementById("panel4").src=getFilename(vkind[3],1);
+	document.getElementById("panel4").alt=getFilename(vkind[3],1);
+	document.getElementById("panel5").src=getFilename(vkind[4],1);
+	document.getElementById("panel5").alt=getFilename(vkind[4],1);
+	document.getElementById("panel6").src=getFilename(vkind[5],1);
+	document.getElementById("panel6").alt=getFilename(vkind[5],1);
 }
 }
 
@@ -195,27 +191,27 @@ function selectVar(n)
     switch(n) {
 	case 1:
 	  vkind[0]=document.getElementById("sel_v1").selectedIndex;
-	  document.getElementById("panel1").src=getFilename(vkind[0]);
+	  document.getElementById("panel1").src=getFilename(vkind[0],0);
 	  break;
 	case 2:
 	  vkind[1]=document.getElementById("sel_v2").selectedIndex;
-	  document.getElementById("panel2").src=getFilename(vkind[1]);
+	  document.getElementById("panel2").src=getFilename(vkind[1],0);
 	  break;
 	case 3:
 	  vkind[2]=document.getElementById("sel_v3").selectedIndex;
-	  document.getElementById("panel3").src=getFilename(vkind[2]);
+	  document.getElementById("panel3").src=getFilename(vkind[2],0);
 	  break;
 	case 4:
 	  vkind[3]=document.getElementById("sel_v4").selectedIndex;
-	  document.getElementById("panel4").src=getFilename(vkind[3]);
+	  document.getElementById("panel4").src=getFilename(vkind[3],1);
 	  break;
 	case 5:
 	  vkind[4]=document.getElementById("sel_v5").selectedIndex;
-	  document.getElementById("panel5").src=getFilename(vkind[4]);
+	  document.getElementById("panel5").src=getFilename(vkind[4],1);
 	  break;
 	case 6:
 	  vkind[5]=document.getElementById("sel_v6").selectedIndex;
-	  document.getElementById("panel6").src=getFilename(vkind[5]);
+	  document.getElementById("panel6").src=getFilename(vkind[5],1);
 	  break;
         default:
 	  break;

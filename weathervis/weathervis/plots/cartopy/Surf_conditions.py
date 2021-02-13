@@ -184,7 +184,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #levels=np.arange(270,294,2)
       SST = SST - 273.15
       levels = [np.min(SST), np.max(SST), 3]
-      levels = [-2,0,2,4,6,8,10,12,14,16,18,20,22,24]
+      levels = [0,3,6,9,12,15,18,21,24]
       C_SS = ax1.contour(dmap_meps.x, dmap_meps.y, SST, colors="k", linewidths=2, levels =levels, zorder=9)
       ax1.clabel(C_SS, C_SS.levels, inline=True, fmt="%3.0f", fontsize=10 )
 
@@ -201,8 +201,9 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
 
       #wind#
       #skip = (slice(50, -50, 50), slice(50, -50, 50))
-      skip = (slice(40, -40, 50), slice(40, -40, 50)) #70
-      CVV = ax1.barbs(xm[skip], ym[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, zorder=10)
+      skip = (slice(40, -40, 30), slice(40, -40, 30)) #70
+      scale = 1.94384/3
+      CVV = ax1.barbs(xm[skip], ym[skip], uxx[skip]*scale, vxx[skip]*scale, zorder=10)
 
       #lat_p = 60.2
       #lon_p = 5.4167

@@ -162,7 +162,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       cb= fig1.colorbar(CF_BLH, fraction=0.046, pad=0.01,aspect=25,cax=ax_cb, label="Boundary layer thickness [m]", extend="both") ##__N
       #cb,fig1,ax1 = adjustable_colorbar(fig1,ax1,data= CF_BLH, fraction=0.046, pad=0.01,aspect=25, label="Boundary layer thickness [m]", extend="both")
       ax1.text(0, 1, "{0}_BLH_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
-               transform=ax1.transAxes, color='dimgrey')
+               transform=ax1.transAxes, color='black')
       legend=True
 
 

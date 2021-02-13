@@ -29,40 +29,40 @@ AROME Arctic forecasts for ISLAS2021
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="500px"></td>
       <td align=center><img id="panel3" src="gfx/fc_20160929/fc_20160929.gif" alt="d-excess" height="500px"></td></tr>
     <tr><td align=center><select id="sel_v1" size=1 onChange="javascript:selectVar(1)">
-<option>CAO-index</option>
-<option>OLR, SLP</option>
-<option>Fluxes</option>
-<option>VEL, P, Z500</option>
-<option>T850, RH, SLP</option>
-<option>d-excess</option>
-<option>BLH, w</option>
-<option>cloud water/ice</option></td>
+<option value=0 selected>CAO-index</option>
+<option value=1>OLR, SLP</option>
+<option value=2>Fluxes</option>
+<option value=3>VEL, P, Z500</option>
+<option value=4>T850, RH, SLP</option>
+<option value=5>d-excess</option>
+<option value=6>BLH, w</option>
+<option value=7>cloud water/ice</option></td>
 <td align=center><select id="sel_v2" size=1 onChange="javascript:selectVar(2)">
-<option>CAO-index</option>
-<option>OLR, SLP</option>
-<option>Fluxes</option>
-<option>VEL, P, Z500</option>
-<option>T850, RH, SLP</option>
-<option>d-excess</option>
-<option>BLH, w</option>
-<option>cloud water/ice</option></td>
+<option value=0>CAO-index</option>
+<option value=1 selected>OLR, SLP</option>
+<option value=2>Fluxes</option>
+<option value=3>VEL, P, Z500</option>
+<option value=4>T850, RH, SLP</option>
+<option value=5>d-excess</option>
+<option value=6>BLH, w</option>
+<option value=7>cloud water/ice</option></td>
 <td align=center><select id="sel_v3" size=1 onChange="javascript:selectVar(3)">
-<option>CAO-index</option>
-<option>OLR, SLP</option>
-<option>Fluxes</option>
-<option>VEL, P, Z500</option>
-<option>T850, RH, SLP</option>
-<option>d-excess</option>
-<option>BLH, w</option>
-<option>cloud water/ice</option></td></tr>
+<option value=0>CAO-index</option>
+<option value=1>OLR, SLP</option>
+<option value=2 selected>Fluxes</option>
+<option value=3>VEL, P, Z500</option>
+<option value=4>T850, RH, SLP</option>
+<option value=5>d-excess</option>
+<option value=6>BLH, w</option>
+<option value=7>cloud water/ice</option></td>
   <tr><td colspan=3 width=1300 align=center>
   <form name="selpic" action="">
 			<b>Top row</b> Domain:
    <select id="domain1" size=1 onChange="javascript:selectDomain(0)">
-     <option id=dom0>AromeArctic</option>
-     <option id=dom1>MEPS</option>
-     <option id=dom2>Svalbard</option>
-     <option id=dom3>North_Norway</option>
+     <option value=0>AromeArctic</option>
+     <option value=1>MEPS</option>
+     <option value=2>Svalbard</option>
+     <option value=3 selected>North_Norway</option>
    </select>
 			Base time:
       <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(0)">
@@ -81,10 +81,10 @@ AROME Arctic forecasts for ISLAS2021
 	  <input name="sync" type="checkbox" checked=false onClick="javascript:checkSync()">Sync both rows<br>
 			<b>Bottom row:</b> Domain:
    <select id="domain2" size=1 onChange="javascript:selectDomain(1)">
-     <option >AromeArctic</option>
-     <option >MEPS</option>
-     <option >Svalbard</option>
-     <option >North_Norway</option>
+     <option value=0>AromeArctic</option>
+     <option value=0>MEPS</option>
+     <option value=0>Svalbard</option>
+     <option value=0 selected>North_Norway</option>
    </select>
 			Base time:
       <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(1)">
@@ -98,32 +98,32 @@ AROME Arctic forecasts for ISLAS2021
       </form>
   </td></tr>
     <tr><td align=center><select id="sel_v4" size=1 onChange="javascript:selectVar(4)">
-<option>CAO-index</option>
-<option>OLR, SLP</option>
-<option>Fluxes</option>
-<option>VEL, P, Z500</option>
-<option>T850, RH, SLP</option>
-<option>d-excess</option>
-<option>BLH, w</option>
-<option>cloud water/ice</option></td>
+<option value=0>CAO-index</option>
+<option value=1>OLR, SLP</option>
+<option value=2>Fluxes</option>
+<option value=3 selected >VEL, P, Z500</option>
+<option value=4>T850, RH, SLP</option>
+<option value=5>d-excess</option>
+<option value=6>BLH, w</option>
+<option value=7>cloud water/ice</option></td>
 <td align=center><select id="sel_v5" size=1 onChange="javascript:selectVar(5)">
-<option>CAO-index</option>
-<option>OLR, SLP</option>
-<option>Fluxes</option>
-<option>VEL, P, Z500</option>
-<option>T850, RH, SLP</option>
-<option>d-excess</option>
-<option>BLH, w</option>
-<option>cloud water/ice</option></td>
+<option value=0>CAO-index</option>
+<option value=1>OLR, SLP</option>
+<option value=2>Fluxes</option>
+<option value=3>VEL, P, Z500</option>
+<option value=4>T850, RH, SLP</option>
+<option value=5 selected>d-excess</option>
+<option value=6>BLH, w</option>
+<option value=7>cloud water/ice</option></td>
 <td align=center><select id="sel_v6" size=1 onChange="javascript:selectVar(6)">
-<option>CAO-index</option>
-<option>OLR, SLP</option>
-<option>Fluxes</option>
-<option>VEL, P, Z500</option>
-<option>T850, RH, SLP</option>
-<option>d-excess</option>
-<option>BLH, w</option>
-<option>cloud water/ice</option></td></tr>
+<option value=0 selected>CAO-index</option>
+<option value=1>OLR, SLP</option>
+<option value=2>Fluxes</option>
+<option value=3>VEL, P, Z500</option>
+<option value=4>T850, RH, SLP</option>
+<option value=5>d-excess</option>
+<option value=6 selected>BLH, w</option>
+<option value=7>cloud water/ice</option></td>
   <tr><td align=center><img id="panel4" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 1" height="500px"></td>
       <td align=center><img id="panel5" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 2" height="500px"></td>
       <td align=center><img id="panel6" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 3" height="500px"></td></tr>
