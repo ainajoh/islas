@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>
+AROME Arctic forecasts for ISLAS2021
+</title>
+<link rel='stylesheet' type='text/css' href='watersip.css'>
+<script type="text/javascript" src="navigation_arome.js"></script>
+<script type="text/javascript" src="page_navigation.js"></script>
+</head>
+
+<BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
+  <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
+    <td width=100><img align=left src="gfx/UiBmerke_200_200_svhv.gif" height=60></td>
+    <td width=1200 colspan=7><h2 align=center>AROME forecasts for ISLAS2021 aircraft operations</h2></td></tr>
+    <tr>
+    <td width=200 align=center bgcolor=#c0c0c0><a href=index.html>Moisture source diagnostic</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href="javascript:;" onClick="javascript:setKind('ARID');">AR probability</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=CAOID><a href="javascript:;" onClick="javascript:setKind('CAOID');">CAO probability</a></td>
+    <td width=100 align=center bgColor=#c0c0c0 id=EHSID><a href="javascript:;" onClick="javascript:setKind('EHSID');">EHS probability</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=SSHID><a href="javascript:;" onClick="javascript:setKind('SSHID');">SSH probability</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=SLOEID><a href="javascript:;" onClick="javascript:setKind('SLOEID');">SLOE probability</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=TPID><a href="javascript:;" onClick="javascript:setKind('TPID');">TP probability</a></td></tr>
+    <tr><td width=200 align=left colspan=2>Image size:<form name="selsize" action=""><input name="small" value="small" type="button" onClick="javascript:setSize(0)">
+	  <input name="large" value="large" type="button" onClick="javascript:setSize(1)">
+    <td width=800 align=center colspan=6>Base: AROME Arctic forecast. Plots updated 3 times daily at 04, 10 and 16 UTC.</td></tr>
+    <tr><td></td></tr></table>
+  <table border=0 bgcolor=#ffffff width=1300 align=center>
+  <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="500px"></td>
+      <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="500px"></td>
+      <td align=center><img id="panel3" src="gfx/fc_20160929/fc_20160929.gif" alt="d-excess" height="500px"></td></tr>
+    <tr><td align=center><select id="sel_v1" size=1 onChange="javascript:selectVar(1)">
+<option>CAO-index</option>
+<option>OLR, SLP</option>
+<option>Fluxes</option>
+<option>VEL, P, Z500</option>
+<option>T850, RH, SLP</option>
+<option>d-excess</option>
+<option>BLH, w</option>
+<option>cloud water/ice</option></td>
+<td align=center><select id="sel_v2" size=1 onChange="javascript:selectVar(2)">
+<option>CAO-index</option>
+<option>OLR, SLP</option>
+<option>Fluxes</option>
+<option>VEL, P, Z500</option>
+<option>T850, RH, SLP</option>
+<option>d-excess</option>
+<option>BLH, w</option>
+<option>cloud water/ice</option></td>
+<td align=center><select id="sel_v3" size=1 onChange="javascript:selectVar(3)">
+<option>CAO-index</option>
+<option>OLR, SLP</option>
+<option>Fluxes</option>
+<option>VEL, P, Z500</option>
+<option>T850, RH, SLP</option>
+<option>d-excess</option>
+<option>BLH, w</option>
+<option>cloud water/ice</option></td></tr>
+  <tr><td colspan=3 width=1300 align=center>
+  <form name="selpic" action="">
+			<b>Top row</b> Domain:
+   <select id="domain1" size=1 onChange="javascript:selectDomain(0)">
+     <option id=dom0>AromeArctic</option>
+     <option id=dom1>MEPS</option>
+     <option id=dom2>Svalbard</option>
+     <option id=dom3>North_Norway</option>
+   </select>
+			Base time:
+      <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(0)">
+      <span id="btime0">now</span>
+      <input name="forward" value="+6h" type="button" onClick="javascript:skiponeforward(0)">
+			Forecast time:
+      <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(0)">
+      <span id="ftime0">t+00h</span>
+      <input name="forward" value="+1h" type="button" onClick="javascript:skip1hforward(0)">
+       <b>Valid time: <span id="valid0">valid</span></b>
+      </form>
+  </td></tr>
+  <tr><td colspan=3 align=center><span id=caption2></span></td></tr>
+<tr><td colspan=3 width=1300 align=center>
+  <form name="selpic" action="">
+	  <input name="sync" type="checkbox" checked=false onClick="javascript:checkSync()">Sync both rows<br>
+			<b>Bottom row:</b> Domain:
+   <select id="domain2" size=1 onChange="javascript:selectDomain(1)">
+     <option >AromeArctic</option>
+     <option >MEPS</option>
+     <option >Svalbard</option>
+     <option >North_Norway</option>
+   </select>
+			Base time:
+      <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(1)">
+      <span id="btime1">now</span>
+      <input name="forward" value="+6h" type="button" onClick="javascript:skiponeforward(1)">
+			Forecast time:
+      <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(1)">
+      <span id="ftime1">t+00h</span>
+      <input name="forward" value="+1h" type="button" onClick="javascript:skip1hforward(1)">
+       <b>Valid time: <span id="valid1">valid</span></b>
+      </form>
+  </td></tr>
+    <tr><td align=center><select id="sel_v4" size=1 onChange="javascript:selectVar(4)">
+<option>CAO-index</option>
+<option>OLR, SLP</option>
+<option>Fluxes</option>
+<option>VEL, P, Z500</option>
+<option>T850, RH, SLP</option>
+<option>d-excess</option>
+<option>BLH, w</option>
+<option>cloud water/ice</option></td>
+<td align=center><select id="sel_v5" size=1 onChange="javascript:selectVar(5)">
+<option>CAO-index</option>
+<option>OLR, SLP</option>
+<option>Fluxes</option>
+<option>VEL, P, Z500</option>
+<option>T850, RH, SLP</option>
+<option>d-excess</option>
+<option>BLH, w</option>
+<option>cloud water/ice</option></td>
+<td align=center><select id="sel_v6" size=1 onChange="javascript:selectVar(6)">
+<option>CAO-index</option>
+<option>OLR, SLP</option>
+<option>Fluxes</option>
+<option>VEL, P, Z500</option>
+<option>T850, RH, SLP</option>
+<option>d-excess</option>
+<option>BLH, w</option>
+<option>cloud water/ice</option></td></tr>
+  <tr><td align=center><img id="panel4" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 1" height="500px"></td>
+      <td align=center><img id="panel5" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 2" height="500px"></td>
+      <td align=center><img id="panel6" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 3" height="500px"></td></tr>
+  <tr><td colspan=3 align=center><span id=caption2></span><hr></td></tr>
+  </table>
+<p>
+<p align=center>Website updated 3x daily at 04, 10 and 16 UTC. All times in UTC time.
+<p>
+Contact: <i>aina.johannessen@uib.no, harald.sodemann@uib.no</i>.
+<p>
+<a href="http://www.uib.no/gfi" target=main>[back to GFI Homepage]</a>
+</body>
+</html>

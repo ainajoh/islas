@@ -109,9 +109,9 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
             dmap_meps.IWC[np.where(dmap_meps.IWC <= 0.001)] = np.nan
 
             #pcolor as pcolormesh and  this projection is not happy together. If u want faster, try imshow
-            CI = ax1.pcolor(dmap_meps.x, dmap_meps.y, dmap_meps.IWC[tidx, :, :], cmap=plt.cm.Blues,alpha=0.8, vmin=-0.001,zorder=3)
-            dmap_meps.LWC[np.where( dmap_meps.LWC <= 0.09)] = np.nan
-            CC=ax1.pcolor(dmap_meps.x, dmap_meps.y,  dmap_meps.LWC[tidx, :, :], cmap=plt.cm.Reds,alpha=0.5, vmin=0,zorder=2)
+            #dmap_meps.LWC[np.where( dmap_meps.LWC <= 0.09)] = np.nan
+            CC=ax1.pcolor(dmap_meps.x, dmap_meps.y,  dmap_meps.LWC[tidx, :, :], cmap=plt.cm.Reds,alpha=0.5, vmin=0.1, vmax=4.0,zorder=2)
+            CI = ax1.pcolor(dmap_meps.x, dmap_meps.y, dmap_meps.IWC[tidx, :, :], cmap=plt.cm.Blues,alpha=0.8, vmin=0.01, vmax=0.1,zorder=3)
 
             ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
             if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value

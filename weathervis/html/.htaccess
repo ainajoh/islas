@@ -1,0 +1,7 @@
+//Password Protect file
+<Files .htaccess>
+AuthName "Prompt"
+AuthType Basic
+AuthUserFile /home/centos/html
+Require valid-user
+</Files>
