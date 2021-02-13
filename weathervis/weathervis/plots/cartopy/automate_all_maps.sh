@@ -1,6 +1,23 @@
 #!/bin/bash
 source ~/.bashrc
 
+function converting {
+  here=$( pwd )
+  # convert to smaller image size and transfer to web disk
+  cd ~/output/weathervis/$1
+  mkdir small
+  for f in *.png; do 
+    convert -scale 40% $f small/$f
+  done
+  if ! [ -d ~/www/gfx/$1 ]; then
+    mkdir ~/www/gfx/$1
+  fi
+  cp small/* ~/www/gfx/$1
+  rm -rf ~/output/weathervis/$1
+  chown -R centos:apache ~/www/gfx/$1  
+  cd $here
+}
+
 #dirname=$( pwd )
 dirname=""
 #set workingpath to where this file is located
@@ -140,36 +157,31 @@ for md in ${model[@]}; do
     ##runstring_sat="python satlookalike --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
 
     echo $runstring_Z
-    #$runstring_Z
-    echo runstring_OLR
-    #$runstring_OLR
+    $runstring_Z
+    converting $modelrun
+    echo $runstring_OLR
+    $runstring_OLR
+    converting $modelrun
     echo $runstring_T
-    #$runstring_T
+    $runstring_T
+    converting $modelrun
     echo $runstring_CAO
-    #$runstring_CAO
+    $runstring_CAO
+    converting $modelrun
     echo $runstring_BLH
-    #$runstring_BLH
+    $runstring_BLH
+    converting $modelrun
     echo $runstring_SURF
     $runstring_SURF
+    converting $modelrun
     echo $runstring_dxs
-    #$runstring_dxs
+    $runstring_dxs
+    converting $modelrun
     echo $runstring_WC
-    #$runstring_WC
+    $runstring_WC
+    converting $modelrun
 
   done
 done
-
-# convert to smaller image size and transfer to web disk
-cd ~/output/weathervis/$modelrun
-mkdir small
-for f in *.png; do 
-  convert -scale 40% $f small/$f
-done
-if ! [ -d ~/www/gfx/$modelrun ]; then
-  mkdir ~/www/gfx/$modelrun
-fi
-cp small/* ~/www/gfx/$modelrun
-rm -rf ~/output/weathervis/$modelrun
-chown -R centos:apache ~/www/gfx/$modelrun  
 
 # fin
