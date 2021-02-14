@@ -116,11 +116,11 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
     #fig1 = plt.figure(figsize=(7, 9))
+    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
       #ax1 = plt.subplot(projection=crs)
 
-      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                               subplot_kw={'projection': crs})
       ttt = tim
       tidx = tim - np.min(steps)
 
@@ -134,20 +134,22 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       MSLP = np.where(Z < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
       RH = (tmap_meps.relative_humidity_pl[tidx, plev, :, :]).squeeze()
       # MSLP with contour labels every 10 hPa
-      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=1, alpha=1.0,
-                        levels=np.arange(round(np.nanmin(MSLP),-1)-10, round(np.nanmax(MSLP),-1)+10, 1), colors='grey', linewidths=0.5)
       C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
-                        levels=np.arange(round(np.nanmin(MSLP),-1)-10, round(np.nanmax(MSLP),-1)+10, 10),
+                        levels=np.arange(960, 1050, 1), colors='grey', linewidths=0.5)
+      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
+                        levels=np.arange(960, 1050, 10),
                        colors='grey', linewidths=1.0, label = "MSLP [hPa]")
       ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
       # air temperature (C)
-      C_T = ax1.contour(dmap_meps.x, dmap_meps.y, TA, zorder=3, alpha=1.0,
-                         levels=np.arange(-50, 30, 0.5), colors="red", linewidths=0.7)
+      CF_T= ax1.contourf(dmap_meps.x, dmap_meps.y, TA, zorder=1, alpha=1.0,
+                         levels=np.arange(-50, 30, 1.0), cmap="PRGn")
+      C_T = ax1.contour(dmap_meps.x, dmap_meps.y, TA, zorder=4, alpha=1.0,
+                          levels=np.arange(-50, 30, 1.0), colors="red", linewidths=0.7)
       ax1.clabel(C_T, C_T.levels[::3], inline=True, fmt="%3.0f", fontsize=10)
 
       # relative humidity above 80%
-      CF_RH = ax1.contourf(dmap_meps.x, dmap_meps.y, RH, zorder=1, alpha=0.1,
-                        levels=np.arange(80, 120, 20), colors="blue", linewidths=0.7,label = "RH >80% [%]")
+      CF_RH = ax1.contour(dmap_meps.x, dmap_meps.y, RH, zorder=4, alpha=0.5,
+                        levels=np.arange(70, 110, 10), colors="blue", linewidths=0.7,label = "RH >80% [%]")
 
       #lat_p = 60.2
       #lon_p = 5.4167
@@ -160,7 +162,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       legend=True
       if legend:
         proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
-                for pc in CF_RH.collections]
+                for pc in CF_T.collections]
         proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
                  plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
                  plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
@@ -198,8 +200,6 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
       fig1.savefig(make_modelrun_folder+"/{0}_{1}_T850_RH_{2}+{3:02d}.png".format(model, domain_name, dt, tim), bbox_inches="tight", dpi=200)
       ax1.cla()
-      plt.clf()
-      plt.close(fig1)
 
     #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
     #        for pc in CF_RH.collections]
@@ -213,8 +213,8 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     #                  f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
     #fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
 
-    ax1.cla()
     plt.clf()
+    plt.close(fig1)
 
   plt.close("all")
 

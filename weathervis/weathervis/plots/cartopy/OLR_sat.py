@@ -58,9 +58,9 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
 
-    for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      fig, ax = plt.subplots(1, 1, figsize=(7, 9),
+    fig, ax = plt.subplots(1, 1, figsize=(7, 9),
                                subplot_kw={'projection': crs})
+    for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
 
       ttt = tim
       tidx = tim - np.min(steps)
@@ -149,7 +149,7 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
       ax.text(0, 1, "{0}_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
-               transform=ax.transAxes, color='dimgrey')
+               transform=ax.transAxes, color='black')
       #ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
       #ax.set_extent([lonlat[0]+10, lonlat[1], lonlat[2]-2, lonlat[3]])  # (x0, x1, y0, y1)
 
@@ -161,11 +161,8 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
       ax.cla()
-      fig.clf()
-      plt.close(fig)
-
-    ax.cla()
-    plt.clf()
+    fig.clf()
+    plt.close(fig)
   plt.close("all")
 
 

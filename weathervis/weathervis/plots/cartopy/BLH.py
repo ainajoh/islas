@@ -119,10 +119,11 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
     print("\nplotting")
     #fig1 = plt.figure(figsize=(7, 9), projection=crs)
     print("\nplotting")
+    make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                             subplot_kw={'projection': crs})
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
       #ax1 = plt.subplot(projection=crs)
-      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                             subplot_kw={'projection': crs})
       ttt = tim  # + np.min(steps)
 
       tidx = tim - np.min(steps)
@@ -151,7 +152,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
                         levels=np.linspace(-2.0,-0.07,4 ), colors="blue", linewidths=0.7)
       # boundary layer thickness
       CF_BLH = ax1.contourf(dmap_meps.x, dmap_meps.y, BLH, zorder=1, alpha=0.5,
-                        levels=np.arange(500, 5000, 500), linewidths=0.7,label = "BLH", cmap = "summer",extend="both")
+                        levels=np.arange(500, 3500, 500), linewidths=0.7,label = "BLH", cmap = "summer",extend="both")
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))
       #ax1.set_extent(data_domain.lonlat)
 
@@ -164,8 +165,6 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       ax1.text(0, 1, "{0}_BLH_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
                transform=ax1.transAxes, color='black')
       legend=True
-
-
 
       if legend:
         #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
@@ -194,14 +193,11 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
         ax1.set_extent(data_domain.lonlat)
       #  print(data_domain.lonlat)
-      make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
       print(
         "filename: " + make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt))
       fig1.savefig(make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "BLH", dt, ttt),
                    bbox_inches="tight",dpi=200)
       ax1.cla()
-      plt.clf()
-      plt.close(fig1)
 
       #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
       #       for pc in CF_RH.collections]
@@ -215,8 +211,8 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       #                  f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
       #fig2.savefig("../../../output/{0}_T850_RH_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
 
-    ax1.cla()
-    plt.clf()
+  plt.clf()
+  plt.close(fig1)
   plt.close("all")
 
 

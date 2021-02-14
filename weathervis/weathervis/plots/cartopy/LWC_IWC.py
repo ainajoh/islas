@@ -63,8 +63,6 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         dmap_meps.retrieve()
         dmap_meps.air_pressure_at_sea_level /= 100
 
-
-
         #CALCULATE
         dmap_meps.LWC = np.sum(dmap_meps.mass_fraction_of_cloud_condensed_water_in_air_ml[:,:,:,:],axis=1)
         dmap_meps.LWC =dmap_meps.LWC*1000
@@ -72,53 +70,75 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         dmap_meps.IWC = np.sum(dmap_meps.mass_fraction_of_cloud_ice_in_air_ml[:,:,:,:],axis=1)
         dmap_meps.IWC = dmap_meps.IWC*1000
         dmap_meps.units.IWC = "g/kg"
+        del dmap_meps.mass_fraction_of_cloud_condensed_water_in_air_ml
+        del dmap_meps.mass_fraction_of_cloud_ice_in_air_ml
         # for more normal unit of g/m^2 read
         # #https://www.nwpsaf.eu/site/download/documentation/rtm/docs_rttov12/rttov_gas_cloud_aerosol_units.pdf
         # https://www.researchgate.net/post/How-to-convert-the-units-of-specific-cloud-liquid-water-from-ERA5-kg-kg-to-kg-m2
+        dmap_meps.LWC[np.where(dmap_meps.LWC < 0.1)] = np.nan
+        dmap_meps.IWC[np.where(dmap_meps.IWC < 0.01)] = np.nan
+
+        #It is a bug in pcolormesh. supposedly newest is correct, but not older versions. Invalid corner values set to nan
+        #https://github.com/matplotlib/basemap/issues/470
+        x,y = np.meshgrid(dmap_meps.x, dmap_meps.y)
+        #dlon,dlat=  np.meshgrid(dmap_meps.longitude, dmap_meps.latitude)
+
+        nx, ny = x.shape
+        mask = (
+          (x[:-1, :-1] > 1e20) |
+          (x[1:, :-1] > 1e20) |
+          (x[:-1, 1:] > 1e20) |
+          (x[1:, 1:] > 1e20) |
+          (x[:-1, :-1] > 1e20) |
+          (x[1:, :-1] > 1e20) |
+          (x[:-1, 1:] > 1e20) |
+          (x[1:, 1:] > 1e20)
+        )
 
         # plot map
-
         lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
         lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
         parallels = dmap_meps.standard_parallel_projection_lambert
 
-
         globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                          globe=globe)
+        make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+        fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                                      subplot_kw={'projection': crs})
         for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
             #ax1 = plt.subplot(projection=crs)
-            fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                                      subplot_kw={'projection': crs})
             ttt = tim #+ np.min(steps)
             tidx = tim - np.min(steps)
 
             ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
             MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
 
+            #pcolor as pcolormesh and  this projection is not happy together. If u want faster, try imshow
+            #dmap_meps.LWC[np.where( dmap_meps.LWC <= 0.09)] = np.nan
+            data =  dmap_meps.LWC[tidx,:nx - 1, :ny - 1].copy()
+            data[mask] = np.nan
+            CC=ax1.pcolor(x, y,  data[:, :], cmap=plt.cm.Reds, vmin=0.1, vmax=4.0,zorder=2)
+            data =  dmap_meps.IWC[tidx,:nx - 1, :ny - 1].copy()
+            data[mask] = np.nan
+            CI= ax1.pcolor(x, y, data[:, :], cmap=plt.cm.Blues,alpha=0.5, vmin=0.01, vmax=0.1,zorder=3)
+
             # MSLP
             # MSLP with contour labels every 10 hPa
             C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=4, alpha=1.0,
-                              levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
+                              levels=np.arange(960, 1050, 1),
                               colors='grey', linewidths=0.5)
-            C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=4, alpha=1.0,
-                              levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
+            C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=5, alpha=1.0,
+                              levels=np.arange(960, 1050, 10),
                               colors='grey', linewidths=1.0, label="MSLP [hPa]")
             ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
 
-            dmap_meps.IWC[np.where(dmap_meps.IWC <= 0.001)] = np.nan
 
-            #pcolor as pcolormesh and  this projection is not happy together. If u want faster, try imshow
-            #dmap_meps.LWC[np.where( dmap_meps.LWC <= 0.09)] = np.nan
-            CC=ax1.pcolor(dmap_meps.x, dmap_meps.y,  dmap_meps.LWC[tidx, :, :], cmap=plt.cm.Reds,alpha=0.5, vmin=0.1, vmax=4.0,zorder=2)
-            CI = ax1.pcolor(dmap_meps.x, dmap_meps.y, dmap_meps.IWC[tidx, :, :], cmap=plt.cm.Blues,alpha=0.8, vmin=0.01, vmax=0.1,zorder=3)
-
-            ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+            ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=6,facecolor="none",edgecolor="gray")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
             if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
                  ax1.set_extent(data_domain.lonlat)
             ax1.text(0, 1, "{0}_LWC_IWC_{1}_{2}+{3:02d}".format(model,m_level, dt, ttt), ha='left', va='bottom', \
                                    transform=ax1.transAxes, color='black')
-            make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
             print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "LWP_IWP", dt, ttt))
             if grid:
                  nicegrid(ax=ax1)
@@ -129,7 +149,7 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                                            format='%.3f', ticks=[0.001, np.nanmax(dmap_meps.IWC[tidx, :, :])*0.8])
                 cbar = nice_vprof_colorbar(CF=CC, ax=ax1, extend="max", label='LWC [g/kg]',x0=0.50,y0=0.95,width=0.26,height=0.05,
                                           format='%.1f',ticks=[0.09, np.nanmax(dmap_meps.LWC[tidx, :, :])*0.8])
-                proxy = [plt.axhline(y=0, xmin=0, xmax=0, color="gray",zorder=5)]
+                proxy = [plt.axhline(y=0, xmin=0, xmax=0, color="gray",zorder=7)]
                 # proxy.extend(proxy1)
                 lg = ax1.legend(proxy, ["MSLP [hPa]"])
                 frame = lg.get_frame()
@@ -138,13 +158,11 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
             fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "clouds", dt, ttt), bbox_inches="tight", dpi=200)
             ax1.cla()
-            plt.clf()
-            plt.close(fig1)
+        plt.clf()
+    plt.close(fig1)
     plt.close("all")
 
-
-
-        # fin
+    # fin
 
 if __name__ == "__main__":
   import argparse

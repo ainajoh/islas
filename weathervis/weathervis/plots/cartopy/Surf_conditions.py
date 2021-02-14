@@ -69,7 +69,6 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           break
     print("--------> Found match for your request ############")
 
-
     if not split:
       file_all = check_all.file.loc[0]
       file_sfx = check_sfx.file.loc[0]
@@ -95,14 +94,10 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
         dmap_meps_sfx.units.H = dmap_meps_sfx.units.SFX_H
         dmap_meps_sfx.units.SST = dmap_meps_sfx.units.SFX_SST
 
-
-
-
     # convert fields
     dmap_meps.air_pressure_at_sea_level/=100
     u,v = xwind2uwind(tmap_meps.x_wind_10m,tmap_meps.y_wind_10m, tmap_meps.alpha)
     vel = wind_speed(tmap_meps.x_wind_10m,tmap_meps.y_wind_10m)
-
 
     lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
     lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
@@ -114,10 +109,13 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
                                  globe=globe)
     crs = data
     crs_lon = ccrs.PlateCarree()
+
+    make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
+    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
+
     #crs = ccrs.PlateCarree()
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                               subplot_kw={'projection': crs})
       ttt = tim #+ np.min(steps)
       tidx = tim - np.min(steps)
       print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
@@ -161,19 +159,6 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #ax1.scatter(xx[skip][skip], yy[skip][skip], s=20, zorder=2, marker='.', linewidths=0.9,
       #            c="black", alpha=0.7, transform=data)
 
-
-      #SENSIBLE
-      levelspos = np.arange(20, round(np.nanmax(SH), -10) + 10, 40)
-      levelsneg = np.arange(-300, -19, 40)
-      levels = np.append(levelsneg, levelspos)
-      levels = np.linspace(-300,300,15)
-      CSH = plt.contour(dmap_meps.x, dmap_meps.y, SH, alpha=1.0, colors="blue", linewidths=0.7, levels=levels)
-      #ax1.clabel(CSH, CSH.levels[1::2], inline=True, fmt="%3.0f", fontsize=10)
-      #xx = np.where(SH < -10, xm, np.NaN).squeeze()
-      #yy = np.where(SH < -10, ym, np.NaN).squeeze()
-      #skip = (slice(None, None, 4), slice(None, None, 4))
-      #ax1.scatter(xx[skip][skip],yy[skip][skip],s=20, zorder=2, marker='x',linewidths=0.9, c= "white", alpha=0.7, transform=data)
-
       #xx = np.where(SH >80, xm, np.NaN).squeeze()
       #yy = np.where(SH >80, ym, np.NaN).squeeze()
       #skip = (slice(None, None, 4), slice(None, None, 4))
@@ -183,19 +168,18 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #SST_new
       #levels=np.arange(270,294,2)
       SST = SST - 273.15
-      levels = [np.min(SST), np.max(SST), 3]
+      #levels = [np.min(SST), np.max(SST), 3]
       levels = [0,2,4,6,8,10,12,15,18,21,24]
-      C_SS = ax1.contour(dmap_meps.x, dmap_meps.y, SST, colors="k", linewidths=2, levels =levels, zorder=9)
+      C_SS = ax1.contour(dmap_meps.x, dmap_meps.y, SST, colors="darkred", linewidths=2, levels =levels, zorder=8)
       ax1.clabel(C_SS, C_SS.levels, inline=True, fmt="%3.0f", fontsize=10 )
-
 
       #MSLP
       #MSLP with contour labels every 10 hPa
       C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=10, alpha=1.0,
-                        levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
+                        levels=np.arange(960, 1050, 1),
                         colors='grey', linewidths=0.5)
       C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=10, alpha=1.0,
-                        levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
+                        levels=np.arange(960, 1050, 10),
                         colors='grey', linewidths=1.0, label="MSLP [hPa]")
       ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
 
@@ -203,31 +187,44 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #skip = (slice(50, -50, 50), slice(50, -50, 50))
       skip = (slice(10, -10, 30), slice(10, -10, 30)) #70
       scale = 1.94384
-      CVV = ax1.barbs(xm[skip], ym[skip], uxx[skip]*scale, vxx[skip]*scale, length=5.5, zorder=10)
+      CVV = ax1.barbs(xm[skip], ym[skip], uxx[skip]*scale, vxx[skip]*scale, length=5.5, zorder=11)
 
       #lat_p = 60.2
       #lon_p = 5.4167
       #mainpoint = ax1.scatter(lon_p, lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),
       #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
 
-
       #LATENT_new
       #levels=np.arange(270,294,2)
       cmap = plt.get_cmap("coolwarm")
-      levels = np.linspace(-100,300,7)
+      levels = np.linspace(-150,200,8)
 
-      CSST = ax1.contourf(dmap_meps.x, dmap_meps.y, L, zorder=1, levels=levels, alpha=0.7, cmap = cmap, extend = "both", transform=data)
-      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="whitesmoke",edgecolor="gray")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+      CLH = ax1.contourf(dmap_meps.x, dmap_meps.y, L, zorder=1, levels=levels, alpha=0.7, cmap = cmap, extend = "both", transform=data)
+      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="white",edgecolor="gray")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
       ax1.text(0, 1, "{0}_surf_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
       ##########################################################
       #handles, labels = ax1.get_legend_handles_labels()
+
+      #SENSIBLE
+      #levelspos = np.arange(20, round(np.nanmax(SH), -10) + 10, 40)
+      #levelsneg = np.arange(-300, -19, 40)
+      #levels = np.append(levelsneg, levelspos)
+      #levels = np.linspace(-300,300,15)
+      #CSH = plt.contour(dmap_meps.x, dmap_meps.y, SH, alpha=1.0, colors="blue", linewidths=0.7, levels=levels, zorder=14)
+      CSH = plt.contour(dmap_meps.x, dmap_meps.y, SH, alpha=1.0, colors="blue", linewidths=0.7, zorder=14)
+      #ax1.clabel(CSH, CSH.levels[1::2], inline=True, fmt="%3.0f", fontsize=10)
+      #xx = np.where(SH < -10, xm, np.NaN).squeeze()
+      #yy = np.where(SH < -10, ym, np.NaN).squeeze()
+      #skip = (slice(None, None, 4), slice(None, None, 4))
+      #ax1.scatter(xx[skip][skip],yy[skip][skip],s=20, zorder=2, marker='x',linewidths=0.9, c= "white", alpha=0.7, transform=data)
+
       legend=True
       if legend:
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="blue"),
-                 plt.axhline(y=0, xmin=1, xmax=1, color="black")]
+                 plt.axhline(y=0, xmin=1, xmax=1, color="darkred")]
         lg = plt.legend(proxy, [f"Sensible heat [{dmap_meps_sfx.units.H}] ", f"SST [C]"],loc=1)
         ax_cb = adjustable_colorbar_cax(fig1, ax1)
-        cb = plt.colorbar(CSST, cax= ax_cb, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
+        cb = plt.colorbar(CLH, cax= ax_cb, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
         frame = lg.get_frame()
         lg.set_zorder(102)
         frame.set_facecolor('lightgray')
@@ -236,21 +233,19 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #print("test")
       #print(OUTPUTPATH)
       #print("{0}".format(dt))
-      make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
       if grid:
         nicegrid(ax=ax1)
       if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
         ax1.set_extent(data_domain.lonlat)
       fig1.savefig(make_modelrun_folder + "/{0}_{1}_surf_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
-
       ax1.cla()
       #cb.remove()
       #lg.remove()
       #plt.draw()
 
-      plt.clf()
-      plt.close(fig1)
+    plt.clf()
+    plt.close(fig1)
   plt.close("all")
 # fin
 
