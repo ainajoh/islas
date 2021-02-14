@@ -48,7 +48,8 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
         data_domain = None
     return data_domain
 def setup_directory(modelrun, point_name, point_lonlat):
-    projectpath = setup_directory(OUTPUTPATH, "{0}".format(dt))
+    #projectpath = setup_directory(OUTPUTPATH, "{0}".format(dt))
+    projectpath = OUTPUTPATH+"{0}".format(dt)
     figname = "fc_" + modelrun
     # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
