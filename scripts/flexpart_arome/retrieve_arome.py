@@ -9,13 +9,8 @@ import datetime
 
 #mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/weathervis/")
 
-lt = 7
-lvl = 64#64#64
-modelruntime = "2020031100"#Camp start 20.feb - 14.march
-model = "AromeArctic"
-xres=1
-yres=1
-def set_variable2d():
+
+def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
     variable2d_arome = {}
     variable3d_arome = {}
     variable2d_sfx = {}
@@ -129,21 +124,22 @@ def set_variable2d():
     print(arome2d.file)
     #data_domain = DOMAIN(modelruntime, model, file=file_arome2d)
     #data_domain.AromeArctic()
-    dmap_arome2d = get_data(model=model, file=file_arome2d, param=param2d_arome, step=[0, lt],date=modelruntime)
+    dmap_arome2d = get_data(model=model, file=file_arome2d, param=param2d_arome, step=steps,date=modelruntime)
     dmap_arome2d.retrieve()
     print(dmap_arome2d.__dir__)
     print("retrive 3darome")
     # 3dArome This can be included in 2darome for timeefficency
     param3d_arome = [*variable3d_arome.keys()]
-    arome3d = check_data(date=modelruntime, model=model, param=param3d_arome)
+    #param3d_arome=["x_wind_ml"]
+    arome3d = check_data(date=modelruntime, model=model, param=param3d_arome, m_level=lvl)
     file_arome3d = arome3d.file
 
     #data_domain = DOMAIN(modelruntime, model, file=file_arome3d)
     #data_domain.AromeArctic()
     print(file_arome3d)
-    dmap_arome3d = get_data(model=model, file=file_arome3d, param=param3d_arome, step=[0, lt],
-                        date=modelruntime,  m_level=[0, lvl])
-    #print(dmap_arome3d)
+    dmap_arome3d = get_data(model=model, file=file_arome3d, param=param3d_arome, step=steps,
+                        date=modelruntime,  m_level=lvl)
+    print(dmap_arome3d.url)
     dmap_arome3d.retrieve()
     print(dmap_arome3d.__dir__)
     print("retrive sfxarome")
@@ -153,7 +149,7 @@ def set_variable2d():
     file_sfx2d=sfx2d.file
     #data_domain = DOMAIN(modelruntime, model, file=file_sfx2d)
     #data_domain.AromeArctic()
-    dmap_sfx2d = get_data(model=model, file=file_sfx2d, param=param2d_sfx, step=[0, lt],date=modelruntime)
+    dmap_sfx2d = get_data(model=model, file=file_sfx2d, param=param2d_sfx, step=steps,date=modelruntime)
     dmap_sfx2d.retrieve()
     #print(dmap_sfx2d.x ==dmap_arome2d.x)
     #print(len(dmap_arome2d.x))
@@ -166,13 +162,26 @@ def set_variable2d():
     #xa = dataset.variables["x"]
     #print(xa.getncattr("_ChunkSizes"))
     #print(type(long(dataset.variables["x"].getncattr("_ChunkSizes")))
+    #for tim in np.arange(np.min(steps), np.max(steps) + 1, 1):
+    #    # ax1 = plt.subplot(projection=crs)
+    #    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+    #                             subplot_kw={'projection': crs})
+    #    ttt = tim  # + np.min(steps)
+    #    tidx = tim - np.min(steps)
 
-
-    for t in range( 0, len(dmap_arome2d.time )):
+    #for t in range( 0, len(dmap_arome2d.time )):
+    for t in np.arange(np.min(steps), np.max(steps) + 1, 1):
+        tidx = t - np.min(steps)
         print("Inside for loop")
         output = "./"
-        validdate = datetime.datetime(int(modelruntime[0:4]), int(modelruntime[4:6]), int(modelruntime[6:8]), int(modelruntime[8:10])) + datetime.timedelta(hours=t)
+        print("####################################################################################")
+        print(t)
+        print("####################################################################################")
+        validdate = datetime.datetime(int(modelruntime[0:4]), int(modelruntime[4:6]), int(modelruntime[6:8]), int(modelruntime[8:10])) + datetime.timedelta(hours=int(t))
         date_time = validdate.strftime("%Y%m%d_%H")
+        print("####################################################################################")
+        print(date_time)
+        print("####################################################################################")
         #flexpart dont like 00, want 24
         if validdate.hour==0:
             dateminus1d=validdate - datetime.timedelta(days=1)
@@ -231,7 +240,7 @@ def set_variable2d():
             vid = ncid.createVariable(variable3d_arome[param]['name'], 'f4',('level','Y','X'),zlib=True)
             vid.units = variable3d_arome[param]['units']
             vid.description = variable3d_arome[param]['description']
-            expressiondata = f"dmap_arome3d.{param}[{t},:,::{xres},::{yres}]"
+            expressiondata = f"dmap_arome3d.{param}[{tidx},:,::{xres},::{yres}]"
             data = eval(expressiondata)
             vid[:] = data
 
@@ -240,7 +249,7 @@ def set_variable2d():
             vid = ncid.createVariable(variable2d_arome[param]['name'], 'f4', ('Y', 'X'), zlib=True)
             vid.units = variable2d_arome[param]['units']
             vid.description = variable2d_arome[param]['description']
-            expressiondata = f"dmap_arome2d.{param}[{t},0,::{xres},::{yres}]"
+            expressiondata = f"dmap_arome2d.{param}[{tidx},0,::{xres},::{yres}]"
             data = eval(expressiondata)
             if param =="surface_air_pressure":
                 print(param)
@@ -250,7 +259,7 @@ def set_variable2d():
             vid = ncid.createVariable(variable2d_sfx[param]['name'], 'f4', ('Y', 'X'), zlib=True)
             vid.units = variable2d_sfx[param]['units']
             vid.description = variable2d_sfx[param]['description']
-            expressiondata = f"dmap_sfx2d.{param}[{t},::{xres},::{yres}]"
+            expressiondata = f"dmap_sfx2d.{param}[{tidx},::{xres},::{yres}]"
             data = eval(expressiondata)
             vid[:] = data
 
@@ -258,9 +267,30 @@ def set_variable2d():
         ncid.close()
 
     #return variable2d_arome
+def fix(modelruntime, steps=[0,64], lvl=[0,64]):
+    print(modelruntime)
+    #lt = 7
+    #lvl = [0,64]  # 64   #64 #  49..#
+    #modelruntime = "2020031100"  # Camp start 20.feb - 14.march..
+    model = "AromeArctic"
+    xres = 1
+    yres = 1
+    variable2d = set_variable2d(modelruntime,steps,lvl,xres,yres,model)
 
-variable2d = set_variable2d()
-#print(variable2d)
+if __name__ == "__main__":
+  import argparse
+  def none_or_str(value):
+    if value == 'None':
+      return None
+    return value
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, type=str)
+  parser.add_argument("--steps", default=[0,65], nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
+  parser.add_argument("--m_levels", default=[0,64], nargs="+", type=int,help="model level, 64 is lowest)
+
+  args = parser.parse_args()
+  fix(args.datetime, args.steps, args.m_levels)
+  #datetime, step=4, model= "MEPS", domain = None
 
 
 
