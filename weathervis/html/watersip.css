@@ -1,0 +1,17 @@
+p  {line-height:14pt; font-size:11pt; font-family:Helvetica,Arial,sans-serif; color:black; }
+p.small  {line-height:9pt; font-size:9pt; font-family:Helvetica,Arial,sans-serif; color:black; }
+h1 {font-size:14pt; font-family:Helvetica,Arial,sans-serif; color:black; }
+h2 {font-size:14pt; font-family:Helvetica,Arial,sans-serif; color:black; }
+h3 {font-size:12pt; font-family:Helvetica,Arial,sans-serif; color:black; }
+des {font-size:11pt; font-family:Helvetica,Arial,sans-serif; color:blue; }
+body {line-height:12pt; font-size:11pt; font-family:Helvetica,Arial,sans-serif; color:black; }
+td {font-size:11pt; font-family:Helvetica,Arial,sans-serif; color:black; }
+td.nc {color:red; }
+td.ip {color:blue; }
+td.co {color:green; }
+td.pre { font-size:10pt; font-family:Courier; }
+th {font-size:11pt; font-family:Helvetica,Arial,sans-serif; 
+    font-weight:bold; color:black; }
+pre {line-height:11pt; font-size:10pt; font-family:Courier; }     
+ol  {font-weight:bold; }
+ul  {font-weight:normal; }
