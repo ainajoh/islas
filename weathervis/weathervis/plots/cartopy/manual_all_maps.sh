@@ -1,6 +1,6 @@
 #!/bin/bash
 # manually run all maps as in crontab
-steps=2
+steps=24
 #runhour=00
 #runhour=06
 runhour=12

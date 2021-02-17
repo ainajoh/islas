@@ -17,7 +17,7 @@ var fdate = new Array(0,0); // forecast time step
 var vkind=new Array(0,1,2,3,4,5);
 var synced=false;
 var kind = 1;
-var domain = new Array(0,0);
+var domain = new Array(3,3);
 var bt = 0;
 
 // treshold settings and names
@@ -68,11 +68,7 @@ function getKind(n)
 
 function getDomainname(n)
 {
-k=0;
-if (n>2) {
-	k=1;
-}
-	switch (domain[k]) {
+	switch (domain[n]) {
 		case 0:
 		return "AromeArctic_AromeArctic";
 		break;

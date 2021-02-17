@@ -163,7 +163,6 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
             plt.close(fig1)
     plt.close("all")
 
-    # fin
 
 if __name__ == "__main__":
   import argparse
@@ -182,11 +181,10 @@ if __name__ == "__main__":
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
-  IWP_and_LWP(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
+  #for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
+  for s in np.arange(np.min(args.steps), np.max(args.steps)+1, 1):
+    IWP_and_LWP(datetime=args.datetime, steps = [s, s], model = args.model, domain_name = args.domain_name,
           domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid, m_level=args.m_level)
   #datetime, step=4, model= "MEPS", domain = None
 
-
-
-
-
+# fin

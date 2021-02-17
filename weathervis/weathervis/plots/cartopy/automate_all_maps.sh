@@ -14,7 +14,7 @@ function converting {
   fi
   cp small/* ~/www/gfx/$1
   rm -rf ~/output/weathervis/$1
-  chown -R centos:apache ~/www/gfx/$1  
+  sudo chown -R centos:apache ~/www/gfx/$1  
   cd $here
 }
 
@@ -145,7 +145,7 @@ for md in ${model[@]}; do
     runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
     runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 34 64"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 20 64"
 
 
     #runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
@@ -157,25 +157,25 @@ for md in ${model[@]}; do
     ##runstring_sat="python satlookalike --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
 
     echo $runstring_Z
-    $runstring_Z
+    #$runstring_Z
     converting $modelrun
     echo $runstring_OLR
-    $runstring_OLR
+    #$runstring_OLR
     converting $modelrun
     echo $runstring_T
-    $runstring_T
+    #$runstring_T
     echo $runstring_CAO
     converting $modelrun
-    $runstring_CAO
+    #$runstring_CAO
     converting $modelrun
     echo $runstring_BLH
-    $runstring_BLH
+    #$runstring_BLH
     converting $modelrun
     echo $runstring_SURF
-    $runstring_SURF
+    #$runstring_SURF
     converting $modelrun
     echo $runstring_dxs
-    $runstring_dxs
+    #$runstring_dxs
     converting $modelrun
     echo $runstring_WC
     $runstring_WC
