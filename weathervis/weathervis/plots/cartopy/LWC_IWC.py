@@ -104,9 +104,10 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                          globe=globe)
         make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-        fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                                      subplot_kw={'projection': crs})
+
         for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
+            fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                                      subplot_kw={'projection': crs})
             #ax1 = plt.subplot(projection=crs)
             ttt = tim #+ np.min(steps)
             tidx = tim - np.min(steps)
@@ -158,8 +159,8 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
             fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "clouds", dt, ttt), bbox_inches="tight", dpi=200)
             ax1.cla()
-        plt.clf()
-    plt.close(fig1)
+            plt.clf()
+            plt.close(fig1)
     plt.close("all")
 
     # fin
