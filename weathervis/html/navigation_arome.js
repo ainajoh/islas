@@ -15,7 +15,7 @@ day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
 var fdate = new Array(0,0); // forecast time step
 var vkind=new Array(0,1,2,3,4,5);
-var synced=false;
+var synced=true;
 var kind = 1;
 var domain = new Array(3,3);
 var bt = 0;
@@ -30,7 +30,7 @@ captions[2]="";
 // functions
 function checkSync()
 {
-  synced=false
+  synced=document.getElementById("sync").checked;
 }
 
 function getKind(n)
@@ -252,6 +252,7 @@ function skiponeback(row)
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
 	document.getElementById("ftime"+row).innerHTML=getFcStep(row);
 	prepareFigure(row);
+	syncFigures(row);
 }
 
 function skiponeforward(row) 
@@ -265,6 +266,7 @@ function skiponeforward(row)
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
 	document.getElementById("ftime"+row).innerHTML=getFcStep(row);
 	prepareFigure(row);
+	syncFigures(row);
 }
 
 function skip1hforward(row) 
@@ -277,6 +279,7 @@ function skip1hforward(row)
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
 	document.getElementById("ftime"+row).innerHTML=getFcStep(row);
 	prepareFigure(row);
+	syncFigures(row);
 }
 
 function skip1hback(row) 
@@ -289,6 +292,28 @@ function skip1hback(row)
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
 	document.getElementById("ftime"+row).innerHTML=getFcStep(row);
 	prepareFigure(row);
+	syncFigures(row);
+}
+
+function syncFigures(row)
+{
+	if (synced==true) {
+		if (row<1) {
+			cday[1]=cday[0];
+			fdate[1]=fdate[0];
+			document.getElementById("btime"+1).innerHTML=getDatename(1)+"_"+getBasetime(1);
+			document.getElementById("valid"+1).innerHTML=getFcdate(1);
+			document.getElementById("ftime"+1).innerHTML=getFcStep(1);
+			prepareFigure(1);
+		} else {
+			cday[0]=cday[1];
+			fdate[0]=fdate[1];
+			document.getElementById("btime"+0).innerHTML=getDatename(0)+"_"+getBasetime(0);
+			document.getElementById("valid"+0).innerHTML=getFcdate(0);
+			document.getElementById("ftime"+0).innerHTML=getFcStep(0);
+			prepareFigure(0);
+		}
+	}
 }
 
 
