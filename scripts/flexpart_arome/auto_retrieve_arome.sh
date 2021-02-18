@@ -1,6 +1,6 @@
 #!/bin/bash
 source ~/.bashrc
-
+##
 dirname=$( pwd )
 #set workingpath to where this file is located
 cd "$(dirname "$0")"
