@@ -5,11 +5,11 @@ dirname=$( pwd )
 #set workingpath to where this file is located
 cd "$(dirname "$0")"
 
+echo "$(dirname "$0")"
 if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
     dname="source /Data/gfi/isomet/projects/ISLAS_aina/tools/githubclones/islas/weathervis/weathervis/data/config/config_cyclone.sh"
     $dname
 fi
-
 #fclagh=350 #3.5 hour before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
@@ -28,6 +28,9 @@ modelrun_date=$yymmdd
 chunks=7
 steps_min=0
 steps_max=48 #65
+m_level_min=0
+m_level_max=64
+
 while [ $# -gt 0 ]; do
   case "$1" in
     --modelrun_date)
