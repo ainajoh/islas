@@ -111,19 +111,25 @@ for dt in ${modelrun[@]}; do #${StringArray[@]}
 done
 
 #if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
-if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
+#if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
+i=1
+if [[ i==1 ]]; then
     #data_link="/Data/gfi/isomet/projects/ISLAS_aina/tools/flex-arome/data/"
     #data_main="/Data/gfi/work/cat010/flexpart_arome/input/"
     for dt in ${modelrun[@]}; do #${StringArray[@]}
       data_link="/Data/gfi/isomet/projects/ISLAS_aina/tools/flex-arome/data/$dt"
-      make_linkdir="mkdir $data_link"
-      echo $make_linkdir
-      $make_linkdir
-
+      #make_linkdir="mkdir $data_link" #echo $make_linkdir  #$make_linkdir
       data_main="/Data/gfi/work/cat010/flexpart_arome/input/$dt"
       make_link="ln -s $data_main $data_link"
       echo $make_link
-      $make_link
+      #$make_link
+
+      make_availablefile="$data_link/AVAILABLE"
+      printf "XXXXXX EMPTY LINES XXXXXXXXX\nXXXXXX EMPTY LINES XXXXXXXX\nYYYYMMDD HHMMSS   name of the file(up to 80 characters)" >> test.txt #$make_availablefile
+
+
+
+
     done
 fi
 #link it to where we want data.
