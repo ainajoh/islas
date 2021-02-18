@@ -106,12 +106,12 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                               colors='grey', linewidths=1.0, label="MSLP [hPa]")
             ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
 
-            dmap_meps.IWC[np.where(dmap_meps.IWC <= 0.001)] = np.nan
+            dmap_meps.IWC[np.where(dmap_meps.IWC <= 0.09)] = np.nan
 
             #pcolor as pcolormesh and  this projection is not happy together. If u want faster, try imshow
-            CI = ax1.pcolor(dmap_meps.x, dmap_meps.y, dmap_meps.IWC[tidx, :, :], cmap=plt.cm.Blues,alpha=0.8, vmin=-0.001,zorder=3)
+            CI = ax1.pcolor(dmap_meps.x, dmap_meps.y, dmap_meps.IWC[tidx, :, :], cmap=plt.cm.Blues,alpha=0.7, vmin=-0.001,zorder=3)
             dmap_meps.LWC[np.where( dmap_meps.LWC <= 0.09)] = np.nan
-            CC=ax1.pcolor(dmap_meps.x, dmap_meps.y,  dmap_meps.LWC[tidx, :, :], cmap=plt.cm.Reds,alpha=0.5, vmin=0,zorder=2)
+            CC=ax1.pcolor(dmap_meps.x, dmap_meps.y,  dmap_meps.LWC[tidx, :, :], cmap=plt.cm.Reds,alpha=0.8, vmin=-0.001,zorder=2)
 
             ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
             if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
@@ -119,7 +119,7 @@ def IWP_and_LWP(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
             ax1.text(0, 1, "{0}_LWC_IWC[[{1}]_{2}+{3:02d}".format(model,m_level, dt, ttt), ha='left', va='bottom', \
                                    transform=ax1.transAxes, color='dimgrey')
             make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-            print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name, "LWP_IWP", dt, ttt))
+            print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "clouds", dt, ttt))
             if grid:
                  nicegrid(ax=ax1)
 
