@@ -5,6 +5,15 @@ dirname=$( pwd )
 #set workingpath to where this file is located
 cd "$(dirname "$0")"
 
+cf=""
+if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
+    cf="source ../../data/config/config_cyclone.sh"
+    fi
+if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then
+    cf="source ../../data/config/config_islas_server.sh"
+    fi
+
+$cf
 #fclagh=350 #3.5 hour before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
