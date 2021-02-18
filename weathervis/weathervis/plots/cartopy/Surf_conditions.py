@@ -40,12 +40,12 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False):
+def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
 
   for dt in datetime: #modelrun at time..
     date = dt[0:-2]
     hour = int(dt[-2:])
-    param_sfc = ["surface_geopotential","air_pressure_at_sea_level", "x_wind_10m", "y_wind_10m", "air_temperature_0m", "air_temperature_2m","specific_humidity_2m", "relative_humidity_2m","precipitation_amount_acc","fog_area_fraction", "wind_speed", "wind_direction"]
+    param_sfc = ["surface_geopotential","air_pressure_at_sea_level", "x_wind_10m", "y_wind_10m","precipitation_amount_acc", "wind_speed"]
     param_sfx = ["LE", "H", "SST"]
     param_pl = []
     param = param_sfc + param_pl
@@ -103,8 +103,6 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
     u,v = xwind2uwind(tmap_meps.x_wind_10m,tmap_meps.y_wind_10m, tmap_meps.alpha)
     vel = wind_speed(tmap_meps.x_wind_10m,tmap_meps.y_wind_10m)
 
-    # plot map
-    fig1 = plt.figure(figsize=(7, 9))
 
     lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
     lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
@@ -118,8 +116,8 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
     crs_lon = ccrs.PlateCarree()
     #crs = ccrs.PlateCarree()
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      ax1 = plt.subplot(projection=crs)
-
+      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
       ttt = tim #+ np.min(steps)
       tidx = tim - np.min(steps)
       print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
@@ -219,6 +217,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
 
       CSST = ax1.contourf(dmap_meps.x, dmap_meps.y, L, zorder=1, levels=levels, alpha=0.7, cmap = cmap, extend = "both", transform=data)
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=3,facecolor="whitesmoke",edgecolor="gray")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+      ax1.text(0, 1, "{0}_surf_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
       ##########################################################
       #handles, labels = ax1.get_legend_handles_labels()
       legend=True
@@ -226,8 +225,8 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
         proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="blue"),
                  plt.axhline(y=0, xmin=1, xmax=1, color="black")]
         lg = plt.legend(proxy, [f"Sensible heat [{dmap_meps_sfx.units.H}] ", f"SST [C]"],loc=1)
-
-        cb = plt.colorbar(CSST, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
+        ax_cb = adjustable_colorbar_cax(fig1, ax1)
+        cb = plt.colorbar(CSST, cax= ax_cb, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
         frame = lg.get_frame()
         lg.set_zorder(102)
         frame.set_facecolor('lightgray')
@@ -237,6 +236,10 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #print(OUTPUTPATH)
       #print("{0}".format(dt))
       make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
+      if grid:
+        nicegrid(ax=ax1)
+      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+        ax1.set_extent(data_domain.lonlat)
       fig1.savefig(make_modelrun_folder + "/{0}_{1}_surf_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
 
@@ -246,6 +249,8 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
       #plt.draw()
 
       plt.clf()
+      plt.close(fig1)
+  plt.close("all")
 # fin
 
 if __name__ == "__main__":
@@ -261,9 +266,11 @@ if __name__ == "__main__":
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
+  parser.add_argument("--grid", default=True, help="Display legend")
+
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   surf(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info)
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid)
   #datetime, step=4, model= "MEPS", domain = None
 # ax1.fill(xx[skip][skip], yy[skip][skip], color="none", hatch='X', edgecolor="b", linewidth=0.0)

@@ -41,7 +41,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True):
+def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True):
   for dt in datetime: #modelrun at time..
     print(dt)
     date = dt[0:-2]
@@ -115,12 +115,13 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
-
-    fig1 = plt.figure(figsize=(7, 9))
-
+    #fig1 = plt.figure(figsize=(7, 9))
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
-      ax1 = plt.subplot(projection=crs)
+      #ax1 = plt.subplot(projection=crs)
 
+      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                               subplot_kw={'projection': crs})
+      ttt = tim
       tidx = tim - np.min(steps)
 
       print('Plotting {0} + {1:02d} UTC'.format(dt,tim))
@@ -154,6 +155,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
 
       ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  #‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+      ax1.text(0, 1, "{0}_T850_RH_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
       legend=True
       if legend:
@@ -187,13 +189,21 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
       #fig1.savefig("../../../../output/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
       make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+
+      if grid:
+        nicegrid(ax=ax1)
+
+      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+        ax1.set_extent(data_domain.lonlat)
+
       fig1.savefig(make_modelrun_folder+"/{0}_{1}_T850_RH_{2}+{3:02d}.png".format(model, domain_name, dt, tim), bbox_inches="tight", dpi=200)
       ax1.cla()
       plt.clf()
+      plt.close(fig1)
 
     #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
     #        for pc in CF_RH.collections]
-    #proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
+    #proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),eee
     #         plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
     #         plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
     #proxy.extend(proxy1)
@@ -205,6 +215,8 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
     ax1.cla()
     plt.clf()
+
+  plt.close("all")
 
 
 if __name__ == "__main__":
@@ -222,11 +234,13 @@ if __name__ == "__main__":
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
+  parser.add_argument("--grid", default=True, help="Display legend")
+
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   print(args.__dict__)
   T850_RH(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info)
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
   #datetime, step=4, model= "MEPS", domain = None
 
 
@@ -236,5 +250,3 @@ if __name__ == "__main__":
 #    return self.fig
   #def do_something(self):
   #  return self.fig
-
-

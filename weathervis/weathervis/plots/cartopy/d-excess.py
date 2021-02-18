@@ -53,7 +53,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     return data_domain
 
 
-def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, legend=False, info=False):
+def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, legend=False, info=False,grid=True):
     for dt in datetime:  # modelrun at time..
         date = dt[0:-2]
         hour = int(dt[-2:])
@@ -113,7 +113,8 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
         crs_lon = ccrs.PlateCarree()
         # crs = ccrs.PlateCarree()
         for tim in np.arange(np.min(steps), np.max(steps) + 1, 1):
-            ax1 = plt.subplot(projection=crs)
+            fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
+                                     subplot_kw={'projection': crs})
 
             ttt = tim  # + np.min(steps)
             tidx = tim - np.min(steps)
@@ -210,7 +211,7 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
             ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'), zorder=3,
                             facecolor="whitesmoke")  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
             ax1.text(0, 1, "{0}_dxs_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
-                     transform=ax1.transAxes, color='dimgrey')
+                     transform=ax1.transAxes, color='black')
             ##########################################################
             # handles, labels = ax1.get_legend_handles_labels()
             legend = True
@@ -221,8 +222,10 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                          ]
                 lg = plt.legend(proxy, ["d-xs=10", "MSLP [hPa]", "Sea Ice conc. >10%"], loc=1)
 
+
                 # cb = plt.colorbar(CSST, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label ="RH [%]", extend = "both")
-                cb = plt.colorbar(Cd, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label="d-xs [$\perthousand$]",
+                ax_cb = adjustable_colorbar_cax(fig1, ax1)
+                cb = plt.colorbar(Cd, fraction=0.046, pad=0.01, ax=ax1, aspect=25, cax= ax_cb, label="d-excess [$\perthousand$]",
                                   extend="both")
 
                 frame = lg.get_frame()
@@ -230,11 +233,18 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                 frame.set_alpha(1)
             make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
             print("filename: " + make_modelrun_folder + "/{0}_{1}_dxs_{2}+{3:02d}.png".format(model, domain_name, dt,
-                                                                                               ttt))
+                                                                                             ttt))
+            if grid:
+                nicegrid(ax=ax1)
+            if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+                ax1.set_extent(data_domain.lonlat)
             fig1.savefig(make_modelrun_folder + "/{0}_{1}_dxs_{2}+{3:02d}.png".format(model, domain_name, dt, ttt),
                          bbox_inches="tight", dpi=200)
             ax1.cla()
             plt.clf()
+            plt.close(fig1)
+    plt.close("all")
+
 
 
 # fin
@@ -250,9 +260,10 @@ if __name__ == "__main__":
     parser.add_argument("--domain_name", default=None, help="MEPS or AromeArctic")
     parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
     parser.add_argument("--legend", default=False, help="Display legend")
+    parser.add_argument("--grid", default=True, help="Display legend")
     parser.add_argument("--info", default=False, help="Display info")
     args = parser.parse_args()
     surf(datetime=args.datetime, steps=args.steps, model=args.model, domain_name=args.domain_name,
-         domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info)
+         domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info,grid=args.grid)
     # datetime, step=4, model= "MEPS", domain = None
 # ax1.fill(xx[skip][skip], yy[skip][skip], color="none", hatch='X', edgecolor="b", linewidth=0.0)
