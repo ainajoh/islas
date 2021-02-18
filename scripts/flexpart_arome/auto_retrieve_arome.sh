@@ -5,11 +5,11 @@ dirname=$( pwd )
 #set workingpath to where this file is located
 cd "$(dirname "$0")"
 
+echo "$(dirname "$0")"
 if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
     dname="source /Data/gfi/isomet/projects/ISLAS_aina/tools/githubclones/islas/weathervis/weathervis/data/config/config_cyclone.sh"
     $dname
 fi
-
 #fclagh=350 #3.5 hour before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
@@ -28,6 +28,9 @@ modelrun_date=$yymmdd
 chunks=7
 steps_min=0
 steps_max=48 #65
+m_level_min=0
+m_level_max=64
+
 while [ $# -gt 0 ]; do
   case "$1" in
     --modelrun_date)
@@ -103,6 +106,25 @@ for dt in ${modelrun[@]}; do #${StringArray[@]}
   for ch in "${chunk_list[@]}"; do #${StringArray[@]}
     runstring="python retrieve_arome.py --steps $ch --datetime $dt --m_levels $m_level_min $m_level_max"
     echo $runstring
-    $runstring
+    #$runstring
   done
 done
+
+#if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
+if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
+    #data_link="/Data/gfi/isomet/projects/ISLAS_aina/tools/flex-arome/data/"
+    #data_main="/Data/gfi/work/cat010/flexpart_arome/input/"
+    for dt in ${modelrun[@]}; do #${StringArray[@]}
+      data_link="/Data/gfi/isomet/projects/ISLAS_aina/tools/flex-arome/data/$dt"
+      make_linkdir="mkdir $data_link"
+      echo $make_linkdir
+      $make_linkdir
+
+      data_main="/Data/gfi/work/cat010/flexpart_arome/input/$dt"
+      make_link="ln -s $data_main $data_link"
+      echo $make_link
+      $make_link
+    done
+fi
+#link it to where we want data.
+
