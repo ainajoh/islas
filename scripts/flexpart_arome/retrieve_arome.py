@@ -270,7 +270,7 @@ def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
 def fix(modelruntime, steps=[0,64], lvl=[0,64]):
     print(modelruntime)
     #lt = 7
-    #lvl = [0,64]  # 64   #64 #  49..#
+    lvl = [0,1]  # 64   #64 #  49..#
     #modelruntime = "2020031100"  # Camp start 20.feb - 14.march..
     model = "AromeArctic"
     xres = 1
@@ -286,7 +286,7 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, type=str)
   parser.add_argument("--steps", default=[0,65], nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
-  parser.add_argument("--m_levels", default=[0,64], nargs="+", type=int,help="model level, 64 is lowest)
+  parser.add_argument("--m_levels", default=[0,64], nargs="+", type=int,help="model level, 64 is lowest")
 
   args = parser.parse_args()
   fix(args.datetime, args.steps, args.m_levels)
