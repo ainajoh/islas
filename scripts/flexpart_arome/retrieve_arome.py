@@ -6,9 +6,14 @@ from weathervis.calculation import *
 from netCDF4 import Dataset
 import os
 import datetime
+import platform
 
 #mydir_new = os.chdir("/Users/ainajoh/Documents/GitHub/islas/weathervis/")
-
+if "cyclone.hpc.uib.no" in platform.node():
+    print("detected cyclone")
+    outputpath="/Data/gfi/work/cat010/flexpart_arome/input/"
+else:
+    outputpath="./"
 
 def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
     variable2d_arome = {}
@@ -173,7 +178,7 @@ def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
     for t in np.arange(np.min(steps), np.max(steps) + 1, 1):
         tidx = t - np.min(steps)
         print("Inside for loop")
-        output = "./"
+        output = outputpath
         print("####################################################################################")
         print(t)
         print("####################################################################################")
