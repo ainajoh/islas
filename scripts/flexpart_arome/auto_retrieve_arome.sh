@@ -106,6 +106,24 @@ for dt in ${modelrun[@]}; do #${StringArray[@]}
   for ch in "${chunk_list[@]}"; do #${StringArray[@]}
     runstring="python retrieve_arome.py --steps $ch --datetime $dt --m_levels $m_level_min $m_level_max"
     echo $runstring
-    $runstring
+    #$runstring
   done
 done
+
+#if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
+if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
+    #data_link="/Data/gfi/isomet/projects/ISLAS_aina/tools/flex-arome/data/"
+    #data_main="/Data/gfi/work/cat010/flexpart_arome/input/"
+    for dt in ${modelrun[@]}; do #${StringArray[@]}
+      data_link="/Data/gfi/isomet/projects/ISLAS_aina/tools/flex-arome/data/$dt"
+      make_linkdir="mkdir $data_link"
+      echo $make_linkdir
+      $make_linkdir
+
+      data_main="/Data/gfi/work/cat010/flexpart_arome/input/$dt"
+      make_link="ln -s $data_main $data_link"
+      echo $make_link
+      $make_link
+    done
+fi
+#link it to where we want data.
