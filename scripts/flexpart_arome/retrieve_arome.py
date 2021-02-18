@@ -275,7 +275,7 @@ def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
 def fix(modelruntime, steps=[0,64], lvl=[0,64]):
     print(modelruntime)
     #lt = 7
-    lvl = [0,1]  # 64   #64 #  49..#
+    #lvl = [0,1]  # 64   #64 #  49..#
     #modelruntime = "2020031100"  # Camp start 20.feb - 14.march..
     model = "AromeArctic"
     xres = 1
