@@ -14,6 +14,8 @@ if "cyclone.hpc.uib.no" in platform.node():
     outputpath="/Data/gfi/work/cat010/flexpart_arome/input/"
 else:
     outputpath="./"
+    print("LOCAL")
+
 
 def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
     variable2d_arome = {}
@@ -127,20 +129,15 @@ def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
     print(arome2d)
     file_arome2d= arome2d.file
     print(arome2d.file)
-    #data_domain = DOMAIN(modelruntime, model, file=file_arome2d)
-    #data_domain.AromeArctic()
     dmap_arome2d = get_data(model=model, file=file_arome2d, param=param2d_arome, step=steps,date=modelruntime)
+    print(dmap_arome2d.url)
     dmap_arome2d.retrieve()
     print(dmap_arome2d.__dir__)
     print("retrive 3darome")
     # 3dArome This can be included in 2darome for timeefficency
     param3d_arome = [*variable3d_arome.keys()]
-    #param3d_arome=["x_wind_ml"]
     arome3d = check_data(date=modelruntime, model=model, param=param3d_arome, m_level=lvl)
     file_arome3d = arome3d.file
-
-    #data_domain = DOMAIN(modelruntime, model, file=file_arome3d)
-    #data_domain.AromeArctic()
     print(file_arome3d)
     dmap_arome3d = get_data(model=model, file=file_arome3d, param=param3d_arome, step=steps,
                         date=modelruntime,  m_level=lvl)
@@ -152,33 +149,27 @@ def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
     param2d_sfx = [*variable2d_sfx.keys()]
     sfx2d = check_data(date=modelruntime, model=model, param=param2d_sfx)
     file_sfx2d=sfx2d.file
-    #data_domain = DOMAIN(modelruntime, model, file=file_sfx2d)
-    #data_domain.AromeArctic()
     dmap_sfx2d = get_data(model=model, file=file_sfx2d, param=param2d_sfx, step=steps,date=modelruntime)
     dmap_sfx2d.retrieve()
-    #print(dmap_sfx2d.x ==dmap_arome2d.x)
-    #print(len(dmap_arome2d.x))
 
     #attr
     url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/2020/07/01/arome_arctic_full_2_5km_20200701T18Z.nc?projection_lambert,x,y"
     dataset = Dataset(url)
     attr = {}
     proj = dataset.variables["projection_lambert"]
-    #xa = dataset.variables["x"]
-    #print(xa.getncattr("_ChunkSizes"))
-    #print(type(long(dataset.variables["x"].getncattr("_ChunkSizes")))
-    #for tim in np.arange(np.min(steps), np.max(steps) + 1, 1):
-    #    # ax1 = plt.subplot(projection=crs)
-    #    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-    #                             subplot_kw={'projection': crs})
-    #    ttt = tim  # + np.min(steps)
-    #    tidx = tim - np.min(steps)
+    #proj=dmap_arome2d.projection_lambert
 
     #for t in range( 0, len(dmap_arome2d.time )):
     for t in np.arange(np.min(steps), np.max(steps) + 1, 1):
         tidx = t - np.min(steps)
         print("Inside for loop")
-        output = outputpath
+        output = outputpath + modelruntime + "/"
+        print(output)
+        if not os.path.exists(output):
+            os.makedirs(output)
+            print("Directory ", output, " Created ")
+        else:
+            print("Directory ", output, " exist ")
         print("####################################################################################")
         print(t)
         print("####################################################################################")

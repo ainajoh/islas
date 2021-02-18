@@ -1,4 +1,3 @@
-
 #!/bin/bash
 source ~/.bashrc
 
@@ -26,7 +25,7 @@ steps_min=0
 steps_max=48 #65
 while [ $# -gt 0 ]; do
   case "$1" in
-    --modelrun)
+    --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
     modelrun_date=("${1#*=}")
     fi
@@ -49,6 +48,16 @@ while [ $# -gt 0 ]; do
     --steps_min)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
     steps_min=("${1#*=}")
+    fi
+    ;;
+  --m_level_min)
+    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
+    m_level_min=("${1#*=}")
+    fi
+    ;;
+  --m_level_max)
+    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
+    m_level_max=("${1#*=}")
     fi
     ;;
     *)
@@ -87,7 +96,7 @@ done
 
 for dt in ${modelrun[@]}; do #${StringArray[@]}
   for ch in "${chunk_list[@]}"; do #${StringArray[@]}
-    runstring="python retrieve_arome.py --steps $ch --datetime $dt"
+    runstring="python retrieve_arome.py --steps $ch --datetime $dt --m_levels $m_level_min $m_level_max"
     echo $runstring
     $runstring
   done
