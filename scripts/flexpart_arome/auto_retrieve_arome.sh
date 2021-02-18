@@ -106,7 +106,7 @@ for dt in ${modelrun[@]}; do #${StringArray[@]}
   for ch in "${chunk_list[@]}"; do #${StringArray[@]}
     runstring="python retrieve_arome.py --steps $ch --datetime $dt --m_levels $m_level_min $m_level_max"
     echo $runstring
-    #$runstring
+    $runstring
   done
 done
 
