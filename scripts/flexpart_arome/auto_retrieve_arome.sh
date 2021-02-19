@@ -113,7 +113,7 @@ done
 #if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
 #if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
 i=1
-if [[ i==1 ]]; then
+if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
     #data_link="/Data/gfi/isomet/projects/ISLAS_aina/tools/flex-arome/data/"
     #data_main="/Data/gfi/work/cat010/flexpart_arome/input/"
     for dt in ${modelrun[@]}; do #${StringArray[@]}
@@ -122,14 +122,23 @@ if [[ i==1 ]]; then
       data_main="/Data/gfi/work/cat010/flexpart_arome/input/$dt"
       make_link="ln -s $data_main $data_link"
       echo $make_link
-      #$make_link
+      $make_link
 
       make_availablefile="$data_link/AVAILABLE"
-      printf "XXXXXX EMPTY LINES XXXXXXXXX\nXXXXXX EMPTY LINES XXXXXXXX\nYYYYMMDD HHMMSS   name of the file(up to 80 characters)" >> test.txt #$make_availablefile
-
-
-
-
+      rm $make_availablefile
+      printf "XXXXXX EMPTY LINES XXXXXXXXX\nXXXXXX EMPTY LINES XXXXXXXX\nYYYYMMDD HHMMSS   name of the file(up to 80 characters)\n" >> "$make_availablefile" #$make_availablefile
+      totpath="$data_link/AR*.nc"
+      for file in $totpath;do
+          filename="$(basename $file)"
+          YYYYMMDD="${filename:2:8}"
+          HHMMSS="${filename:11:2}0000"
+          echo $filename
+          echo $YYYYMMDD
+          echo $HHMMSS
+          line="$YYYYMMDD $HHMMSS      '$filename'      ' '"
+          echo $line
+          printf "$line\n" >> "$make_availablefile" #$make_availablefile
+      done
     done
 fi
 #link it to where we want data.
