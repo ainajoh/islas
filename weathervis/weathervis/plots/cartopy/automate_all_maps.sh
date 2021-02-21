@@ -147,6 +147,7 @@ for md in ${model[@]}; do
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 20 64"
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
+    runstring_FP="python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
 
     #runstring_T850="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
@@ -184,6 +185,9 @@ for md in ${model[@]}; do
     converting $modelrun
     echo $runstring_T2M
     $runstring_T2M
+    converting $modelrun
+    echo $runstring_FP
+    $runstring_FP
     converting $modelrun
 
   done
