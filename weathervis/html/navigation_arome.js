@@ -60,6 +60,9 @@ function getKind(n)
     case 7:
       return "_clouds";
       break;
+    case 8:
+      return "_T2M";
+      break;
     default: 
       return "_";
       break;
@@ -70,16 +73,28 @@ function getDomainname(n)
 {
 	switch (domain[n]) {
 		case 0:
-		return "AromeArctic_AromeArctic";
+		return "AromeArctic_NorwegianSea_area";
 		break;
 		case 1:
-		return "MEPS_MEPS";
+		return "AromeArctic_Andenes_area";
 		break;
 		case 2:
 		return "AromeArctic_Svalbard";
 		break;
 		case 3:
 		return "AromeArctic_North_Norway";
+		break;
+		case 4:
+		return "AromeArctic_AromeArctic";
+		break;
+		case 5:
+		return "MEPS_South_Norway";
+		break;
+		case 6:
+		return "MEPS_West_Norway";
+		break;
+		case 7:
+		return "MEPS_Osteroy";
 		break;
 		default:
 		return "None";
