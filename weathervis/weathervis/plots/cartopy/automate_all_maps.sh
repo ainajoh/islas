@@ -44,7 +44,7 @@ else
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
-#modeldatehour="2021021121"
+#modeldatehour="2021022000"
 
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
@@ -147,16 +147,6 @@ for md in ${model[@]}; do
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 20 64"
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_FP="python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-
-
-    #runstring_T850="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    #runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    #runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
-    #runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    #runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    #runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    ##runstring_sat="python satlookalike --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md"
 
     echo $runstring_Z
     $runstring_Z
@@ -168,7 +158,6 @@ for md in ${model[@]}; do
     $runstring_T850
     converting $modelrun
     echo $runstring_CAO
-    converting $modelrun
     $runstring_CAO
     converting $modelrun
     echo $runstring_BLH
@@ -185,9 +174,6 @@ for md in ${model[@]}; do
     converting $modelrun
     echo $runstring_T2M
     $runstring_T2M
-    converting $modelrun
-    echo $runstring_FP
-    $runstring_FP
     converting $modelrun
 
   done

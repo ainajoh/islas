@@ -37,34 +37,37 @@ function getKind(n)
 {
   switch (n) {
     case 0:
-      return "_CAOi";
+      return "_L00150";
       break;
     case 1:
-      return "_OLR_sat";
+      return "_L00300";
       break;
     case 2:
-      return "_surf";
+      return "_L00500";
       break;
     case 3:
-      return "_Z500_VEL_P";
+      return "_L01000";
       break;
     case 4:
-      return "_T850_RH";
+      return "_L01500";
       break;
     case 5:
-      return "_dxs";
+      return "_L02000";
       break;
     case 6:
-      return "_BLH";
+      return "_L03000";
       break;
     case 7:
-      return "_clouds";
+      return "_L04000";
       break;
     case 8:
-      return "_T2M";
+      return "_L05000";
       break;
     case 9:
-      return "_FP";
+      return "_L07000";
+      break;
+    case 10:
+      return "_L00000";
       break;
     default: 
       return "_";
@@ -164,7 +167,7 @@ function getBasetime(row)
 
 function getFilename(n,k)
 {
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(k)+getKind(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(k)+"_FP_ANX"+getKind(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
 }
 
 function prepareFigure(n) 
