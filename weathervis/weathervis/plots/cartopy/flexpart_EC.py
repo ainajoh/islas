@@ -130,7 +130,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, release_na
           ttt = tim
           tidx = tim - np.min(steps)
 
-          if lev>=10000: # TOC for last level
+          if lev>=7000: # TOC for last levels
             spec2=np.sum(spec1[0, 0, tidx, :, :, :],0).squeeze()
             lev=0
           else: 
