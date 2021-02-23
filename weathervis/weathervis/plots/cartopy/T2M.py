@@ -144,7 +144,7 @@ def T2M(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       # air temperature (C)
       CF_T= ax1.contourf(dmap_meps.x, dmap_meps.y, TA, zorder=1, alpha=1.0,
                          levels=np.arange(-20, 20, 1.0), cmap="PRGn")
-      TA = np.where(Z < 3000, tmap_meps.air_temperature_2m[tidx, :, :], np.NaN).squeeze()
+      TA = np.where(Z < 2000, tmap_meps.air_temperature_2m[tidx, :, :], np.NaN).squeeze()
       C_T = ax1.contour(dmap_meps.x, dmap_meps.y, TA, zorder=4, alpha=1.0,
                           levels=np.arange(-20, 20, 1.0), colors="red", linewidths=0.7)
       ax1.clabel(C_T, C_T.levels[::2], inline=True, fmt="%3.0f", fontsize=10)
