@@ -67,7 +67,7 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
      begin_HHMMSS, end_HHMMSS,
      begin_rel_YYYYMMDD, end_rel_YYYYMMDD,
      begin_rel_HHMMSS, end_rel_HHMMSS,
-     sim_direction):
+     sim_direction,file):
 
     dom_name="lonlat"
     if point_name or point_lonlat:
@@ -78,7 +78,7 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
         dom = area(datetime, domain_name, domain_lonlat)
         if domain_name:
             dom_name= point_name
-    file="/Users/ainajoh/flexarome.input-ISLAS-lowres__INPUT"
+    #file="/Users/ainajoh/flexarome.input-ISLAS-lowres__INPUT"
     import re
     subdict={"{date_input_for_flexpart}":datetime,
              "{begin_YYYYMMDD}":begin_YYYYMMDD,
@@ -135,6 +135,8 @@ if __name__ == "__main__":
   parser.add_argument("--end_rel_HHMMSS",type=str, default=None, help=" ")
 
   parser.add_argument("--sim_direction",type=str, default="1", help="1:foreward, -1:backward")
+  parser.add_argument("--file",type=str, default=None, help="path and filename")
+
 
 
   args = parser.parse_args()
@@ -145,7 +147,7 @@ if __name__ == "__main__":
      begin_HHMMSS=args.begin_HHMMSS, end_HHMMSS=args.end_HHMMSS,
      begin_rel_YYYYMMDD=args.begin_rel_YYYYMMDD, end_rel_YYYYMMDD=args.end_rel_YYYYMMDD,
      begin_rel_HHMMSS=args.begin_rel_HHMMSS, end_rel_HHMMSS=args.end_rel_HHMMSS,
-     sim_direction=args.sim_direction)
+     sim_direction=args.sim_direction, file=args.file)
   #datetime, step=4, model= "MEPS", domain = None
 
 
