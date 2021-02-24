@@ -77,7 +77,7 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
     elif domain_name or domain_lonlat:
         dom = area(datetime, domain_name, domain_lonlat)
         if domain_name:
-            dom_name= point_name
+            dom_name= domain_name
     #file="/Users/ainajoh/flexarome.input-ISLAS-lowres__INPUT"
     import re
     subdict={"{date_input_for_flexpart}":datetime,
