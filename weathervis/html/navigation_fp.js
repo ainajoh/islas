@@ -34,29 +34,7 @@ function checkSync()
   synced=document.getElementById("sync").checked;
 }
 
-function getSite(n)
-{
-  switch (sites[n]) {
-    case 0:
-      return "_NYA";
-      break;
-    case 1:
-      return "_HH";
-      break;
-    case 2:
-      return "_CMET";
-      break;
-    case 3:
-      return "_ANX";
-      break;
-    default: 
-      return "_";
-      break;
-  }
-}
-
-
-function getKind(n)
+function getLevel(n)
 {
   switch (n) {
     case 0:
@@ -84,12 +62,6 @@ function getKind(n)
       return "_L04000";
       break;
     case 8:
-      return "_L05000";
-      break;
-    case 9:
-      return "_L07000";
-      break;
-    case 10:
       return "_L00000";
       break;
     default: 
@@ -190,7 +162,7 @@ function getBasetime(row)
 
 function getFilename(n,k)
 {
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(k)+"_FP"+getSite(k)+getKind(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/FLEXPART_EC_"+getDomainname(k)+getLevel(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
 }
 
 function prepareFigure(n) 
