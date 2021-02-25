@@ -139,13 +139,13 @@ echo $modelrun
 #modelrun=("2020100812")
 #modelrun=("2020100912")
 #modelrun=("2020101012")
-#modelrun=("2021022100")
+#modelrun=("2021022300")
 
 #steps=0
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_FP="python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --release_name $release_name"
+    runstring_FP="python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
     echo $runstring_FP
     $runstring_FP

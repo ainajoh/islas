@@ -278,12 +278,12 @@ function initWebsite()
         if (cday[0].getUTCHours()<12) {
   	cday[0].setUTCHours(0,0,0);
     	} else {
-    	cday[0].setUTCHours(12,0,0);
+    	cday[0].setUTCHours(0,0,0);
     	}
         if (cday[1].getUTCHours()<12) {
   	cday[1].setUTCHours(0,0,0);
     	} else {
-    	cday[1].setUTCHours(12,0,0);
+    	cday[1].setUTCHours(0,0,0);
     	}
 	period=0;
 	site=0;
@@ -301,8 +301,8 @@ function initWebsite()
 
 function skiponeback(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()-6);
-	fdate[row]+=6;
+	cday[row].setUTCHours(cday[row].getUTCHours()-24);
+	fdate[row]+=24;
 	if (fdate[row]>66) {
 		fdate[row]=66;
 	}
@@ -315,8 +315,8 @@ function skiponeback(row)
 
 function skiponeforward(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()+6);
-	fdate[row]-=6;
+	cday[row].setUTCHours(cday[row].getUTCHours()+24);
+	fdate[row]-=24;
 	if (fdate[row]<0) {
 		fdate[row]=0;
 	}
