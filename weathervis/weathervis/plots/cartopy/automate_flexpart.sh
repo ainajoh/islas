@@ -140,6 +140,7 @@ echo $modelrun
 #modelrun=("2020100912")
 #modelrun=("2020101012")
 #modelrun=("2021022300")
+modelrun=("2021022500")
 
 #steps=0
 for md in ${model[@]}; do

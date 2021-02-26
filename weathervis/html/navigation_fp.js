@@ -74,28 +74,28 @@ function getDomainname(n)
 {
 	switch (domain[n]) {
 		case 0:
-		return "AromeArctic_NorwegianSea_area";
+		return "NorwegianSea_area";
 		break;
 		case 1:
-		return "AromeArctic_Andenes_area";
+		return "Andenes_area";
 		break;
 		case 2:
-		return "AromeArctic_Svalbard";
+		return "Svalbard";
 		break;
 		case 3:
-		return "AromeArctic_North_Norway";
+		return "North_Norway";
 		break;
 		case 4:
-		return "AromeArctic_AromeArctic";
+		return "AromeArctic";
 		break;
 		case 5:
-		return "MEPS_South_Norway";
+		return "South_Norway";
 		break;
 		case 6:
-		return "MEPS_West_Norway";
+		return "West_Norway";
 		break;
 		case 7:
-		return "MEPS_Osteroy";
+		return "Osteroy";
 		break;
 		default:
 		return "None";
