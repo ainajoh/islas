@@ -157,8 +157,8 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
           print(np.max(spec2a))
           print(np.max(spec2b))
           #spec2[:,:]=0.01
-          spec2a = np.where(spec2a > 1e-9, spec2a, np.NaN)
-          spec2b = np.where(spec2b > 1e-9, spec2b, np.NaN)
+          spec2a = np.where(spec2a > 1e-10, spec2a, np.NaN)
+          spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
 
           print('Plotting {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
           # gather, filter and squeeze variables for plotting
@@ -167,8 +167,8 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
           Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
           MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-          F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-9, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
-          F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-9, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.9, transform=ccrs.PlateCarree())
+          F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
+          F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.9, transform=ccrs.PlateCarree())
           del spec2a
           del spec2b
           # MSLP with contour labels every 10 hPa
