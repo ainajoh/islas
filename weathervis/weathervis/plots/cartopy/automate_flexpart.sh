@@ -32,6 +32,9 @@ if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
 if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
     fi
+if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+    cf="source ../../data/config/config_islas_server.sh"
+    fi
 
 $cf
 
@@ -140,6 +143,7 @@ echo $modelrun
 #modelrun=("2020100912")
 #modelrun=("2020101012")
 #modelrun=("2021022300")
+modelrun=("2021022500")
 
 #steps=0
 for md in ${model[@]}; do

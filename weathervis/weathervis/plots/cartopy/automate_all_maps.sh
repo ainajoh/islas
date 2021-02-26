@@ -32,6 +32,9 @@ if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
 if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
     fi
+if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+    cf="source ../../data/config/config_islas_server.sh"
+    fi
 
 $cf
 

@@ -165,8 +165,8 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
           Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
           MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-          F_P = ax1.pcolormesh(lons, lats, spec2a, cmap=plt.cm.Blues, zorder=1, alpha=0.8, transform=ccrs.PlateCarree())
-          F_P = ax1.pcolormesh(lons, lats, spec2b, cmap=plt.cm.Reds, zorder=2, alpha=0.8, transform=ccrs.PlateCarree())
+          F_P = ax1.pcolormesh(lons, lats, spec2a, cmap=plt.cm.Reds, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
+          F_P = ax1.pcolormesh(lons, lats, spec2b, cmap=plt.cm.Blues, zorder=2, alpha=0.9, transform=ccrs.PlateCarree())
           del spec2a
           del spec2b
           # MSLP with contour labels every 10 hPa

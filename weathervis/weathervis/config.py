@@ -60,6 +60,9 @@ if "cyclone.hpc.uib.no" in platform.node():
 elif "islas-forecast.novalocal" in platform.node():
     print("detect islas-forecast.novalocal")
     OUTPUTPATH = islas_server()
+elif "islas-operational.novalocal" in platform.node():
+    print("detect islas-operational.novalocal")
+    OUTPUTPATH = islas_server()
 
 else:
     print("local host detected")
