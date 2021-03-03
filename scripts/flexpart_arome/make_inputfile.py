@@ -67,7 +67,7 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
      begin_HHMMSS, end_HHMMSS,
      begin_rel_YYYYMMDD, end_rel_YYYYMMDD,
      begin_rel_HHMMSS, end_rel_HHMMSS,
-     sim_direction,file):
+     sim_direction, file, ZPOINT_1,ZPOINT_2):
 
     dom_name="lonlat"
     if point_name or point_lonlat:
@@ -94,6 +94,8 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
              "{min_2}":str(dom[1]),
              "{max_1}":str(dom[2]),
              "{max_2}":str(dom[3]),
+             "{ZPOINT_1}": ZPOINT_1),
+             "{ZPOINT_2}": ZPOINT_2),
              "{domain_name}":dom_name}
 
     with open (file, 'r' ) as f:
@@ -136,6 +138,8 @@ if __name__ == "__main__":
 
   parser.add_argument("--sim_direction",type=str, default="1", help="1:foreward, -1:backward")
   parser.add_argument("--file",type=str, default=None, help="path and filename")
+  parser.add_argument("--ZPOINT_1",type=float, default=None, help="")
+  parser.add_argument("--ZPOINT_2",type=float, default=None, help="")
 
 
 
@@ -147,7 +151,7 @@ if __name__ == "__main__":
      begin_HHMMSS=args.begin_HHMMSS, end_HHMMSS=args.end_HHMMSS,
      begin_rel_YYYYMMDD=args.begin_rel_YYYYMMDD, end_rel_YYYYMMDD=args.end_rel_YYYYMMDD,
      begin_rel_HHMMSS=args.begin_rel_HHMMSS, end_rel_HHMMSS=args.end_rel_HHMMSS,
-     sim_direction=args.sim_direction, file=args.file)
+     sim_direction=args.sim_direction, file=args.file, ZPOINT_1 = args.ZPOINT_1, ZPOINT_2 = args.ZPOINT_2)
   #datetime, step=4, model= "MEPS", domain = None
 
 
