@@ -135,96 +135,105 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     fig1 = plt.figure(figsize=(7, 9))
     make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
-        l=0
-        for lev in levs:
-          ax1 = plt.subplot(projection=crs)
+        # determine if image should be created for this time step
+        stepok=False
+        if tim<25:
+            stepok=True
+        elif (tim<=36) and ((tim % 3) == 0):
+            stepok=True
+        elif (tim<=66) and ((tim % 6) == 0):
+            stepok=True
+        if stepok==True:
+            l=0
+            for lev in levs:
+              ax1 = plt.subplot(projection=crs)
 
-          ttt = tim
-          tidx = tim - np.min(steps)
+              ttt = tim
+              tidx = tim - np.min(steps)
 
-          if lev>=5000: # TOC for last levels
-            spec2a=np.sum(spec1a[0, 0, tidx, :, :, :],0).squeeze()
-            spec2b=np.sum(spec1b[0, 0, tidx, :, :, :],0).squeeze()
-            lev=0
-          else: 
-            spec2a=(spec1a[0, 0, tidx, l, :, :]).squeeze()
-            spec2b=(spec1b[0, 0, tidx, l, :, :]).squeeze()
-            l=l+1
+              if lev>=5000: # TOC for last levels
+                spec2a=np.sum(spec1a[0, 0, tim, :, :, :],0).squeeze()
+                spec2b=np.sum(spec1b[0, 0, tim, :, :, :],0).squeeze()
+                lev=0
+              else: 
+                spec2a=(spec1a[0, 0, tim, l, :, :]).squeeze()
+                spec2b=(spec1b[0, 0, tim, l, :, :]).squeeze()
+                l=l+1
 
-          #print(tidx)
-          #print(lev)
-          #print(np.min(spec2))
-          print(np.max(spec2a))
-          print(np.max(spec2b))
-          #spec2[:,:]=0.01
-          spec2a = np.where(spec2a > 1e-10, spec2a, np.NaN)
-          spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
+              #print(tidx)
+              #print(lev)
+              #print(np.min(spec2))
+              print(np.max(spec2a))
+              print(np.max(spec2b))
+              #spec2[:,:]=0.01
+              spec2a = np.where(spec2a > 1e-10, spec2a, np.NaN)
+              spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
 
-          print('Plotting {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
-          # gather, filter and squeeze variables for plotting
-          plev = 0
-          #reduces noise over mountains by removing values over a certain height.
+              print('Plotting {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
+              # gather, filter and squeeze variables for plotting
+              plev = 0
+              #reduces noise over mountains by removing values over a certain height.
 
-          Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
-          MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-          F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
-          F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.9, transform=ccrs.PlateCarree())
-          del spec2a
-          del spec2b
-          # MSLP with contour labels every 10 hPa
-          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
-                            levels=np.arange(960, 1050, 1), colors='grey', linewidths=0.5,transform=crs)
-          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=4, alpha=1.0,
-                            levels=np.arange(960, 1050, 10),
-                           colors='grey', linewidths=1.0, label = "MSLP [hPa]",transform=crs)
-          ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+              Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
+              MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+              F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
+              F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.9, transform=ccrs.PlateCarree())
+              del spec2a
+              del spec2b
+              # MSLP with contour labels every 10 hPa
+              C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
+                                levels=np.arange(960, 1050, 1), colors='grey', linewidths=0.5,transform=crs)
+              C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=4, alpha=1.0,
+                                levels=np.arange(960, 1050, 10),
+                               colors='grey', linewidths=1.0, label = "MSLP [hPa]",transform=crs)
+              ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
 
-          ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  
-          ax1.text(0, 1, "{0}_FP_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
+              ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  
+              ax1.text(0, 1, "{0}_FP_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
-          legend=False
-          if legend:
-            proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
-                    for pc in CF_T.collections]
-            proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
-                     plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
-                     plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
-            proxy.extend(proxy1)
-            lg = ax1.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
-                                  f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
-                                  f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
-            frame = lg.get_frame()
-            frame.set_facecolor('white')
-            frame.set_alpha(1)
+              legend=False
+              if legend:
+                proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
+                        for pc in CF_T.collections]
+                proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
+                         plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
+                         plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
+                proxy.extend(proxy1)
+                lg = ax1.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
+                                      f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
+                                      f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
+                frame = lg.get_frame()
+                frame.set_facecolor('white')
+                frame.set_alpha(1)
 
-          #if info:
-          #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
-          #           fontsize=7)#, bbox=dict(facecolor='white', alpha=0.5))
-
-
-          ##########################################################
-
-          #plt.show()
+              #if info:
+              #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
+              #           fontsize=7)#, bbox=dict(facecolor='white', alpha=0.5))
 
 
-          #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
-          #          dmap_meps.latitude[-1, -1]]
-          # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
-          # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
-          #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
-          #fig1.savefig("../../../../output/{0}_T2M_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
+              ##########################################################
 
-          if grid:
-            nicegrid(ax=ax1)
+              #plt.show()
 
-          #if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-          ax1.set_extent(lonlat)
 
-          model='FLEXPART_EC'
-          print(make_modelrun_folder+"/{0}_{1}_L{2:05.0f}_{3}+{4:02d}.png".format(model, domain_name, lev, dt, tim))
-          fig1.savefig(make_modelrun_folder+"/{0}_{1}_L{2:05.0f}_{3}+{4:02d}.png".format(model, domain_name, lev, dt, tim), bbox_inches="tight", dpi=200)
-          ax1.cla()
-          plt.clf()
+              #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
+              #          dmap_meps.latitude[-1, -1]]
+              # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
+              # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
+              #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
+              #fig1.savefig("../../../../output/{0}_T2M_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
+
+              if grid:
+                nicegrid(ax=ax1)
+
+              #if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+              ax1.set_extent(lonlat)
+
+              model='FLEXPART_EC'
+              print(make_modelrun_folder+"/{0}_{1}_L{2:05.0f}_{3}+{4:02d}.png".format(model, domain_name, lev, dt, tim))
+              fig1.savefig(make_modelrun_folder+"/{0}_{1}_L{2:05.0f}_{3}+{4:02d}.png".format(model, domain_name, lev, dt, tim), bbox_inches="tight", dpi=200)
+              ax1.cla()
+              plt.clf()
 
     plt.close(fig1)
 
@@ -247,12 +256,19 @@ if __name__ == "__main__":
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
-
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   print(args.__dict__)
-  flexpart_EC(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+
+  # split up in 3 retrievals of up to 24h
+  flexpart_EC(datetime=args.datetime, steps =  [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>24:
+      flexpart_EC(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>36:
+      flexpart_EC(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
   #datetime, step=4, model= "MEPS", domain = None
 
 #fin
