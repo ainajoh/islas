@@ -117,91 +117,103 @@ def T2M(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
                                 globe=globe)
     #fig1 = plt.figure(figsize=(7, 9))
     make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                               subplot_kw={'projection': crs})
+                               
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
       #ax1 = plt.subplot(projection=crs)
 
-      ttt = tim
-      tidx = tim - np.min(steps)
+      # determine if image should be created for this time step
+      stepok=False
+      if tim<25:
+          stepok=True
+      elif (tim<=36) and ((tim % 3) == 0):
+          stepok=True
+      elif (tim<=66) and ((tim % 6) == 0):
+          stepok=True
+      if stepok==True:
 
-      print('Plotting {0} + {1:02d} UTC'.format(dt,tim))
-      # gather, filter and squeeze variables for plotting
-      plev = 0
-      #reduces noise over mountains by removing values over a certain height.
+          fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
+          ttt = tim
+          tidx = tim - np.min(steps)
 
-      Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
-      TA = np.where(Z < 50000, tmap_meps.air_temperature_2m[tidx, :, :], np.NaN).squeeze()
-      MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-      #RH = (tmap_meps.relative_humidity_pl[tidx, plev, :, :]).squeeze()
-      # MSLP with contour labels every 10 hPa
-      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
-                        levels=np.arange(960, 1050, 1), colors='grey', linewidths=0.5)
-      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
-                        levels=np.arange(960, 1050, 10),
-                       colors='grey', linewidths=1.0, label = "MSLP [hPa]")
-      ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
-      # air temperature (C)
-      CF_T= ax1.contourf(dmap_meps.x, dmap_meps.y, TA, zorder=1, alpha=1.0,
-                         levels=np.arange(-20, 20, 1.0), cmap="PRGn")
-      TA = np.where(Z < 2000, tmap_meps.air_temperature_2m[tidx, :, :], np.NaN).squeeze()
-      C_T = ax1.contour(dmap_meps.x, dmap_meps.y, TA, zorder=4, alpha=1.0,
-                          levels=np.arange(-20, 20, 1.0), colors="red", linewidths=0.7)
-      ax1.clabel(C_T, C_T.levels[::2], inline=True, fmt="%3.0f", fontsize=10)
+          print('Plotting T2M {0} + {1:02d} UTC'.format(dt,tim))
+          # gather, filter and squeeze variables for plotting
+          plev = 0
+          #reduces noise over mountains by removing values over a certain height.
 
-      # relative humidity above 80%
-      #CF_RH = ax1.contour(dmap_meps.x, dmap_meps.y, RH, zorder=4, alpha=0.5,
-      #                  levels=np.linspace(70, 100, 4), colors="blue", linewidths=0.7,label = "RH >70% [%]")
+          Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
+          TA = np.where(Z < 50000, tmap_meps.air_temperature_2m[tidx, :, :], np.NaN).squeeze()
+          MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+          #RH = (tmap_meps.relative_humidity_pl[tidx, plev, :, :]).squeeze()
+          # MSLP with contour labels every 10 hPa
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
+                            levels=np.arange(960, 1050, 1), colors='grey', linewidths=0.5)
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
+                            levels=np.arange(960, 1050, 10),
+                           colors='grey', linewidths=1.0, label = "MSLP [hPa]")
+          ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+          # air temperature (C)
+          CF_T= ax1.contourf(dmap_meps.x, dmap_meps.y, TA, zorder=1, alpha=1.0,
+                             levels=np.arange(-20, 20, 1.0), cmap="PRGn")
+          TA = np.where(Z < 2000, tmap_meps.air_temperature_2m[tidx, :, :], np.NaN).squeeze()
+          C_T = ax1.contour(dmap_meps.x, dmap_meps.y, TA, zorder=4, alpha=1.0,
+                              levels=np.arange(-20, 20, 1.0), colors="red", linewidths=0.7)
+          ax1.clabel(C_T, C_T.levels[::2], inline=True, fmt="%3.0f", fontsize=10)
 
-      #lat_p = 60.2
-      #lon_p = 5.4167
-      #mainpoint = ax1.scatter(lon_p, lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),
-      #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
+          # relative humidity above 80%
+          #CF_RH = ax1.contour(dmap_meps.x, dmap_meps.y, RH, zorder=4, alpha=0.5,
+          #                  levels=np.linspace(70, 100, 4), colors="blue", linewidths=0.7,label = "RH >70% [%]")
 
-      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  #‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
-      ax1.text(0, 1, "{0}_T2M_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
+          #lat_p = 60.2
+          #lon_p = 5.4167
+          #mainpoint = ax1.scatter(lon_p, lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),
+          #                        color='lime', zorder=6, linestyle='None', edgecolors="k", linewidths=3)
 
-      legend=False
-      if legend:
-        proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
-                for pc in CF_T.collections]
-        proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
-                 plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
-                 plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
-        proxy.extend(proxy1)
-        lg = ax1.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
-                              f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
-                              f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
-        frame = lg.get_frame()
-        frame.set_facecolor('white')
-        frame.set_alpha(1)
+          ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  #‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+          ax1.text(0, 1, "{0}_T2M_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
-      #if info:
-      #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
-      #           fontsize=7)#, bbox=dict(facecolor='white', alpha=0.5))
+          legend=False
+          if legend:
+            proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
+                    for pc in CF_T.collections]
+            proxy1 = [plt.axhline(y=0, xmin=1, xmax=1, color="red"),
+                     plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
+                     plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
+            proxy.extend(proxy1)
+            lg = ax1.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
+                                  f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
+                                  f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
+            frame = lg.get_frame()
+            frame.set_facecolor('white')
+            frame.set_alpha(1)
 
-
-      ##########################################################
-
-      #plt.show()
+          #if info:
+          #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
+          #           fontsize=7)#, bbox=dict(facecolor='white', alpha=0.5))
 
 
-      #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
-      #          dmap_meps.latitude[-1, -1]]
-      # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
-      # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
-      #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
-      #fig1.savefig("../../../../output/{0}_T2M_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
+          ##########################################################
 
-      if grid:
-        nicegrid(ax=ax1)
+          #plt.show()
 
-      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-        ax1.set_extent(data_domain.lonlat)
 
-      print(make_modelrun_folder+"/{0}_{1}_T2M_{2}+{3:02d}.png".format(model, domain_name, dt, tim))
-      fig1.savefig(make_modelrun_folder+"/{0}_{1}_T2M_{2}+{3:02d}.png".format(model, domain_name, dt, tim), bbox_inches="tight", dpi=200)
-      ax1.cla()
+          #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
+          #          dmap_meps.latitude[-1, -1]]
+          # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
+          # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
+          #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
+          #fig1.savefig("../../../../output/{0}_T2M_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
+
+          if grid:
+            nicegrid(ax=ax1)
+
+          if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+            ax1.set_extent(data_domain.lonlat)
+
+          print(make_modelrun_folder+"/{0}_{1}_T2M_{2}+{3:02d}.png".format(model, domain_name, dt, tim))
+          fig1.savefig(make_modelrun_folder+"/{0}_{1}_T2M_{2}+{3:02d}.png".format(model, domain_name, dt, tim), bbox_inches="tight", dpi=200)
+          ax1.cla()
+          plt.clf()
+          plt.close(fig1)
 
     #proxy = [plt.Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0], )
     #        for pc in CF_RH.collections]
@@ -214,9 +226,6 @@ def T2M(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
     #                 f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
     #                  f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
     #fig2.savefig("../../../output/{0}_T2M_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
-
-    plt.clf()
-    plt.close(fig1)
 
   plt.close("all")
 
@@ -237,18 +246,16 @@ if __name__ == "__main__":
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
-
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   print(args.__dict__)
-  T2M(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
+
+  T2M(datetime=args.datetime, steps = [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
           domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  #datetime, step=4, model= "MEPS", domain = None
-
-
-#class T2M():
-#  def __init__(self,datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True):
-#    self.fig = T2M(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True)
-#    return self.fig
-  #def do_something(self):
-  #  return self.fig
+  if np.max(args.steps)>24:
+    T2M(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>36:
+    T2M(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+# fin

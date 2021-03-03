@@ -131,10 +131,12 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
-    #fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
-    fig1 = plt.figure(figsize=(7, 9))
+    #fig1 = plt.figure(figsize=(7, 9))
     make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
+        #ax1 = plt.subplot(projection=crs)
+
         # determine if image should be created for this time step
         stepok=False
         if tim<25:
@@ -144,10 +146,11 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         elif (tim<=66) and ((tim % 6) == 0):
             stepok=True
         if stepok==True:
+
             l=0
             for lev in levs[0:8]:
-              ax1 = plt.subplot(projection=crs)
 
+              fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
               ttt = tim
               tidx = tim - np.min(steps)
 
@@ -169,7 +172,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               spec2a = np.where(spec2a > 1e-10, spec2a, np.NaN)
               spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
 
-              print('Plotting {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
+              print('Plotting FLEXPART-EC {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
               # gather, filter and squeeze variables for plotting
               plev = 0
               #reduces noise over mountains by removing values over a certain height.
@@ -234,8 +237,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               fig1.savefig(make_modelrun_folder+"/{0}_{1}_L{2:05.0f}_{3}+{4:02d}.png".format(model, domain_name, lev, dt, tim), bbox_inches="tight", dpi=200)
               ax1.cla()
               plt.clf()
-
-    plt.close(fig1)
+              plt.close(fig1)
 
   plt.close("all")
 
