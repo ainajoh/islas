@@ -263,6 +263,12 @@ function skiponeback(row)
 {
 	cday[row].setUTCHours(cday[row].getUTCHours()-6);
 	fdate[row]+=6;
+	if ((fdate[row]>24) && (fdate[row]<36)) {
+		fdate[row]=fdate[row] - (fdate[row] % 3)
+	}
+	if ((fdate[row]>36) && (fdate[row]<66)) {
+		fdate[row]=fdate[row] - (fdate[row] % 6)
+	}
 	if (fdate[row]>66) {
 		fdate[row]=66;
 	}
@@ -277,6 +283,12 @@ function skiponeforward(row)
 {
 	cday[row].setUTCHours(cday[row].getUTCHours()+6);
 	fdate[row]-=6;
+	if ((fdate[row]>24) && (fdate[row]<36)) {
+		fdate[row]=fdate[row] + (fdate[row] % 3)
+	}
+	if ((fdate[row]>36) && (fdate[row]<66)) {
+		fdate[row]=fdate[row] + (fdate[row] % 6)
+	}
 	if (fdate[row]<0) {
 		fdate[row]=0;
 	}
@@ -290,6 +302,12 @@ function skiponeforward(row)
 function skip1hforward(row) 
 {
 	fdate[row]+=1;
+	if (fdate[row]>24) {
+		fdate[row]=fdate[row]+2;
+	}
+	if (fdate[row]>36) {
+		fdate[row]=fdate[row]+3;
+	}
 	if (fdate[row]>66) {
 		fdate[row]=66;
 	}
@@ -302,6 +320,12 @@ function skip1hforward(row)
 
 function skip1hback(row) 
 {
+	if (fdate[row]>36) {
+		fdate[row]=fdate[row]-3;
+	}
+	if (fdate[row]>24) {
+		fdate[row]=fdate[row]-2;
+	}
 	fdate[row]-=1;
 	if (fdate[row]<0) {
 		fdate[row]=0;
