@@ -4,17 +4,21 @@ source ~/.bashrc
 function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
-  cd ~/output/weathervis/$1
+  cd /home/centos/output/weathervis/$1
   mkdir small
   for f in *.png; do 
     convert -scale 40% $f small/$f
   done
-  if ! [ -d ~/www/gfx/$1 ]; then
-    mkdir ~/www/gfx/$1
+  if ! [ -d /home/centos/www/gfx/$1 ]; then
+    mkdir /home/centos/www/gfx/$1
   fi
-  cp small/* ~/www/gfx/$1
-  rm -rf ~/output/weathervis/$1
-  sudo chown -R centos:apache ~/www/gfx/$1  
+  cp small/* /home/centos/www/gfx/$1
+  rm -rf /home/centos/output/weathervis/$1
+  sudo chown -R centos:apache /home/centos/www/gfx/$1  
+  # transfer to webserver
+  if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+    scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/* 158.39.201.233:/home/centos/www/gfx/$1/
+  fi
   cd $here
 }
 
@@ -29,7 +33,7 @@ cf=""
 if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
     cf="source ../../data/config/config_cyclone.sh"
     fi
-if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then
+if [[ "$HOSTNAME" == *"islas-forecast.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
     fi
 if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then

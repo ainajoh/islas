@@ -145,7 +145,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
             stepok=True
         if stepok==True:
             l=0
-            for lev in levs:
+            for lev in levs[0:8]:
               ax1 = plt.subplot(projection=crs)
 
               ttt = tim
