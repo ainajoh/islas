@@ -49,7 +49,8 @@ point_name=("Andenes")
 domain_name=("Andenes")
 #Make overview map
 map_loc="python point_maploc.py --datetime ${modelrun[0]} --point_name ${point_name[@]}"
-echo $map_loc
+
+#echo $map_loc
 $map_loc
 
 for dt in ${modelrun[@]}; do #${StringArray[@]}

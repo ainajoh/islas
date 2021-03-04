@@ -9,6 +9,42 @@ import math
 ####################################################################################################################
 # UTILITIES
 #####################################################################################################################
+def nearest_neighbour_idx(plon,plat, longitudes, latitudes, nmin=1):
+    """
+    Parameters
+    ----------
+    plon: longitude of a specific location [degrees]
+    plat: latitude of a specific location  [degrees]
+    longitudes: all longitudes of the model[degrees]
+    latitudes: all latitudes of the model  [degrees]
+    nmin: number of points you want nearest to your specific location
+
+    Returns
+    -------
+    indexes as tuples in array for the closest gridpoint near a specific location.
+    point = [(y1,x1),(y2,x2)]. This format is done in order to ease looping through points.
+    for p in point:
+        #gives p = (y1,x1)
+        xatlocation = x_wind_10m[:,0,p]
+    """
+    #source https://github.com/metno/NWPdocs/wiki/From-x-y-wind-to-wind-direction
+    R = 6371.0 #model has 6371000.0
+    dlat = np.radians(latitudes - plat) ##lat2 - lat1
+    dlon = np.radians(longitudes - plon) #lon2 - lon1
+    platm = np.full(np.shape(latitudes), plat)
+    a = (np.sin(dlat / 2) * np.sin(dlat / 2) +
+         np.cos(np.radians(plat)) * np.cos(np.radians(latitudes)) *
+         np.sin(dlon / 2) * np.sin(dlon / 2))
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+    d = R * c
+    dsort = np.sort(d,axis=None)
+    closest_idx = np.where(np.isin(d,dsort[0:nmin]))
+
+    #point = [(x,y) for x,y in zip(closest_idx[0],closest_idx[1])]
+
+
+    return closest_idx
+
 def nearest_neighbour(plon,plat, longitudes, latitudes, nmin=1):
     """
     Parameters
