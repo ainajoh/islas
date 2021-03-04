@@ -94,8 +94,8 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
              "{min_2}":str(dom[1]),
              "{max_1}":str(dom[2]),
              "{max_2}":str(dom[3]),
-             "{ZPOINT_1}": ZPOINT_1),
-             "{ZPOINT_2}": ZPOINT_2),
+             "{ZPOINT_1}": ZPOINT_1,
+             "{ZPOINT_2}": ZPOINT_2,
              "{domain_name}":dom_name}
 
     with open (file, 'r' ) as f:
@@ -138,8 +138,8 @@ if __name__ == "__main__":
 
   parser.add_argument("--sim_direction",type=str, default="1", help="1:foreward, -1:backward")
   parser.add_argument("--file",type=str, default=None, help="path and filename")
-  parser.add_argument("--ZPOINT_1",type=float, default=None, help="")
-  parser.add_argument("--ZPOINT_2",type=float, default=None, help="")
+  parser.add_argument("--ZPOINT_1",type=str, default=None, help="")
+  parser.add_argument("--ZPOINT_2",type=str, default=None, help="")
 
 
 
