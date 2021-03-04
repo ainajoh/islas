@@ -4,6 +4,8 @@ from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.calculation import *
 from weathervis.get_data import *
+import platform
+import os
 
 def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
   if domain_name or domain_lonlat:
@@ -29,7 +31,11 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
 
 def point(datetime, point_name, point_lonlat,number_grid=500):
     if point_name:
-        sites = pd.read_csv("../../weathervis/weathervis/data/sites.csv", sep=";", header=0, index_col=0)
+        if "cyclone.hpc.uib.no" in platform.node():
+            print("detected cyclone")
+            sites = pd.read_csv("../githubclones/islas/weathervis/weathervis/data/sites.csv", sep=";", header=0, index_col=0)
+        else:
+            sites = pd.read_csv("../../weathervis/weathervis/data/sites.csv", sep=";", header=0, index_col=0)
         point_lonlat = [sites.loc[point_name].lon, sites.loc[point_name].lat]
 
     #test nearest lonlat
