@@ -58,7 +58,9 @@ def point(datetime, point_name, point_lonlat,number_grid=1):
     #print(y_llc * 2500)
     #print(x_urc * 2500)
     #print(y_urc * 2500)
-    return [x_llc*2500,y_llc * 2500, x_urc * 2500, y_urc * 2500]
+    #return [x_llc*2500,y_llc * 2500, x_urc * 2500, y_urc * 2500]
+    return [y_llc*2500,x_llc * 2500, y_urc * 2500, x_urc * 2500]
+
 def area(datetime, domain_name, domain_lonlat):
     check_all = check_data(date=datetime, model="AromeArctic", step=0)
     file_all = check_all.file
