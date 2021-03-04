@@ -29,7 +29,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def point(datetime, point_name, point_lonlat,number_grid=500):
+def point(datetime, point_name, point_lonlat,number_grid=1):
     if point_name:
         if "cyclone.hpc.uib.no" in platform.node():
             print("detected cyclone")
@@ -37,6 +37,7 @@ def point(datetime, point_name, point_lonlat,number_grid=500):
         else:
             sites = pd.read_csv("../../weathervis/weathervis/data/sites.csv", sep=";", header=0, index_col=0)
         point_lonlat = [sites.loc[point_name].lon, sites.loc[point_name].lat]
+        print(point_lonlat)
 
     #test nearest lonlat
     check_all = check_data(date=datetime, model="AromeArctic", param=["longitude"], step=1)
@@ -45,6 +46,8 @@ def point(datetime, point_name, point_lonlat,number_grid=500):
     dmap_meps = get_data(model="AromeArctic", data_domain=data_domain, param=["longitude"], file=file_all, step=1,
                          date=datetime)
     dmap_meps.retrieve()
+    print("NUMBER GRID")
+    print(number_grid)
     closest_idx= nearest_neighbour_idx(point_lonlat[0], point_lonlat[1], dmap_meps.longitude, dmap_meps.latitude, nmin=number_grid)
 
     x_llc=np.min(closest_idx[0])
@@ -85,6 +88,13 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
         if domain_name:
             dom_name= domain_name
     #file="/Users/ainajoh/flexarome.input-ISLAS-lowres__INPUT"
+
+    if int(sim_direction)==-1:
+        new_beg=end_YYYYMMDD
+        new_end=begin_YYYYMMDD
+        begin_YYYYMMDD=new_beg
+        end_YYYYMMDD=new_end
+
     import re
     subdict={"{date_input_for_flexpart}":datetime,
              "{begin_YYYYMMDD}":begin_YYYYMMDD,
@@ -131,7 +141,7 @@ if __name__ == "__main__":
   parser.add_argument("--domain_lonlat", nargs="+", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--point_name", default=None, help="see site.csv")
   parser.add_argument("--point_lonlat", nargs="+", type=float, default=None, help="[ lonmin, lonmax, latmin, latmax]")
-  parser.add_argument("--number_grid", type=int, default=None, help="")
+  parser.add_argument("--number_grid", type=int, default=500, help="")
 
   parser.add_argument("--begin_YYYYMMDD", type=str, default=None, help="v")
   parser.add_argument("--end_YYYYMMDD", type=str,default=None, help=" ")
