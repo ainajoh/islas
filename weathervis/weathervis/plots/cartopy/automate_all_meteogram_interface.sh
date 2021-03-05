@@ -13,7 +13,6 @@ domain_name=("GEOF322")
 map_loc="python point_maploc.py --datetime ${modelrun[0]} --point_name ${point_name[@]}"
 
 #echo $map_loc
-$map_loc
 
 for dt in ${modelrun[@]}; do #${StringArray[@]}
   #runstring="python point_meteogram.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"

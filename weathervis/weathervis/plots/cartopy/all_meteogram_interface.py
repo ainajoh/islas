@@ -2,6 +2,8 @@ from weathervis.config import *
 from weathervis.utils import *
 from weathervis.domain import *
 from weathervis.get_data import *
+from weathervis.check_data import *
+
 from weathervis.calculation import *
 import os
 from point_meteogram import *
@@ -47,7 +49,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     else:
         data_domain = None
     return data_domain
-def setup_directory(modelrun, point_name, point_lonlat):
+def setup_met_directory(modelrun, point_name, point_lonlat):
     projectpath = setup_directory(OUTPUTPATH, "{0}".format(dt))
     figname = "fc_" + modelrun
     # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
@@ -147,8 +149,10 @@ class LOC_PLOTS:
         return dmet, data_domain,bad_param
 
 def input_handler(date, steps, model, domain_name,domain_lonlat, legend, info, num_point,point_lonlat, point_name):
-    dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3 = setup_directory(
+
+    dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3 = setup_met_directory(
         dt, point_name, point_lonlat)
+
 
 
     PM = PMET(date=date, steps=steps, model=model, domain_name=domain_name,
