@@ -28,6 +28,8 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
         data_domain = None
     return data_domain
 
+
+
 def setup_directory( path, folder_name):
     projectpath= path+ folder_name
     if not os.path.exists(projectpath):

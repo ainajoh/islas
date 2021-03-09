@@ -152,14 +152,18 @@ class VERT_MET():
         print(np.shape(self.dmet.ap))
 
         self.dmet.u,self.dmet.v = xwind2uwind(self.dmet.x_wind_ml, self.dmet.y_wind_ml, self.dmet.alpha)
+        print("test1")
         self.dmet.velocity = wind_speed(self.dmet.x_wind_ml, self.dmet.y_wind_ml)
+        print("test2")
         self.dmet.heighttoreturn = ml2alt_gl(air_temperature_ml=self.dmet.air_temperature_ml,
                                            specific_humidity_ml=self.dmet.specific_humidity_ml, ap=self.dmet.ap,
                                            b=self.dmet.b,
                                            surface_air_pressure=self.dmet.surface_air_pressure)
-
+        print("test3")
         self.dmet.dtdz = lapserate(self.dmet.air_temperature_ml, self.dmet.heighttoreturn, self.dmet.air_temperature_0m)
+        print("test4")
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
+        print("test5")
         self.dmet.theta = potential_temperatur(self.dmet.air_temperature_ml, self.dmet.p)
 
         #self.dmet.geotoreturn = ml2alt_sl(self.dmet.p, self.dmet.surface_geopotential, self.dmet.air_temperature_ml,
@@ -379,7 +383,7 @@ class VERT_MET():
         axm2.xaxis.grid(True, which="minor", linestyle="--")
         axm2.tick_params(axis="x", which="major", pad=12)
 
-        figm2.tight_layout()
+        #figm2.tight_layout()
         plt.savefig(dirName_b1 + "2"+figname_b1 + "_LOC" + str(ip) +
                     "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
                                                     dmet.latitude[jindx, iindx]) + ".png")

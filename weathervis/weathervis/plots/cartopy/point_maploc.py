@@ -308,7 +308,6 @@ class MAP():
                                zorder=2)  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                 # ax.coastlines(resolution='10m')
             ax.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
-
             all_gridpoint = ax.scatter(dmet.longitude, dmet.latitude, s=6.0**2, transform=ccrs.PlateCarree(),
                                     color='k', zorder=4, linestyle='None',edgecolors="k",linewidths=1)
 
@@ -326,14 +325,15 @@ class MAP():
                         "Analysed gridpoints","model coastline"), loc="upper right",ncol=2,mode="expand")
             #gridlines
             #gl = ax.gridlines(crs=crs, linewidth=2, color='gray', alpha=0.5, linestyle='--')
-
+            print("SSSSSSSSSS")
             if all == True:
                 figname_b2_2 = figname_b2 + "_[" + sitename + "]"
             else:
                 figname_b2_2 = figname_b2 + "_LOC" + str(ip) + \
                                "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[p], dmet.latitude[p])
+            print("SSSSSSSSSS")
 
-            figm2.tight_layout()
+            #figm2.tight_layout()
             plt.savefig(dirName_b2 + figname_b2_2 + ".png",dpi=200)
             ip += 1
             plt.close(figm2)

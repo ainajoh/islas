@@ -14,11 +14,11 @@ import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib.lines import Line2D
 import matplotlib as mpl
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
+#import cartopy.crs as ccrs
+#import cartopy.feature as cfeature
 import sys
 import matplotlib.patheffects as pe
-from cartopy.io import shapereader  # For reading shapefiles containg high-resolution coastline.
+#from cartopy.io import shapereader  # For reading shapefiles containg high-resolution coastline.
 from copy import deepcopy
 import numpy as np
 import matplotlib.colors as colors
@@ -27,7 +27,6 @@ import matplotlib as mpl
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
-
 def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     if domain_name or domain_lonlat:
         if domain_lonlat:
@@ -182,6 +181,7 @@ class PMET():
         labeltext = []
         def Temp(air_temperature_2m=True, air_temperature_ml=True, air_temperature_0m = True, subplot1_labels=[],
                  labeltext=[]):
+            print("temp plot")
             if dmet.air_temperature_2m is not None:
                 T2M = axm1.plot(dmet.time_normal, dmet.air_temperature_2m[:, -1, jindx, iindx] - 273.15, color="brown")
                 min = np.min([dmet.air_temperature_2m[:, -1, jindx, iindx]]) - 273.15
@@ -213,6 +213,7 @@ class PMET():
                 axm1.set_ylim(bottom=np.floor(min), top=np.ceil(max))
             return axm1, subplot1_labels,labeltext
         def RH():
+            print("in rh")
             if dmet.relative_humidity_2m is not None:
                 axm1_2 = axm1.twinx()
                 axm1_2.plot(dmet.time_normal, dmet.relative_humidity_2m[:, 0, jindx, iindx] * 100, color="seagreen", alpha=0.8)
@@ -220,9 +221,10 @@ class PMET():
                 axm1_2.set_ylim(bottom=0.001, top=100)
                 axm1_2.tick_params(axis="y", colors="seagreen")
             else:
-                print("No temp ")
+                print("No rh 2m ")
             return axm1_2, subplot1_labels, labeltext
         def Precip(subplot1_labels=[], labeltext=[]):
+            print("in precip")
             if dmet.precip1h is not None:
                 axm1_3 = axm1.twinx()
                 wd = -0.125
@@ -240,6 +242,7 @@ class PMET():
                 subplot1_labels += [P_bar[0]]
                 labeltext += ["1h acc precip"]
                 return axm1_3, subplot1_labels, labeltext
+
         axm1, subplot1_labels,labeltext = Temp(subplot1_labels=subplot1_labels,labeltext=labeltext)
         axm1_2, subplot1_labels,labeltext = RH()
         axm1_3, subplot1_labels,labeltext = Precip(subplot1_labels=subplot1_labels,labeltext=labeltext)
@@ -248,9 +251,11 @@ class PMET():
         axm1.xaxis.grid(True, which="minor", linestyle="--")
 
         #PLOT2##################################################################################################
+        print("#PLOT2##################################################################################################")
         subplot2_labels = []
         labeltext2 = []
         def q(subplot2_labels=[],labeltext2=[]):
+            print("in q")
             if dmet.specific_humidity_2m is not None:
                 Q2M = axm2.plot(dmet.time_normal, dmet.specific_humidity_2m[:, 0, jindx, iindx] * 1000, zorder=2, color="green",
                              alpha=0.8)
@@ -267,7 +272,7 @@ class PMET():
                 labeltext2 += ["10m Spec.Hum."]
 
 
-            if dmet.specific_humidity_2m is not None and dmet.specific_humidity_ml is not None:
+            if dmet.specific_humidity_2m is None and dmet.specific_humidity_ml is None:
                 print("no spec.hum avail.")
             else:
                 axm2.set_ylabel('Spec. Hum. (g/kg)', color="green")
@@ -277,7 +282,9 @@ class PMET():
                     topidx = round_up(maxq, 1)
                 axm2.set_ylim(bottom=0, top=topidx + 0.10 * topidx)
             return axm2, subplot2_labels, labeltext2
+
         def CloudType(subplot2_labels=[],labeltext2=[]):
+            print("in cloud")
             axm2_1 = axm2.twinx()
             if dmet.cloud_area_fraction is not None:
                 tot_clf_f = axm2_1.fill_between(dmet.time_normal, 0, dmet.cloud_area_fraction[:, -1, jindx, iindx] * 100,
@@ -299,7 +306,7 @@ class PMET():
                               color="red", marker=r"$C_L$", markersize=12)
                 subplot2_labels += [high_clf[0], med_clf[0], low_clf[0]] #, conv_clf[0]
                 labeltext2 += ["hi. cloud", "med. cloud", "low cloud"] #, "conv. cloud"
-            if dmet.convective_cloud_area_fraction is not None and dmet.cloud_area_fraction is not None:
+            if dmet.convective_cloud_area_fraction is None and dmet.cloud_area_fraction is None:
                 print("NO cloudType aval.")
             else:
                 axm2_1.set_ylabel('Cloud cover %', color="k")
@@ -328,7 +335,7 @@ class PMET():
                         dmet.vg_10m[:, 0, jindx, iindx] / wspeed_gust, scale=80, zorder=2)
                 subplot3_labels += [GUST[0]]
                 labeltext3 += ["10m wind gust"]
-            if dmet.u_10m is not None and dmet.ug_10m is not None:
+            if dmet.u_10m is None and dmet.ug_10m is None:
                 print("NO cloudType aval.")
             else:
                 axm3.set_ylabel('wind (m/s)')
@@ -415,11 +422,14 @@ class PMET():
         axm4.xaxis.grid(True, which="minor", linestyle="--")
         axm4.tick_params(axis="x", which="major", pad=12)
         print("before savefig")
-        figm2.tight_layout()
-        plt.savefig(dirName_b0 + figname_b0 + "_LOC" + str(ip) +
+        #figm2.tight_layout()
+        print(dirName_b0 + figname_b0 + "_LOC" + str(ip) +
                     "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
                                                     dmet.latitude[jindx, iindx]) + ".png")
-
+        plt.savefig(dirName_b0 + figname_b0 + "_LOC" + str(ip) +
+                    "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
+                                                    dmet.latitude[jindx, iindx]) + ".png", bbox_inches = "tight", dpi = 200)
+        print("fig saved")
         plt.close()
 
         print("\n###########################\n"
@@ -445,6 +455,7 @@ class PMET():
         labeltext = []
         def Temp(air_temperature_2m=True, air_temperature_ml=True, air_temperature_0m=True, subplot1_labels=[],
                  labeltext=[]):
+            print("TEMP AVG")
             if dmet.air_temperature_2m is not None:
                 temp2m_mean = np.mean(dmet.air_temperature_2m[:, 0, indx[0], indx[1]], axis=(1))
                 T2M_MEAN = axma1.plot(dmet.time_normal, temp2m_mean - 273.15, color="red", linewidth=3)
@@ -466,6 +477,8 @@ class PMET():
 
             # rh
         def RH(subplot1_labels=[],labeltext=[]):
+            print("RH AVG")
+
             if dmet.relative_humidity_2m is not None:
                 axma1_2 = axma1.twinx()
                 relhum2m_mean = np.mean(dmet.relative_humidity_2m[:, 0, indx[0], indx[1]], axis=(1))
@@ -479,6 +492,8 @@ class PMET():
                 labeltext += ["2m mean RH."]
             return axma1_2, subplot1_labels, labeltext
         def Precip(subplot1_labels=[], labeltext=[]):
+            print("PRECIP AVG")
+
             axma1_3 = axma1.twinx()
             if dmet.precip1h is not None:
                 wd = -0.125
@@ -509,6 +524,8 @@ class PMET():
         subplot2_labels = []
         labeltext2 = []
         def q(subplot2_labels=[],labeltext2=[]):
+            print("Q AVG")
+
             if dmet.specific_humidity_2m is not None:
                 q_mean2m = np.mean(dmet.specific_humidity_2m[:, 0, indx[0], indx[1]], axis=(1))
                 Q2M_mean = axma2.plot(dmet.time_normal, q_mean2m * 1000,
@@ -526,6 +543,8 @@ class PMET():
                 labeltext2 += ["2m Spec.Hum."]
             return axma2,subplot2_labels,labeltext2
         def CloudType(subplot2_labels=[], labeltext2=[]):
+            print("CLOUD AVG")
+
             if dmet.low_type_cloud_area_fraction is not None:
                 axma2_1 = axma2.twinx()
                 all_low_clf = np.mean(dmet.low_type_cloud_area_fraction[:, -1, indx[0], indx[1]], axis=(1))
@@ -533,10 +552,11 @@ class PMET():
                 all_high_clf = np.mean(dmet.high_type_cloud_area_fraction[:, -1, indx[0], indx[1]], axis=(1))
                 all_conv_clf = np.mean(dmet.convective_cloud_area_fraction[:, -1, indx[0], indx[1]], axis=(1))
                 tot_all = np.mean(dmet.cloud_area_fraction[:, -1, indx[0], indx[1]], axis=(1))
-
+                print("tot clf")
                 tot_clf_f = axma2_1.fill_between(dmet.time_normal, 0, tot_all * 100, zorder=1, color="gray", alpha=0.6)
                 tot_clf = axma2_1.plot(dmet.time_normal, tot_all * 100, zorder=1, color="k")
                 tot_patch = mpl.patches.Patch(color='gray', alpha=0.6, linewidth=0)
+                print("high clf")
 
                 #conv_clf = axma2_1.plot(dmet.time_normal, all_conv_clf * 100, zorder=2, color="pink")
                 high_clf = axma2_1.plot(dmet.time_normal, all_high_clf * 100, zorder=2, color="lightblue", marker=r"$C_H$",
@@ -545,10 +565,13 @@ class PMET():
                                markersize=12)
                 low_clf = axma2_1.plot(dmet.time_normal, all_low_clf * 100, zorder=2, color="red", marker=r"$C_L$",
                                markersize=12)
+                print("label clf")
+
                 axma2_1.set_ylabel('Cloud cover %', color="k")
                 axma2_1.tick_params(axis="y", colors="k")
                 subplot2_labels += [(tot_clf[0], tot_patch), high_clf[0], med_clf[0], low_clf[0]] # conv_clf[0]
                 labeltext2 += ["tot.cloud", "hi. cloud", "med. cloud", "low cloud"] #, "conv. cloud"
+                print("cloud done")
             return axma2_1, subplot2_labels, labeltext2
         axma2, subplot2_labels, labeltext2 = q(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
         axma2_1, subplot2_labels, labeltext2 = CloudType(subplot2_labels=subplot2_labels, labeltext2=labeltext2)
@@ -557,6 +580,7 @@ class PMET():
         subplot3_labels = []
         labeltext3 = []
         def wind(subplot3_labels=[], labeltext3=[]):
+            print("wind")
             if dmet.y_wind_10m is not None:
                 wspeed = np.sqrt(dmet.x_wind_10m[:, 0, indx[0], indx[1]] ** 2 + dmet.y_wind_10m[:, 0, indx[0], indx[1]] ** 2)
                 ws_mean = np.mean(wspeed, axis=(1))
@@ -580,6 +604,7 @@ class PMET():
                 axma3.tick_params(axis="y", color="darkmagenta")
             return axma3, subplot3_labels,labeltext3
         def pressure(subplot3_labels=[], labeltext3=[]):
+            print("pressure")
             axma3_3 = axma3.twinx()
             if dmet.surface_air_pressure is not None:
                 p_mean = np.mean(dmet.surface_air_pressure[:, 0, indx[0], indx[1]], axis=(1))
@@ -596,6 +621,7 @@ class PMET():
         subplot4_labels = []
         labeltext4 = []
         def fluxes(subplot4_labels=[], labeltext4=[]):
+            print("fluxes")
             if dmet.H is not None:
                 SH_mean = np.mean(dmet.H[:, indx[0], indx[1]], axis=(1))
                 LH_mean = np.mean(dmet.LE[:, indx[0], indx[1]], axis=(1))
@@ -612,21 +638,22 @@ class PMET():
                 labeltext4 = ["Sensible H.Flux", "Latent H.Flux"]
             return axma4,subplot4_labels,labeltext4
         def precip_type(subplot4_labels=[], labeltext4=[]):
+            print("precio type")
             axma4_1 = axma4.twinx()
             if dmet.snowfall_amount is not None:
                 tot_rain = np.nansum(dmet.rainfall_amount[:, -1, indx[0], indx[1]], axis=(1))
                 tot_snow = np.nansum(dmet.snowfall_amount[:, -1, indx[0], indx[1]], axis=(1))
                 tot_graupel = np.nansum(dmet.graupelfall_amount[:, -1, indx[0], indx[1]], axis=(1))
-
+                print("nansum done")
                 tot = tot_rain + tot_snow + tot_graupel
                 rain_frac = (tot_rain / tot) * 100
                 snow_frac = (tot_snow / tot) * 100
                 graupel_frac = (tot_graupel / tot) * 100
-
-                #rain_in = axma4_1.plot(dmet.time_normal, rain_frac, zorder=1, color="red", linestyle='dashed', marker='o')
-                #snow_in = axma4_1.plot(dmet.time_normal, snow_frac, zorder=1, color="gray", linestyle='dashed', marker='*')
-                #graupel_in = axma4_1.plot(dmet.time_normal, graupel_frac, zorder=1, color="lightblue", linestyle='dashed',
-                #                  marker='D')
+                print("calc done")
+                #AVOIDING UserWarning: Warning: converting a masked element to nan.
+                rain_frac = rain_frac.filled(np.nan)
+                snow_frac = snow_frac.filled(np.nan)
+                graupel_frac = graupel_frac.filled(np.nan)
 
                 wd = -0.125
                 p1 = axma4_1.bar(dmet.time_normal, rain_frac, width=wd / 4, alpha=0.3, color="red", zorder=0)
@@ -634,6 +661,7 @@ class PMET():
                                 zorder=0)
                 p3 = axma4_1.bar(dmet.time_normal, graupel_frac, width=wd / 4, bottom=rain_frac + snow_frac, alpha=0.3,
                                 color="gray", zorder=0)
+                print("bar done")
 
                 subplot4_labels += [p1[0], p2[0], p3[0]]
                 labeltext4 += ["Rain", "Snow", "Graupel"]
@@ -643,6 +671,7 @@ class PMET():
                 axma4_1.set_ylabel('% of instantaneous precip. type')
                 #subplot4_labels += [rain_in[0], snow_in[0], graupel_in[0]]
                 #labeltext4 += ["Rain", "Snow", "Graupel"]
+            print("precio done")
             return axma4_1, subplot4_labels, labeltext4
         axma4, subplot4_labels, labeltext4 = fluxes(subplot4_labels=subplot4_labels, labeltext4=labeltext4)
         axma4_1,subplot4_labels, labeltext4 = precip_type(subplot4_labels=subplot4_labels, labeltext4=labeltext4)
@@ -673,6 +702,7 @@ class PMET():
         axma4.tick_params(axis="x", which="major", pad=12)
 
         figma1.tight_layout()
+        print(dirName_b2 + figname_b2 + "_LOC[" + sitename + "]" + ".png")
         plt.savefig(dirName_b2 + figname_b2 + "_LOC[" + sitename + "]" + ".png")
         plt.close()
 
