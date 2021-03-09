@@ -200,18 +200,20 @@ def input_handler(date, steps, model, domain_name,domain_lonlat, legend, info, n
     VM.calculations()
     print("end cald")
     M = MAP(point_lonlat=point_lonlat, point_name=point_name)
+    print("end map")
     M.dmet = dmet
 
     #POINT PLOTS
     M.plot_maplocation(points, dirName_b2, figname_b2, point_lonlat=point_lonlat)
-
+    print("end maploc")
     ip = 0
     for po in points:
         jindx, iindx = po
         PM.plot_meteogram(jindx, iindx, dirName_b0, figname_b0, ip)
+        print("p met done")
         VM.vertical_met(jindx, iindx, dirName_b1, figname_b1, ip, p_top = 500 )
         ip += 1
-
+    print("vert met done")
     #AVERAGE PLOTS
     averagesite = ["ALL_DOMAIN", "ALL_NEAREST", "LAND", "SEA"]
     for av in averagesite:
