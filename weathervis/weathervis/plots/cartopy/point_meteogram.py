@@ -496,7 +496,7 @@ class PMET():
             axm6_1.add_artist(con2)  # axm6_1.transData
             con2.set_linewidth(1)
             subplot6_labels += [mainpoint, allpoint, evalpoint]
-            labeltext6 += [f"requested pos.[{self.point_lonlat[0]},{self.point_lonlat[1]} ]\n {self.point_name} )", "model gridpoints", "evaluated gridpoint"]
+            labeltext6 += [f"requested pos.\n[{self.point_lonlat[0]},{self.point_lonlat[1]} ]\n {self.point_name}", "model gridpoints", "evaluated gridpoint"]
             axm6_L = figm3.add_subplot(3, 3, 7)
             axm6_L.set_xticks([] )
             axm6_L.set_yticks([])
@@ -648,7 +648,7 @@ class PMET():
                 P_bar = axma1_3.bar(dmet.time_normal, precip_mean, color="blue", alpha=0.5, width=wd / 4, align="edge",
                                 bottom=0,
                                 zorder=11)
-                autolabel(P_bar_max, axma1_3, space=1)
+                autolabel(P_bar_max, axma1_3, space=2)
                 topidx = 1
                 maxp = np.nanmax(precip_max[:])
                 if maxp > topidx:
@@ -843,7 +843,7 @@ class PMET():
                 S_bar = axma5.bar(dmet.time_normal, av_tot_sample, ls="--",
                                  ec="green", color="lightblue",
                                  alpha=0.8, width=wd/4, align="edge")
-                autolabel(S_bar, axis=axma5, fmt='{:.3f}', space=1)
+                autolabel(S_bar, axis=axma5, fmt='{:.3f}', space=3)
                 axma5.set_yticks([])
                 # axm5.set_axis_off()
                 axma5.set_ylim(bottom=0, top=1.2)
@@ -926,8 +926,8 @@ class PMET():
             axma6_1.add_artist(con2)  # axm6_1.transData
             con2.set_linewidth(1)
             subplot6_labels += [mainpoint, allpoint, evalpoint]
-            labeltext6 += [f"requested pos.[{self.point_lonlat[0]},{self.point_lonlat[1]} ]\n {self.point_name} )",
-                           "model gridpoints", "evaluated gridpoint"]
+            labeltext6 += [f"requested pos.\n[{self.point_lonlat[0]},{self.point_lonlat[1]} ]\n {self.point_name}", "model gridpoints", "evaluated gridpoint"]
+
             axma6_L = figma2.add_subplot(3, 3, 7)
             axma6_L.set_xticks([])
             axma6_L.set_yticks([])
