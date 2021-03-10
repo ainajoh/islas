@@ -1029,8 +1029,8 @@ class PMET():
         print(dirName_b2 + figname_b2 + "_LOC_loc_name[" + sitename + "]" + ".png")
         #figm2.savefig(dirName_b0 + figname_b0 + "_op1" + ".png", bbox_inches = "tight", dpi = 200)
 
-        figma1.savefig(dirName_b0 + figname_b0 + "_o1_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
-        figma2.savefig(dirName_b0 + figname_b0 + "_o2_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        figma1.savefig(dirName_b0 + figname_b0 + "_op1_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        figma2.savefig(dirName_b0 + figname_b0 + "_op2_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
 
         plt.close()
 
