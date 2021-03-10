@@ -431,14 +431,11 @@ class PMET():
                 wd = -0.125  # width of 3h x axis found emprically, should heve better automatic
                 indx_sea = np.where(dmet.land_area_fraction[0][0][:][:] == 0)
                 points_sea = [(x,y) for x,y in zip(indx_sea[0],indx_sea[1])]
-
-                near_sea = nearest_neighbour(self.point_lonlat[0],self.point_lonlat[1],
-                                             dmet.longitude[points_sea],
-                                             dmet.latitude[points_sea], 1)
-                print("near_sea")
-
-                print(near_sea)
-                S_dx= axm5_1.plot(dmet.time_normal, dmet.dexcess[:, near_sea[0], near_sea[1]])
+                #
+                #near_sea = nearest_neighbour_idx(self.point_lonlat[0],self.point_lonlat[1],
+                #                             dmet.longitude[indx_sea[0],indx_sea[1]],
+                #                             dmet.latitude[indx_sea[0],indx_sea[1]])
+                S_dx= axm5_1.plot(dmet.time_normal, dmet.dexcess[:, jindx, iindx])
                 #axm5_1.set_ylim(bottom=0, top=
                 axm5_1.set_ylabel(' d-excess ')
                 # rainfall_amount
