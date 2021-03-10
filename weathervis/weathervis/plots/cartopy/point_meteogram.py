@@ -44,32 +44,33 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     else:
         data_domain = None
     return data_domain
-def setup_met_directory(modelrun, point_name, point_lonlat):
+def setup_met_directory(modelrun, point_name, point_lonlat, model):
     projectpath = setup_directory(OUTPUTPATH, "{0}/".format(modelrun))
     print("OROOOOJJ")
     print(projectpath)
-    figname = "fc_" + modelrun
     # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
+        pname=str(point_lonlat)
         #dirName = projectpath + "/meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_lonlat)
         dirName = projectpath #+ "/"+ str(point_lonlat)
 
     else:
         #dirName = projectpath + "/meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
-        dirName = projectpath #+ "/"+ str(point_name)
+        dirName = projectpath
+        pname=str(point_name) #+ "/"+ str(point_name)
 
 
     dirName_b1 = dirName #+ "met/"
-    figname_b1 = "vmet_" + figname
+    figname_b1 = "vmet_" + modelrun
 
     dirName_b0 = dirName# + "met/"
-    figname_b0 = "met_" + figname
+    figname_b0 = "PMETEOGRAM_" + pname + "_" + modelrun
 
     dirName_b2 = dirName #+ "map/"
-    figname_b2 = "map_" + figname
+    figname_b2 = "map_" + modelrun
 
     dirName_b3 = dirName #+ "met/"
-    figname_b3 = "met_" + figname
+    figname_b3 = "met_" + modelrun
 
     if not os.path.exists(dirName_b1):
         os.makedirs(dirName_b1)
@@ -587,13 +588,9 @@ class PMET():
         print(dirName_b0 + figname_b0 + "_LOC_" + str(loc_name) +
                     "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
                                                     dmet.latitude[jindx, iindx]) + ".png")
-        figm2.savefig(dirName_b0 + figname_b0 + "_o1_LOC_" + str(loc_name) +
-                    "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
-                                                    dmet.latitude[jindx, iindx]) + ".png", bbox_inches = "tight", dpi = 200)
+        figm2.savefig(dirName_b0 + figname_b0 + "_op1" + ".png", bbox_inches = "tight", dpi = 200)
 
-        figm3.savefig(dirName_b0 + figname_b0 + "_o2_LOC_" + str(loc_name) +
-                      "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
-                                                      dmet.latitude[jindx, iindx]) + ".png", bbox_inches="tight",
+        figm3.savefig(dirName_b0 + figname_b0 + "_op2" + ".png", bbox_inches="tight",
                       dpi=200)
         print("fig saved")
         plt.close()
@@ -1030,8 +1027,10 @@ class PMET():
         loc_name=self.point_name if self.point_name else self.point_lonlat
 
         print(dirName_b2 + figname_b2 + "_LOC_loc_name[" + sitename + "]" + ".png")
-        figma1.savefig(dirName_b2 + figname_b2 + "_o1_LOC_"+loc_name+"[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
-        figma2.savefig(dirName_b2 + figname_b2 + "_o2_LOC_"+loc_name+"[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        #figm2.savefig(dirName_b0 + figname_b0 + "_op1" + ".png", bbox_inches = "tight", dpi = 200)
+
+        figma1.savefig(dirName_b0 + figname_b0 + "_o1_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        figma2.savefig(dirName_b0 + figname_b0 + "_o2_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
 
         plt.close()
 
@@ -1061,7 +1060,7 @@ if __name__ == "__main__":
 
     for dt in args.datetime:
         dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3 = setup_met_directory(
-            dt, args.point_name, args.point_lonlat)
+            dt, args.point_name, args.point_lonlat,model)
 
         VM = PMET(date=dt, steps=args.steps, model=args.model, domain_name=args.domain_name,
                       domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info, num_point=args.point_num,
