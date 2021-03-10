@@ -1030,8 +1030,8 @@ class PMET():
         loc_name=self.point_name if self.point_name else self.point_lonlat
 
         print(dirName_b2 + figname_b2 + "_LOC_loc_name[" + sitename + "]" + ".png")
-        figma1.savefig(dirName_b2 + figname_b2 + "_o1_LOC_"+loc_name+"[" + sitename + "].jpg", format="jpg", bbox_inches = "tight", dpi = 200)
-        figma2.savefig(dirName_b2 + figname_b2 + "_o2_LOC_"+loc_name+"[" + sitename + "].jpg", format="jpg", bbox_inches = "tight", dpi = 200)
+        figma1.savefig(dirName_b2 + figname_b2 + "_o1_LOC_"+loc_name+"[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        figma2.savefig(dirName_b2 + figname_b2 + "_o2_LOC_"+loc_name+"[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
 
         plt.close()
 
