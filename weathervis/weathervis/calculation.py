@@ -196,7 +196,7 @@ def dexcess(mslp,SST, q2m):
 
     Q = q2m.squeeze()
     mslp=mslp.squeeze()
-    q2m=q2m.squeeze()
+    SST=SST.squeeze()
 
     SST = SST - 273.15
     mslp = mslp / 100
