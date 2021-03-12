@@ -17,7 +17,7 @@ function converting {
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-    scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/F* 158.39.201.233:/home/centos/www/gfx/$1/
+    scp -r -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1 158.39.201.233:/home/centos/www/gfx
   fi
   cd $here
 }
