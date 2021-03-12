@@ -4,11 +4,17 @@ source ~/.bashrc
 function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
+  cd /home/centos/output/weathervis/
+  if ! [ -d $1 ]; then
+     mkdir $1
+  fi
   cd /home/centos/output/weathervis/$1
   mkdir small
   for f in *.png; do 
+    echo $f
     convert -scale 40% $f small/$f
   done
+  wait
   if ! [ -d /home/centos/www/gfx/$1 ]; then
     mkdir /home/centos/www/gfx/$1
   fi
@@ -17,7 +23,9 @@ function converting {
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-    scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/F* 158.39.201.233:/home/centos/www/gfx/$1
+    copy="scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/FLEXPART_AA* 158.39.201.233:/home/centos/www/gfx/$1/"
+    echo $copy
+    $copy
   fi
   cd $here
 }
@@ -66,7 +74,7 @@ model=("AromeArctic")
 steps_max=(1)
 domain_name="None"
 release_name="NYA"
-
+domain_name=("AromeArctic" "North_Norway" "Svalbard" "Andenes_area" NorwegianSea_area)
 while [ $# -gt 0 ]; do
   case "$1" in
     --model)
@@ -93,7 +101,7 @@ while [ $# -gt 0 ]; do
     ;;
     --domain_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
-    domain_name="${1#*=}"
+    domain_name=("${1#*=}")
     fi
     ;;
     --release_name)
@@ -109,7 +117,8 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
-
+#domain_name=($domain_name)
+echo domain_name
 echo $model
 echo $modelrun_date
 echo $modelrun_hour
@@ -132,33 +141,19 @@ echo $modelrun
 #fi
 
 
-#modelrun=("2020100300") "2020021712" "2020021812" "2020021912"
-#modelrun=( "2020022712" "2020022812" "2020022912")
-#modelrun=("2020022012" "2020022112" )
-#modelrun=("2020021912" "2020022012" "2020022112" "2020022212" "2020022312" "2020022412" "2020022512" "2020022612")
 #modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
-#modelrun=("2020031512")
-#modelrun=("2020100412")
-#modelrun=("2020100412")
-#modelrun=("2020100512")
-#modelrun=("2020100612")
-#modelrun=("2020100712")
-#modelrun=("2020100812")
-#modelrun=("2020100912")
-#modelrun=("2020101012")
-#modelrun=("2021022300")
-#modelrun=("2021022500")
-#modelrun=("2021022600")
-
+#modelrun=("2021030400")
 #steps=0
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_FP="python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-
-    echo $runstring_FP
-    $runstring_FP
-    converting $modelrun
+	  for dom in ${domain_name[@]}; do
+    		runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $dom"
+		
+    		echo $runstring_FP
+    		$runstring_FP
+    		converting $modelrun
+	done
 
   done
 done

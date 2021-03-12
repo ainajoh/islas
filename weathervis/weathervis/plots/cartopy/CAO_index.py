@@ -1,5 +1,5 @@
 # %%
-# python Z500_VEL.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
+# python CAO.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
 from weathervis.config import *
 from weathervis.utils import *
@@ -38,7 +38,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
+def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
 
   for dt in datetime: #modelrun at time..
     date = dt[0:-2]
@@ -118,7 +118,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     dmap_meps.air_pressure_at_sea_level/=100
     tmap_meps.geopotential_pl/=10.0
 
-
     lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
     lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
     parallels = dmap_meps.standard_parallel_projection_lambert
@@ -130,89 +129,99 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
                                  globe=globe)
 
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                               subplot_kw={'projection': crs})
-      ttt = tim #+ np.min(steps)
-      tidx = tim - np.min(steps)
-      print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
-      plev2 = 0
-      embr = 0
-      ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
-      MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-      Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
-      DELTAPT=dpt[tidx, 0, :, :]
-      DELTAPT = dpt_sst[tidx,:,:]
-      ICE = dmap_mepsdfx.SIC[tidx, :, :]
-      DELTAPT = np.where( ICE <= 0.99,DELTAPT,0)
-      lvl = range(-1,13)
-      C = [[255,255,255	],  # grey #[255,255,255],#gre
-           [204,191,189	],  # grey
-           [155,132,127	],  # grey
-           [118,86,80],  # lillac, 39	64	197	149,53,229
-           [138,109,81],  # blue dark,7,67,194 [218,81,14],
-           [181,165,102],  #
-           [229,226,124],  ##
-           [213,250,128],
-           [125,231,111],
-           [55,212,95],
-           [25,184,111],
-           [17,138,234],
-           [21,82,198],
-           [37,34,137]]
-      C = np.array(C)
-      C = np.divide(C, 255.)  # RGB has to be between 0 and 1 in python
-      CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, DELTAPT, zorder=0,
-                            antialiased=True,extend = "max", levels=lvl, colors=C, vmin=0, vmax=12)#
+                               
+      # determine if image should be created for this time step
+      stepok=False
+      if tim<25:
+          stepok=True
+      elif (tim<=36) and ((tim % 3) == 0):
+          stepok=True
+      elif (tim<=66) and ((tim % 6) == 0):
+          stepok=True
+      if stepok==True:
 
-      CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=1, linewidths=2.5, colors="black", levels=[0.1, 0.5])  #
-      # MSLP with contour labels every 10 hPa
-      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=1, alpha=1.0,
-                      levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
-                      colors='grey', linewidths=0.5)
-      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
-                        levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
-                        colors='grey', linewidths=1.0)
-      ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+          fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
+          ttt = tim #+ np.min(steps)
+          tidx = tim - np.min(steps)
+          print('Plotting CAO index {0} + {1:02d} UTC'.format(dt, ttt))
+          plev2 = 0
+          embr = 0
+          ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
+          MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+          Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
+          DELTAPT=dpt[tidx, 0, :, :]
+          DELTAPT = dpt_sst[tidx,:,:]
+          ICE = dmap_mepsdfx.SIC[tidx, :, :]
+          DELTAPT = np.where( ICE <= 0.99,DELTAPT,0)
+          lvl = range(-1,13)
+          C = [[255,255,255	],  # grey #[255,255,255],#gre
+               [204,191,189	],  # grey
+               [155,132,127	],  # grey
+               [118,86,80],  # lillac, 39	64	197	149,53,229
+               [138,109,81],  # blue dark,7,67,194 [218,81,14],
+               [181,165,102],  #
+               [229,226,124],  ##
+               [213,250,128],
+               [125,231,111],
+               [55,212,95],
+               [25,184,111],
+               [17,138,234],
+               [21,82,198],
+               [37,34,137]]
+          C = np.array(C)
+          C = np.divide(C, 255.)  # RGB has to be between 0 and 1 in python
+          CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, DELTAPT, zorder=0,
+                                antialiased=True,extend = "max", levels=lvl, colors=C, vmin=0, vmax=12)#
 
-      #CS = ax1.contour(dmap_meps.x, dmap_meps.y, Z, zorder=3, alpha=1.0,
-      #                  levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
-      #ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
+          CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=1, linewidths=2.5, colors="black", levels=[0.1, 0.5])  #
+          # MSLP with contour labels every 10 hPa
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=1, alpha=1.0,
+                          levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
+                          colors='grey', linewidths=0.5)
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
+                            levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
+                            colors='grey', linewidths=1.0)
+          ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
 
-      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
-      ax1.text(0, 1, "{0}_CAOi_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
+          #CS = ax1.contour(dmap_meps.x, dmap_meps.y, Z, zorder=3, alpha=1.0,
+          #                  levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
+          #ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
 
-      ##########################################################
-      legend=True
-      if legend:
-        proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="grey"),
-                plt.axhline(y=0, xmin=1, xmax=1, color="black",linewidth=4)]
-        try:
-          ax_cb = adjustable_colorbar_cax(fig1, ax1)
+          ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+          ax1.text(0, 1, "{0}_CAOi_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
-          plt.colorbar(CF_prec,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25, label=r"$\theta_{SST}-\theta_{850}$", extend="both")
+          ##########################################################
+          legend=True
+          if legend:
+            proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="grey"),
+                    plt.axhline(y=0, xmin=1, xmax=1, color="black",linewidth=4)]
+            try:
+              ax_cb = adjustable_colorbar_cax(fig1, ax1)
 
-        except:
-          pass
+              plt.colorbar(CF_prec,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25, label=r"$\theta_{SST}-\theta_{850}$", extend="both")
 
-        lg = ax1.legend(proxy, [f"MSLP [hPa]",
-                               f"Sea ice at 10%, 80%, 99%"])
-        frame = lg.get_frame()
-        frame.set_facecolor('white')
-        frame.set_alpha(1)
-      make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      if grid:
-        nicegrid(ax=ax1)
+            except:
+              pass
 
-      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-        ax1.set_extent(data_domain.lonlat)
-      print("filename: "+make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
-      fig1.savefig(make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
-      ax1.cla()
-      plt.clf()
-      plt.close(fig1)
+            lg = ax1.legend(proxy, [f"MSLP [hPa]",
+                                   f"Sea ice at 10%, 80%, 99%"])
+            frame = lg.get_frame()
+            frame.set_facecolor('white')
+            frame.set_alpha(1)
+          make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+          if grid:
+            nicegrid(ax=ax1)
+
+          if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+            ax1.set_extent(data_domain.lonlat)
+          print("filename: "+make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
+          fig1.savefig(make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
+          ax1.cla()
+          plt.clf()
+          plt.close(fig1)
   plt.close("all")
 
-# fin
+# 
 
 if __name__ == "__main__":
   import argparse
@@ -228,9 +237,16 @@ if __name__ == "__main__":
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
-
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
-  Z500_VEL(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info)
-  #datetime, step=4, model= "MEPS", domain = None
+   
+  CAO(datetime=args.datetime, steps = [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>24:
+    CAO(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>36:
+    CAO(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+
+# fin

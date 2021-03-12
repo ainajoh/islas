@@ -119,119 +119,123 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
 
+    make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-      fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),
-                               subplot_kw={'projection': crs})
 
-      ttt = tim #+ np.min(steps)
-      tidx = tim - np.min(steps)
-      print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
-      plev2 = 0
-      embr = 0
-      ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
-      MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
-      acc=1
-      TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=acc)[tidx, 0, :,:].squeeze()
-      VEL = (vel[tidx, plev2, :, :]).squeeze()
-      Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
-      Ux = u[tidx, 0,:, :].squeeze()
-      Vx = v[tidx, 0,:, :].squeeze()
-      uxx = tmap_meps.x_wind_pl[tidx, 0,:, :].squeeze()
-      vxx = tmap_meps.y_wind_pl[tidx, 0,:, :].squeeze()
-      cmap = plt.get_cmap("tab20c")
-      lvl = [0.02, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, 25, 30]
-      norm = mcolors.BoundaryNorm(lvl, cmap.N)
+      # determine if image should be created for this time step
+      stepok=False
+      if tim<25:
+          stepok=True
+      elif (tim<=36) and ((tim % 3) == 0):
+          stepok=True
+      elif (tim<=66) and ((tim % 6) == 0):
+          stepok=True
+      if stepok==True:
+
+          fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
+          ttt = tim #+ np.min(steps)
+          tidx = tim - np.min(steps)
+          print('Plotting Z500 {0} + {1:02d} UTC'.format(dt, ttt))
+          plev2 = 0
+          embr = 0
+          ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
+          MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+          acc=1
+          TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=acc)[tidx, 0, :,:].squeeze()
+          VEL = (vel[tidx, plev2, :, :]).squeeze()
+          Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
+          Ux = u[tidx, 0,:, :].squeeze()
+          Vx = v[tidx, 0,:, :].squeeze()
+          uxx = tmap_meps.x_wind_pl[tidx, 0,:, :].squeeze()
+          vxx = tmap_meps.y_wind_pl[tidx, 0,:, :].squeeze()
+          cmap = plt.get_cmap("tab20c")
+          lvl = [0.02, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, 25, 30]
+          norm = mcolors.BoundaryNorm(lvl, cmap.N)
+
+          try: #workaround for a stupid matplotlib error not handling when all values are outside of range in lvl or all just nans..
+            #https://github.com/SciTools/cartopy/issues/1290
+            #cmap =  mcolors.ListedColormap('hsv', 'hsv') #plt.get_cmap("hsv")PuBu
+            #TP.filled(np.nan) #fill mask with nan to avoid:  UserWarning: Warning: converting a masked element to nan.
+            CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, TP, zorder=1,
+                                   cmap=cmap, norm = norm, alpha=0.4, antialiased=True,
+                                   levels=lvl, extend = "max")#
+          except:
+            pass
+          # MSLP with contour labels every 10 hPa
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=1, alpha=1.0,
+                          levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
+                          colors='grey', linewidths=0.5)
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
+                            levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
+                            colors='grey', linewidths=1.0)
+          ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+          ####REMOVE LATER 60.2;5.4166666666667;60;None;N
 
 
-      try: #workaround for a stupid matplotlib error not handling when all values are outside of range in lvl or all just nans..
-        #https://github.com/SciTools/cartopy/issues/1290
-        #cmap =  mcolors.ListedColormap('hsv', 'hsv') #plt.get_cmap("hsv")PuBu
-        #TP.filled(np.nan) #fill mask with nan to avoid:  UserWarning: Warning: converting a masked element to nan.
-        CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, TP, zorder=1,
-                               cmap=cmap, norm = norm, alpha=0.4, antialiased=True,
-                               levels=lvl, extend = "max")#
-      except:
-        pass
-      # MSLP with contour labels every 10 hPa
-      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=1, alpha=1.0,
-                      levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
-                      colors='grey', linewidths=0.5)
-      C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
-                        levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
-                        colors='grey', linewidths=1.0)
-      ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
-      ####REMOVE LATER 60.2;5.4166666666667;60;None;N
+          skip=20
+          skip = (slice(20, -20, 50), slice(20, -20, 50)) #70
+          xm,ym=np.meshgrid(dmap_meps.x, dmap_meps.y)
+          CVV = ax1.barbs( xm[skip], ym[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, length=6.5, zorder=5)
+          #CS = ax1.contour(dmap_meps.x, dmap_meps.y, VEL, zorder=3, alpha=1.0,
+          #                   levels=np.arange(-80, 80, 5), colors="green", linewidths=0.7)
+          # geopotential
+          CS = ax1.contour(dmap_meps.x, dmap_meps.y, Z, zorder=3, alpha=1.0,
+                            levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
+          ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
 
+          ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+          ax1.text(0, 1, "{0}_Z500_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
+          if grid:
+            nicegrid(ax=ax1)
+          ##########################################################
+          legend = True
+          if legend:
+            proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="gray"),
+            plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
+            try:
+              ax_cb = adjustable_colorbar_cax(fig1, ax1)
 
-      skip=20
-      skip = (slice(20, -20, 50), slice(20, -20, 50)) #70
-      xm,ym=np.meshgrid(dmap_meps.x, dmap_meps.y)
-      CVV = ax1.barbs( xm[skip], ym[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, length=6.5, zorder=5)
-      #CS = ax1.contour(dmap_meps.x, dmap_meps.y, VEL, zorder=3, alpha=1.0,
-      #                   levels=np.arange(-80, 80, 5), colors="green", linewidths=0.7)
-      # geopotential
-      CS = ax1.contour(dmap_meps.x, dmap_meps.y, Z, zorder=3, alpha=1.0,
-                        levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
-      ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
+              cb = plt.colorbar(CF_prec, cax=ax_cb,fraction=0.046, pad=0.01, aspect=25, label =f"{acc}h acc. prec. [mm/{acc}h]", extend="both")
 
-      ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
-      ax1.text(0, 1, "{0}_Z500_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
-      if grid:
-        nicegrid(ax=ax1)
-      ##########################################################
-      legend = True
-      if legend:
-        proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="gray"),
-        plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
-        try:
-          ax_cb = adjustable_colorbar_cax(fig1, ax1)
+            except:
+              pass
+            lg = ax1.legend(proxy, [f"MSLP [hPa]",
+                                   f"Geopotential height[{tmap_meps.units.geopotential_pl}] at {dmap_meps.pressure[plev2]:.0f} hPa"],
+                            loc="upper right")
+            frame = lg.get_frame()
+            frame.set_facecolor('white')
+            frame.set_alpha(1)
 
-          cb = plt.colorbar(CF_prec, cax=ax_cb,fraction=0.046, pad=0.01, aspect=25, label =f"{acc}h acc. prec. [mm/{acc}h]", extend="both")
+          #if info:
+            #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
+            #           fontsize=7)  # , bbox=dict(facecolor='white', alpha=0.5))
 
-        except:
-          pass
-        lg = ax1.legend(proxy, [f"MSLP [hPa]",
-                               f"Geopotential height[{tmap_meps.units.geopotential_pl}] at {dmap_meps.pressure[plev2]:.0f} hPa"],
-                        loc="upper right")
-        frame = lg.get_frame()
-        frame.set_facecolor('white')
-        frame.set_alpha(1)
+          #plt.show()
+          if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+            ax1.set_extent(data_domain.lonlat)
+          fig1.savefig(make_modelrun_folder + "/{0}_{1}_Z500_VEL_P_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
+          ax1.cla()
+          plt.clf()
+          plt.close(fig1)
 
-      #if info:
-        #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
-        #           fontsize=7)  # , bbox=dict(facecolor='white', alpha=0.5))
-
-      #plt.show()
-      if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-        ax1.set_extent(data_domain.lonlat)
-      make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-      fig1.savefig(make_modelrun_folder + "/{0}_{1}_Z500_VEL_P_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
-      ax1.cla()
-      plt.clf()
-      plt.close(fig1)
-
-    #proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
-    #         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
-    #fig2 = plt.figure(figsize=(2, 1.25))
-    #fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
-    #                          f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
-    #fig2.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
-    #plt.close(fig2)
-    #try:
-    #  fig3, ax3 = plt.subplots()
-    #  fig3.colorbar(CF_prec, fraction=0.046, pad=0.04)
-    #  ax3.remove()
-    #  fig3.savefig(make_modelrun_folder+"/{0}_{1}_Z500_VEL_P_COLORBAR.png".format(model, domain_name), bbox_inches="tight", dpi=200)
-    #  plt.close(fig3)
-    #except:
-    #  pass
-    ax1.cla()
-    plt.clf()
+        #proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
+        #         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
+        #fig2 = plt.figure(figsize=(2, 1.25))
+        #fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
+        #                          f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
+        #fig2.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
+        #plt.close(fig2)
+        #try:
+        #  fig3, ax3 = plt.subplots()
+        #  fig3.colorbar(CF_prec, fraction=0.046, pad=0.04)
+        #  ax3.remove()
+        #  fig3.savefig(make_modelrun_folder+"/{0}_{1}_Z500_VEL_P_COLORBAR.png".format(model, domain_name), bbox_inches="tight", dpi=200)
+        #  plt.close(fig3)
+        #except:
+        #  pass
   plt.close("all")
 
-
-
-# fin
 
 if __name__ == "__main__":
   import argparse
@@ -250,6 +254,14 @@ if __name__ == "__main__":
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
-  Z500_VEL(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid)
-  #datetime, step=4, model= "MEPS", domain = None
+
+  Z500_VEL(datetime=args.datetime, steps = [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>24:
+    Z500_VEL(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>36:
+    Z500_VEL(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+
+# fin
