@@ -28,7 +28,12 @@ AROME Arctic meteogram forecasts for ISLAS2021
   <table border=0 bgcolor=#ffffff width=1300 align=center>
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="800px"></td>
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="800px"></td></tr>
-  <tr><td align=center>Location:<select id="sel_v1" size=1 onChange="javascript:selectLocation(0)">
+  <tr><td align=center>
+Type:<select id="meteogram1" size=1 onChange="javascript:selectMeteogram(0)">
+<option value=0>Synoptics</option>
+<option value=1 selected>Precipitation</option>
+</select>
+Location:<select id="sel_v1" size=1 onChange="javascript:selectLocation(0)">
 <option value=0 selected>Andenes</option>
 <option value=1>Tromso</option>
 <option value=2>Ny Alesund</option></select>Points:
@@ -39,10 +44,16 @@ AROME Arctic meteogram forecasts for ISLAS2021
      <option value=3>Nearest gridpoint</option>
      <option value=4 selected>Point location</option>
    </select></td>
-<td align=center>Location:<select id="sel_v2" size=1 onChange="javascript:selectLocation(1)">
+<td align=center>
+Type:<select id="meteogram2" size=1 onChange="javascript:selectMeteogram(1)">
+<option value=0 selected>Synoptics</option>
+<option value=1>Precipitation</option>
+</select>
+Location:<select id="sel_v2" size=1 onChange="javascript:selectLocation(1)">
 <option value=0>Andenes</option>
 <option value=1>Tromso</option>
-<option value=2 selected>Ny Alesund</option></select>
+<option value=2 selected>Ny Alesund</option>
+</select>
    Points:
    <select id="domain2" size=1 onChange="javascript:selectPoint(1)">
      <option value=0>Sea</option>

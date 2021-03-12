@@ -58,13 +58,14 @@ function getKind(n)
   }
 }
 
-function getMeteogram()
+function getMeteogram(m)
 {
-	switch (mkind[0]) {
+	switch (mkind[m]) {
 		case 0:
-		return "PMETEOGRAM_";
+		return "op1";
 		break;
 		case 1:
+		return "op2";
 		break;
 		case 2:
 		break;
@@ -79,13 +80,13 @@ function getDomainname(n)
 {
 	switch (domain[n]) {
 		case 0:
-		return "Andenes_";
+		return "PMETEOGRAM_Andenes_";
 		break;
 		case 1:
-		return "Tromso_";
+		return "PMETEOGRAM_Tromso_";
 		break;
 		case 2:
-		return "NyAlesund_";
+		return "PMETEOGRAM_NyAlesund_";
 		break;
 		default:
 		return "None";
@@ -156,7 +157,7 @@ function getBasetime()
 
 function getFilename(k,n)
 {
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getMeteogram()+getDomainname(n)+getDatename(k)+getBasetime(k)+"_"+"op1"+getKind(k)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(n)+getDatename(k)+getBasetime(k)+"_"+getMeteogram(n)+getKind(k)+".png";
 }
 
 function prepareFigure() 
@@ -166,6 +167,20 @@ function prepareFigure()
 	document.getElementById("panel2").src=getFilename(vkind[1],1);
 	document.getElementById("panel2").alt=getFilename(vkind[1],1);
 }
+
+function selectMeteogram(n)
+{
+    switch(n) {
+ 	case 0:
+	  mkind[0]=document.getElementById("meteogram1").selectedIndex;
+	  break;
+ 	case 1:
+	  mkind[1]=document.getElementById("meteogram2").selectedIndex;
+	  break;
+    }
+    prepareFigure();
+}
+
 
 function selectPoint(n)
 {
