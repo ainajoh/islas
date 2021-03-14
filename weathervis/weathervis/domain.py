@@ -151,6 +151,12 @@ class domain():
         self.lonlat=[15.8,16.4,69.2,69.4]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
+    def ALOMAR(self):
+        #16.120;69.310;10
+        self.domain_name = "ALOMAR"
+        self.lonlat=[15.8,16.4,69.2,69.4]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
     def Andenes_area(self):
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "Andenes_area"
@@ -278,6 +284,18 @@ class domain():
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def JanMayen(self): #PAraglidingstart
+        point_name = "JanMayen"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.22)
+        maxlon = float(plon + 0.18)
+        minlat = float(plat - 0.08)
+        maxlat = float(plat + 0.05)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def CAO(self): #PAraglidingstart
         point_name = "JanMayen"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
