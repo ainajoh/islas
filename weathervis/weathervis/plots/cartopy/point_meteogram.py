@@ -44,32 +44,33 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     else:
         data_domain = None
     return data_domain
-def setup_met_directory(modelrun, point_name, point_lonlat):
+def setup_met_directory(modelrun, point_name, point_lonlat, model):
     projectpath = setup_directory(OUTPUTPATH, "{0}/".format(modelrun))
     print("OROOOOJJ")
     print(projectpath)
-    figname = "fc_" + modelrun
     # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
+        pname=str(point_lonlat)
         #dirName = projectpath + "/meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_lonlat)
         dirName = projectpath #+ "/"+ str(point_lonlat)
 
     else:
         #dirName = projectpath + "/meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
-        dirName = projectpath #+ "/"+ str(point_name)
+        dirName = projectpath
+        pname=str(point_name) #+ "/"+ str(point_name)
 
 
     dirName_b1 = dirName #+ "met/"
-    figname_b1 = "vmet_" + figname
+    figname_b1 = "vmet_" + modelrun
 
     dirName_b0 = dirName# + "met/"
-    figname_b0 = "met_" + figname
+    figname_b0 = "PMETEOGRAM_" + pname + "_" + modelrun
 
     dirName_b2 = dirName #+ "map/"
-    figname_b2 = "map_" + figname
+    figname_b2 = "map_" + modelrun
 
     dirName_b3 = dirName #+ "met/"
-    figname_b3 = "met_" + figname
+    figname_b3 = "met_" + modelrun
 
     if not os.path.exists(dirName_b1):
         os.makedirs(dirName_b1)
@@ -145,6 +146,10 @@ class PMET():
         #dexcess
         self.dmet.dexcess=None
         self.dmet.dexcess=dexcess(self.dmet.surface_air_pressure,self.dmet.SST, self.dmet.specific_humidity_2m)
+        self.dmet.land_area_fraction =self.dmet.land_area_fraction.squeeze()
+        self.dmet.SST =self.dmet.SST.squeeze()
+
+
 
     def points(self):
         point_lonlat = self.point_lonlat; dmet = self.dmet; num_point = self.num_point
@@ -157,8 +162,15 @@ class PMET():
                                          dmet.latitude, num_point)
             self.point_lonlat = [sites.loc[self.point_name].lon, sites.loc[self.point_name].lat]
         poi = ind_list[0:self.num_point]
-        indx_sea = np.where(dmet.land_area_fraction[0][0][:][:] == 0)
-        indx_land = np.where(dmet.land_area_fraction[0][0][:][:] == 1)
+        #SST = dmet.SST.filled(np.nan)
+        #indx_sea = np.where(dmet.SST[0,:,:].mask)
+        #indx_land = np.where(~dmet.SST[0,:,:].mask)
+        #print("indx_land")
+        #
+        #print(indx_land)
+
+        indx_sea = np.where( (self.dmet.land_area_fraction[0,:,:] == 0) & (~self.dmet.SST[0,:,:].mask) )
+        indx_land = np.where( (self.dmet.land_area_fraction[0,:,:] == 1) & (self.dmet.SST[0,:,:].mask) )
         indx_alldomain = np.where(dmet.latitude != None)
         ll = np.array([list(item) for item in ind_list[0:num_point]])
         jindx = ll[:, 0]
@@ -429,22 +441,37 @@ class PMET():
                 print("dexcess")
                 print(np.shape(dmet.dexcess))
                 wd = -0.125  # width of 3h x axis found emprically, should heve better automatic
-                indx_sea = np.where(dmet.land_area_fraction[0][0][:][:] == 0)
-                points_sea = [(x,y) for x,y in zip(indx_sea[0],indx_sea[1])]
-
-                near_sea = nearest_neighbour(self.point_lonlat[0],self.point_lonlat[1],
-                                             dmet.longitude[points_sea],
-                                             dmet.latitude[points_sea], 1)
-                print("near_sea")
-
-                print(near_sea)
-                S_dx= axm5_1.plot(dmet.time_normal, dmet.dexcess[:, near_sea[0], near_sea[1]])
+                #indx_sea = np.where(dmet.land_area_fraction[0][0][:][:] == 0)
+                #points_sea = [(x,y) for x,y in zip(indx_sea[0],indx_sea[1])]
+                #
+                #near_sea = nearest_neighbour_idx(self.point_lonlat[0],self.point_lonlat[1],
+                #                             dmet.longitude[indx_sea[0],indx_sea[1]],
+                #                             dmet.latitude[indx_sea[0],indx_sea[1]])
+                S_dx= axm5_1.plot(dmet.time_normal, dmet.dexcess[:, jindx, iindx],color="blue")
                 #axm5_1.set_ylim(bottom=0, top=
-                axm5_1.set_ylabel(' d-excess ')
+                axm5_1.set_ylabel(' d-excess ',color="blue")
+                axm5_1.tick_params(axis="y", colors="blue")
+
                 # rainfall_amount
             return axm5_1, subplot5_labels, labeltext5
+        def plot_sst(subplot5_labels = [], labeltext5 = []):
+            axm5_2 = axm5.twinx()
+            if dmet.SST is not None:
+                S_dx= axm5_2.plot(dmet.time_normal, dmet.SST[:, jindx, iindx], color="brown")
+                axm5_2.set_ylabel(' SST ', color="brown")
+                axm5_2.tick_params(axis="y", colors="brown")
+                axm5_2.yaxis.set_label_position("left")
+                axm5_2.yaxis.tick_left()
+
+            return axm5_2, subplot5_labels, labeltext5
+
+
+
+
         axm5, subplot5_labels, labeltext5 = samples(subplot5_labels, labeltext5)
         axm5_1, subplot5_labels, labeltext5 = plot_dexcess(subplot5_labels, labeltext5)
+        axm5_2, subplot5_labels, labeltext5 = plot_sst(subplot5_labels, labeltext5)
+
         axm5_1.legend(subplot5_labels, labeltext5, loc='upper left').set_zorder(99999)
         #FIG2 PLOT6###############################################################################################
         print("#PLOT6##################################################################################################")
@@ -472,9 +499,9 @@ class PMET():
 
             axm6.add_feature(cfeature.GSHHSFeature(scale='high'), facecolor='whitesmoke', edgecolor='k', linewidths=2.,
                            zorder=0)
-            CC = axm6.contour(dmet.longitude, dmet.latitude, dmet.land_area_fraction[0, 0, :, :], alpha=0.6, zorder=1,
-                            levels=[0.9, 1, 1.1],
-                            colors="b", linewidths=5, transform=ccrs.PlateCarree())
+            #CC = axm6.contour(dmet.longitude, dmet.latitude, dmet.land_area_fraction[0, :, :], alpha=0.6, zorder=1,
+            #                levels=[0.9, 1, 1.1],
+            #                colors="b", linewidths=5, transform=ccrs.PlateCarree())
             mainpoint = axm6.scatter(self.point_lonlat[0], self.point_lonlat[1], c="blue", s=6 ** 2, transform=ccrs.PlateCarree(),zorder=2)
             allpoint = axm6.scatter(dmet.longitude, dmet.latitude, c="black", s=5 ** 2, transform=ccrs.PlateCarree(),zorder=1)
             evalpoint = axm6.scatter(dmet.longitude[jindx,iindx], dmet.latitude[jindx,iindx], c="red", s=6 ** 2, transform=ccrs.PlateCarree(),zorder=4)
@@ -561,13 +588,9 @@ class PMET():
         print(dirName_b0 + figname_b0 + "_LOC_" + str(loc_name) +
                     "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
                                                     dmet.latitude[jindx, iindx]) + ".png")
-        figm2.savefig(dirName_b0 + figname_b0 + "_o1_LOC_" + str(loc_name) +
-                    "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
-                                                    dmet.latitude[jindx, iindx]) + ".png", bbox_inches = "tight", dpi = 200)
+        figm2.savefig(dirName_b0 + figname_b0 + "_op1" + ".png", bbox_inches = "tight", dpi = 200)
 
-        figm3.savefig(dirName_b0 + figname_b0 + "_o2_LOC_" + str(loc_name) +
-                      "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
-                                                      dmet.latitude[jindx, iindx]) + ".png", bbox_inches="tight",
+        figm3.savefig(dirName_b0 + figname_b0 + "_op2" + ".png", bbox_inches="tight",
                       dpi=200)
         print("fig saved")
         plt.close()
@@ -861,13 +884,27 @@ class PMET():
 
                 wd = -0.125  # width of 3h x axis found emprically, should heve better automatic
 
-                S_dx = axma5_1.plot(dmet.time_normal, av_dexcess)
+                S_dx = axma5_1.plot(dmet.time_normal, av_dexcess,color="blue")
                 # axm5_1.set_ylim(bottom=0, top=
-                axma5_1.set_ylabel(' d-excess')
+                axma5_1.set_ylabel(' d-excess', color="blue")
+                axma5_1.tick_params(axis="y", colors="blue")
                 # rainfall_amount
             return axma5_1, subplot5_labels, labeltext5
+        def plot_sst(subplot5_labels = [], labeltext5 = []):
+            axma5_2 = axma5.twinx()
+            if dmet.SST is not None:
+                sst_av = np.mean(dmet.SST[:,indx[0], indx[1]],axis=1)
+                S_ma= axma5_2.plot(dmet.time_normal, sst_av, color="brown")
+                axma5_2.set_ylabel(' SST ', color="brown")
+                axma5_2.tick_params(axis="y", colors="brown")
+                axma5_2.yaxis.set_label_position("left")
+                axma5_2.yaxis.tick_left()
+
+            return axma5_2, subplot5_labels, labeltext5
         axma5, subplot5_labels, labeltext5 = samples(subplot5_labels, labeltext5)
         axma5_1, subplot5_labels, labeltext5 = plot_dexcess(subplot5_labels, labeltext5)
+        axma5_2, subplot5_labels, labeltext5 = plot_sst(subplot5_labels, labeltext5)
+
         axma5_1.legend(subplot5_labels, labeltext5, loc='upper left').set_zorder(99999)
 
         # FIG2 PLOT6##################################################################################################
@@ -896,9 +933,10 @@ class PMET():
 
             axma6.add_feature(cfeature.GSHHSFeature(scale='high'), facecolor='whitesmoke', edgecolor='k', linewidths=2.,
                              zorder=0)
-            CC = axma6.contour(dmet.longitude, dmet.latitude, dmet.land_area_fraction[0, 0, :, :], alpha=0.6, zorder=1,
-                              levels=[0.9, 1, 1.1],
-                              colors="b", linewidths=5, transform=ccrs.PlateCarree())
+            #CC = axma6.contour(dmet.longitude, dmet.latitude, dmet.land_area_fraction[0, :, :], alpha=0.6, zorder=1,
+            #                  levels=[0.9, 1, 1.1],
+            #                  colors="b", linewidths=5, transform=ccrs.PlateCarree())
+            #CT = axma6.pcolormesh(dmet.longitude, dmet.latitude, dmet.SST[0, :, :],transform=ccrs.PlateCarree(),alpha=0.7)
             mainpoint = axma6.scatter(self.point_lonlat[0], self.point_lonlat[1], c="blue", s=6 ** 2,
                                      transform=ccrs.PlateCarree(), zorder=2)
             allpoint = axma6.scatter(dmet.longitude, dmet.latitude, c="black", s=5 ** 2, transform=ccrs.PlateCarree(),
@@ -912,6 +950,7 @@ class PMET():
                                zorder=0)
             axma6_1.scatter(dmet.x[iindx], dmet.y[jindx], facecolors='none', edgecolors='r', s=6 ** 2, zorder=1,
                            marker='s')
+
             axma6_1.set_extent([0, 25, 50, 85], crs=ccrs.PlateCarree())
             axma6_1.set_zorder(4)
             from matplotlib.patches import ConnectionPatch
@@ -988,8 +1027,10 @@ class PMET():
         loc_name=self.point_name if self.point_name else self.point_lonlat
 
         print(dirName_b2 + figname_b2 + "_LOC_loc_name[" + sitename + "]" + ".png")
-        figma1.savefig(dirName_b2 + figname_b2 + "_o1_LOC_loc_name[" + sitename + "].jpg", format="jpg",dpi=200)
-        figma2.savefig(dirName_b2 + figname_b2 + "_o2_LOC_loc_name[" + sitename + "].jpg", format="jpg",dpi=200)
+        #figm2.savefig(dirName_b0 + figname_b0 + "_op1" + ".png", bbox_inches = "tight", dpi = 200)
+
+        figma1.savefig(dirName_b0 + figname_b0 + "_op1_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        figma2.savefig(dirName_b0 + figname_b0 + "_op2_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
 
         plt.close()
 
@@ -1019,7 +1060,7 @@ if __name__ == "__main__":
 
     for dt in args.datetime:
         dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3 = setup_met_directory(
-            dt, args.point_name, args.point_lonlat)
+            dt, args.point_name, args.point_lonlat,model)
 
         VM = PMET(date=dt, steps=args.steps, model=args.model, domain_name=args.domain_name,
                       domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info, num_point=args.point_num,

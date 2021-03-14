@@ -143,18 +143,18 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
             stepok=True
         elif (tim<=36) and ((tim % 3) == 0):
             stepok=True
-        elif (tim<=66) and ((tim % 6) == 0):
+        elif (tim<=96) and ((tim % 6) == 0):
             stepok=True
         if stepok==True:
 
             l=0
-            for lev in levs[0:8]:
+            for lev in levs[0:3]:
 
               fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
               ttt = tim
               tidx = tim - np.min(steps)
 
-              if lev>=5000: # TOC for last levels
+              if lev>=3000: # TOC for last levels
                 spec2a=np.sum(spec1a[0, 0, tim, :, :, :],0).squeeze()
                 spec2b=np.sum(spec1b[0, 0, tim, :, :, :],0).squeeze()
                 lev=0
