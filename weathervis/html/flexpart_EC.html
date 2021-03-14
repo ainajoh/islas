@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>
+AROME Arctic forecasts for ISLAS2021
+</title>
+<link rel='stylesheet' type='text/css' href='watersip.css'>
+<script type="text/javascript" src="navigation_fp.js"></script>
+<script type="text/javascript" src="page_navigation.js"></script>
+</head>
+
+<BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
+  <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
+    <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
+    <td width=1200 colspan=7><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td></tr>
+    <tr>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=flexpart_EC.html>Flexpart EC</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=flexpart_AA.html>Flexpart AA</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=forecast.html>AROME maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms.html>Meteogram plots</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=probability.html>Probability maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=watersip.html>WaterSip maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">ETH maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=TPID></td></tr>
+    <tr>
+    <td width=800 align=center colspan=8>Base: ECMWF flexpart forecast. Plots updated 1 times daily at ca 15 UTC.</td></tr>
+    <tr><td></td></tr></table>
+  <table border=0 bgcolor=#ffffff width=1300 align=center>
+  <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="500px"></td>
+      <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="500px"></td>
+      <td align=center><img id="panel3" src="gfx/fc_20160929/fc_20160929.gif" alt="d-excess" height="500px"></td></tr>
+    <tr><td align=center><select id="sel_v1" size=1 onChange="javascript:selectVar(1)">
+<option value=0 selected>500</option>
+<option value=1>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
+<td align=center><select id="sel_v2" size=1 onChange="javascript:selectVar(2)">
+<option value=0>500</option>
+<option value=1 selected>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
+<td align=center><select id="sel_v3" size=1 onChange="javascript:selectVar(3)">
+<option value=0>500</option>
+<option value=1>1500</option>
+<option value=2 selected>3000</option>
+<option value=3>total column</option></td>
+  <tr><td colspan=3 width=1300 align=center>
+  <form name="selpic" action="">
+	  <input id="sync" type="checkbox" checked=false onClick="javascript:checkSync()">Sync both rows
+			<b>Top row</b>
+   Domain:
+   <select id="domain1" size=1 onChange="javascript:selectDomain(0)">
+     <option value=0>NorwegianSea_area</option>
+     <option value=1>Andenes_area</option>
+     <option value=2>Svalbard</option>
+     <option value=3 selected>North_Norway</option>
+     <option value=4>AromeArctic</option>
+     <option value=5>South_Norway</option>
+     <option value=6>West_Norway</option>
+     <option value=7>Osteroy</option>
+   </select>
+			Base time:
+      <input name="back" value="-24h" type="button" onClick="javascript:skiponeback(0)">
+      <span id="btime0">now</span>
+      <input name="forward" value="+24h" type="button" onClick="javascript:skiponeforward(0)">
+			Forecast time:
+      <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(0)">
+      <span id="ftime0">t+00h</span>
+      <input name="forward" value="+1h" type="button" onClick="javascript:skip1hforward(0)">
+       <b>Valid time: <span id="valid0">valid</span></b>
+      </form>
+  </td></tr>
+  <tr><td colspan=3 align=center><span id=caption2></span></td></tr>
+<tr><td colspan=3 width=1300 align=center>
+  <form name="selpic" action="">
+			<b>Bottom row:</b>
+   Domain:
+   <select id="domain2" size=1 onChange="javascript:selectDomain(1)">
+     <option value=0>NorwegianSea_area</option>
+     <option value=1>Andenes_area</option>
+     <option value=2>Svalbard</option>
+     <option value=3 selected>North_Norway</option>
+     <option value=4>AromeArctic</option>
+     <option value=5>South_Norway</option>
+     <option value=6>West_Norway</option>
+     <option value=7>Osteroy</option>
+   </select>
+			Base time:
+      <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(1)">
+      <span id="btime1">now</span>
+      <input name="forward" value="+6h" type="button" onClick="javascript:skiponeforward(1)">
+			Forecast time:
+      <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(1)">
+      <span id="ftime1">t+00h</span>
+      <input name="forward" value="+1h" type="button" onClick="javascript:skip1hforward(1)">
+       <b>Valid time: <span id="valid1">valid</span></b>
+      </form>
+  </td></tr>
+    <tr><td align=center><select id="sel_v4" size=1 onChange="javascript:selectVar(4)">
+<option value=0 selected>500</option>
+<option value=1>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
+<td align=center><select id="sel_v5" size=1 onChange="javascript:selectVar(5)">
+<option value=0>500</option>
+<option value=1 selected>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
+<td align=center><select id="sel_v6" size=1 onChange="javascript:selectVar(6)">
+<option value=0>500</option>
+<option value=1>1500</option>
+<option value=2 selected>3000</option>
+<option value=3>total column</option></td>
+  <tr><td align=center><img id="panel4" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 1" height="500px"></td>
+      <td align=center><img id="panel5" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 2" height="500px"></td>
+      <td align=center><img id="panel6" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 3" height="500px"></td></tr>
+  <tr><td colspan=3 align=center><span id=caption2></span><hr></td></tr>
+  </table>
+<p>
+<p align=center>Products on this website updated 1x daily at ca 15 UTC. All times in UTC time.
+<p>
+Contact: <i>aina.johannessen@uib.no, harald.sodemann@uib.no</i>.
+<p>
+<a href="http://www.uib.no/gfi" target=main>[back to GFI Homepage]</a>
+</body>
+</html>

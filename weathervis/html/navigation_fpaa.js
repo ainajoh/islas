@@ -38,15 +38,30 @@ function getLevel(n)
 {
   switch (n) {
     case 0:
-      return "_L00500";
+      return "_L00150";
       break;
     case 1:
-      return "_L01500";
+      return "_L00300";
       break;
     case 2:
-      return "_L03000";
+      return "_L00500";
       break;
     case 3:
+      return "_L01000";
+      break;
+    case 4:
+      return "_L01500";
+      break;
+    case 5:
+      return "_L02000";
+      break;
+    case 6:
+      return "_L03000";
+      break;
+    case 7:
+      return "_L04000";
+      break;
+    case 8:
       return "_L00000";
       break;
     default: 
@@ -147,7 +162,7 @@ function getBasetime(row)
 
 function getFilename(n,k)
 {
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/FLEXPART_EC_"+getDomainname(k)+getLevel(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/FLEXPART_AA_"+getDomainname(k)+getLevel(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
 }
 
 function prepareFigure(n) 
