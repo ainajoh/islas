@@ -18,7 +18,7 @@ var vkind=new Array(4,4);
 var mkind=new Array(0,1);
 var synced=true;
 var kind = 1;
-var domain = new Array(0,2);
+var domain = new Array(0,3);
 var bt = 0;
 
 // treshold settings and names
@@ -83,10 +83,25 @@ function getDomainname(n)
 		return "PMETEOGRAM_Andenes_";
 		break;
 		case 1:
-		return "PMETEOGRAM_Tromso_";
+		return "PMETEOGRAM_ALOMAR_";
 		break;
 		case 2:
+		return "PMETEOGRAM_Tromso_";
+		break;
+		case 3:
 		return "PMETEOGRAM_NyAlesund_";
+		break;
+		case 4:
+		return "PMETEOGRAM_Longyearbyen_";
+		break;
+		case 5:
+		return "PMETEOGRAM_Bjornoya_";
+		break;
+		case 6:
+		return "PMETEOGRAM_NorwegianSea_";
+		break;
+		case 7:
+		return "PMETEOGRAM_CAO_";
 		break;
 		default:
 		return "None";
