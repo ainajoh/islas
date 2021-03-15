@@ -30,8 +30,8 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
-    if domain_name or domain_lonlat:
+def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name):
+    if domain_name or domain_lonlat or point_name:
         if domain_lonlat:
             print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
             data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
@@ -46,40 +46,48 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
             else:
                 func = f"data_domain.{domain_name}()"
             eval(func)
+        if point_name and domain_name == None and domain_lonlat ==None:
+            data_domain = domain(dt, model, file=file, point_name=point_name)
+
     else:
         data_domain = None
     return data_domain
 def setup_met_directory(modelrun, point_name, point_lonlat):
-    projectpath = setup_directory(OUTPUTPATH, "{0}".format(modelrun))
-    figname = "fc_" + modelrun
+    projectpath = setup_directory(OUTPUTPATH, "{0}/".format(modelrun))
+    #figname = "fc_" + modelrun
     # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
-        dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_lonlat)
+        pname = str(point_lonlat)
+        dirName = projectpath  # + "/"+ str(point_lonlat)
+        #dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_lonlat)
     else:
-        dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
+        dirName = projectpath
+        pname = str(point_name)  # + "/"+ str(point_name)
+        #dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
 
-    dirName_b1 = dirName + "met/"
-    figname_b1 = "vmet_" + figname
+    dirName_b1 = dirName
+    figname_b1 = "VPMETEOGRAM_" + pname + "_" + modelrun
 
-    dirName_b0 = dirName + "met/"
-    figname_b0 = "met_" + figname
 
-    dirName_b2 = dirName + "map/"
-    figname_b2 = "map_" + figname
+    dirName_b0 = dirName  # + "met/"
+    figname_b0 = "PMETEOGRAM_" + pname + "_" + modelrun
 
-    dirName_b3 = dirName + "met/"
-    figname_b3 = "met_" + figname
+    dirName_b2 = dirName  # + "map/"
+    figname_b2 = "map_" + modelrun
+
+    dirName_b3 = dirName  # + "met/"
+    figname_b3 = "met_" + modelrun
 
     if not os.path.exists(dirName_b1):
         os.makedirs(dirName_b1)
         print("Directory ", dirName_b1, " Created ")
     else:
         print("Directory ", dirName_b1, " already exists")
-    if not os.path.exists(dirName_b2):
-        os.makedirs(dirName_b2)
-        print("Directory ", dirName_b2, " Created ")
-    else:
-        print("Directory ", dirName_b2, " already exists")
+    #if not os.path.exists(dirName_b2):
+    #    os.makedirs(dirName_b2)
+    #    print("Directory ", dirName_b2, " Created ")
+    #else:
+    #    print("Directory ", dirName_b2, " already exists")
     return dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3
 def nice_vprof_colorbar(CF, ax, lvl=None, ticks=None, label=None, highlight_val=None, highlight_linestyle="k--", extend="both"):
     x0, y0, width, height = 0.75, 0.86, 0.26, 0.13
@@ -140,7 +148,7 @@ class VERT_MET():
         self.param = self.param_pl + self.param_ml + self.param_sfc + self.param_sfx
         dmet,data_domain,bad_param = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps,
                                      p_level=self.p_level, m_level=self.m_level,mbrs=self.mbrs,
-                                     domain_name=self.domain_name, domain_lonlat=self.domain_lonlat)
+                                     domain_name=self.domain_name, domain_lonlat=self.domain_lonlat, point_name=self.point_name)
 
         self.dmet = dmet
         self.data_domain = data_domain
@@ -165,14 +173,21 @@ class VERT_MET():
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
         print("test5")
         self.dmet.theta = potential_temperatur(self.dmet.air_temperature_ml, self.dmet.p)
+        print("test6")
+        self.dmet.altfrom_pref = pl2alt_sl(self.dmet.surface_geopotential, self.dmet.air_temperature_ml, self.dmet.specific_humidity_ml, self.dmet.p*100)
 
-        #self.dmet.geotoreturn = ml2alt_sl(self.dmet.p, self.dmet.surface_geopotential, self.dmet.air_temperature_ml,
-        #                                  self.dmet.specific_humidity_ml)
-        #self.dmet.t_v_level = virtual_temp(self.dmet.air_temperature_ml, self.dmet.specific_humidity_ml)
-        #self.dmet.BLH = BL_height_sl(self.dmet.atmosphere_boundary_layer_thickness, self.dmet.surface_geopotential)
+        #self.dmet.reference_pressure=np.full(np.shape(self.dmet.surface_air_pressure),1013.)
+        #print(self.dmet.reference_pressure)
+        #self.dmet.verticalref = ml2alt_sl(surface_geopotential=self.dmet.surface_geopotential, air_temperature_ml=self.dmet.air_temperature_ml,
+        #                                   specific_humidity_ml=self.dmet.specific_humidity_ml, ap=self.dmet.ap,
+        #                                   b=self.dmet.b,
+        #                                   surface_air_pressure=self.dmet.reference_pressure)
 
     def points(self):
         point_lonlat = self.point_lonlat; dmet = self.dmet; num_point = self.num_point
+        print("find nearest")
+        print("#####################################################################")
+
         if point_lonlat:
             ind_list = nearest_neighbour(point_lonlat[0], point_lonlat[1], dmet.longitude, dmet.latitude, num_point)
         else:
@@ -183,10 +198,24 @@ class VERT_MET():
         poi = ind_list[0:num_point]
         return poi
 
-    def vertical_met(self,jindx, iindx, dirName_b1, figname_b1, ip, p_top = 500 ):
+    def vertical_met(self,jindx, iindx, dirName_b1, figname_b1, ip, p_top = 500):
         dmet = self.dmet
         # Point and calc
         p_p = dmet.p[:, :, jindx, iindx]  # / 100
+        #refp_p = dmet.altfrom_pref[:, :, jindx, iindx]  # / 100
+        Rd = 287.06  # [J/kg K] Gas constant for dry air
+        g = 9.80665
+        #self.dmet.reference_pressure=np.full(np.shape(self.dmet.surface_air_pressure),1013.)
+        #Tv = virtual_temp(dmet.air_temperature_ml, dmet.specific_humidity_ml)
+        #h_ref = (Rd * Tv[:, :, jindx, iindx] / g) * np.log(p_p / 101300.)
+        #print(p_p)
+        #def func_h_ref(p_p):
+        #    h_ref = ( Rd *Tv[:, :, jindx, iindx]/g )*np.log(p_p/1013.)
+        #    return h_ref
+        #def func_p_ref(h_ref):
+        #    p_ref = 1013.*np.exp(h_ref * g / ( Rd *Tv[:, :, jindx, iindx]))
+        #    return p_ref
+        #p_p =x
         q_p = dmet.specific_humidity_ml[:, :, jindx, iindx]  # * 1000
         temp_p = dmet.air_temperature_ml[:, :, jindx, iindx]  # - 273.15
         ur_p = dmet.u[:, :, jindx, iindx]
@@ -213,7 +242,7 @@ class VERT_MET():
               "\nINITIALISING PLOTTING: meteogram_vertical \n"
               "\n###########################\n")
         #INITIALISING
-        figm1, (axm1, axm2) = plt.subplots(nrows=2, ncols=1, figsize=(12, 14), sharex=True)
+        figm1, (axm1, axm2) = plt.subplots(nrows=2, ncols=1, figsize=(12, 14), sharex=False)
         plt.subplots_adjust(wspace=0.001)
         levels = range(len(dmet.hybrid))
         lx, tx = np.meshgrid(levels, dmet.time_normal[:])
@@ -284,6 +313,10 @@ class VERT_MET():
         axm2.xaxis.set_minor_locator(mdates.HourLocator((0, 6, 12, 18)))
         axm2.xaxis.set_major_formatter(xfmt_maj)
         axm2.xaxis.set_minor_formatter(xfmt_min)
+        axm1.xaxis.set_major_locator(mdates.DayLocator())
+        axm1.xaxis.set_minor_locator(mdates.HourLocator((0, 6, 12, 18)))
+        axm1.xaxis.set_major_formatter(xfmt_maj)
+        axm1.xaxis.set_minor_formatter(xfmt_min)
 
         axm1.xaxis.grid(True, which="major", linewidth=2)
         axm1.xaxis.grid(True, which="minor", linestyle="--")
@@ -291,15 +324,31 @@ class VERT_MET():
         axm2.xaxis.grid(True, which="minor", linestyle="--")
         axm2.tick_params(axis="x", which="major", pad=12)
 
-        figm1.tight_layout()
-        plt.savefig(dirName_b1 + figname_b1 + "_LOC" + str(ip) +
-                    "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
-                                                 dmet.latitude[jindx, iindx]) + ".png")
+        #figm1.tight_layout()
+        #ymin, ymax = axm1.get_ylim()  refp_p
+        #axi = axm1.twinx()
+        #secax = axm1.secondary_yaxis('right', functions=(func_h_ref, func_p_ref))
+        #axi.set_ylim( np.min(h_ref.squeeze()), np.max(h_ref.squeeze()) )
+        #axi.plot([], [])
+        #axi.plot(tx, h_ref)
+
+        #axi.set_ylim(axm1.get_ylim())
+        #axi.plot(tx,self.dmet.verticalref.squeeze())
+        #ax2.plot([],[])
+
+        axm1.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm1.transAxes, color='black')
+        axm2.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm2.transAxes, color='black')
+
+        plt.savefig(dirName_b1 + figname_b1 + "_op2_"+ ".png", bbox_inches = "tight", dpi = 200)
+
+        #plt.savefig(dirName_b1 + figname_b1 + "_LOC" + str(ip) +
+        #           "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
+        #                                         dmet.latitude[jindx, iindx]) + ".png")
         plt.clf()
         plt.close()
 
         # INITIALISING
-        figm2, (axm1, axm2) = plt.subplots(nrows=2, ncols=1, figsize=(12, 14), sharex=True)
+        figm2, (axm1, axm2) = plt.subplots(nrows=2, ncols=1, figsize=(12, 14), sharex=False)
         plt.subplots_adjust(wspace=0.001)
         levels = range(len(dmet.hybrid))
         lx, tx = np.meshgrid(levels, dmet.time_normal[:])
@@ -324,7 +373,7 @@ class VERT_MET():
         CS = axm1.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(0,100,10),colors="green")  #Purples BrBu  BrYlBu cool bwr RdYlBu_r
         axm1.clabel(CS, inline=True, fmt='%1.0f')  # '%1.0fK')
         #cloud
-        Cfrac = axm1.contourf(tx, p_p, areafrac_cloud,hatches=['--','---'], colors="none", alpha = 0.0,levels= [1,50,100])
+        Cfrac = axm1.contourf(tx, p_p, areafrac_cloud,hatches=['--','---'], colors="none", alpha = 0.0,levels= [1,50,100],zlevel=100)
         artists, labels = Cfrac.legend_elements()
         cfrac_leg = axm1.legend(artists, ["1-50% Cloud cover"," 50-100% Cloud cover"], handleheight=2, loc='upper left')
 
@@ -376,6 +425,10 @@ class VERT_MET():
         axm2.xaxis.set_minor_locator(mdates.HourLocator((0, 6, 12, 18)))
         axm2.xaxis.set_major_formatter(xfmt_maj)
         axm2.xaxis.set_minor_formatter(xfmt_min)
+        axm1.xaxis.set_major_locator(mdates.DayLocator())
+        axm1.xaxis.set_minor_locator(mdates.HourLocator((0, 6, 12, 18)))
+        axm1.xaxis.set_major_formatter(xfmt_maj)
+        axm1.xaxis.set_minor_formatter(xfmt_min)
 
         axm1.xaxis.grid(True, which="major", linewidth=2)
         axm1.xaxis.grid(True, which="minor", linestyle="--")
@@ -384,11 +437,15 @@ class VERT_MET():
         axm2.tick_params(axis="x", which="major", pad=12)
 
         #figm2.tight_layout()
-        plt.savefig(dirName_b1 + "2"+figname_b1 + "_LOC" + str(ip) +
-                    "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
-                                                    dmet.latitude[jindx, iindx]) + ".png")
+        print(" SAVEIIING")
+        print(dirName_b1 + figname_b1 + "_op1_"+ ".png")
+        axm1.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm1.transAxes, color='black')
+        axm2.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm2.transAxes, color='black')
+        plt.savefig(dirName_b1 + figname_b1 + "_op1_"+ ".png", bbox_inches = "tight", dpi = 200)
+
         plt.clf()
         plt.close()
+        print("DONE SAVE")
 
 def handle_input():
     param_ML = ["air_temperature_ml", "specific_humidity_ml", "x_wind_ml", "y_wind_ml", "cloud_area_fraction_ml"]

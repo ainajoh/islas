@@ -192,6 +192,19 @@ def density(Tv, p):
     #    t_v_level[:, k, :, :] = air_temperature_ml[:, k, :, :] * (1. + 0.609133 * specific_humidity_ml[:, k, :, :])
     return rho
 
+def specific_humidity(T, rh,p):
+    #T in K
+    #p in Pa
+    #rh in frac no %
+    Rd = 287.0
+    Rv=461.0
+    TC = T-273.15
+    es = 6.1094 * np.exp(17.625 * TC / (TC + 243.04))*100 #pa
+    e = rh * es
+    w= e * Rd / ( Rv * ( p - e ) )
+    q = w/(w+1)
+    return q
+
 def dexcess(mslp,SST, q2m):
 
     Q = q2m.squeeze()
@@ -201,7 +214,7 @@ def dexcess(mslp,SST, q2m):
     SST = SST - 273.15
     mslp = mslp / 100
 
-    es = 6.1094 * np.exp(17.625 * SST / (SST + 243.04))
+    es = 6.1094 * np.exp(17.625 * SST / (SST + 243.04)) #pa
     Qs = 0.622 * es / (mslp - 0.37 * es)
     # RH_2m = dmap_meps.relative_humidity_2m[tidx,:,:].squeeze()*100
     RH = Q / Qs * 100
