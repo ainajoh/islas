@@ -37,7 +37,7 @@ yymmdd="${yy}${mm}${dd}"
 modelrun_date=$yymmdd
 modelrun_hour="00"
 model=("AromeArctic")
-steps_max=(1)
+steps_max=(6)
 domain_name="None"
 
 while [ $# -gt 0 ]; do
@@ -92,7 +92,7 @@ echo $modelrun
 #domain_name=""
 #model=("$1")
 #modelrun=("$2")
-#steps_max=($3)
+steps_max=(6)
 #if [$4]
 #then
 #  domain_name="$4" #West_Norway
@@ -103,7 +103,10 @@ echo $modelrun
 #modelrun=( "2020022712" "2020022812" "2020022912")
 #modelrun=("2020022012" "2020022112" )
 #modelrun=("2020021912" "2020022012" "2020022112" "2020022212" "2020022312" "2020022412" "2020022512" "2020022612")
-#modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
+modelrun=("2020022700" "2020022706" "2020022712" "2020022718" "2020022800" "2020022806" "2020022812" "2020030200" "2020030206" "2020030212" "2020030218" "2020030300" "2020030306")
+modelrun=("2020030800" "2020030806" "2020030812" "2020030818" "2020030900" "2020030906" "2020030912" "2020030918" "2020031000" "2020031006" "2020031012" "2020031018" "2020031100" "2020031106" "2020031112")
+modelrun=("2020031500" "2020031506" "2020031512" "2020031518" "2020031600" "2020031612" "2020031618" "2020031100" "2020031106" "2020031112")
+
 #modelrun=("2020031512")
 #modelrun=("2020100412")
 #modelrun=("2020100412")
@@ -119,14 +122,15 @@ echo $modelrun
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
-    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 0 64"
+    steps_max=(6)
+    runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $domain_name"
+    runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $domain_name"
+    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 6 --model $md --domain_name $domain_name"
+    runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $domain_name"
+    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max}  --model $md --domain_name $domain_name"
+    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $domain_name"
+    runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $domain_name"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $domain_name --m_level 0 64"
 
 
     #runstring_T="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
@@ -144,7 +148,7 @@ for md in ${model[@]}; do
     echo $runstring_T
     #$runstring_T
     echo $runstring_CAO
-    #$runstring_CAO
+    $runstring_CAO
     echo $runstring_BLH
     #$runstring_BLH
     echo $runstring_SURF
@@ -152,19 +156,19 @@ for md in ${model[@]}; do
     echo $runstring_dxs
     #$runstring_dxs
     echo $runstring_WC
-    $runstring_WC
+    #$runstring_WC
 
   done
 done
 
 # convert to smaller image size and transfer to web disk
-cd ~/output/weathervis/$modelrun
-mkdir small
-for f in *.png; do 
-  convert -scale 40% $f small/$f
-done
-mkdir ~/www/gfx/$modelrun
-cp small/* ~/www/gfx/$modelrun
-rm -rf ~/output/weathervis/$modelrun
+#cd ~/output/weathervis/$modelrun
+#mkdir small
+#for f in *.png; do
+#  convert -scale 40% $f small/$f
+#done
+#mkdir ~/www/gfx/$modelrun
+#cp small/* ~/www/gfx/$modelrun
+#rm -rf ~/output/weathervis/$modelrun
 
 # fin
