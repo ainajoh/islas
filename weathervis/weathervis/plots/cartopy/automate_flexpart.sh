@@ -42,12 +42,12 @@ if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
 
 $cf
 
-#fclagh=350 #3.5 hour before forecsast is issued
+#fclagh=1200 #12 hour before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
-  modeldatehour=$(date -u --date "today - $((350*60/100)) minutes" +'%Y%m%d%H%M')
+  modeldatehour=$(date -u --date "today - $((1200*60/100)) minutes" +'%Y%m%d%H%M')
 else
-  modeldatehour=$(date -v-$((350*60/100))M -u +%Y%m%d%H%M)
+  modeldatehour=$(date -v-$((1200*60/100))M -u +%Y%m%d%H%M)
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
