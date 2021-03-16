@@ -5,12 +5,12 @@
 
 function setKind(id) 
 {
-   document.getElementById('ARID').bgColor="#c0c0c0";
-   document.getElementById('CAOID').bgColor="#c0c0c0";
-   document.getElementById('EHSID').bgColor="#c0c0c0";
-   document.getElementById('TPID').bgColor="#c0c0c0";
-   document.getElementById('SSHID').bgColor="#c0c0c0";
-   document.getElementById('SLOEID').bgColor="#c0c0c0";
+   document.getElementById('ARID').bgColor="#a0a0a0";
+   document.getElementById('CAOID').bgColor="#a0a0a0";
+   document.getElementById('EHSID').bgColor="#a0a0a0";
+   document.getElementById('TPID').bgColor="#a0a0a0";
+   document.getElementById('SSHID').bgColor="#a0a0a0";
+   document.getElementById('SLOEID').bgColor="#a0a0a0";
    document.getElementById(id).bgColor="#aaccff";
    switch (id) {
      case 'ARID':
