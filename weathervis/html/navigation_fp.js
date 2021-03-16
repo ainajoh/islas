@@ -5,10 +5,12 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
+cday0.setUTCHours(cday0.getUTCHours()-24);
 day0.setUTCHours(0);
 day0.setUTCMinutes(0);
 day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
+cday1.setUTCHours(cday1.getUTCHours()-24);
 day1.setUTCHours(0);
 day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
@@ -260,14 +262,14 @@ function skiponeback(row)
 {
 	cday[row].setUTCHours(cday[row].getUTCHours()-24);
 	fdate[row]+=24;
-	if ((fdate[row]>24) && (fdate[row]<36)) {
+	if ((fdate[row]>0) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] - (fdate[row] % 3)
 	}
-	if ((fdate[row]>36) && (fdate[row]<66)) {
+	if ((fdate[row]>36) && (fdate[row]<120)) {
 		fdate[row]=fdate[row] - (fdate[row] % 6)
 	}
-	if (fdate[row]>66) {
-		fdate[row]=66;
+	if (fdate[row]>120) {
+		fdate[row]=120;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
@@ -280,10 +282,10 @@ function skiponeforward(row)
 {
 	cday[row].setUTCHours(cday[row].getUTCHours()+24);
 	fdate[row]-=24;
-	if ((fdate[row]>24) && (fdate[row]<36)) {
+	if ((fdate[row]>0) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] + (fdate[row] % 3)
 	}
-	if ((fdate[row]>36) && (fdate[row]<66)) {
+	if ((fdate[row]>36) && (fdate[row]<120)) {
 		fdate[row]=fdate[row] + (fdate[row] % 6)
 	}
 	if (fdate[row]<0) {
@@ -299,14 +301,14 @@ function skiponeforward(row)
 function skip1hforward(row) 
 {
 	fdate[row]+=1;
-	if (fdate[row]>24) {
+	if (fdate[row]>0) {
 		fdate[row]=fdate[row]+2;
 	}
 	if (fdate[row]>36) {
 		fdate[row]=fdate[row]+3;
 	}
-	if (fdate[row]>66) {
-		fdate[row]=66;
+	if (fdate[row]>120) {
+		fdate[row]=120;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
@@ -320,7 +322,7 @@ function skip1hback(row)
 	if (fdate[row]>36) {
 		fdate[row]=fdate[row]-3;
 	}
-	if (fdate[row]>24) {
+	if (fdate[row]>0) {
 		fdate[row]=fdate[row]-2;
 	}
 	fdate[row]-=1;
