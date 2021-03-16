@@ -5,12 +5,12 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
-cday0.setUTCHours(cday0.getUTCHours()-24);
+day0.setUTCHours(day0.getUTCHours()-24);
 day0.setUTCHours(0);
 day0.setUTCMinutes(0);
 day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
-cday1.setUTCHours(cday1.getUTCHours()-24);
+day1.setUTCHours(day1.getUTCHours()-24);
 day1.setUTCHours(0);
 day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
