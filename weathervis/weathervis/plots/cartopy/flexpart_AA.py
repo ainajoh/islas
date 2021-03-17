@@ -292,15 +292,18 @@ if __name__ == "__main__":
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   print(args.__dict__)
-  # split up in 3 retrievals of up to 24h
-  flexpart_EC(datetime=args.datetime, steps =  [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+  flexpart_EC(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>24:
-      flexpart_EC(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>36:
-      flexpart_EC(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
-              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+
+  # split up in 3 retrievals of up to 24h
+  #flexpart_EC(datetime=args.datetime, steps =  [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+  #       domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  #if np.max(args.steps)>24:
+  #    flexpart_EC(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+  #            domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  #if np.max(args.steps)>36:
+  #    flexpart_EC(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+  #            domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
   #datetime, step=4, model= "MEPS", domain = None
 
 #fin

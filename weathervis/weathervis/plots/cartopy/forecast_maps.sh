@@ -8,6 +8,7 @@ steps=$3
 case "$model" in
     AA)
 	automate_all_meteogram_centos.sh --steps_max $steps --modelrun_hour $runhour
+	automate_all_verticalmeteogram_centos.sh --steps_max $steps --modelrun_hour $runhour
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic

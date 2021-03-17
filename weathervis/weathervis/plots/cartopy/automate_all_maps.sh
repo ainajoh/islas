@@ -152,7 +152,7 @@ for md in ${model[@]}; do
     runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
     runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 20 64"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 24 64"
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
     echo $runstring_Z

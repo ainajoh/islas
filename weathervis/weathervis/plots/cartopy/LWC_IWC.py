@@ -9,6 +9,8 @@ from weathervis.get_data import *
 from weathervis.calculation import *
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+from matplotlib.colors import BoundaryNorm
+from matplotlib.ticker import MaxNLocator
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
@@ -129,10 +131,16 @@ def IWC_LWC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                 #dmap_meps.LWC[np.where( dmap_meps.LWC <= 0.09)] = np.nan
                 data =  dmap_meps.LWC[tidx,:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
-                CC=ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.Reds, vmin=0.1, vmax=4.0,zorder=2)
+                levels = MaxNLocator(nbins=15).tick_values(0.1, 4.0)
+                cmap = plt.get_cmap('Reds')
+                norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+                CC=ax1.pcolormesh(x, y,  data, shading='flat', cmap=cmap, vmin=0.1, vmax=4.0,zorder=2)
                 data =  dmap_meps.IWC[tidx,:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
-                CI= ax1.pcolormesh(x, y, data[:, :], cmap=plt.cm.Blues,alpha=0.5, vmin=0.01, vmax=0.1,zorder=3)
+                levels = MaxNLocator(nbins=15).tick_values(0.01, 0.1)
+                cmap = plt.get_cmap('Blues')
+                norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+                CI= ax1.pcolormesh(x, y, data, shading='flat', cmap=cmap,alpha=0.5, vmin=0.01, vmax=0.1,zorder=3)
 
                 # MSLP
                 # MSLP with contour labels every 10 hPa
