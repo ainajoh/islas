@@ -71,7 +71,7 @@ yymmdd="${yy}${mm}${dd}"
 modelrun_date=$yymmdd
 modelrun_hour="00"
 model=("AromeArctic")
-steps_max=(1)
+steps_max=(66)
 domain_name="None"
 release_name="NYA"
 domain_name=("AromeArctic" "North_Norway" "Svalbard" "Andenes_area" NorwegianSea_area)
@@ -148,7 +148,7 @@ for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
 	  for dom in ${domain_name[@]}; do
-    		runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $dom"
+    		runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $dom"
 		
     		echo $runstring_FP
     		$runstring_FP

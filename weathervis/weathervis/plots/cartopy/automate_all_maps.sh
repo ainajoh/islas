@@ -13,7 +13,7 @@ function converting {
     mkdir /home/centos/www/gfx/$1
   fi
   cp small/* /home/centos/www/gfx/$1
-  rm -rf /home/centos/output/weathervis/$1
+  #rm -rf /home/centos/output/weathervis/$1
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
@@ -152,7 +152,7 @@ for md in ${model[@]}; do
     runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
     runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 20 64"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 24 64"
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
     echo $runstring_Z

@@ -2,6 +2,8 @@
 import numpy as np
 from netCDF4 import Dataset
 import pandas as pd
+from weathervis.calculation import *
+
 #Preset domain.
 if __name__ == "__main__":
     print("Run by itself")
@@ -12,11 +14,14 @@ def lonlat2idx(lonlat, url):
     lon = dataset.variables["longitude"][:]
     lat = dataset.variables["latitude"][:]
     # DOMAIN FOR SHOWING GRIDPOINT:: MANUALLY ADJUSTED
-    idx = np.where((lat > lonlat[2]) & (lat < lonlat[3]) & \
-                   (lon >= lonlat[0]) & (lon <= lonlat[1]))
-
-    idx = np.where((lat > lonlat[2]) & (lat < lonlat[3]) & \
-                   (lon >= lonlat[0]) & (lon <= lonlat[1]))
+    if len(lonlat)>2:
+        idx = np.where((lat > lonlat[2]) & (lat < lonlat[3]) & \
+                       (lon >= lonlat[0]) & (lon <= lonlat[1]))
+    else:
+        print("nearest")
+        idx = nearest_neighbour_idx(lonlat[0],lonlat[1],lon,lat)
+        print(idx)
+        print("idx")
     dataset.close()  #        self.lonlat = [0,30, 73, 82]  #
 
     return idx
@@ -37,12 +42,13 @@ def idx2lonlat(idx, url):
 
 
 class domain():
-    def __init__(self, date, model, file, lonlat=None, idx=None,domain_name=None):
+    def __init__(self, date, model, file, lonlat=None, idx=None,domain_name=None,point_name=None):
         self.date = date
         self.model = model
         self.lonlat = lonlat
         self.idx = idx
         self.domain_name = domain_name
+        self.point_name=point_name
         if type(file)==pd.core.frame.DataFrame:
             self.file = file.loc[0,'File']
         else:
@@ -61,6 +67,16 @@ class domain():
 
         if self.lonlat and not self.idx:
             self.idx = lonlat2idx(self.lonlat, self.url)
+        print("IN DOMAIN")
+        if self.point_name and not self.domain_name:
+            print("GOTCHA")
+            sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+            plon = float(sites.loc[self.point_name].lon)
+            plat = float(sites.loc[self.point_name].lat)
+            self.lonlat = [plon,plat]
+            print(self.lonlat)
+            self.idx = lonlat2idx(self.lonlat, self.url)
+        
         #if self.idx:
         #    self.lonlat = idx2lonlat(self.idx, url)  # rough
 
