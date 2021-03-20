@@ -18,7 +18,7 @@ var vkind=new Array(4,4);
 var mkind=new Array(0,1);
 var synced=true;
 var kind = 1;
-var domain = new Array(0,3);
+var domain = new Array(0,0);
 var bt = 0;
 
 // treshold settings and names
