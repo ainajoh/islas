@@ -5,12 +5,10 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
-day0.setUTCHours(day0.getUTCHours()-24);
 day0.setUTCHours(0);
 day0.setUTCMinutes(0);
 day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
-day1.setUTCHours(day1.getUTCHours()-24);
 day1.setUTCHours(0);
 day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
@@ -40,15 +38,30 @@ function getLevel(n)
 {
   switch (n) {
     case 0:
-      return "_L00500";
+      return "_L00150";
       break;
     case 1:
-      return "_L01500";
+      return "_L00300";
       break;
     case 2:
-      return "_L03000";
+      return "_L00500";
       break;
     case 3:
+      return "_L01000";
+      break;
+    case 4:
+      return "_L01500";
+      break;
+    case 5:
+      return "_L02000";
+      break;
+    case 6:
+      return "_L03000";
+      break;
+    case 7:
+      return "_L04000";
+      break;
+    case 8:
       return "_L00000";
       break;
     default: 
@@ -149,7 +162,7 @@ function getBasetime(row)
 
 function getFilename(n,k)
 {
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/FLEXPART_EC_"+getDomainname(k)+getLevel(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/FLEXPART_AA_"+getDomainname(k)+getLevel(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
 }
 
 function prepareFigure(n) 
@@ -262,14 +275,14 @@ function skiponeback(row)
 {
 	cday[row].setUTCHours(cday[row].getUTCHours()-24);
 	fdate[row]+=24;
-	if ((fdate[row]>0) && (fdate[row]<36)) {
+	if ((fdate[row]>24) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] - (fdate[row] % 3)
 	}
-	if ((fdate[row]>36) && (fdate[row]<120)) {
+	if ((fdate[row]>36) && (fdate[row]<66)) {
 		fdate[row]=fdate[row] - (fdate[row] % 6)
 	}
-	if (fdate[row]>120) {
-		fdate[row]=120;
+	if (fdate[row]>66) {
+		fdate[row]=66;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
@@ -282,10 +295,10 @@ function skiponeforward(row)
 {
 	cday[row].setUTCHours(cday[row].getUTCHours()+24);
 	fdate[row]-=24;
-	if ((fdate[row]>0) && (fdate[row]<36)) {
+	if ((fdate[row]>24) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] + (fdate[row] % 3)
 	}
-	if ((fdate[row]>36) && (fdate[row]<120)) {
+	if ((fdate[row]>36) && (fdate[row]<66)) {
 		fdate[row]=fdate[row] + (fdate[row] % 6)
 	}
 	if (fdate[row]<0) {
@@ -301,14 +314,14 @@ function skiponeforward(row)
 function skip1hforward(row) 
 {
 	fdate[row]+=1;
-	if (fdate[row]>0) {
+	if (fdate[row]>24) {
 		fdate[row]=fdate[row]+2;
 	}
 	if (fdate[row]>36) {
 		fdate[row]=fdate[row]+3;
 	}
-	if (fdate[row]>120) {
-		fdate[row]=120;
+	if (fdate[row]>66) {
+		fdate[row]=66;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
@@ -322,7 +335,7 @@ function skip1hback(row)
 	if (fdate[row]>36) {
 		fdate[row]=fdate[row]-3;
 	}
-	if (fdate[row]>0) {
+	if (fdate[row]>24) {
 		fdate[row]=fdate[row]-2;
 	}
 	fdate[row]-=1;

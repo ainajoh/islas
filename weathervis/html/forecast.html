@@ -13,7 +13,8 @@ AROME Arctic forecasts for ISLAS2021
     <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
     <td width=1200 colspan=7><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td></tr>
     <tr>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=flexpart.html>Flexpart maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=flexpart_EC.html>Flexpart EC</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=flexpart_AA.html>Flexpart AA</a></td>
     <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=probability.html>Probability maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms.html>Meteogram plots</a></td>
     <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=watersip.html>WaterSip maps</a></td>
@@ -21,7 +22,7 @@ AROME Arctic forecasts for ISLAS2021
     <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0 id=TPID></td></tr>
     <tr>
-    <td width=800 align=center colspan=8>Base: AROME Arctic forecast. Plots updated 4 times daily at 04, 10, 16, 22 UTC.</td></tr>
+    <td width=800 align=center colspan=8>Base: AROME Arctic forecasts from Meteorologisk Institutt. Plots updated 4 times daily at 04, 10, 16, 22 UTC.</td></tr>
     <tr><td></td></tr></table>
   <table border=0 bgcolor=#ffffff width=1300 align=center>
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="500px"></td>
@@ -36,8 +37,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>d-excess</option>
 <option value=6>BLH, w</option>
 <option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=8>T at 2m</option></td>
 <td align=center><select id="sel_v2" size=1 onChange="javascript:selectVar(2)">
 <option value=0>CAO-index</option>
 <option value=1 selected>OLR, SLP</option>
@@ -47,8 +47,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>d-excess</option>
 <option value=6>BLH, w</option>
 <option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=8>T at 2m</option></td>
 <td align=center><select id="sel_v3" size=1 onChange="javascript:selectVar(3)">
 <option value=0>CAO-index</option>
 <option value=1>OLR, SLP</option>
@@ -58,8 +57,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>d-excess</option>
 <option value=6>BLH, w</option>
 <option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=8>T at 2m</option></td>
   <tr><td colspan=3 width=1300 align=center>
   <form name="selpic" action="">
 	  <input id="sync" type="checkbox" checked=false onClick="javascript:checkSync()">Sync both rows
@@ -119,8 +117,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>d-excess</option>
 <option value=6>BLH, w</option>
 <option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=8>T at 2m</option></td>
 <td align=center><select id="sel_v5" size=1 onChange="javascript:selectVar(5)">
 <option value=0>CAO-index</option>
 <option value=1>OLR, SLP</option>
@@ -130,8 +127,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>d-excess</option>
 <option value=6>BLH, w</option>
 <option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=8>T at 2m</option></td>
 <td align=center><select id="sel_v6" size=1 onChange="javascript:selectVar(6)">
 <option value=0>CAO-index</option>
 <option value=1>OLR, SLP</option>
@@ -141,15 +137,14 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5 selected>d-excess</option>
 <option value=6>BLH, w</option>
 <option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=8>T at 2m</option></td>
   <tr><td align=center><img id="panel4" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 1" height="500px"></td>
       <td align=center><img id="panel5" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 2" height="500px"></td>
       <td align=center><img id="panel6" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 3" height="500px"></td></tr>
   <tr><td colspan=3 align=center><span id=caption2></span><hr></td></tr>
   </table>
 <p>
-<p align=center>Website updated 4x daily at 04, 10, 16, 22 UTC. All times in UTC time.
+<p align=center>Website updated 4x daily at 04, 10, 16, 22 UTC. All times in UTC time. Data source: https://threads.met.no
 <p>
 Contact: <i>aina.johannessen@uib.no, harald.sodemann@uib.no</i>.
 <p>
