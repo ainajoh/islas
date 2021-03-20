@@ -384,7 +384,7 @@ class VERT_MET():
 
         #TEMP
         cmap = cm.get_cmap('twilight_shifted')  # BrBu  BrYlBu
-        norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=20)
+        norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=10)
         CF_2 = axm2.pcolormesh(tx, p_p, temp_p, zorder=1, cmap=cmap, norm=norm) #dtdz_p
         cbar = nice_vprof_colorbar(CF=CF_2, ax=axm2, label = 'Temp. [K]', extend="both")
 

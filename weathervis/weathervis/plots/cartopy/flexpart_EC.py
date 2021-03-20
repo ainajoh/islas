@@ -103,7 +103,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     dmap_meps.air_pressure_at_sea_level /= 100
 
     # read netcdf files with flexpart output 
-    dt=2021031600
+    #dt=2021031600
     release_name='NYA'
     cdf = nc.Dataset("/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
     lats=cdf.variables["lat"][:]
@@ -282,11 +282,11 @@ if __name__ == "__main__":
   print(args.__dict__)
 
   # split up in 3 retrievals of up to 24h
-  #flexpart_EC(datetime=args.datetime, steps =  [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-  #       domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  #if np.max(args.steps)>24:
-  #    flexpart_EC(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-  #            domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  flexpart_EC(datetime=args.datetime, steps =  [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+  if np.max(args.steps)>24:
+      flexpart_EC(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
   if np.max(args.steps)>36:
       flexpart_EC(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
               domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
