@@ -13,7 +13,6 @@ function converting {
     mkdir /home/centos/www/gfx/$1
   fi
   cp small/* /home/centos/www/gfx/$1
-  #rm -rf /home/centos/output/weathervis/$1
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
@@ -185,5 +184,8 @@ for md in ${model[@]}; do
 
   done
 done
+
+# remove intermediate modelrun folder
+rm -rf /home/centos/output/weathervis/$modelrun
 
 # fin
