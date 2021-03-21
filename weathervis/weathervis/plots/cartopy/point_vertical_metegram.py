@@ -370,7 +370,7 @@ class VERT_MET():
         axm1.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm1.transAxes, color='black')
         axm2.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm2.transAxes, color='black')
 
-        plt.savefig(dirName_b1 + figname_b1 + "_op2_"+ ".png", bbox_inches = "tight", dpi = 200)
+        plt.savefig(dirName_b1 + figname_b1 + "_op2"+ ".png", bbox_inches = "tight", dpi = 200)
 
         #plt.savefig(dirName_b1 + figname_b1 + "_LOC" + str(ip) +
         #           "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
@@ -469,10 +469,10 @@ class VERT_MET():
 
         #figm2.tight_layout()
         print(" SAVEIIING")
-        print(dirName_b1 + figname_b1 + "_op1_"+ ".png")
+        print(dirName_b1 + figname_b1 + "_op1"+ ".png")
         axm1.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm1.transAxes, color='black')
         axm2.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm2.transAxes, color='black')
-        plt.savefig(dirName_b1 + figname_b1 + "_op1_"+ ".png", bbox_inches = "tight", dpi = 200)
+        plt.savefig(dirName_b1 + figname_b1 + "_op1"+ ".png", bbox_inches = "tight", dpi = 200)
 
         plt.clf()
         plt.close()
