@@ -6,7 +6,7 @@ print(dname)
 print(abspath)
 #global projectpath
 global OUTPUTPATH
-OUTPUTPATH = dname + "/../../../../../output/weathervis/"
+OUTPUTPATH = dname + "/../../../output/weathervis/"
 
 
 #package_path = os.path.dirname(__file__)
@@ -37,7 +37,7 @@ def cyclone():
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
-    OUTPUTPATH = dname+"/../../../../../output/weathervis/"
+    OUTPUTPATH = dname+"/../../../output/weathervis/"
     OUTPUTPATH = setup_directory(OUTPUTPATH)
     return OUTPUTPATH
 
