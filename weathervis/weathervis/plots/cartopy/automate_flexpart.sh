@@ -13,7 +13,6 @@ function converting {
     mkdir /home/centos/www/gfx/$1
   fi
   cp small/* /home/centos/www/gfx/$1
-  rm -rf ~/output/weathervis/$1
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
@@ -42,26 +41,17 @@ if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
 
 $cf
 
-<<<<<<< HEAD
 #fclagh=2400 #24 hours before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
   modeldatehour=$(date -u --date "today - $((2400*60/100)) minutes" +'%Y%m%d%H%M')
 else
   modeldatehour=$(date -v-$((2400*60/100))M -u +%Y%m%d%H%M)
-=======
-#fclagh=1200 #12 hour before forecsast is issued
-
-if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
-  modeldatehour=$(date -u --date "today - $((1200*60/100)) minutes" +'%Y%m%d%H%M')
-else
-  modeldatehour=$(date -v-$((1200*60/100))M -u +%Y%m%d%H%M)
->>>>>>> refs/remotes/origin/centos
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
 #modeldatehour="2021022000"
-modeldatehour="2021031500"
+#modeldatehour="2021031500"
 
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
@@ -172,5 +162,7 @@ for md in ${model[@]}; do
 
   done
 done
+
+rm -rf ~/output/weathervis/$modelrun
 
 # fin
