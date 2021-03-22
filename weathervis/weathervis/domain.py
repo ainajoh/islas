@@ -66,7 +66,9 @@ class domain():
         if self.lonlat and not self.idx:
             self.idx = lonlat2idx(self.lonlat, self.url)
         print("IN DOMAIN")
-        if self.point_name and not self.domain_name:
+        print(self.point_name)
+        print(self.domain_name)
+        if self.point_name != None and self.domain_name == None:
             print("GOTCHA")
             sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
             plon = float(sites.loc[self.point_name].lon)
@@ -355,3 +357,15 @@ class domain():
         maxlat = float(plat + 0.05)
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Iceland(self):
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        self.domain_name = "Iceland"
+        #self.lonlat = [12.0, 19.5, 68.0, 70.6]
+        #self.idx = lonlat2idx(self.lonlat, self.url)
+        #self.lonlat = [-65, 20., 58., 85]
+        self.lonlat = [-26., -8, 63., 67]
+
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+
