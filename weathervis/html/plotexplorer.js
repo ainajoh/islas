@@ -39,33 +39,43 @@ for (i=0; i<dend.length; i++) {
 }
 var pnam = ["MRR","DSD","CRDS","WSIP",];
 var ptit = ["Micro rain radar","Disdrometer","Picarro L2130-i (HIDS2254)","Watersip",];
-var vnam = ["Z","RR","W","LWC","Dm","RR","SND","logND","VIS","CNT","REFL","T","q","dD","d18O","dxs","SLAT","SLON","LFR","TTIM","SSKT","TRD","DXS","CT",];
-var vtit = ["Reflectivity","Precipitation rate","Vertical velocity","Liquid water content","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity","delta D","delta O-18","d-excess","Source latitude","Source longitude","Land fraction","Transport time","Source skin temperature","Transport distance","Deuterium excess","Condensation temperature",];
-var vuni = ["dBz","mm h-1","m s-1","g kg-1","mm","mm h-1","1","1","m","1","dBz","C","g kg-1","permil","permil","permil","deg N","deg E","percent","hours","deg C","km","permil","deg C",];
-var caps = ["Reflectivity","Precipitation rate from bin 2","Vertical fall speed","Liquid water content in air","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity from Picarro L2130-i","D isotope ratio in vapour from Picarro L2130-i","O-18 isotope ratio in vapour from Picarro L2130-i","deuterium excess in vapour from Picarro L2130-i","Moisture source mean latitude (vapour analysis)","Moisture source mean longitude (vapour analysis)","Moisture source mean land fraction (vapour analysis)","Moisture source mean transport time (vapour analysis)","Moisture source mean source SKT (vapour analysis)","Moisture source mean transport distance (vapour analysis)","Moisture source mean deuterium excess (vapour analysis)","Moisture source mean condensation temperature (vapour analysis)",]
+var vnam = ["Z","RR","W","LWC","Dm","RR","SND","logND","VIS","CNT","REFL","T","q","dD","d18O","dxs","p","SLAT","SLON","LFR","TTIM","SSKT","TRD","DXS","CT",];
+var vtit = ["Reflectivity","Precipitation rate","Vertical velocity","Liquid water content","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity","delta D","delta O-18","d-excess","pressure","Source latitude","Source longitude","Land fraction","Transport time","Source skin temperature","Transport distance","Deuterium excess","Condensation temperature",];
+var vuni = ["dBz","mm h-1","m s-1","g kg-1","mm","mm h-1","1","1","m","1","dBz","C","g kg-1","permil","permil","permil","Torr","deg N","deg E","percent","hours","deg C","km","permil","deg C",];
+var caps = ["Reflectivity","Precipitation rate from bin 2","Vertical fall speed","Liquid water content in air","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity from Picarro L2130-i","D isotope ratio in vapour from Picarro L2130-i","O-18 isotope ratio in vapour from Picarro L2130-i","deuterium excess in vapour from Picarro L2130-i","ambient pressure from Picarro L2130-i","Moisture source mean latitude (vapour analysis)","Moisture source mean longitude (vapour analysis)","Moisture source mean land fraction (vapour analysis)","Moisture source mean transport time (vapour analysis)","Moisture source mean source SKT (vapour analysis)","Moisture source mean transport distance (vapour analysis)","Moisture source mean deuterium excess (vapour analysis)","Moisture source mean condensation temperature (vapour analysis)",]
 // length and indices for platforms
 var plen = [4];
 var pstart = [0];
 for (i=0; i<plen.length; i++) {
     pstart.push(pstart[i]+plen[i]);
 }
-var vlen = [4, 8, 4, 8];
+var vlen = [4, 8, 5, 8];
 var vstart = [0];
 for (i=0; i<vlen.length; i++) {
     vstart.push(vstart[i]+vlen[i]);
+}
+
+// mode switch
+var ndays=7;
+var mdays=28;
+var mode = 0; // 0 for 7-day, 1 for 1-day
+if ( mode==1 ) {
+  ndays=1;
+  mdays=28
 }
 
 // current indices
 var insind = 0;
 var parind = 0;
 var cday = currentPeriod(new Date());
-var eday = cday.addDays(7);
+var eday = cday.addDays(ndays);
 var mnam = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 // set the current period
 
 // return the current Friday to Friday period
 function currentPeriod(date)
 {
+  if ( mode == 0) {
     weekday=date.getDay();
     if (weekday<5) {
         date=date.addDays(-7+(5-weekday));
@@ -73,7 +83,10 @@ function currentPeriod(date)
     if (weekday==6) {
         date=date.addDays(-1);
     }
-    return date;
+  } else {
+    date=date.addDays(1);
+  }
+  return date
 }
 
 function setInitialPeriod()
@@ -100,13 +113,33 @@ function fmtDateWeek(d,sep) {
 	  mnam[d.getMonth() + 0] ].join(sep);
 }
 
+// mode switch
+function toggleMode()
+{
+  if (mode==0) {
+    mode=1;
+    ndays=1;
+    mdays=7;
+    document.getElementById("mode").value="daily";
+  } else {
+    mode=0;
+    ndays=7;
+    mdays=28;
+    document.getElementById("mode").value="weekly";
+  }
+}
+
 // advance to next week
 function nextWeek()
 {
 	// determine date range
-	cday=cday.addDays(7);
-	eday=eday.addDays(7);
-	document.getElementById("Index").innerHTML="Week "+pad(cday.getWeek())+" ("+fmtDateWeek(cday," ")+" to "+fmtDateWeek(eday," ")+" "+eday.getFullYear()+")"
+	cday=cday.addDays(ndays);
+	eday=eday.addDays(ndays);
+  if ( mode == 0 ) {
+  	document.getElementById("Index").innerHTML="Week "+pad(cday.getWeek())+" ("+fmtDateWeek(cday," ")+" to "+fmtDateWeek(eday," ")+" "+eday.getFullYear()+")";
+  } else {
+  	document.getElementById("Index").innerHTML="Date: "+fmtDateWeek(cday," ")+" "+eday.getFullYear();
+  }
 	// update image
   refreshImage(0);
   refreshImage(1);
@@ -116,32 +149,36 @@ function nextWeek()
 function prevWeek()
 {
 	// determine date range
-	cday=cday.addDays(-7);
-	eday=eday.addDays(-7);
-	document.getElementById("Index").innerHTML="Week "+pad(cday.getWeek())+" ("+fmtDateWeek(cday," ")+" to "+fmtDateWeek(eday," ")+" "+eday.getFullYear()+")"
+	cday=cday.addDays(-ndays);
+	eday=eday.addDays(-ndays);
+  if ( mode == 0 ) {
+  	document.getElementById("Index").innerHTML="Week "+pad(cday.getWeek())+" ("+fmtDateWeek(cday," ")+" to "+fmtDateWeek(eday," ")+" "+eday.getFullYear()+")";
+  } else {
+  	document.getElementById("Index").innerHTML="Date: "+fmtDateWeek(cday," ")+" "+eday.getFullYear();
+  }
 	// update image
-    refreshImage(0);
-    refreshImage(1);
+  refreshImage(0);
+  refreshImage(1);
 }
 
 // advance to next month
 function nextMonth()
 {
 	// determine date range
-	cday=cday.addDays(28);
-	eday=eday.addDays(28);
+	cday=cday.addDays(mdays);
+	eday=eday.addDays(mdays);
 	document.getElementById("Index").innerHTML="Week "+pad(cday.getWeek())+" ("+fmtDateWeek(cday," ")+" to "+fmtDateWeek(eday," ")+" "+eday.getFullYear()+")"
 	// update image
-    refreshImage(0);
-    refreshImage(1);
+  refreshImage(0);
+  refreshImage(1);
 }
 
 // return to previous month
 function prevMonth()
 {
 	// determine date range
-	cday=cday.addDays(-28);
-	eday=eday.addDays(-28);
+	cday=cday.addDays(-mdays);
+	eday=eday.addDays(-mdays);
 	document.getElementById("Index").innerHTML="Week "+pad(cday.getWeek())+" ("+fmtDateWeek(cday," ")+" to "+fmtDateWeek(eday," ")+" "+eday.getFullYear()+")"
 	// update image
   refreshImage(0);
@@ -213,8 +250,15 @@ function refreshImage(n)
   parind=document.getElementById("parameter"+n).selectedIndex;
   plt=pnam[pstart[depind]+insind];
   par=vnam[vstart[pstart[depind]+insind]+parind];
-  // set image source
-  document.images[n].src = "gfx/"+dnam[depind]+"/"+plt+"_"+par+"_"+dat1+"-"+dat2+".png";
-  // set caption
-  document.getElementById("caption"+n).innerHTML = caps[vstart[pstart[depind]+insind]+parind]+" ("+vuni[vstart[pstart[depind]+insind]+parind]+")";
+  if ( mode==0 ) {
+    // set image source
+    document.images[n].src = "gfx/"+dnam[depind]+"/"+plt+"_"+par+"_"+dat1+"-"+dat2+".png";
+    // set caption
+    document.getElementById("caption"+n).innerHTML = caps[vstart[pstart[depind]+insind]+parind]+" ("+vuni[vstart[pstart[depind]+insind]+parind]+")";
+  } else {
+    // set image source
+    document.images[n].src = "gfx/"+dnam[depind]+"/"+plt+"_"+par+"_"+dat1+".png";
+    // set caption
+    document.getElementById("caption"+n).innerHTML = caps[vstart[pstart[depind]+insind]+parind]+" ("+vuni[vstart[pstart[depind]+insind]+parind]+")";
+  }
 }
