@@ -193,8 +193,18 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   #for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-  for s in np.arange(np.min(args.steps), np.max(args.steps)+1, 1):
-    IWC_LWC(datetime=args.datetime, steps = [s, s], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid, m_level=args.m_level)
-
+  #for s in np.arange(np.min(args.steps), np.max(args.steps)+1, 1):
+  # Albatross
+  # chunck it into 24-h steps, first find out how many chunks we need, s = steps
+  s  = np.arange(np.min(args.steps),np.max(args.steps))
+  cn = np.int(len(s)/24)
+  if cn == 0:  # length of 24 not exceeded
+      IWC_LWC(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid, m_level=args.m_level)
+  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
+      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to "request limit" ##########"i)
+      chunks = np.array_split(s,cn+1)
+      for c in chunks:
+          IWC_LWC(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model, domain_name = args.domain_name,
+                  domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid, m_level=args.m_level)
 # fin
