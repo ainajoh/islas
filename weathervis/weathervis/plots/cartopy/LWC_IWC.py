@@ -162,7 +162,8 @@ def IWC_LWC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                                               format='%.1f',ticks=[0.09, np.nanmax(dmap_meps.LWC[tidx, :, :])*0.8])
                     proxy = [plt.axhline(y=0, xmin=0, xmax=0, color="gray",zorder=7)]
                     # proxy.extend(proxy1)
-                    lg = ax1.legend(proxy, ["MSLP [hPa]"])
+                    # legend's location fixed, otherwise it takes very long to find optimal spot
+                    lg = ax1.legend(proxy, ["MSLP [hPa]"],loc='upper left')
                     frame = lg.get_frame()
                     frame.set_facecolor('white')
                     frame.set_alpha(0.8)
