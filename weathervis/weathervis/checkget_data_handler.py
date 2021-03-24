@@ -44,18 +44,23 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name
     if domain_name != None and domain_name in dir(data_domain):
       print(f"\n####### Setting up domain: {domain_name} ##########")
       domain_name = domain_name.strip()
+      #data_domain = domain(dt, model, file=file, domain_name=domain_name)
       if re.search("\(\)$", domain_name):
         func = f"data_domain.{domain_name}"
       else:
         func = f"data_domain.{domain_name}()"
+      print(func)
+      print(domain_name)
       eval(func)
     else:
       print(f"No domain found with that name; {domain_name}")
+  else:
+    data_domain=None
   if (point_name !=None and domain_name == None and domain_lonlat == None):
      print("GGGGGOOOO")
      data_domain = domain(dt, model, file=file, point_name=point_name)
-  else:
-    data_domain=None
+     print("DOM DONE")
+  print(data_domain)
   return data_domain
 
 
@@ -144,7 +149,7 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
     print(ppd)
     return ppd,bad_param
 
-def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None,bad_param=[],bad_param_sfx=[],point_name=None):
+def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name=None, domain_lonlat=None,bad_param=[],bad_param_sfx=[],point_name=None):
     print("HEEEE")
     fixed_var = ["ap", "b", "ap2", "b2", "pressure", "hybrid", "hybrid2","hybrid0"]  # this should be gotten from get_data
     #indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
@@ -167,7 +172,8 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level, domain_name=None, d
         print(ourfileobj)
         data_domain = domain_input_handler(dt=date, model=model, domain_name=domain_name, domain_lonlat=domain_lonlat, file =ourfileobj, point_name=point_name)
         print("retrieve strt")
-        dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date,m_level=m_level,data_domain=data_domain)
+        print(data_domain)
+        dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date, m_level=m_level, p_level=p_level, data_domain=data_domain)
         print("real retriete")
         print(dmet.url)
         dmet.retrieve()
@@ -228,7 +234,7 @@ def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=N
         try:
             print("getting data")#our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None
             dmet,data_domain,bad_param = retrievenow(our_choice = all_choices.loc[i],model=model,step=step, date=date,fileobj=fileobj,
-                               m_level=m_level,domain_name=domain_name, domain_lonlat=domain_lonlat, bad_param = bad_param,bad_param_sfx = bad_param_sfx,point_name=point_name)
+                               m_level=m_level,p_level=p_level,domain_name=domain_name, domain_lonlat=domain_lonlat, bad_param = bad_param,bad_param_sfx = bad_param_sfx,point_name=point_name)
             break
         except:
             #del (dmet)
