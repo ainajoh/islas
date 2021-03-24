@@ -245,7 +245,7 @@ function initWebsite()
         row=0
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	document.getElementById("ftime"+row).innerHTML=getFcStep();
+	//document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure(); // prepare both rows
 }
 
@@ -265,7 +265,7 @@ function skiponeback()
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	document.getElementById("ftime"+row).innerHTML=getFcStep();
+	//document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
@@ -285,7 +285,7 @@ function skiponeforward()
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	document.getElementById("ftime"+row).innerHTML=getFcStep();
+	//document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
@@ -304,7 +304,7 @@ function skip1hforward()
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	document.getElementById("ftime"+row).innerHTML=getFcStep();
+	//document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
@@ -323,7 +323,7 @@ function skip1hback()
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	document.getElementById("ftime"+row).innerHTML=getFcStep();
+	//document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
