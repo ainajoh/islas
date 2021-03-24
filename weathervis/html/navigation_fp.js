@@ -82,7 +82,7 @@ function getDomainname(n)
 		return "West_Norway";
 		break;
 		case 7:
-		return "Osteroy";
+		return "Iceland";
 		break;
 		default:
 		return "None";
