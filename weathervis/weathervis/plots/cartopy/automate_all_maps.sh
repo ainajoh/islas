@@ -144,43 +144,46 @@ echo $modelrun
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_T850="python T850_RH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]}  --model $md --domain_name $domain_name"
-    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --m_level 24 64"
-    runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
+    runstring_windlvl="python Wind_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --p_level 700 850 925"
+    runstring_T850="python T850_RH.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 steps_max  --model $md --domain_name $domain_name"
+    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name"
+    runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name --m_level 24 64"
+    runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name"
 
+    echo runstring_windlvl
+    $runstring_windlvl
     echo $runstring_Z
-    $runstring_Z
-    converting $modelrun
+    #$runstring_Z
+    #converting $modelrun
     echo $runstring_OLR
-    $runstring_OLR
-    converting $modelrun
+    #$runstring_OLR
+    #converting $modelrun
     echo $runstring_T850
-    $runstring_T850
-    converting $modelrun
+    #$runstring_T850
+    #converting $modelrun
     echo $runstring_CAO
-    $runstring_CAO
-    converting $modelrun
+    #$runstring_CAO
+    #converting $modelrun
     echo $runstring_BLH
-    $runstring_BLH
-    converting $modelrun
+    #$runstring_BLH
+    #converting $modelrun
     echo $runstring_SURF
-    $runstring_SURF
-    converting $modelrun
+    #$runstring_SURF
+    #converting $modelrun
     echo $runstring_dxs
-    $runstring_dxs
-    converting $modelrun
+    #$runstring_dxs
+    #converting $modelrun
     echo $runstring_T2M
-    $runstring_T2M
-    converting $modelrun
+    #$runstring_T2M
+    #converting $modelrun
     echo $runstring_WC
-    $runstring_WC
-    converting $modelrun
+    #$runstring_WC
+    #converting $modelrun
 
   done
 done

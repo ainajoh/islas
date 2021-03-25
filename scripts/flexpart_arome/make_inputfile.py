@@ -92,10 +92,10 @@ def make_inputfile(datetime, steps, domain_name, domain_lonlat, point_name, poin
     #file="/Users/ainajoh/flexarome.input-ISLAS-lowres__INPUT"
 
     if int(sim_direction)==-1:
-        new_beg=end_YYYYMMDD
-        new_end=begin_YYYYMMDD
-        begin_YYYYMMDD=new_beg
-        end_YYYYMMDD=new_end
+        new_beg=end_rel_YYYYMMDD
+        new_end=begin_rel_YYYYMMDD
+        begin_rel_YYYYMMDD=new_beg
+        end_rel_YYYYMMDD=new_end
 
     import re
     subdict={"{date_input_for_flexpart}":datetime,
