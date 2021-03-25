@@ -2,18 +2,19 @@
 <head>
 <meta></meta>
 <TITLE>
-PlotExplorer for ISLAS2021 Campaign data, Geophysical Institute, University of Bergen, Norway
+PlotExplorer for Campaign data, Geophysical Institute, University of Bergen, Norway
 </TITLE>
 <LINK rel='stylesheet' type='text/css' href='watersip.css'>
 <script type="text/javascript" src="plotexplorer.js"></script>
 </HEAD>
 
 <BODY bgcolor=#ffffff vlink=#000055 link=#0000d0 onload="setInitialPeriod()">
-<h2 align=center>Weather observations during field deployments with the Geophysical Institute, University of Bergen, Norway</h2>
-  <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
+<h2 align=center>PlotExplorer for ISLAS2021 Campaign data, Geophysical Institute, University of Bergen, Norway</h2>
+<p>
+<table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart EC</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_AA.html>Flexpart AROME</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=forecasts.html>AROME maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=forecast.html>AROME maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms.html>Surface meteograms</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms_vertical.html>Vertical meteograms</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=probability.html>EC Ensemble</a></td>
@@ -22,7 +23,7 @@ PlotExplorer for ISLAS2021 Campaign data, Geophysical Institute, University of B
     <td width=100 align=center bgcolor=#c0c0c0><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><b>Quicklooks</b></td>
     </tr>
-  </table>
+</table>
 <P align=left>
 <table border=0 bgcolor=#ffffff>
     <tr><td width=50></td><td>
@@ -44,6 +45,9 @@ Deployment: <select id="deployment" name="deployment" size=1 onChange="javascrip
             <option>Disdrometer</option>
             <option>Picarro L2130-i (HIDS2254)</option>
             <option>Watersip</option>
+            <option>Aerosols</option>
+            <option>Micro rain radar at ALOMAR</option>
+            <option>Windmast at Oksebasen, Andenes</option>
 		</select>
 			 Parameter: 
       <select id="parameter0" name="parameter0" size=1 onChange="javascript:selParameter(0)">
@@ -59,6 +63,7 @@ Deployment: <select id="deployment" name="deployment" size=1 onChange="javascrip
       <span width=350 id="Index"> </span>
       <input name=">" value=">" type="button" onClick="javascript:nextWeek();">
       <input name=">>" value=">>" type="button" onClick="javascript:nextMonth();">
+      <input id="mode" value="weekly" type="button" onClick="javascript:toggleMode();">
       </form>
    </td>
    <td width=50></td>
@@ -77,6 +82,12 @@ Deployment: <select id="deployment" name="deployment" size=1 onChange="javascrip
           <option>Picarro L2130-i (HIDS2254)</option>
           
           <option>Watersip</option>
+          
+          <option>Aerosols</option>
+          
+          <option>Micro rain radar at ALOMAR</option>
+          
+          <option>Windmast at Oksebasen, Andenes</option>
           
 		</select>
 			 Parameter: 
@@ -113,7 +124,7 @@ Deployment: <select id="deployment" name="deployment" size=1 onChange="javascrip
 <p>
 Contact: <i>harald (dot) sodemann (at) uib (dot) no</i>.
 <p>
-Last changes: 2021-03-20 18:50:23.815980
+Last changes: 2021-03-24 23:58:34.307596
 <p>
 <a href="" target=main>[back to Homepage]</a>
 </body>

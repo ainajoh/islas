@@ -11,7 +11,7 @@ AROME Arctic meteogram forecasts for ISLAS2021
 <BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
   <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
     <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
-    <td width=1200 colspan=7><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td></tr>
+    <td width=1300 colspan=11><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td></tr>
     <tr>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart EC</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_AA.html>Flexpart AROME</a></td>
@@ -22,10 +22,11 @@ AROME Arctic meteogram forecasts for ISLAS2021
     <td width=100 align=center bgcolor=#c0c0c0><a href=watersip.html>WaterSip</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">ETH maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=index.html>Quicklooks</a></td></tr>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=satellites.html>Satellites</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=index.html>Quicklooks</a></td></tr>
     <tr>
-    <td width=800 align=center colspan=8>Base: AROME Arctic forecast. Plots updated 4 times daily at 04, 10, 16, 22 UTC.</td></tr>
-    <tr><td></td></tr></table>
+    <td width=1300 align=center colspan=12>Base: AROME Arctic forecast. Plots updated 4 times daily at 04, 10, 16, 22 UTC.</td></tr>
+    </table>
   <table border=0 bgcolor=#ffffff width=1300 align=center>
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="800px"></td>
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="800px"></td></tr>
@@ -43,6 +44,9 @@ Location:<select id="sel_v1" size=1 onChange="javascript:selectLocation(0)">
 <option value=5>Bjornoya</option>
 <option value=6>NorwegianSea</option>
 <option value=7>CAO</option>
+<option value=8>pcmet1</option>
+<option value=9>pcmet2</option>
+<option value=10>pcmet3</option>
 </select>
 </td>
 <td align=center>
@@ -59,17 +63,17 @@ Location:<select id="sel_v2" size=1 onChange="javascript:selectLocation(1)">
 <option value=5>Bjornoya</option>
 <option value=6>NorwegianSea</option>
 <option value=7>CAO</option>
+<option value=7>pcmet1</option>
+<option value=7>pcmet2</option>
+<option value=7>pcmet3</option>
 </option>
 </select>
-</td></tr><tr><td>
+</td></tr><tr><td align=center colspan=3>
+  <form name="selpic" action="">
 Base time:
       <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(0)">
       <span id="btime0">now</span>
       <input name="forward" value="+6h" type="button" onClick="javascript:skiponeforward(0)">
-			Forecast time:
-      <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(0)">
-      <span id="ftime0">t+00h</span>
-      <input name="forward" value="+1h" type="button" onClick="javascript:skip1hforward(0)">
        <b>Valid time: <span id="valid0">valid</span></b>
       </form>
   </td></tr>
@@ -80,6 +84,5 @@ Base time:
 <p>
 Contact: <i>aina.johannessen@uib.no, harald.sodemann@uib.no</i>.
 <p>
-<a href="http://www.uib.no/gfi" target=main>[back to GFI Homepage]</a>
 </body>
 </html>
