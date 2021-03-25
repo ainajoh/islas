@@ -74,8 +74,6 @@ class domain():
         #    url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_det_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
         #eval()
 
-
-
     def MEPS(self):
         self.lonlat = [ -1, 60., 49., 72]
         self.idx = lonlat2idx(self.lonlat, self.url)
@@ -89,7 +87,8 @@ class domain():
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def West_Norway(self):
-        self.lonlat = [2., 12., 53., 64.]  # lonmin,lonmax,latmin,latmax,
+        #self.lonlat = [2., 12., 53., 64.]  # lonmin,lonmax,latmin,latmax,
+        self.lonlat = [1.0, 12., 54.5, 64.]  # lonmin,lonmax,latmin,latmax,
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def AromeArctic(self):
@@ -120,7 +119,7 @@ class domain():
     def North_Norway(self): #data
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "North_Norway"
-        self.lonlat = [5,25, 65, 77]  #
+        self.lonlat = [5,20, 66.5, 76.2]  #
         self.idx = lonlat2idx(self.lonlat,url)# RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def KingsBay(self): #bigger data
@@ -148,11 +147,24 @@ class domain():
 
     def Andenes(self):
         #16.120;69.310;10
+        self.domain_name = "Andenes"
         self.lonlat=[15.8,16.4,69.2,69.4]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def VARLEGENHUKEN(self):
-        point_name = "VARLEGENHUKEN"
+    def ALOMAR(self):
+        #16.120;69.310;10
+        self.domain_name = "ALOMAR"
+        self.lonlat=[15.8,16.4,69.2,69.4]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Andenes_area(self):
+        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        self.domain_name = "Andenes_area"
+        self.lonlat=[12.0,19.5,68.0,70.6]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Varlegenhuken(self):
+        point_name = "Varlegenhuken"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -163,9 +175,8 @@ class domain():
         self.lonlat=[minlon,maxlon,minlat,maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-
-    def LONGERYBYEN(self):
-        point_name = "LONGERYBYEN"
+    def Longyearbyen(self):
+        point_name = "Longyearbyen"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -176,9 +187,8 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-
-    def HOPEN(self):
-        point_name = "HOPEN"
+    def Hopen(self):
+        point_name = "Hopen"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -189,8 +199,8 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def BODO(self):
-        point_name = "BODO"
+    def Bodo(self):
+        point_name = "Bodo"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -225,8 +235,8 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def NYAlesund(self):
-        point_name = "NYAlesund"
+    def NyAlesund(self):
+        point_name = "NyAlesund"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -248,6 +258,19 @@ class domain():
         maxlat = float(plat + 0.09)
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Osteroy(self):
+        point_name = "Osteroy"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 1.70)
+        maxlon = float(plon + 1.10)
+        minlat = float(plat - 0.80)
+        maxlat = float(plat + 1.00)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
     def Olsnesnipa(self): #PAraglidingstart
         point_name = "Olsnesnipa"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
@@ -260,8 +283,8 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def Janmayen(self): #PAraglidingstart
-        point_name = "Janmayen"
+    def JanMayen(self): #PAraglidingstart
+        point_name = "JanMayen"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -272,8 +295,8 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def Norwegiansea(self): #PAraglidingstart
-        point_name = "Norwegiansea"
+    def CAO(self): #PAraglidingstart
+        point_name = "JanMayen"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -282,6 +305,24 @@ class domain():
         minlat = float(plat - 0.08)
         maxlat = float(plat + 0.05)
         self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def NorwegianSea(self): #PAraglidingstart
+        point_name = "NorwegianSea"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.22)
+        maxlon = float(plon + 0.18)
+        minlat = float(plat - 0.08)
+        maxlat = float(plat + 0.05)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def NorwegianSea_area(self): #PAraglidingstart
+        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        self.domain_name = "NorwegianSea_area"
+        self.lonlat = [-7,16, 69.0, 77.2]  #
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def GEOF322(self): #PAraglidingstart
@@ -295,3 +336,4 @@ class domain():
         maxlat = float(plat + 0.05)
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
+
