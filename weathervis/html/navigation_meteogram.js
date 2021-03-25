@@ -103,6 +103,15 @@ function getDomainname(n)
 		case 7:
 		return "PMETEOGRAM_CAO_";
 		break;
+	        case 8:
+                return "PMETEOGRAM_pcmet1_";
+                break;
+	        case 9:
+                return "PMETEOGRAM_pcmet2_";
+                break;
+		case 10:
+                return "PMETEOGRAM_pcmet3";
+                break;
 		default:
 		return "None";
 		break;
