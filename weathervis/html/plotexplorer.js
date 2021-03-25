@@ -37,19 +37,19 @@ for (i=0; i<dend.length; i++) {
     aday = new Date(dend[i]);
     dend[i]=currentPeriod(aday.addDays(7));
 }
-var pnam = ["MRR","DSD","CRDS","WSIP",];
-var ptit = ["Micro rain radar","Disdrometer","Picarro L2130-i (HIDS2254)","Watersip",];
-var vnam = ["Z","RR","W","LWC","Dm","RR","SND","logND","VIS","CNT","REFL","T","q","dD","d18O","dxs","p","SLAT","SLON","LFR","TTIM","SSKT","TRD","DXS","CT",];
-var vtit = ["Reflectivity","Precipitation rate","Vertical velocity","Liquid water content","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity","delta D","delta O-18","d-excess","pressure","Source latitude","Source longitude","Land fraction","Transport time","Source skin temperature","Transport distance","Deuterium excess","Condensation temperature",];
-var vuni = ["dBz","mm h-1","m s-1","g kg-1","mm","mm h-1","1","1","m","1","dBz","C","g kg-1","permil","permil","permil","Torr","deg N","deg E","percent","hours","deg C","km","permil","deg C",];
-var caps = ["Reflectivity","Precipitation rate from bin 2","Vertical fall speed","Liquid water content in air","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity from Picarro L2130-i","D isotope ratio in vapour from Picarro L2130-i","O-18 isotope ratio in vapour from Picarro L2130-i","deuterium excess in vapour from Picarro L2130-i","ambient pressure from Picarro L2130-i","Moisture source mean latitude (vapour analysis)","Moisture source mean longitude (vapour analysis)","Moisture source mean land fraction (vapour analysis)","Moisture source mean transport time (vapour analysis)","Moisture source mean source SKT (vapour analysis)","Moisture source mean transport distance (vapour analysis)","Moisture source mean deuterium excess (vapour analysis)","Moisture source mean condensation temperature (vapour analysis)",]
+var pnam = ["MRR","DSD","CRDS","WSIP","OPC","ALOMAR","windmast",];
+var ptit = ["Micro rain radar","Disdrometer","Picarro L2130-i (HIDS2254)","Watersip","Aerosols","Micro rain radar at ALOMAR","Windmast at Oksebasen, Andenes",];
+var vnam = ["Z","RR","W","LWC","Dm","RR","SND","logND","VIS","CNT","REFL","T","q","dD","d18O","dxs","p","SLAT","SLON","LFR","TTIM","SSKT","TRD","DXS","CT","N","Z","RR","W","LWC","ws","wdir_low","wdir_high",];
+var vtit = ["Reflectivity","Precipitation rate","Vertical velocity","Liquid water content","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity","delta D","delta O-18","d-excess","pressure","Source latitude","Source longitude","Land fraction","Transport time","Source skin temperature","Transport distance","Deuterium excess","Condensation temperature","OPC","Reflectivity","Precipitation rate","Vertical velocity","Liquid water content","Windspeed","Wind direction low","Wind direction high",];
+var vuni = ["dBz","mm h-1","m s-1","g kg-1","mm","mm h-1","1","1","m","1","dBz","C","g kg-1","permil","permil","permil","Torr","deg N","deg E","percent","hours","deg C","km","permil","deg C","number per liter","dBz","mm h-1","m s-1","g kg-1","m s-1","degrees N","degrees N",];
+var caps = ["Reflectivity","Precipitation rate from bin 2","Vertical fall speed","Liquid water content in air","Mean diameter","Precipitation rate","Size spectrum","Size classes","Visibility","Droplet count","Reflectivity","Housing temperature","Specific humidity from Picarro L2130-i","D isotope ratio in vapour from Picarro L2130-i","O-18 isotope ratio in vapour from Picarro L2130-i","deuterium excess in vapour from Picarro L2130-i","ambient pressure from Picarro L2130-i","Moisture source mean latitude (vapour analysis)","Moisture source mean longitude (vapour analysis)","Moisture source mean land fraction (vapour analysis)","Moisture source mean transport time (vapour analysis)","Moisture source mean source SKT (vapour analysis)","Moisture source mean transport distance (vapour analysis)","Moisture source mean deuterium excess (vapour analysis)","Moisture source mean condensation temperature (vapour analysis)","Number of particles in size bins","Reflectivity","Precipitation rate from bin 2","Vertical fall speed","Liquid water content in air","Wind speed at low and high levels","Wind direction at lower levels","Wind direction at higher levels",]
 // length and indices for platforms
-var plen = [4];
+var plen = [7];
 var pstart = [0];
 for (i=0; i<plen.length; i++) {
     pstart.push(pstart[i]+plen[i]);
 }
-var vlen = [4, 8, 5, 8];
+var vlen = [4, 8, 5, 8, 1, 4, 3];
 var vstart = [0];
 for (i=0; i<vlen.length; i++) {
     vstart.push(vstart[i]+vlen[i]);
