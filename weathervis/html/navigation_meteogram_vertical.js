@@ -103,6 +103,15 @@ function getDomainname(n)
 		case 7:
 		return "VPMETEOGRAM_CAO_";
 		break;
+	        case 8:
+                return "VPMETEOGRAM_pcmet1_";
+                break;
+	        case 9:
+                return "VPMETEOGRAM_pcmet2_";
+                break;
+		case 10:
+                return "VPMETEOGRAM_pcmet3_";
+                break;
 		default:
 		return "None";
 		break;
