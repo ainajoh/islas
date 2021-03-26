@@ -32,7 +32,7 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
         hour = int(dt[-2:])
         all_param = ['cloud_base_altitude','cloud_top_altitude','air_pressure_at_sea_level','surface_geopotential']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
-                                                           step=steps)
+                                                           step=steps, domain_name=domain_name)
         
         dmet.air_pressure_at_sea_level /= 100
         # Cloud top, cloud bse
