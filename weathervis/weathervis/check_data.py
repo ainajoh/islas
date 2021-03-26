@@ -30,7 +30,7 @@ model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 levtype = [None,"pl","ml"] #include pl here aswell.
 
-use_latest = False
+use_latest = True
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
@@ -283,7 +283,11 @@ class check_data():
         i=0
         while i<len(df):
             file=df["File"][i]
-            url = base_urlfile + YYYY+"/"+MM+"/"+DD+ "/"+ file
+            if use_latest == True:
+              url = base_urlfile + file
+            else:
+              url = base_urlfile + YYYY+"/"+MM+"/"+DD+ "/"+ file
+
             dataset = Dataset(url)
             #for all independent var (dimensions) make a column with dict
             dn = dataset.dimensions.keys()

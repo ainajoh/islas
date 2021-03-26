@@ -4,7 +4,7 @@ from netCDF4 import Dataset
 import pandas as pd
 from weathervis.calculation import *
 
-use_latest = False
+use_latest = True
 
 #Preset domain.
 if __name__ == "__main__":
@@ -130,14 +130,14 @@ class domain():
 
         self.lonlat = [15, 23, 77, 82]  #
         self.idx = lonlat2idx(self.lonlat,
-                              url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+                              url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard_z1(self):  # map
         #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [4, 23, 76.3, 82]  #
         self.idx = lonlat2idx(self.lonlat,
-                              url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+                              url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard(self):  # data
         # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
@@ -151,19 +151,19 @@ class domain():
         self.domain_name = "North_Norway"
         self.lonlat = [5, 20, 66.5, 76.2]  #
         self.idx = lonlat2idx(self.lonlat,
-                              url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+                              url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def KingsBay(self):  # bigger data
         #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [10, 13.3, 78.6, 79.3]
-        self.idx = lonlat2idx(self.lonlat, url)  # Rough
+        self.idx = lonlat2idx(self.lonlat, url=self.url)  # Rough
 
     def KingsBay_Z0(self):  # map
         #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [11, 13., 78.73, 79.16]
-        self.idx = lonlat2idx(self.lonlat, url)  # Rough
+        self.idx = lonlat2idx(self.lonlat, url=self.url)  # Rough
 
     def KingsBay_Z1(self):  # smaller data
         #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
@@ -175,7 +175,7 @@ class domain():
                               186, 187, 188, 189, 182, 183, 184, 185, 186, 187, 188, 189, 190, 183, 184, 185, 186, 187,
                               188, 189, 190, 191, 185, 186, 187, 188, 189, 190, 186, 187, 188, 189, 190, 187, 188,
                               189]])  # y,x
-        self.lonlat = idx2lonlat(self.idx, url)  # rough
+        self.lonlat = idx2lonlat(self.idx, url=self.url)  # rough
 
     def Andenes(self):
         # 16.120;69.310;10

@@ -29,7 +29,7 @@ package_path = os.path.dirname(__file__)
 # Nice logging info saved to aditional file
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
-use_latest = False
+use_latest = True
 
 def SomeError( exception = Exception, message = "Something did not go well" ):
     # Nice error messeges.
