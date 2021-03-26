@@ -60,8 +60,9 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0,
                                     standard_parallels=parallels,globe=globe)
         make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-        # for the generation of the colormap, list of hexcodes
-        C = ['#093b85','#1068e9','#f9db65','#f45510','#c22ecb','#531357']
+        # generation of discrete colormap
+        cm = colors.ListedColormap(['#f4f8f8','#98d1f0','#f9db65','#f45510',
+                                  '#c22ecb','#531357'])
 
         # loop over pressure levels, do not forget the indent the whole routine
         for ip,p in enumerate(dmet.pressure):
@@ -98,7 +99,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                     #CC=ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.get_cmap('Accent', 6), vmin=0, vmax=30,zorder=2)
                     #######################
                     # THIS MAKES THE COLORMAP, FOR AINA TO NOTICE ME
-                    cm = get_continuous_cmap(C) # <-- HERE, HERE,HERE 
+                    #cm = get_continuous_cmap(C) # <-- HERE, HERE,HERE , not needed right now
                     #########################
                     CC=ax1.contourf(x,y,WS,levels=np.linspace(0.0, 30, 7),cmap=cm,zorder=2)
                     # add the wind barbs or quivers
