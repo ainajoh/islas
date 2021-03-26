@@ -24,7 +24,7 @@ def nearest_neighbour_idx(plon,plat, longitudes, latitudes, nmin=1):
     indexes as tuples in array for the closest gridpoint near a specific location.
     point = [(y1,x1),(y2,x2)]. This format is done in order to ease looping through points.
     for p in point:
-        #gives p = (y1,x1)
+        #gies p = (y1,x1)
         xatlocation = x_wind_10m[:,0,p]
     """
     #source https://github.com/metno/NWPdocs/wiki/From-x-y-wind-to-wind-direction
@@ -95,19 +95,20 @@ def get_samplesize(q, rho, a=0.5, b = 0.95, acc = 3):
     -------
     DOUBLE CHECK ALL THE UNITS AFTER UPDATE BEFORE USE.
     """
-    rho = rho / 1000 #/m3 to /L
-    q = q # g/g to g/kg
+    #rho = rho #/ 1000 #kg/m3 to kg/L
+    q = q #*1000# g/g to g/kg
     samplesize = q * rho * a * b * 60 #per hour
+    samplesize=samplesize# /1000 #per Liter?
     samplesize_acc = np.full(np.shape(samplesize), np.nan)
     for step in range(acc-1, np.shape(samplesize)[0]):
         s_acc = 0
         i = 0
         while i < acc:
-            s_acc += samplesize[ step + i - ( acc - 1 ),:,:,:]
+            s_acc += samplesize[ step + i - ( acc - 1 ),:]
             i+=1
-        samplesize_acc[step,:,:,:] = s_acc
+        samplesize_acc[step,:,:,:] = s_acc #g
 
-    return samplesize_acc
+    return samplesize_acc.squeeze()# samplesize_acc.squeeze()
 def precip_acc(precip, acc=1):
     """
 
@@ -179,17 +180,48 @@ def density(Tv, p):
     Parameters
     ----------
     Tv: [K]: Virual temp
-    p: Pressure on FULL MODELLEVELS, on pressure levels, or surface.
+    p: [Pa] Pressure on FULL MODELLEVELS, on pressure levels, or surface.
 
     Returns
     -------
     rho: [kg/m^3]
     """
     Rd = 287.06       #[J/kg K] Gas constant for dry air
-    rho = p/(Rd*Tv)
+    rho = p/(Rd*Tv)   #kg/m^3
     #for k in levels_r:
     #    t_v_level[:, k, :, :] = air_temperature_ml[:, k, :, :] * (1. + 0.609133 * specific_humidity_ml[:, k, :, :])
     return rho
+
+def specific_humidity(T, rh,p):
+    #T in K
+    #p in Pa
+    #rh in frac no %
+    Rd = 287.0
+    Rv=461.0
+    TC = T-273.15
+    es = 6.1094 * np.exp(17.625 * TC / (TC + 243.04))*100 #pa
+    e = rh * es
+    w= e * Rd / ( Rv * ( p - e ) )
+    q = w/(w+1)
+    return q
+
+def dexcess(mslp,SST, q2m):
+
+    Q = q2m.squeeze()
+    mslp=mslp.squeeze()
+    SST=SST.squeeze()
+
+    SST = SST - 273.15
+    mslp = mslp / 100
+
+    es = 6.1094 * np.exp(17.625 * SST / (SST + 243.04)) #pa
+    Qs = 0.622 * es / (mslp - 0.37 * es)
+    # RH_2m = dmap_meps.relative_humidity_2m[tidx,:,:].squeeze()*100
+    RH = Q / Qs * 100
+    # print("RH: {}".format(RH_2m[0][0]))
+    d = 48.2 - 0.54 * RH
+    return d.squeeze()
+
 def virtual_temp(air_temperature_ml, specific_humidity_ml):
     """
 
