@@ -102,12 +102,14 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
  
                 # plot 
                 CT2 = CT.copy()
-                # set all cloud tops above 8000m to 8000m
-                CT2[np.where(CT2>8000)] = 8000
+                # set all cloud tops above 7000m to nan
+                CT2[np.where(CT2>7000)] = np.nan
                 data =  CT2[:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
-                CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.get_cmap('rainbow', 8),
-                           vmin=0, vmax=8000,zorder=2)
+                cmap = plt.cm.get_cmap('rainbow_r', 6)
+                cmap.set_over('lightgrey')
+                CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=cmap,
+                                       vmin=0, vmax=3000,zorder=2)
                 # indicate cloud base height by markers
                 co = '#393939'
                 skip = (slice(10, None, 20), slice(10, None, 20))
