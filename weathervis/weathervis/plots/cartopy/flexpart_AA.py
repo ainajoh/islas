@@ -29,7 +29,8 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     print(date)
     param = ["air_pressure_at_sea_level", "surface_geopotential"]
     print(steps)
-    dmap_meps, dom_name, bad_param = checkget_data_handler(all_param= param, date=dt, model = model, step=steps)
+    print(domain_name)
+    dmap_meps, dom_name, bad_param = checkget_data_handler(domain_name=domain_name, all_param= param, date=dt, model = model, step=steps)
     # convert fields
     dmap_meps.air_pressure_at_sea_level /= 100
     lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert

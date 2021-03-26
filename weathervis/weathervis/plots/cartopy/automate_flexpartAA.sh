@@ -5,7 +5,7 @@ function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
   cd /Data/gfi/isomet/projects/ISLAS_aina/output/weathervis/$1
-  mkdir small
+  mkdir -p small
   for f in *.png; do
     convert -scale 40% $f small/$f
   done
@@ -19,6 +19,7 @@ function converting {
   #if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
   #  scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/[AM]* 158.39.201.233:/home/centos/www/gfx/$1/
   #fi
+  echo "converting done"
   cd $here
 }
 
@@ -66,7 +67,7 @@ model=("AromeArctic")
 steps_max=(1)
 domain_name="None"
 release_name="NYA"
-
+domain_name=("Svalbard" "NorwegianSea_area" "Andenes_area")
 while [ $# -gt 0 ]; do
   case "$1" in
     --model)
@@ -93,7 +94,7 @@ while [ $# -gt 0 ]; do
     ;;
     --domain_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
-    domain_name="${1#*=}"
+    domain_name=["${1#*=}"]
     fi
     ;;
     --release_name)
@@ -138,15 +139,19 @@ echo $modelrun
 #modelrun=("2021022500")
 #modelrun=("2021022600")
 #steps=0
+
+domain_name=("Svalbard" "NorwegianSea_area" "Andenes_area")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
+    for dom in ${domain_name[@]}; do
+        echo $dom
+    	runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $dom"
 
-    echo $runstring_FP
-    $runstring_FP
-    converting $modelrun
-
+    	echo $runstring_FP
+    	$runstring_FP
+    	converting $modelrun
+    done
   done
 done
 
