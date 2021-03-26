@@ -112,7 +112,8 @@ echo $modelrun
 #modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
 #modelrun=("2020031512")
 #modelrun=("2020101012")
-point_name=("pcmet1" "pcmet2" "pcmet3" "Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
+point_name=("pcmet1" "pcemet2" "pcmet3")
+#point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
 #point_name=("NyAlesund")
 for md in ${model[@]}; do
   echo $md
