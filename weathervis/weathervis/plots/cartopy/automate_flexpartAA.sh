@@ -199,12 +199,10 @@ echo $modelrun
 #modelrun=("2021022500")
 #modelrun=("2021022600")
 modelrun=("2021030400")
->>>>>>> c091606fd6ab32c1c3a0be9d42ec4a6d840789da
 #steps=0
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-<<<<<<< HEAD
 	  for dom in ${domain_name[@]}; do
     		cd /Data/gfi/isomet/projects/ISLAS_aina/tools/githubclones/islas/weathervis/weathervis/plots/cartopy
                 runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $dom"
@@ -213,14 +211,11 @@ for md in ${model[@]}; do
     		$runstring_FP
     		converting $modelrun
 	done
-=======
     runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
     echo $runstring_FP
     $runstring_FP
     converting $modelrun
->>>>>>> c091606fd6ab32c1c3a0be9d42ec4a6d840789da
-
   done
 done
 
