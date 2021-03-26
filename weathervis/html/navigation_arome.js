@@ -64,19 +64,19 @@ function getKind(n)
       return "_T2M";
       break;
     case 9:
-      return "_FP";
-      break;
-    case 10:
       return "_WS_700";
       break;
-    case 11:
+    case 10:
       return "_WS_800";
       break;
-    case 12:
+    case 11:
       return "_WS_850";
       break;
-    case 13:
+    case 12:
       return "_WS_925";
+      break;
+    case 13:
+      return "_CB_CT";
       break;
     default: 
       return "_";
