@@ -78,6 +78,9 @@ function getKind(n)
     case 13:
       return "_CB_CT";
       break;
+    case 14:
+      return "_WG10";
+      break;
     default: 
       return "_";
       break;
