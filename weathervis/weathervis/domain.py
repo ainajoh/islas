@@ -380,7 +380,7 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
     def pcmet2(self):
-        point_name = "pcmet1"
+        point_name = "pcmet2"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)
@@ -391,7 +391,7 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
     def pcmet3(self):
-        point_name = "pcmet1"
+        point_name = "pcmet3"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)

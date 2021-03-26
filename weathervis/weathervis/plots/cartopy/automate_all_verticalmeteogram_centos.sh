@@ -59,8 +59,11 @@ yymmdd="${yy}${mm}${dd}"
 modelrun_date=$yymmdd
 modelrun_hour="00"
 model=("AromeArctic")
-steps_max=(66)
+steps_max=66
 domain_name="None"
+
+point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
+steps="None"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -86,9 +89,19 @@ while [ $# -gt 0 ]; do
     steps_max=("${1#*=}")
     fi
     ;;
+    --steps)
+    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
+    steps=("${1#*=}")
+    fi
+    ;;
     --domain_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
     domain_name="${1#*=}"
+    fi
+    ;;
+    --point_name)
+    if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
+    point_name=("${1#*=}")
     fi
     ;;
     *)
@@ -112,15 +125,21 @@ echo $modelrun
 #modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
 #modelrun=("2020031512")
 #modelrun=("2020101012")
-point_name=("pcmet1" "pcemet2" "pcmet3")
-#point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
+#point_name=("pcmet1" "pcemet2" "pcmet3")
 #point_name=("NyAlesund")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
       for pnam in ${point_name[@]}; do
-	 runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --point_name $pnam"
-
+	 if [[ ${steps} != "None" ]]
+	 then
+		echo "test"
+		echo "${steps[0]}"
+		echo "test2"
+	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam"
+	 else
+	        runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --point_name $pnam"
+ 	 fi
     echo $runstring_PVmet
     $runstring_PVmet
     converting $modelrun

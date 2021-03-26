@@ -61,6 +61,7 @@ modelrun_hour="00"
 model=("AromeArctic")
 steps_max=(66)
 domain_name="None"
+point_name=("pcmet1" "pcmet2" "pcmet3" "Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -91,6 +92,16 @@ while [ $# -gt 0 ]; do
     domain_name="${1#*=}"
     fi
     ;;
+    --point_name)
+    if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
+    point_name=("${1#*=}")
+    fi
+    ;;
+    --steps)
+    if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
+    steps=("${1#*=}")
+    fi
+    ;;
     *)
       printf "***************************\n"
       printf "* Error: Invalid argument.*\n"
@@ -99,7 +110,8 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
-
+echo $point_name
+echo ${point_name}
 echo $model
 echo $modelrun_date
 echo $modelrun_hour
@@ -108,18 +120,18 @@ echo $domain_name
 modelrun=${modelrun_date}${modelrun_hour}
 echo $modelrun
 
-
-#modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
-#modelrun=("2020031512")
-#modelrun=("2020101012")
 #point_name=("Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
-point_name=("pcmet1" "pcmet2" "pcmet3" "Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
 #point_name=("CAO")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
       for pnam in ${point_name[@]}; do
-	 runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $pnam --point_name $pnam"
+	  if [[ ${steps} != "None" ]]
+          then
+	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps --steps ${steps[0]} ${steps[1]} --model $md --domain_name $pnam --point_name $pnam"
+          else
+	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $pnam --point_name $pnam"
+          fi
 
     echo $runstring_Pmet
     $runstring_Pmet
