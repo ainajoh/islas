@@ -144,7 +144,7 @@ def Wind_gusts(datetime, steps, model, domain_name = None, domain_lonlat = None,
                     frame.set_facecolor('white')
                     frame.set_alpha(0.8)
      
-                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name,"WG10", dt, ttt), bbox_inches="tight", dpi=200)
+                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name,"WG10", dt, ttt), bbox_inches="tight", dpi=200)
                 ax1.cla()
                 plt.clf()
                 plt.close(fig1)
