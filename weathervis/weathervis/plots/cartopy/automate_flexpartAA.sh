@@ -210,13 +210,7 @@ for md in ${model[@]}; do
     		echo $runstring_FP
     		$runstring_FP
     		converting $modelrun
-	done
-    runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
-
-    echo $runstring_FP
-    $runstring_FP
-    converting $modelrun
-  done
+   done
 done
 
 # fin
