@@ -79,6 +79,9 @@ function getKind(n)
       return "_CB_CT";
       break;
     case 14:
+      return "_CCLMH";
+      break;
+    case 15:
       return "_WG10";
       break;
     default: 
@@ -106,13 +109,13 @@ function getDomainname(n)
 		return "AromeArctic_AromeArctic";
 		break;
 		case 5:
+		return "MEPS_MEPS";
+	        break;
+		case 6:
 		return "MEPS_South_Norway";
 		break;
-		case 6:
-		return "MEPS_West_Norway";
-		break;
 		case 7:
-		return "MEPS_Osteroy";
+		return "MEPS_West_Norway";
 		break;
 		default:
 		return "None";
