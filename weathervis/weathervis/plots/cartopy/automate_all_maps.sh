@@ -144,7 +144,7 @@ echo $modelrun
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_wg = "python Wind_gusts.py  --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_wg="python Wind_gusts.py  --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_cloud_level="python Low_medium_high_clouds.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_windlvl="python Wind_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --p_level 700 850 925"
     runstring_CT="python Cloud_base_top.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
@@ -160,12 +160,16 @@ for md in ${model[@]}; do
     
     echo $runstring_wg
     $runstring_wg
+    converting $modelrun
     echo $runstring_cloud_level
     $runstring_cloud_level
+    converting $modelrun
     echo $runstring_CT
     $runstring_CT 
+    converting $modelrun
     echo $runstring_windlvl
     $runstring_windlvl
+    converting $modelrun
     echo $runstring_Z
     $runstring_Z
     converting $modelrun
