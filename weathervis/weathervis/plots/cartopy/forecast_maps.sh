@@ -38,14 +38,14 @@ case "$model" in
          fi
         echo "exit 64" > /home/centos/batch/timeoutwrapper_AA_${runhour}.sh
 	
-	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_all_meteogram_centos.sh --steps_max $steps --modelrun_hour $runhour &
 	automate_all_verticalmeteogram_centos.sh --steps_max $steps --modelrun_hour $runhour &
 	wait
-	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
-	#automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
     ;;
     MEPS)
         url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/${yy}/${mm}/${dd}/meps_det_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"

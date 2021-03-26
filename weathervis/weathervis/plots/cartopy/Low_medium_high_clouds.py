@@ -30,12 +30,9 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
     for dt in datetime:
         date = dt[0:-2]
         hour = int(dt[-2:])
-        all_param = ['cloud_base_altitude','cloud_top_altitude','air_pressure_at_sea_level','surface_geopotential']
-        #all_param = ['air_pressure_at_sea_level']
-        print(dt)
-        print(model)
-        print(steps)
-        print(all_param)
+        all_param = ['low_type_cloud_area_fraction','medium_type_cloud_area_fraction',
+                     'high_type_cloud_area_fraction','air_pressure_at_sea_level',
+                     'surface_geopotential']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
                                                            step=steps, domain_name=domain_name)
         
@@ -89,83 +86,63 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 ZS = dmet.surface_geopotential[tidx, 0, :, :]
                 MSLP = np.where(ZS < 3000, dmet.air_pressure_at_sea_level[tidx, 0, :, :],
                                 np.NaN).squeeze()
+                LC = dmet.low_type_cloud_area_fraction[:,:].squeeze()
+                MC = dmet.medium_type_cloud_area_fraction[:,:].squeeze()
+                HC = dmet.high_type_cloud_area_fraction[:,:].squeeze()
+                # reduce the detail of the plot -> everythin larger 0.5 =1, rest is nan
+                # I chose the colormaps here due to their nice "end" colors
+                data =  LC[:, :].copy()
+                data[np.where(data>=0.5)] = 1
+                data[np.where(data<0.5)] = np.nan
+                CCl=ax1.contourf(x,y,data,levels=np.linspace(0.0, 1, 10),
+                                 cmap=plt.cm.coolwarm,alpha=0.9,zorder=2)
+            
+                data =  MC[:, :].copy()
+                data[np.where(data>=0.5)] = 1
+                data[np.where(data<0.5)] = np.nan # take 0 and very small cloud covers away
+                CCl=ax1.contourf(x,y,data,levels=np.linspace(0.0, 1, 10),
+                                 cmap=plt.cm.coolwarm_r,alpha=0.8,zorder=2)
                 
-                CT   = dmet.cloud_top_altitude[tidx,0,:,:].copy()
-                CB   = dmet.cloud_base_altitude[tidx,0,:,:].copy()
-                CB[np.where(CB > 20000)] = np.nan # get rid of lage fill values
-                # take three cloud level intervalls, to idicate by markers
-                # level are 0-1000m, 1000-2000m, 2000-3000m 
-                CB1 = CB.copy()
-                CB2 = CB.copy()
-                CB3 = CB.copy() 
-                CB1[np.where(CB>1000)]        = np.nan
-                CB2[np.where(~np.isnan(CB1))] = np.nan # no double counting
-                CB2[np.where(CB>2000)]        = np.nan
-                CB3[np.where(~np.isnan(CB1))] = np.nan # no double counting
-                CB3[np.where(~np.isnan(CB2))] = np.nan # no double counting
-                CB3[np.where(CB>3000)]        = np.nan
- 
-                # plot 
-                CT2 = CT.copy()
-                # do not show cloud tops above 8000m
-                CT2[np.where(CT2>8000)] = np.nan
-                data =  CT2[:nx - 1, :ny - 1].copy()
-                data[mask] = np.nan
-                CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.get_cmap('rainbow', 8),
-                           vmin=0, vmax=8000,zorder=2)
-                # indicate cloud base height by markers
-                co = '#393939'
-                skip = (slice(10, None, 20), slice(10, None, 20))
-                xx = x.copy()
-                yy = y.copy()
-                xx[np.where(np.isnan(CB1))] = np.nan
-                yy[np.where(np.isnan(CB1))] = np.nan
-                sc1 = ax1.scatter(xx[skip], yy[skip], s=10, zorder=2, marker='o', linewidths=0.9,
-                                  c=co, alpha=0.75,label='[0m, 1000 m]')
-                xx = x.copy()
-                yy = y.copy()
-                xx[np.where(np.isnan(CB2))] = np.nan
-                yy[np.where(np.isnan(CB2))] = np.nan
-                sc2 = ax1.scatter(xx[skip], yy[skip], s=20, zorder=2, marker='o', linewidths=0.9,
-                                  c=co, alpha=0.75,label='[1000m, 2000m]')
-                xx = x.copy()
-                yy = y.copy()
-                xx[np.where(np.isnan(CB3))] = np.nan
-                yy[np.where(np.isnan(CB3))] = np.nan
-                sc3 = ax1.scatter(xx[skip], yy[skip], s=40, zorder=2, marker='o', linewidths=0.9,
-                       c=co, alpha=0.75,label='[2000m, 3000m]')
+                data =  HC[:, :].copy()
+                data[np.where(data>=0.5)] = 1
+                data[np.where(data<0.5)] = np.nan # take 0 and very small cloud covers away
+                CCl=ax1.contourf(x,y,data,levels=np.linspace(0.0, 1, 10),
+                     cmap=plt.cm.gnuplot,alpha=0.4,zorder=2) 
                 # MSLP
                 # MSLP with contour labels every 10 hPa, commented out due to cluttering
                 C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=3, alpha=1.0,
                                   levels=np.arange(960, 1050, 1),
                                   colors='grey', linewidths=0.5)
-                C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=3, alpha=1.0,
+                C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=4, alpha=1.0,
                                   levels=np.arange(960, 1050, 10),
                                   colors='grey', linewidths=1.0, label="MSLP [hPa]")
                 ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
-                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=7,facecolor="none",edgecolor="gray") 
+                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=5,facecolor="none",edgecolor="gray") 
                 # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                 if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
                      ax1.set_extent(data_domain.lonlat)
-                ax1.text(0, 1, "{0}_CB_CT_{1}_+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
+                ax1.text(0, 1, "{0}_CClmh_{1}_+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
                                        transform=ax1.transAxes, color='black')
-                print("filename: "+make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CB_CT", dt, ttt))
+                print("filename: "+make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CClmh", dt, ttt))
                 grid = True
                 if grid:
                     nicegrid(ax=ax1)
  
                 legend = True
                 if legend:
-                    ax_cb = adjustable_colorbar_cax(fig1, ax1)
 
-                    plt.colorbar(CCl,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25,
-                                 label=r"cloud top height [m]",extend='max')
-                    l1 = ax1.legend(loc='upper left')
-                    frame = l1.get_frame()
+                    custom_lines = [Line2D([0], [0], color='grey', lw=2),
+                                    Line2D([0], [0], color='C3', lw=8),
+                                    Line2D([0], [0], color='#0099FF', lw=8),
+                                    Line2D([0], [0], color='#FFCC00', lw=8,alpha=0.5)]
+                    lg = ax1.legend(custom_lines,
+                                    ['MSLP', 'low clouds', 'medium clouds','high clouds'],
+                                    loc='upper left')
+                    frame = lg.get_frame()
                     frame.set_facecolor('white')
-                    frame.set_alpha(1)
- 
-                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CB_CT", dt, ttt), bbox_inches="tight", dpi=200)
+                    frame.set_alpha(0.8)
+
+                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CClmh", dt, ttt), bbox_inches="tight", dpi=200)
                 ax1.cla()
                 plt.clf()
                 plt.close(fig1)
