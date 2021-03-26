@@ -26,10 +26,11 @@ Object with properties
 """
 package_path = os.path.dirname(__file__)
 
-
 model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 levtype = [None,"pl","ml"] #include pl here aswell.
+
+use_latest = False
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
@@ -134,14 +135,14 @@ class check_data():
             webcheck = requests.head(url,timeout=5)
         except requests.exceptions.Timeout as e:
             print(e)
-            print("might be problems with the server; check out https://status.met.no")
+            print("There might be problems with the server; check out https://status.met.no")
 
         if webcheck.status_code != 200:  # SomeError(ValueError, f'Type not found: choices:{levtype}')
             SomeError(ConnectionError, f"Website {url} is down with {webcheck}; . Wait until it is up again. Check https://status.met.no")
 
 
         if date != None:
-            print("CHECK_FILE STAAAART")
+            print("Weathervis: check_file start")
             self.file = self.check_files(date, model, param,  mbrs,levtype)
         if self.param == None and self.date != None:
             self.param = self.check_variable(self.file, self.search)
@@ -241,20 +242,30 @@ class check_data():
         DD = date[6:8]
         HH = date[8:10]
         base_url=""
+
+        # find out where to look for data
+        if use_latest == True:
+            archive_url = "latest"
+        else:
+            archive_url = "archive"
+
         if model=="MEPS":
-            base_url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/"   #info about date, years and filname of our model
-            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps25epsarchive/" #info about variables in each file
+            base_url = "https://thredds.met.no/thredds/catalog/meps25eps{0}/".format(archive_url)   #info about date, years and filname of our model
+            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps25eps{0}/".format(archive_url) #info about variables in each file
         elif model == "AromeArctic":
-            base_url = "https://thredds.met.no/thredds/catalog/aromearcticarchive/"
-            base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearcticarchive/"
+            base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/".format(archive_url)
+            base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearctic{0}/".format(archive_url)
         else:
             pass
         print(base_url)
-        print("base_url SHOULD BE PRRRINTED")
-
+        print("Weathervis: base_url should be printed.")
 
         #Find what files exist at that date
-        page = requests.get(base_url + YYYY+"/"+MM+"/"+DD+ "/catalog.html")
+        if use_latest == True:
+          page = requests.get(base_url + "/catalog.html")
+        else:
+          page = requests.get(base_url + YYYY+"/"+MM+"/"+DD+ "/catalog.html")
+
         soup = BeautifulSoup(page.text, 'html.parser')
         rawfiles= soup.table.find_all("a")
         ff =[i.text for i in rawfiles]

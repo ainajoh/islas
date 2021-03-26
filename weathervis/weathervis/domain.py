@@ -4,6 +4,8 @@ from netCDF4 import Dataset
 import pandas as pd
 from weathervis.calculation import *
 
+use_latest = False
+
 #Preset domain.
 if __name__ == "__main__":
     print("Run by itself")
@@ -57,9 +59,15 @@ class domain():
         DD = self.date[6:8]
         HH = self.date[8:10]
         if model == "AromeArctic":
-            url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+            if use_latest == True:
+              url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/{self.file}?latitude,longitude"
+            else:
+              url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
         elif model == "MEPS":
-            url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+            if use_latest == True:
+              url = f"https://thredds.met.no/thredds/dodsC/meps25epslatest/{self.file}?latitude,longitude"
+            else:
+              url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
 
         self.url = url
 
@@ -118,14 +126,14 @@ class domain():
                               url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard_z2(self):  # map
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [15, 23, 77, 82]  #
         self.idx = lonlat2idx(self.lonlat,
                               url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard_z1(self):  # map
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [4, 23, 76.3, 82]  #
         self.idx = lonlat2idx(self.lonlat,
@@ -139,26 +147,26 @@ class domain():
                               url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def North_Norway(self):  # data
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "North_Norway"
         self.lonlat = [5, 20, 66.5, 76.2]  #
         self.idx = lonlat2idx(self.lonlat,
                               url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def KingsBay(self):  # bigger data
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [10, 13.3, 78.6, 79.3]
         self.idx = lonlat2idx(self.lonlat, url)  # Rough
 
     def KingsBay_Z0(self):  # map
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [11, 13., 78.73, 79.16]
         self.idx = lonlat2idx(self.lonlat, url)  # Rough
 
     def KingsBay_Z1(self):  # smaller data
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.idx = np.array([[517, 517, 518, 518, 518, 518, 518, 519, 519, 519, 519, 519, 519, 520, 520, 520, 520, 520,
                               520, 520, 520, 520, 521, 521, 521, 521, 521, 521, 521, 521, 521, 522, 522, 522, 522, 522,
@@ -182,7 +190,7 @@ class domain():
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def Andenes_area(self):
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "Andenes_area"
         self.lonlat = [12.0, 19.5, 68.0, 70.6]
         self.idx = lonlat2idx(self.lonlat, self.url)
@@ -344,7 +352,7 @@ class domain():
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def NorwegianSea_area(self):  # PAraglidingstart
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "NorwegianSea_area"
         self.lonlat = [-7, 16, 69.0, 77.2]  #
         self.idx = lonlat2idx(self.lonlat, self.url)
