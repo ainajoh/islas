@@ -33,7 +33,7 @@ def Wind_gusts(datetime, steps, model, domain_name = None, domain_lonlat = None,
         all_param = ['x_wind_gust_10m','y_wind_gust_10m','x_wind_10m','y_wind_10m',
                      'air_pressure_at_sea_level','surface_geopotential']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
-                                                           step=steps, domain_name=domain_name)
+                                                           step=steps,domain_name=domain_name)
         
         dmet.air_pressure_at_sea_level /= 100
         # print(dmet.pressure) 
@@ -144,7 +144,7 @@ def Wind_gusts(datetime, steps, model, domain_name = None, domain_lonlat = None,
                     frame.set_facecolor('white')
                     frame.set_alpha(0.8)
      
-                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_+{4:02d}.png".format(model, domain_name,"WG10", dt, ttt), bbox_inches="tight", dpi=200)
+                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name,"WG10", dt, ttt), bbox_inches="tight", dpi=200)
                 ax1.cla()
                 plt.clf()
                 plt.close(fig1)
@@ -160,7 +160,7 @@ if __name__ == "__main__":
   parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+")
   parser.add_argument("--steps", default=0, nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
   parser.add_argument("--p_level", default=1000, nargs="+", type=int,help="p_level example --p_level 1000 925")
-  parser.add_argument("--model",default="AromeArctic", help="MEPS or AromeArctic")
+  parser.add_argument("--model",default="MEPS", help="MEPS or AromeArctic")
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")

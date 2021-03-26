@@ -26,8 +26,9 @@ modelrun_date=$yymmdd
 
 case "$model" in
     AA)
-	url="https://thredds.met.no/thredds/dodsC/aromearcticarchive/${yy}/${mm}/${dd}/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
-        echo $url
+	#url="https://thredds.met.no/thredds/dodsC/aromearcticarchive/${yy}/${mm}/${dd}/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+        url="https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+	echo $url
         web_code=$(curl -sL -w "%{http_code}\n" "$url" -o /dev/null)
         echo $web_code
         echo $(($web_code == 200))

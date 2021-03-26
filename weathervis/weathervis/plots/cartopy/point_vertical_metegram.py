@@ -301,7 +301,26 @@ class VERT_MET():
         #legend((line1, line2, line3), ('label1', 'label2', 'label3'))
         axm1.invert_yaxis() #pressure from large to low
         axm1.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
-
+        # create the second axis in m, always convert 
+        # I will simply use the barometric formular for now
+        # z = T0/L [(P/P0)^{LR/g}-1]
+        # we can take P0 from model and T0 from model, will test it for default
+        # 1013 hPa and 263K 
+        axm1T = axm1.twinx()
+        axm1T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm1.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm1T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm1T.plot([],[])
         #################################
         # P2: Potential temp with wind
         #################################
@@ -333,7 +352,22 @@ class VERT_MET():
         axm2.invert_yaxis()
         axm2.set_ylabel("Pressure [hPa]")
         axm2.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
-
+        # again creating the second y axis in m
+        axm2T = axm2.twinx()
+        axm2T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm2.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm2T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm2T.plot([],[])
         #################################
         # SET ADJUSTMENTS ON AXIS
         #################################
@@ -413,6 +447,18 @@ class VERT_MET():
         axm1.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
         #axm1.legend(Cfrac[0], "1%-50% Cloud cover")
 
+        axm1T = axm1.twinx()
+        axm1T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm1.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm1T.set_ylim((T_f(ymin),T_f(ymax)))
         #TEMP
         cmap = cm.get_cmap('twilight_shifted')  # BrBu  BrYlBu
         norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=10)
@@ -448,6 +494,22 @@ class VERT_MET():
         axm2.invert_yaxis()
         axm2.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
 
+        # again the second axis in m, still an approximation!
+        axm2T = axm2.twinx()
+        axm2T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm2.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm2T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm2T.plot([],[])
         #axis
         xfmt_maj = mdates.DateFormatter('%d.%m')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
         xfmt_min = mdates.DateFormatter('%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
