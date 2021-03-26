@@ -9,8 +9,6 @@ from weathervis.get_data import *
 from weathervis.calculation import *
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-from matplotlib.colors import BoundaryNorm
-from matplotlib.ticker import MaxNLocator
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
@@ -131,16 +129,10 @@ def IWC_LWC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                 #dmap_meps.LWC[np.where( dmap_meps.LWC <= 0.09)] = np.nan
                 data =  dmap_meps.LWC[tidx,:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
-                levels = MaxNLocator(nbins=15).tick_values(0.1, 4.0)
-                cmap = plt.get_cmap('Reds')
-                norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
-                CC=ax1.pcolormesh(x, y,  data, shading='flat', cmap=cmap, vmin=0.1, vmax=4.0,zorder=2)
+                CC=ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.Reds, vmin=0.1, vmax=4.0,zorder=2)
                 data =  dmap_meps.IWC[tidx,:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
-                levels = MaxNLocator(nbins=15).tick_values(0.01, 0.1)
-                cmap = plt.get_cmap('Blues')
-                norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
-                CI= ax1.pcolormesh(x, y, data, shading='flat', cmap=cmap,alpha=0.5, vmin=0.01, vmax=0.1,zorder=3)
+                CI= ax1.pcolormesh(x, y, data[:, :], cmap=plt.cm.Blues,alpha=0.5, vmin=0.01, vmax=0.1,zorder=3)
 
                 # MSLP
                 # MSLP with contour labels every 10 hPa
@@ -170,7 +162,8 @@ def IWC_LWC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                                               format='%.1f',ticks=[0.09, np.nanmax(dmap_meps.LWC[tidx, :, :])*0.8])
                     proxy = [plt.axhline(y=0, xmin=0, xmax=0, color="gray",zorder=7)]
                     # proxy.extend(proxy1)
-                    lg = ax1.legend(proxy, ["MSLP [hPa]"])
+                    # legend's location fixed, otherwise it takes very long to find optimal spot
+                    lg = ax1.legend(proxy, ["MSLP [hPa]"],loc='upper left')
                     frame = lg.get_frame()
                     frame.set_facecolor('white')
                     frame.set_alpha(0.8)
@@ -200,8 +193,18 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   #for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
-  for s in np.arange(np.min(args.steps), np.max(args.steps)+1, 1):
-    IWC_LWC(datetime=args.datetime, steps = [s, s], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid, m_level=args.m_level)
-
+  #for s in np.arange(np.min(args.steps), np.max(args.steps)+1, 1):
+  # Albatross
+  # chunck it into 24-h steps, first find out how many chunks we need, s = steps
+  s  = np.arange(np.min(args.steps),np.max(args.steps))
+  cn = np.int(len(s)/24)
+  if cn == 0:  # length of 24 not exceeded
+      IWC_LWC(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid, m_level=args.m_level)
+  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
+      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
+      chunks = np.array_split(s,cn+1)
+      for c in chunks:
+          IWC_LWC(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model, domain_name = args.domain_name,
+                  domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info,grid=args.grid, m_level=args.m_level)
 # fin

@@ -31,23 +31,35 @@ case "$model" in
         web_code=$(curl -sL -w "%{http_code}\n" "$url" -o /dev/null)
         echo $web_code
         echo $(($web_code == 200))
-        echo "exit 0" > timeoutwrapper.sh
+        echo "exit 0" > /home/centos/batch/timeoutwrapper_AA_${runhour}.sh
         if [ $web_code != 200 ]; then
            echo "Data not available on web page yet"
            exit 0
          fi
-        echo "exit 64" > timeoutwrapper.sh
+        echo "exit 64" > /home/centos/batch/timeoutwrapper_AA_${runhour}.sh
 	
-	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_all_meteogram_centos.sh --steps_max $steps --modelrun_hour $runhour &
 	automate_all_verticalmeteogram_centos.sh --steps_max $steps --modelrun_hour $runhour &
 	wait
-	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
-	#automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
     ;;
     MEPS)
+        url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/${yy}/${mm}/${dd}/meps_det_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+	echo $url
+        web_code=$(curl -sL -w "%{http_code}\n" "$url" -o /dev/null)
+        echo $web_code
+        echo $(($web_code == 200))
+        echo "exit 0" > /home/centos/batch/timeoutwrapper_MEPS_${runhour}.sh
+        if [ $web_code != 200 ]; then
+           echo "Data not available on web page yet"
+           exit 0
+         fi
+        echo "exit 64" > /home/centos/batch/timeoutwrapper_MEPS_${runhour}.sh
+
 	#automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Osteroy
 	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name South_Norway
 	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name West_Norway
@@ -55,10 +67,10 @@ case "$model" in
     ;;
     FP)
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
+	automate_flexpart.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Iceland
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
-	#automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
+	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
     ;;
     *)
 	printf "***************************\n"

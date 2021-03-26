@@ -112,17 +112,16 @@ echo $modelrun
 #modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
 #modelrun=("2020031512")
 #modelrun=("2020101012")
-#point_name=("Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
 point_name=("pcmet1" "pcmet2" "pcmet3" "Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
-#point_name=("CAO")
+#point_name=("NyAlesund")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
       for pnam in ${point_name[@]}; do
-	 runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $pnam --point_name $pnam"
+	 runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --point_name $pnam"
 
-    echo $runstring_Pmet
-    $runstring_Pmet
+    echo $runstring_PVmet
+    $runstring_PVmet
     converting $modelrun
    done
   done

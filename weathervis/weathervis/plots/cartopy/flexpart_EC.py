@@ -75,7 +75,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
       data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_all)
 
-      #lonlat = np.array(data_domain.lonlat)
+      lonlat = np.array(data_domain.lonlat)
       dmap_meps = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=rsteps,
                            date=dt, p_level=[850])
       print("\n######## Retrieving data ############")
@@ -86,7 +86,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
       # get sfc level data
       file_sfc = check_sfc.file.loc[0]
       data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_sfc)
-      #lonlat = np.array(data_domain.lonlat)
+      lonlat = np.array(data_domain.lonlat)
       dmap_meps = get_data(model=model, param=param_sfc, file=file_sfc, step=rsteps, date=dt, data_domain=data_domain)
       print("\n######## Retrieving data ############")
       print(f"--------> from: {dmap_meps.url} ")
@@ -135,8 +135,8 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     spec1c=cdf.variables["spec001"][:]
 
     # plot map
-    lonlat = [dmap_meps.longitude[0,0], dmap_meps.longitude[-1,-1], dmap_meps.latitude[0,0], dmap_meps.latitude[-1,-1]]
-    print(lonlat)
+    #lonlat = [dmap_meps.longitude[0,0], dmap_meps.longitude[-1,-1], dmap_meps.latitude[0,0], dmap_meps.latitude[-1,-1]]
+    #print(lonlat)
 
     lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
     lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert

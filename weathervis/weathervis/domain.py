@@ -91,6 +91,11 @@ class domain():
         self.lonlat = [-1, 60., 49., 72]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
+    def Iceland(self):
+        self.domain_name = "Iceland"
+        self.lonlat = [-26, 30., 58., 85.]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
     def Finse(self):
         self.lonlat = [7.524026, 8.524026, 60, 61.5]
         self.idx = lonlat2idx(self.lonlat, self.url)
