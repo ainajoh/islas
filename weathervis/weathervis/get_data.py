@@ -29,6 +29,8 @@ package_path = os.path.dirname(__file__)
 # Nice logging info saved to aditional file
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
+use_latest = True
+
 def SomeError( exception = Exception, message = "Something did not go well" ):
     # Nice error messeges.
     logging.error(exception(message))
@@ -248,7 +250,12 @@ class get_data():
             file = self.file.copy()
             param = self.param.copy()
             logging.info(file)
-            url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
+
+            if use_latest==False:
+              url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
+            else:
+              url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/{file.loc['File']}?"
+
             for prm in param: #loop that updates the url to include each parameter with its dimensions
                 url += f"{prm}"                           # example:  url =url+x_wind_pl
                 dimlist = list(file["var"][prm]["dim"])   # List of the variables the param depends on ('time', 'pressure', 'ensemble_member', 'y', 'x')
@@ -265,7 +272,12 @@ class get_data():
             file = self.file.copy()
             param = self.param.copy() #has to be copied in order for not infinite loop when updating self.param
             logging.info(file)
-            url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
+
+            if use_latest==False:
+              url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
+            else:
+              url = f"https://thredds.met.no/thredds/dodsC/meps25epslatest/{file.loc['File']}?"
+
             for prm in param:  #loop that updates the url to include each parameter with its dimensions
                 url += f"{prm}"                           # example:  url =url+x_wind_pl
                 dimlist = list(file["var"][prm]["dim"])   # List of the variables the param depends on ('time', 'pressure', 'ensemble_member', 'y', 'x')

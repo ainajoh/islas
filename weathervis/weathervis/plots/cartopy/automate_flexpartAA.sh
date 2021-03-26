@@ -4,23 +4,21 @@ source ~/.bashrc
 function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
-  cd /home/centos/output/weathervis/$1
+  cd /Data/gfi/isomet/projects/ISLAS_aina/output/weathervis/$1
   mkdir small
-  for f in *.png; do 
+  for f in *.png; do
     convert -scale 40% $f small/$f
   done
-  if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir /home/centos/www/gfx/$1
-  fi
-  cp small/* /home/centos/www/gfx/$1
-  rm -rf ~/output/weathervis/$1
-  sudo chown -R centos:apache /home/centos/www/gfx/$1  
+  #if ! [ -d /home/centos/www/gfx/$1 ]; then
+  #  mkdir /home/centos/www/gfx/$1
+  #fi
+  #cp small/* /home/centos/www/gfx/$1
+  #rm -rf /home/centos/output/weathervis/$1
+  sudo chown -R centos:apache /home/centos/www/gfx/$1
   # transfer to webserver
-  if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-    copy="scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/FLEXPART_AA* 158.39.201.233:/home/centos/www/gfx/$1/"
-    echo $copy
-    $copy
-  fi
+  #if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+  #  scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/[AM]* 158.39.201.233:/home/centos/www/gfx/$1/
+  #fi
   cd $here
 }
 
@@ -46,12 +44,12 @@ $cf
 
 #fclagh=350 #3.5 hour before forecsast is issued
 
-if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
-  modeldatehour=$(date -u --date "today - $((350*60/100)) minutes" +'%Y%m%d%H%M')
-else
-  modeldatehour=$(date -v-$((350*60/100))M -u +%Y%m%d%H%M)
-  #date -v-60M -u +%Y%m%d%H%M
-fi
+#if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
+#  modeldatehour=$(date -u --date "today - $((350*60/100)) minutes" +'%Y%m%d%H%M')
+#else
+#  modeldatehour=$(date -v-$((350*60/100))M -u +%Y%m%d%H%M)
+#  #date -v-60M -u +%Y%m%d%H%M
+#fi
 
 #modeldatehour="2021022000"
 
@@ -120,18 +118,6 @@ echo $domain_name
 echo $release_name
 modelrun=${modelrun_date}${modelrun_hour}
 echo $modelrun
-#modelrun=("2021010100")
-#model=("AromeArctic")
-#steps_max=(1)
-#domain_name="West_Norwa
-#domain_name=""
-#model=("$1")
-#modelrun=("$2")
-#steps_max=($3)
-#if [$4]
-#then
-#  domain_name="$4" #West_Norway
-#fi
 
 
 #modelrun=("2020100300") "2020021712" "2020021812" "2020021912"
@@ -151,7 +137,6 @@ echo $modelrun
 #modelrun=("2021022300")
 #modelrun=("2021022500")
 #modelrun=("2021022600")
-modelrun=("2021030400")
 #steps=0
 for md in ${model[@]}; do
   echo $md

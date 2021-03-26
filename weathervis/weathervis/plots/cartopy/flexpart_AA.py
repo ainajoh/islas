@@ -3,7 +3,8 @@ from weathervis.utils import *
 from weathervis.checkget_data_handler import *
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
-
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
 import glob
 #import weathervis.config as wc
 import cartopy.crs as ccrs
@@ -18,14 +19,6 @@ import netCDF4 as nc
 import matplotlib.colors as colors
 import datetime as dt_m
 
-dmap_meps, dom, bad = checkget_data_handler(all_param=["air_pressure_at_sea_level"],date="2021032200",  model="AromeArctic", step=[0,1])
-
-lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
-lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
-parallels = dmap_meps.standard_parallel_projection_lambert
-globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
-crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,globe=globe)
-
 #####################################################################################################################
 def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None,
                 legend=False, info = False, save = True, grid=True, flex_base_path=""):
@@ -39,14 +32,17 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     dmap_meps, dom_name, bad_param = checkget_data_handler(all_param= param, date=dt, model = model, step=steps)
     # convert fields
     dmap_meps.air_pressure_at_sea_level /= 100
-
+    lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
+    lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
+    parallels = dmap_meps.standard_parallel_projection_lambert
+    globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
+    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,globe=globe)
     release_name = 'NYAlesund_S1'
-    path = "{0}{1}*/flexpart_run_d01_combined.nc".format(flex_base_path, release_name)
-    path = "/Users/ainajoh/multirel4cmet.nc"
-    #path="/Users/ainajoh/2222svalb14.nc"
-    findpath = glob.glob(path)
-    print(findpath)
-    cdf = nc.Dataset(findpath[0], "r")  # "/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
+    path = "{0}/{1}/flexpart_run_d01_combined.nc".format(flex_base_path, release_name)
+    print(path)
+    #findpath = glob.glob(path)
+    #print(findpath)
+    cdf = nc.Dataset(path, "r")  # "/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
     lats = cdf.variables["XLAT"][:]
     lons = cdf.variables["XLONG"][:]
     #lons, lats = np.meshgrid(lons, lats)
@@ -69,14 +65,14 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         print(time_read)
 
         # determine if image should be created for this time step
-        stepok=False
-        if tim<0: # do not need hourly steps for FP
-            stepok=True
-        elif (tim<=36) and ((tim % 3) == 0):
-            stepok=True
-        elif (tim<=120) and ((tim % 6) == 0):
-            stepok=True
-        #stepok=True
+        #stepok=False
+        #if tim<0: # do not need hourly steps for FP
+        #    stepok=True
+        #elif (tim<=36) and ((tim % 3) == 0):
+        #    stepok=True
+        #elif (tim<=120) and ((tim % 6) == 0):
+        #    stepok=True
+        stepok=True
         if stepok==True:#
             l=0
 
@@ -129,9 +125,11 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                 lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
                           dmap_meps.latitude[-1, -1]]
                 ax1.set_extent(lonlat)
-
+                lev_in=int(lev)
+                lev_in=f"{lev_in}"
+                lev_in=lev_in.zfill(5)
                 fig1.savefig(
-                    make_modelrun_folder + "/FLEXPART_AA_{0}_L{1}_{2}+{4:02d}.png".format(domain_name, lev, "Flexpart_AA", dt, tim),
+                    make_modelrun_folder + "/FLEXPART_AA_{0}_L{1}_{2}+{3:02d}.png".format(domain_name, lev_in, dt, tim),
                     bbox_inches="tight", dpi=200)
                 l+=1
                 ax1.cla()
@@ -183,7 +181,8 @@ if __name__ == "__main__":
   args = parser.parse_args()
   print(args.__dict__)
 
-  flex_base_path= "/home/centos/flexpart-arome/{0}".format(dt)
+  #flex_base_path= "/home/centos/flexpart-arome/{0}".format(dt)
+  flex_base_path= "/Data/gfi/work/cat010/flexpart_arome/output/{0}".format(args.datetime[0])
 
 
   # split up in 3 retrievals of up to 24h
