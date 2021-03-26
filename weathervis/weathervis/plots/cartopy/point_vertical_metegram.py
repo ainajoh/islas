@@ -89,7 +89,7 @@ def setup_met_directory(modelrun, point_name, point_lonlat):
     #else:
     #    print("Directory ", dirName_b2, " already exists")
     return dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3
-def nice_vprof_colorbar(CF, ax, lvl=None, ticks=None, label=None, highlight_val=None, highlight_linestyle="k--", extend="both"):
+def old_nice_vprof_colorbar(CF, ax, lvl=None, ticks=None, label=None, highlight_val=None, highlight_linestyle="k--", extend="both"):
     x0, y0, width, height = 0.75, 0.86, 0.26, 0.13
     axins = inset_axes(ax, width='80%', height='23%',
                         bbox_to_anchor=(x0, y0, width, height),  # (x0, y0, width, height)
@@ -130,7 +130,9 @@ class VERT_MET():
         self.point_lonlat = point_lonlat
         self.param_pl = []
         self.param_ml = ["air_temperature_ml", "specific_humidity_ml", "x_wind_ml", "y_wind_ml",
-                          "cloud_area_fraction_ml"]
+                          "cloud_area_fraction_ml",
+                         "mass_fraction_of_cloud_ice_in_air_ml",
+                         "mass_fraction_of_cloud_condensed_water_in_air_ml"]
         self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m","atmosphere_boundary_layer_thickness","surface_geopotential"]
         self.param_sfx = []
         self.param = self.param_ml + self.param_pl + self.param_sfc + self.param_sfx
@@ -222,7 +224,8 @@ class VERT_MET():
         vr_p = dmet.v[:, :, jindx, iindx]
         vel_p = dmet.velocity[:, :, jindx, iindx]
         rh_p = relative_humidity(temp_p, q_p, p_p )
-
+        dmet.mass_fraction_of_cloud_condensed_water_in_air_ml=dmet.mass_fraction_of_cloud_condensed_water_in_air_ml*1000.*1000 #g/kg
+        dmet.mass_fraction_of_cloud_ice_in_air_ml = dmet.mass_fraction_of_cloud_ice_in_air_ml*1000.*1000
         #MASK
         temp_p = np.ma.array(temp_p, mask=p_p < p_top)
         ur_p = np.ma.array(ur_p, mask=p_p < p_top)
@@ -231,6 +234,10 @@ class VERT_MET():
         q_p = np.ma.array(q_p, mask=p_p < p_top)
         dtdz_p = np.ma.array(dmet.dtdz[:, :, jindx, iindx], mask=p_p < p_top)
         areafrac_cloud = np.ma.array(dmet.cloud_area_fraction_ml[:, :, jindx, iindx], mask=p_p < p_top)
+        #mass_fraction_of_snow_in_air_ml = dmet.mass_fraction_of_snow_in_air_ml[:, :, jindx, iindx]
+        lvls = [0]
+        mass_fraction_of_cloud_condensed_water_in_air_ml = np.ma.array(dmet.mass_fraction_of_cloud_condensed_water_in_air_ml[:, :, jindx, iindx], mask=p_p < p_top)
+        mass_fraction_of_cloud_ice_in_air_ml = np.ma.array(dmet.mass_fraction_of_cloud_ice_in_air_ml[:, :, jindx, iindx], mask=p_p < p_top)
 
         #UNIT
         areafrac_cloud=areafrac_cloud*100
@@ -246,63 +253,121 @@ class VERT_MET():
         plt.subplots_adjust(wspace=0.001)
         levels = range(len(dmet.hybrid))
         lx, tx = np.meshgrid(levels, dmet.time_normal[:])
+        #GROUND COLOR ON ALL AXIS
+        axm1.fill_between(dmet.time_normal[:], dmet.surface_air_pressure[:, 0, jindx, iindx] / 100, \
+                          dmet.air_pressure_at_sea_level[:, 0, jindx, iindx] / 100, color="gray")
+        axm2.fill_between(dmet.time_normal[:], dmet.surface_air_pressure[:, 0, jindx, iindx] / 100, \
+                          dmet.air_pressure_at_sea_level[:, 0, jindx, iindx] / 100, color="gray")
 
-        #################################
+        # FIG1 PLOT1###############################################################################################
         # P1: RH with lapserate and BLheight
         #################################
-        # Ground color gray
-        axm1.fill_between(dmet.time_normal[:], dmet.surface_air_pressure[:, 0, jindx, iindx] / 100, \
-                                  dmet.air_pressure_at_sea_level[:, 0, jindx, iindx] / 100, color="gray")
         # spec humidity
+
         cmap = cm.get_cmap('gnuplot2_r')  # BrBu  BrYlBu
         lvl = np.linspace(np.min(q_p),np.max(q_p), 20)
         CF_Q = axm1.contourf(tx, p_p, q_p, levels=lvl, cmap=cmap,extend="both", zorder=1)
         ticks = np.array([lvl[0], lvl[5], lvl[10], lvl[15], lvl[-1]])
-
         cbar = nice_vprof_colorbar(CF=CF_Q, ax=axm1,ticks=ticks, lvl=lvl, label = 'Spec. Hum. [g/kg]')
-
         axm1.contour(tx, p_p, q_p, linestyles="dashed",
                      levels=ticks[1:-1], colors="white", zorder=2, alpha=0.8)
 
-        axm1.invert_yaxis()
-        axm1.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
+        #lvl = np.linspace(np.min(mass_fraction_of_cloud_ice_in_air_ml),np.max(mass_fraction_of_cloud_ice_in_air_ml), 20)
+        lvl = np.linspace(np.min(mass_fraction_of_cloud_ice_in_air_ml),np.max(mass_fraction_of_cloud_ice_in_air_ml), 4)
+        lvl = [0.00001,0.1, 0.2,0.5,2,10]
+        print(np.max(mass_fraction_of_cloud_ice_in_air_ml))
+        CF_ICE = axm1.contour(tx, p_p, mass_fraction_of_cloud_ice_in_air_ml,levels=lvl, zorder=12,
+                              colors="cyan", linewidths=3,linestyles="-", alpha=0.8,
+                              label="Inline label")
+        axm1.clabel(CF_ICE, CF_ICE.levels, inline=False, fmt="%3.1f", fontsize=12)
+        #marker=r"$C_H$"
 
+        lvl = np.linspace(np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),np.max(mass_fraction_of_cloud_condensed_water_in_air_ml), 4)
+        lvl = [0.001,5,20,50,150]
+        print(np.max(mass_fraction_of_cloud_condensed_water_in_air_ml))
+        CF_C = axm1.contour(tx, p_p, mass_fraction_of_cloud_condensed_water_in_air_ml,levels=lvl, zorder=11,
+                            colors="gray", linewidths=3,linestyles="-", alpha=0.8,
+                            label="2Inline label") #lime
+        axm1.clabel(CF_C, CF_C.levels, inline=False, fmt="%3.1f", fontsize=12,colors="gray")
+        #axm1.pcolormesh(tx, p_p, mass_fraction_of_cloud_condensed_water_in_air_ml, zorder=10)
+
+        #axm1.legend()#[CS], ["Pot. Temp."], loc='upper left').set_zorder(99999)
+        #axm1.legend()#[CS], ["Pot. Temp."], loc='upper left').set_zorder(99999)
+        #axm1.legend([CF_ICE[0],CF_C[0]],["1","2"])
+        artists_C, labels = CF_C.legend_elements()
+        artists_ICE, labels = CF_ICE.legend_elements()
+        cfrac_leg = axm1.legend((artists_C[0],artists_ICE[0]), ("cloud condensed water", "cloud ice"), handleheight=2, loc='upper left').set_zorder(99999)
+
+        #legend((line1, line2, line3), ('label1', 'label2', 'label3'))
+        axm1.invert_yaxis() #pressure from large to low
+        axm1.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
+        # create the second axis in m, always convert 
+        # I will simply use the barometric formular for now
+        # z = T0/L [(P/P0)^{LR/g}-1]
+        # we can take P0 from model and T0 from model, will test it for default
+        # 1013 hPa and 263K 
+        axm1T = axm1.twinx()
+        axm1T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm1.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm1T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm1T.plot([],[])
         #################################
         # P2: Potential temp with wind
         #################################
-        # Ground in gray
-        axm2.fill_between(dmet.time_normal[:], dmet.surface_air_pressure[:, 0, jindx, iindx] / 100, \
-                                  dmet.air_pressure_at_sea_level[:, 0, jindx, iindx] / 100, color="gray")
         cmap = plt.cm.RdYlBu_r  # plt.cm.jet RdYlBu
         skip = (slice(None, None, 2), slice(None, None, 2))
-
         axm2.barbs(tx[skip][skip], p_p[skip][skip], ur_p[skip][skip] * 1.943844,
                    vr_p[skip][skip] * 1.943844, length=7, zorder=1000, sizes=dict(emptybarb=0.25, spacing=0.15, height=0.4))
 
         lvl = np.array([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
-        CF_WS = axm2.contourf(tx, p_p, vel_p, cmap=cmap, alpha=0.8, levels=lvl, extend="both",
-                              zorder=1)
-        axm2.contour(tx, p_p, vel_p, levels=[13.], linestyles="dashed", colors="black",
-                      alpha=0.8, zorder=1)
-
-
+        CF_WS = axm2.contourf(tx, p_p, vel_p, cmap=cmap, alpha=0.8, levels=lvl, extend="both", zorder=1)
+        axm2.contour(tx, p_p, vel_p, levels=[13.], linestyles="dashed", colors="black", alpha=0.8, zorder=1)
         ticks = np.array([3, 13, 20])
         cbar = nice_vprof_colorbar(CF=CF_WS, ax=axm2,ticks=ticks, lvl=lvl, label = 'Wind Speed [m/s]', highlight_val = [13] )
-
         # potential temp.
-        #lvl = np.linspace(np.min(dmet.theta[:, :, jindx, iindx]), np.max(dmet.theta[:, :, jindx, iindx]), 200)
         lvl = np.arange(np.min(dmet.theta[:, :, jindx, iindx]), np.max(dmet.theta[:, :, jindx, iindx]), 2)
+
 
         CS = axm2.contour(tx, p_p, dmet.theta[:, :, jindx, iindx], colors="black", levels=lvl,
                           zorder=2)
         axm2.clabel(CS, [*CS.levels[2:5:1], *CS.levels[5:10:2], *CS.levels[15:20:5]], inline=True,
                     fmt='$\Theta$ = %1.0fK')  # '%1.0fK')
         # label
-        axm2.legend([CS], ["Pot. Temp."], loc='upper left').set_zorder(99999)
+
+        artists_C, labels = CS.legend_elements()
+        cfrac_leg = axm2.legend(artists_C, ["Potential temp."], handleheight=2,
+                                loc='upper left').set_zorder(99999)
+
+        #axm2.legend(CS, "Pot. Temp.", loc='upper left').set_zorder(99999)
         axm2.invert_yaxis()
         axm2.set_ylabel("Pressure [hPa]")
         axm2.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
-
+        # again creating the second y axis in m
+        axm2T = axm2.twinx()
+        axm2T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm2.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm2T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm2T.plot([],[])
         #################################
         # SET ADJUSTMENTS ON AXIS
         #################################
@@ -339,7 +404,7 @@ class VERT_MET():
         axm1.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm1.transAxes, color='black')
         axm2.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm2.transAxes, color='black')
 
-        plt.savefig(dirName_b1 + figname_b1 + "_op2_"+ ".png", bbox_inches = "tight", dpi = 200)
+        plt.savefig(dirName_b1 + figname_b1 + "_op2"+ ".png", bbox_inches = "tight", dpi = 200)
 
         #plt.savefig(dirName_b1 + figname_b1 + "_LOC" + str(ip) +
         #           "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
@@ -368,7 +433,7 @@ class VERT_MET():
         ticks = np.array([-9.8,-6.5, -3, 0, 3, 6])
         norm = mpl.colors.DivergingNorm(vmin=-10., vcenter=0., vmax=6)
         CF = axm1.pcolormesh(tx, p_p, dtdz_p, cmap=cmap, zorder=1,norm=norm) #dtdz_p
-        cbar = nice_vprof_colorbar(CF=CF, ax=axm1,ticks=ticks, label = 'Lapse. rate. [C/km]' )
+        cbar = nice_vprof_colorbar(CF=CF, ax=axm1,ticks=ticks, label = 'Lapse. rate. [C/km]', format='%.1f')
         #relative humidity
         CS = axm1.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(0,100,10),colors="green")  #Purples BrBu  BrYlBu cool bwr RdYlBu_r
         axm1.clabel(CS, inline=True, fmt='%1.0f')  # '%1.0fK')
@@ -382,11 +447,23 @@ class VERT_MET():
         axm1.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
         #axm1.legend(Cfrac[0], "1%-50% Cloud cover")
 
+        axm1T = axm1.twinx()
+        axm1T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm1.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm1T.set_ylim((T_f(ymin),T_f(ymax)))
         #TEMP
         cmap = cm.get_cmap('twilight_shifted')  # BrBu  BrYlBu
-        norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=20)
+        norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=10)
         CF_2 = axm2.pcolormesh(tx, p_p, temp_p, zorder=1, cmap=cmap, norm=norm) #dtdz_p
-        cbar = nice_vprof_colorbar(CF=CF_2, ax=axm2, label = 'Temp. [K]', extend="both")
+        cbar = nice_vprof_colorbar(CF=CF_2, ax=axm2, label = 'Temp. [K]', extend="both", format='%.0f')
 
         #RH
         C = axm2.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(0,100,10),colors="green") #dtdz_p
@@ -417,6 +494,22 @@ class VERT_MET():
         axm2.invert_yaxis()
         axm2.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
 
+        # again the second axis in m, still an approximation!
+        axm2T = axm2.twinx()
+        axm2T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm2.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm2T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm2T.plot([],[])
         #axis
         xfmt_maj = mdates.DateFormatter('%d.%m')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
         xfmt_min = mdates.DateFormatter('%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
@@ -438,10 +531,10 @@ class VERT_MET():
 
         #figm2.tight_layout()
         print(" SAVEIIING")
-        print(dirName_b1 + figname_b1 + "_op1_"+ ".png")
+        print(dirName_b1 + figname_b1 + "_op1"+ ".png")
         axm1.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm1.transAxes, color='black')
         axm2.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm2.transAxes, color='black')
-        plt.savefig(dirName_b1 + figname_b1 + "_op1_"+ ".png", bbox_inches = "tight", dpi = 200)
+        plt.savefig(dirName_b1 + figname_b1 + "_op1"+ ".png", bbox_inches = "tight", dpi = 200)
 
         plt.clf()
         plt.close()
