@@ -102,8 +102,8 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
  
                 # plot 
                 CT2 = CT.copy()
-                # do not show cloud tops above 8000m
-                CT2[np.where(CT2>8000)] = np.nan
+                # set all cloud tops above 8000m to 8000m
+                CT2[np.where(CT2>8000)] = 8000
                 data =  CT2[:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
                 CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.get_cmap('rainbow', 8),

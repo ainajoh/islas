@@ -33,7 +33,7 @@ def Wind_gusts(datetime, steps, model, domain_name = None, domain_lonlat = None,
         all_param = ['x_wind_gust_10m','y_wind_gust_10m','x_wind_10m','y_wind_10m',
                      'air_pressure_at_sea_level','surface_geopotential']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
-                                                           step=steps)
+                                                           step=steps,domain_name=domain_name)
         
         dmet.air_pressure_at_sea_level /= 100
         # print(dmet.pressure) 
