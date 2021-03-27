@@ -11,7 +11,7 @@ AROME Arctic NOAA satellite images for ISLAS2021
 <BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
   <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
     <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
-    <td width=1200 colspan=7><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td><td><a href=index.html>[System status]</td></tr>
+    <td width=1200 colspan=7><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td></tr>
     <tr>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart EC</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_AA.html>Flexpart AROME</a></td>
@@ -23,7 +23,7 @@ AROME Arctic NOAA satellite images for ISLAS2021
     <td width=100 align=center bgcolor=#c0c0c0><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">ETH maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><b>Satellites</b></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=quicklooks.html>Quicklooks</a></td></tr>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=index.html>Quicklooks</a></td></tr>
     <tr>
     <td width=1200 align=center colspan=12>Base: NOAA polar orbiting satellites, IR and VIS channels. Plots updated 1 times daily at 06 UTC.</td></tr>
     <tr><td></td></tr></table>
@@ -31,23 +31,29 @@ AROME Arctic NOAA satellite images for ISLAS2021
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="800px"></td>
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="800px"></td></tr>
   <tr><td align=center>
+Domain:<select id="domain0" size=1 onChange="javascript:selectDomain(0)">
+<option value=0 selected>AromeArctic</option>
+<option value=1>Greenland sea</option>
+</select>
 Type:<select id="channel0" size=1 onChange="javascript:selectChannel(0)">
 <option value=0 selected>IR channel 2</option>
 <option value=1>VIS/IR composite</option>
 </select>
 Time:<select id="sel_time0" size=1 onChange="javascript:selectTime(0)">
-IROPTIONS
-<option>0422</option> <option>0452</option> <option>0512</option> <option>0513</option> <option>0542</option> <option>0602</option> <option>0629</option> <option>0633</option> <option>0650</option> <option>0723</option> <option>0740</option> <option>0810</option> <option>0814</option> <option>0827</option> <option>0904</option> <option>0917</option> <option>0951</option> <option>0954</option> <option>1005</option> <option>1045</option> <option>1055</option> <option>1132</option> <option>1134</option> <option>1145</option> <option>1225</option> <option>1235</option> <option>1312</option> <option>1326</option> <option>1410</option> <option>1420</option> <option>1450</option> <option>1452</option> <option>1512</option> <option>1547</option> <option>1559</option> <option>1629</option> <option>1632</option> <option>1650</option> <option>1724</option> <option>1737</option> <option>1804</option> <option>1810</option> <option>1831</option>
+<option>0043</option> <option>0133</option> <option>0222</option> <option>0312</option> <option>0403</option> <option>0441</option> <option>0452</option> <option>0453</option> <option>0521</option> <option>0543</option> <option>0608</option> <option>0615</option> <option>0633</option> <option>0710</option> <option>0721</option> <option>0756</option> <option>0757</option> <option>0810</option> <option>0843</option> <option>0858</option> <option>0930</option> <option>0938</option> <option>0946</option> <option>1024</option> <option>1036</option> <option>1111</option> <option>1118</option> <option>1126</option> <option>1204</option> <option>1216</option> <option>1256</option> <option>1258</option> <option>1307</option> <option>1349</option> <option>1400</option> <option>1431</option> <option>1438</option> <option>1527</option> <option>1548</option> <option>1607</option> <option>1617</option> <option>1629</option> <option>1704</option> <option>1725</option> <option>1744</option> <option>1758</option> <option>1809</option> <option>1842</option> <option>1904</option> <option>1928</option> <option>1954</option> <option>2022</option>
 </select>
 </td>
 <td align=center>
+Domain:<select id="domain1" size=1 onChange="javascript:selectDomain(1)">
+<option value=0 selected>AromeArctic</option>
+<option value=1>Greenland sea</option>
+</select>
 Type:<select id="channel1" size=1 onChange="javascript:selectChannel(1)">
 <option value=0>IR channel 2</option>
 <option value=1 selected>VIS/IR composite</option>
 </select>
 Time:<select id="sel_time1" size=1 onChange="javascript:selectTime(1)">
-VISOPTIONS
-<option>0422</option> <option>0452</option> <option>0512</option> <option>0602</option> <option>0633</option> <option>0650</option> <option>0740</option> <option>0814</option> <option>0827</option> <option>0917</option> <option>0954</option> <option>1005</option> <option>1055</option> <option>1134</option> <option>1145</option> <option>1235</option> <option>1326</option> <option>1420</option> <option>1450</option> <option>1547</option> <option>1559</option> <option>1629</option> <option>1632</option> <option>1650</option> <option>1724</option> <option>1737</option> <option>1804</option> <option>1810</option> <option>1831</option>
+<option>0312</option> <option>0403</option> <option>0441</option> <option>0453</option> <option>0543</option> <option>0615</option> <option>0633</option> <option>0721</option> <option>0757</option> <option>0810</option> <option>0858</option> <option>0938</option> <option>0946</option> <option>1036</option> <option>1118</option> <option>1126</option> <option>1216</option> <option>1258</option> <option>1307</option> <option>1400</option> <option>1438</option> <option>1527</option> <option>1548</option> <option>1607</option> <option>1617</option> <option>1629</option> <option>1704</option> <option>1725</option> <option>1744</option> <option>1758</option> <option>1809</option> <option>1842</option> <option>1904</option>
 </select>
 </td></tr><tr><td>
   <form name="selpic" action="">

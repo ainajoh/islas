@@ -31,6 +31,10 @@ AROME Arctic NOAA satellite images for ISLAS2021
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="800px"></td>
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="800px"></td></tr>
   <tr><td align=center>
+Domain:<select id="domain0" size=1 onChange="javascript:selectDomain(0)">
+<option value=0 selected>AromeArctic</option>
+<option value=1>Greenland sea</option>
+</select>
 Type:<select id="channel0" size=1 onChange="javascript:selectChannel(0)">
 <option value=0 selected>IR channel 2</option>
 <option value=1>VIS/IR composite</option>
@@ -40,6 +44,10 @@ IROPTIONS
 </select>
 </td>
 <td align=center>
+Domain:<select id="domain1" size=1 onChange="javascript:selectDomain(1)">
+<option value=0 selected>AromeArctic</option>
+<option value=1>Greenland sea</option>
+</select>
 Type:<select id="channel1" size=1 onChange="javascript:selectChannel(1)">
 <option value=0>IR channel 2</option>
 <option value=1 selected>VIS/IR composite</option>

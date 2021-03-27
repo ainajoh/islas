@@ -15,6 +15,7 @@ day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
 var fdate = new Array(0,0); // forecast time step
 var mkind=new Array(0,1);
+var dkind=new Array(0,0);
 var synced=true;
 var kind = 1;
 var tim = new Array(1,1);
@@ -29,14 +30,30 @@ captions[2]="";
 
 // functions
 
+function getDomain(m)
+{
+	switch (dkind[m]) {
+		case 0:
+                return "_AROME_Arctic.png";
+		break;
+		case 1:
+                return "_Greendland_Sea.png";
+		break;
+		default:
+		return "None";
+		break;
+	}
+}
+
+
 function getChannel(m)
 {
 	switch (mkind[m]) {
 		case 0:
-                return "mne_channel5,2AA.png";
+                return "mne_channel5";
 		break;
 		case 1:
-                return "mne_channel1,2,3AA.png";
+                return "mne_channel1,2,3";
 		break;
 		default:
 		return "None";
@@ -113,7 +130,7 @@ function getBasetime()
 
 function getFilename(k)
 {
-  return "./gfx/sat_"+getDatename()+"/noaa"+getDatename()+getTime(k)+getChannel(k);
+  return "./gfx/sat_"+getDatename()+"/noaa"+getDatename()+getTime(k)+getChannel(k)+getDomain(k);
 }
 
 function prepareFigure() 
@@ -122,6 +139,19 @@ function prepareFigure()
 	document.getElementById("panel1").alt=getFilename(0);
 	document.getElementById("panel2").src=getFilename(1);
 	document.getElementById("panel2").alt=getFilename(1);
+}
+
+function selectDomain(n)
+{
+    switch(n) {
+ 	case 0:
+	  dkind[0]=document.getElementById("domain0").selectedIndex;
+	  break;
+ 	case 1:
+	  dkind[1]=document.getElementById("domain1").selectedIndex;
+	  break;
+    }
+    prepareFigure();
 }
 
 function selectChannel(n)
