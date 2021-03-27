@@ -5,7 +5,7 @@ function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
   cd /home/centos/output/weathervis/$1
-  mkdir small
+  mkdir -p small
   for f in *.png; do 
     convert -scale 40% $f small/$f
   done
@@ -128,7 +128,7 @@ for md in ${model[@]}; do
       for pnam in ${point_name[@]}; do
 	  if [[ ${steps} != "None" ]]
           then
-	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps --steps ${steps[0]} ${steps[1]} --model $md --domain_name $pnam --point_name $pnam"
+	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --domain_name $pnam --point_name $pnam"
           else
 	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $pnam --point_name $pnam"
           fi

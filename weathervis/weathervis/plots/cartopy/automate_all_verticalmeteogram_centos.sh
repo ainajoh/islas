@@ -5,7 +5,7 @@ function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
   cd /home/centos/output/weathervis/$1
-  mkdir small
+  mkdir -p small
   for f in *.png; do 
     convert -scale 40% $f small/$f
   done
