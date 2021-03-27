@@ -115,7 +115,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                                       levels=np.arange(960, 1050, 10),
                                       colors='grey', linewidths=1.0, label="MSLP [hPa]")
                     ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
-                    ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=6,facecolor="none",edgecolor="gray") 
+                    ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=6,facecolor="none",edgecolor="k") 
                     # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                     if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
                          ax1.set_extent(data_domain.lonlat)
