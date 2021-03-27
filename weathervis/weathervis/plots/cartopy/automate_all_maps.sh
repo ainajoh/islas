@@ -5,7 +5,7 @@ function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
   cd /home/centos/output/weathervis/$1
-  mkdir small
+  mkdir -p small
   for f in *.png; do 
     convert -scale 40% $f small/$f
   done
@@ -139,33 +139,42 @@ echo $modelrun
 #modelrun=("2020100912")
 #modelrun=("2020101012")
 #modelrun=("2020101012")
+echo ${modelrun[i]}
 
 #steps=0
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_wg = "python Wind_gusts.py  --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
-    runstring_cloud_level="python Low_medium_high_clouds.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
-    runstring_windlvl="python Wind_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --p_level 700 850 925"
-    runstring_CT="python Cloud_base_top.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 $steps_max  --model $md --domain_name $domain_name"
+    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_T850="python T850_RH.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
-    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_CT="python Cloud_base_top.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_cloud_level="python Low_medium_high_clouds.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_LMH="python Low_medium_high_clouds.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --m_level 24 64"
+    runstring_windlvl="python Wind_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --p_level 700 850 925"
+    runstring_wg="python Wind_gusts.py  --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
-    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 steps_max  --model $md --domain_name $domain_name"
-    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name"
-    runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name --m_level 24 64"
-    runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 steps_max --model $md --domain_name $domain_name"
+    runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     
     echo $runstring_wg
     $runstring_wg
+    converting $modelrun
     echo $runstring_cloud_level
     $runstring_cloud_level
+    converting $modelrun
     echo $runstring_CT
     $runstring_CT 
+    converting $modelrun
+    echo $runstring_LMH
+    $runstring_LMH 
+    converting $modelrun
     echo $runstring_windlvl
     $runstring_windlvl
+    converting $modelrun
     echo $runstring_Z
     $runstring_Z
     converting $modelrun

@@ -118,7 +118,7 @@ def old_nice_vprof_colorbar(CF, ax, lvl=None, ticks=None, label=None, highlight_
 
 class VERT_MET():
     def __init__(self, model, date, steps, data=None, domain_name=None, domain_lonlat=None, legend=None, info=None,
-                 num_point=None, point_name=None, point_lonlat=None):
+                 num_point=None, point_name=None, point_lonlat=None,m_level=None,p_level=None):
         self.model = model
         self.date = date
         self.steps = steps
@@ -136,8 +136,8 @@ class VERT_MET():
         self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m","atmosphere_boundary_layer_thickness","surface_geopotential"]
         self.param_sfx = []
         self.param = self.param_ml + self.param_pl + self.param_sfc + self.param_sfx
-        self.p_level = None
-        self.m_level = None
+        self.p_level = p_level
+        self.m_level = m_level
         self.mbrs = None
         self.url = None
         self.point_lonlat = point_lonlat
@@ -301,7 +301,26 @@ class VERT_MET():
         #legend((line1, line2, line3), ('label1', 'label2', 'label3'))
         axm1.invert_yaxis() #pressure from large to low
         axm1.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
-
+        # create the second axis in m, always convert 
+        # I will simply use the barometric formular for now
+        # z = T0/L [(P/P0)^{LR/g}-1]
+        # we can take P0 from model and T0 from model, will test it for default
+        # 1013 hPa and 263K 
+        axm1T = axm1.twinx()
+        axm1T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm1.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm1T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm1T.plot([],[])
         #################################
         # P2: Potential temp with wind
         #################################
@@ -333,7 +352,22 @@ class VERT_MET():
         axm2.invert_yaxis()
         axm2.set_ylabel("Pressure [hPa]")
         axm2.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
-
+        # again creating the second y axis in m
+        axm2T = axm2.twinx()
+        axm2T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm2.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm2T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm2T.plot([],[])
         #################################
         # SET ADJUSTMENTS ON AXIS
         #################################
@@ -413,6 +447,18 @@ class VERT_MET():
         axm1.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
         #axm1.legend(Cfrac[0], "1%-50% Cloud cover")
 
+        axm1T = axm1.twinx()
+        axm1T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm1.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm1T.set_ylim((T_f(ymin),T_f(ymax)))
         #TEMP
         cmap = cm.get_cmap('twilight_shifted')  # BrBu  BrYlBu
         norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=10)
@@ -448,6 +494,22 @@ class VERT_MET():
         axm2.invert_yaxis()
         axm2.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
 
+        # again the second axis in m, still an approximation!
+        axm2T = axm2.twinx()
+        axm2T.set_ylabel('Altitude [m]')
+        P0 = 1000
+        T0 = 273
+        L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
+        R = 287.053 # J/(kg K)
+        g = 9.81
+        T_f = lambda T_c: T0/L*((T_c/P0)**(-L*R/g) -1)
+        # get left axis limits
+        ymin, ymax = axm2.get_ylim()
+        # apply function and set transformed values to right axis limits
+        axm2T.set_ylim((T_f(ymin),T_f(ymax)))
+        # set an invisible artist to twin axes 
+        # to prevent falling back to initial values on rescale events
+        axm2T.plot([],[])
         #axis
         xfmt_maj = mdates.DateFormatter('%d.%m')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
         xfmt_min = mdates.DateFormatter('%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
@@ -518,7 +580,7 @@ if __name__ == "__main__":
 
         VM = VERT_MET(date=dt, steps=args.steps, model=args.model, domain_name=args.domain_name,
                       domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info, num_point=args.point_num,
-                      point_lonlat=args.point_lonlat, point_name=args.point_name)
+                      point_lonlat=args.point_lonlat, point_name=args.point_name, m_level=[25,64])
 
         VM.retrieve_handler()
         VM.calculations()

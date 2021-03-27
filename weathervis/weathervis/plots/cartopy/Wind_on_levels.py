@@ -61,7 +61,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                                     standard_parallels=parallels,globe=globe)
         make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
         # for the generation of the colormap, list of hexcodes
-        C = ['#093b85','#1068e9','#f9db65','#f45510','#c22ecb','#531357']
+        C = ['#ffffff','#1068e9','#f9db65','#f45510','#c22ecb','#531357']
 
         # loop over pressure levels, do not forget the indent the whole routine
         for ip,p in enumerate(dmet.pressure):

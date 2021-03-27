@@ -31,11 +31,6 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
         date = dt[0:-2]
         hour = int(dt[-2:])
         all_param = ['cloud_base_altitude','cloud_top_altitude','air_pressure_at_sea_level','surface_geopotential']
-        #all_param = ['air_pressure_at_sea_level']
-        print(dt)
-        print(model)
-        print(steps)
-        print(all_param)
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
                                                            step=steps, domain_name=domain_name)
         
@@ -107,12 +102,14 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
  
                 # plot 
                 CT2 = CT.copy()
-                # do not show cloud tops above 8000m
-                CT2[np.where(CT2>8000)] = np.nan
+                # set all cloud tops above 7000m to nan
+                CT2[np.where(CT2>7000)] = np.nan
                 data =  CT2[:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
-                CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.get_cmap('rainbow', 8),
-                           vmin=0, vmax=8000,zorder=2)
+                cmap = plt.cm.get_cmap('rainbow_r', 6)
+                cmap.set_over('lightgrey')
+                CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=cmap,
+                                       vmin=0, vmax=3000,zorder=2)
                 # indicate cloud base height by markers
                 co = '#393939'
                 skip = (slice(10, None, 20), slice(10, None, 20))
@@ -180,30 +177,26 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+")
   parser.add_argument("--steps", default=0, nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
-  parser.add_argument("--model",default="AromeArctic", help="MEPS or AromeArctic")
+  parser.add_argument("--model",default="MEPS", help="MEPS or AromeArctic")
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
-  
-  Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
-                     domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
-                     legend = args.legend,info = args.info,grid=args.grid)
 
   # chunck it into 24-h steps, first find out how many chunks we need, s = steps
-  #s  = np.arange(np.min(args.steps),np.max(args.steps))
-  #cn = np.int(len(s)/24)
-  #if cn == 0:  # length of 24 not exceeded
-  #    Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
-  #                   domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
-  #                   legend = args.legend,info = args.info,grid=args.grid)
-  #else: # lenght of 24 is exceeded, split in chunks, set by cn+1
-  #    print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
-  #    chunks = np.array_split(s,cn+1)
-  #    for c in chunks:
-  #        Cloud_base_top(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,
-  #                domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
-  #                info = args.info,grid=args.grid)
+  s  = np.arange(np.min(args.steps),np.max(args.steps))
+  cn = np.int(len(s)/24)
+  if cn == 0:  # length of 24 not exceeded
+      Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
+                     domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
+                     legend = args.legend,info = args.info,grid=args.grid)
+  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
+      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
+      chunks = np.array_split(s,cn+1)
+      for c in chunks:
+          Cloud_base_top(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,
+                  domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
+                  info = args.info,grid=args.grid)
 

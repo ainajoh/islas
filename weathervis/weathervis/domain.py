@@ -66,7 +66,9 @@ class domain():
         if self.lonlat and not self.idx:
             self.idx = lonlat2idx(self.lonlat, self.url)
         print("IN DOMAIN")
-        if self.point_name and not self.domain_name:
+        print(self.point_name)
+        print(self.domain_name)
+        if self.point_name != None and self.domain_name == None:
             print("GOTCHA")
             sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
             plon = float(sites.loc[self.point_name].lon)
@@ -89,11 +91,6 @@ class domain():
 
     def MEPS(self):
         self.lonlat = [-1, 60., 49., 72]
-        self.idx = lonlat2idx(self.lonlat, self.url)
-
-    def Iceland(self):
-        self.domain_name = "Iceland"
-        self.lonlat = [-26, 30., 58., 85.]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def Finse(self):
@@ -360,3 +357,48 @@ class domain():
         maxlat = float(plat + 0.05)
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Iceland(self):
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        self.domain_name = "Iceland"
+        #self.lonlat = [12.0, 19.5, 68.0, 70.6]
+        #self.idx = lonlat2idx(self.lonlat, self.url)
+        #self.lonlat = [-65, 20., 58., 85]
+        self.lonlat = [-26., -8, 63., 67]
+
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def pcmet1(self):
+        point_name = "pcmet1"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.22)
+        maxlon = float(plon + 0.18)
+        minlat = float(plat - 0.08)
+        maxlat = float(plat + 0.05)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+    def pcmet2(self):
+        point_name = "pcmet2"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.22)
+        maxlon = float(plon + 0.18)
+        minlat = float(plat - 0.08)
+        maxlat = float(plat + 0.05)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+    def pcmet3(self):
+        point_name = "pcmet3"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.22)
+        maxlon = float(plon + 0.18)
+        minlat = float(plat - 0.08)
+        maxlat = float(plat + 0.05)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+

@@ -26,8 +26,9 @@ modelrun_date=$yymmdd
 
 case "$model" in
     AA)
-	url="https://thredds.met.no/thredds/dodsC/aromearcticarchive/${yy}/${mm}/${dd}/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
-        echo $url
+	#url="https://thredds.met.no/thredds/dodsC/aromearcticarchive/${yy}/${mm}/${dd}/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+        url="https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+	echo $url
         web_code=$(curl -sL -w "%{http_code}\n" "$url" -o /dev/null)
         echo $web_code
         echo $(($web_code == 200))
@@ -38,11 +39,11 @@ case "$model" in
          fi
         echo "exit 64" > /home/centos/batch/timeoutwrapper_AA_${runhour}.sh
 	
-	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
-	automate_all_meteogram_centos.sh --steps_max $steps --modelrun_hour $runhour &
-	automate_all_verticalmeteogram_centos.sh --steps_max $steps --modelrun_hour $runhour &
-	wait
+	automate_all_meteogram_centos.sh --steps_max $steps --modelrun_hour $runhour 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
+	automate_all_verticalmeteogram_centos.sh --steps_max $steps --modelrun_hour $runhour 
+	#wait
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
