@@ -3,22 +3,15 @@ source ~/.bashrc
 
 function converting {
   here=$( pwd )
+  echo "make file"
   # convert to smaller image size and transfer to web disk
   cd /Data/gfi/isomet/projects/ISLAS_aina/output/weathervis/$1
   mkdir -p small
+  echo "converting start"
   for f in *.png; do
-    convert -scale 40% $f small/$f
+    echo $f
+    convert -scale 40% $f ./small/$f
   done
-  #if ! [ -d /home/centos/www/gfx/$1 ]; then
-  #  mkdir /home/centos/www/gfx/$1
-  #fi
-  #cp small/* /home/centos/www/gfx/$1
-  #rm -rf /home/centos/output/weathervis/$1
-  sudo chown -R centos:apache /home/centos/www/gfx/$1
-  # transfer to webserver
-  #if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-  #  scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/[AM]* 158.39.201.233:/home/centos/www/gfx/$1/
-  #fi
   echo "converting done"
   cd $here
 }
@@ -67,7 +60,8 @@ model=("AromeArctic")
 steps_max=(1)
 domain_name="None"
 release_name="NYA"
-domain_name=("Svalbard" "NorwegianSea_area" "Andenes_area")
+#domain_name=("AromeArctic" "Svalbard" "NorwegianSea_area" "Andenes_area")
+
 while [ $# -gt 0 ]; do
   case "$1" in
     --model)
@@ -139,14 +133,13 @@ echo $modelrun
 #modelrun=("2021022500")
 #modelrun=("2021022600")
 #steps=0
-
-domain_name=("Svalbard" "NorwegianSea_area" "Andenes_area")
+domain_name=("Svalbard" "AromeArctic") # "NorwegianSea_area" "Andenes_area")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
     for dom in ${domain_name[@]}; do
         echo $dom
-    	runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $dom"
+    	runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $dom"
 
     	echo $runstring_FP
     	$runstring_FP

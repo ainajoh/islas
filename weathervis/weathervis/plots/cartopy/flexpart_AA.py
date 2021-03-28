@@ -21,7 +21,7 @@ import datetime as dt_m
 
 #####################################################################################################################
 def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None,
-                legend=False, info = False, save = True, grid=True, flex_base_path=""):
+                legend=False, info = False, save = True, grid=True, flex_base_path="", track = False,release_name="NYAlesund_S1"):
   for dt in datetime: #modelrun at time..
     dt = f"{dt}"
     date = dt[0:-2]
@@ -38,8 +38,8 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     parallels = dmap_meps.standard_parallel_projection_lambert
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,globe=globe)
-    release_name = 'NYAlesund_S1'
     path = "{0}/{1}/flexpart_run_d01_combined.nc".format(flex_base_path, release_name)
+    #path = "/Users/ainajoh/Downloads/here.nc"
     print(path)
     #findpath = glob.glob(path)
     #print(findpath)
@@ -61,30 +61,20 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
         ax1 = plt.subplot(projection=crs)
         epoch_now = tim_data[tim]
-        print(epoch_now)
         time_read = dt_m.datetime.utcfromtimestamp(epoch_now)
-        print(time_read)
-
-        # determine if image should be created for this time step
-        #stepok=False
-        #if tim<0: # do not need hourly steps for FP
-        #    stepok=True
-        #elif (tim<=36) and ((tim % 3) == 0):
-        #    stepok=True
-        #elif (tim<=120) and ((tim % 6) == 0):
-        #    stepok=True
-        stepok=True
+        stepok = False
+        if tim < 0:  # do not need hourly steps for FP
+            stepok = True
+        elif (tim <= 36) and ((tim % 3) == 0):
+            stepok = True
+        elif (tim <= 120) and ((tim % 3) == 0):
+            stepok = True
         if stepok==True:#
             l=0
-
-            #levidx1 = lev.index(500)
-            #levidx2 = lev.index(1500)
-            #levidx3 = lev.index(3000)
             for lev in levs[:]:
                 fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
                 ttt = tim
                 tidx = tim - np.min(steps)
-                #spec2a = (spec1a[tim, :, l, :, :]).squeeze()  #(66, 6, 13, 94, 70) -> (6,94,70)
                 if len(np.shape(spec1a)) == 5:
                     print("hereee if many releases")
                     spec2a=(spec1a[tim, :, l, :, :]).squeeze()
@@ -101,24 +91,25 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                                     levels=np.arange(960, 1050, 10),
                                     colors='grey', linewidths=1.0, label="MSLP [hPa]", transform=crs)
                 ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+                cmapmy= ["Reds", "Blues", "Oranges","Greens", "Greys", "Purples"]
 
-                c = ['#F7A7FD','#A7D3FD','#FDDBA7',
-                     '#00FF80', '#606060','#9933FF']
                 colorindx = 0
                 label_leg = []
                 for rel in range(0,np.shape(spec2a)[0]):
-                    print(c[colorindx])
-                    cm = get_continuous_cmap( [ c[colorindx], c[colorindx] ] )
+                    cm = cmapmy[colorindx]
                     FP = ax1.pcolormesh(lons, lats, spec2a[rel,:,:],  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=cm, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
                     labeltext = f"rel_{rel}"
                     #tot_patch = mpl.patches.Patch(color='gray', alpha=0.5, linewidth=0)
-                    label_leg += [Line2D([0], [0], marker="s", color=c[colorindx], label=labeltext, markersize=15,lw=0)]
+                    label_leg += [Line2D([0], [0], marker="s", color=cm[:-1], label=labeltext, markersize=15,lw=0)]
                     colorindx += 1
 
                 ax1.legend(handles=label_leg, loc='upper left').set_zorder(99999)
                 ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))
                 ax1.text(0, 1, "{0}_FP_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
+                if track:
+                    tt = dmap_meps.time[tim]
+                    plot_track_on_map(dt=dt, model=model, tim=tim, gca=plt.gca(), ccrs=ccrs, c1="gray", c2="red", tt=tt, url="/Users/ainajoh/Downloads/Data_210327_0545Z")
                 if grid:
                     nicegrid(ax=ax1)
 
@@ -138,30 +129,6 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                 plt.close(fig1)
 
 
-def old():
-    file= "/Users/ainajoh/multirel4cmet.nc"
-    cdf = nc.Dataset(file, "r")  # "/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
-    print(cdf)
-    lats=cdf.variables["XLAT"][:]
-    lons=cdf.variables["XLONG"][:]
-    tim=cdf.variables["time"][:]
-    levs=cdf.variables["ZTOP"][:]
-    spec1a=cdf.variables["CONC"]
-    #lons, lats = np.meshgrid(lons, lats)
-    print(np.shape(spec1a))
-    print(np.shape(lats))
-    print(np.shape(dmap_meps.air_pressure_at_sea_level))
-    print(levs)
-    spec1a = spec1a[30,0,1,:,:]
-    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9), subplot_kw={'projection': crs})
-    F_P = ax1.pcolormesh(lons, lats, spec1a, cmap=plt.cm.Reds, zorder=1,
-                     alpha=0.9, transform=ccrs.PlateCarree())
-    C_P = ax1.contour(dmap_meps.x, dmap_meps.y, dmap_meps.air_pressure_at_sea_level[0, 0,:,:], colors='grey', linewidths=0.5)
-    ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'), alpha = 0.2)
-
-    plt.show()
-
-
 if __name__ == "__main__":
   import argparse
 
@@ -179,6 +146,8 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
+  parser.add_argument("--track", default=False, help="Display info")
+  parser.add_argument("--release_name", default="NYAlesund_S1", help="nope")
   args = parser.parse_args()
   print(args.__dict__)
 
@@ -188,6 +157,6 @@ if __name__ == "__main__":
 
   # split up in 3 retrievals of up to 24h
   flexpart_EC(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model, domain_name = args.domain_name,
-         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, flex_base_path=flex_base_path)
+         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, flex_base_path=flex_base_path, track= args.track, release_name = args.release_name)
   #old()
 #fin
