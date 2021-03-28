@@ -111,7 +111,7 @@ echo $modelrun_date
 echo $modelrun_hour
 echo $steps_max
 echo $domain_name
-modelrun=${modelrun_date}${modelrun_hour}
+modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
 
 
@@ -133,7 +133,7 @@ for md in ${model[@]}; do
  	 fi
     echo $runstring_PVmet
     $runstring_PVmet
-    converting $modelrun
+    converting ${modelrun[i]}
    done
   done
 done

@@ -110,7 +110,7 @@ echo $modelrun_date
 echo $modelrun_hour
 echo $steps_max
 echo $domain_name
-modelrun=${modelrun_date}${modelrun_hour}
+modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
 
 #point_name=("Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
@@ -125,7 +125,7 @@ for md in ${model[@]}; do
 
     echo $runstring_Pmet
     $runstring_Pmet
-    converting $modelrun
+    converting ${modelrun[i]}
    done
   done
 done

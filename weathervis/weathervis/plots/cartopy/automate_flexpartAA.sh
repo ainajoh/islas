@@ -117,7 +117,7 @@ echo $modelrun_hour
 echo $steps_max
 echo $domain_name
 echo $release_name
-modelrun=${modelrun_date}${modelrun_hour}
+modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
 #modelrun=("2021010100")
 #model=("AromeArctic")
@@ -144,7 +144,7 @@ for md in ${model[@]}; do
 		
     		echo $runstring_FP
     		$runstring_FP
-    		converting $modelrun
+    		converting ${modelrun[i]}
 	done
 
   done
