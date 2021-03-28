@@ -7,7 +7,7 @@ import numpy as np
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.colors as mcolors
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
+def domain_input_handler_old(dt, model, domain_name, domain_lonlat, file, point_lonlat=None):
 
     if domain_name or domain_lonlat:
         if domain_lonlat:
@@ -27,7 +27,43 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     else:
         data_domain = None
     return data_domain
+def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name, point_lonlat=None):
+  #print(point_name)
+  #print(domain_name)
+  #print(domain_lonlat)
+  if domain_name or domain_lonlat:
+    if domain_lonlat:
+      print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
+      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
+    else:
+      data_domain = domain(dt, model, file=file)
 
+    if domain_name != None and domain_name in dir(data_domain):
+      print(f"\n####### Setting up domain: {domain_name} ##########")
+      domain_name = domain_name.strip()
+      #data_domain = domain(dt, model, file=file, domain_name=domain_name)
+      if re.search("\(\)$", domain_name):
+        func = f"data_domain.{domain_name}"
+      else:
+        func = f"data_domain.{domain_name}()"
+      print(func)
+      print(domain_name)
+      eval(func)
+    else:
+      print(f"No domain found with that name; {domain_name}")
+  else:
+    data_domain=None
+  if (point_name !=None and domain_name == None and domain_lonlat == None):
+     print("GGGGGOOOO")
+     data_domain = domain(dt, model, file=file, point_name=point_name)
+     print("DOM DONE")
+  if (point_lonlat != None, point_name == None and domain_name == None and domain_lonlat == None):
+  #   print("GGGGGOOOO")
+     data_domain = domain(dt, model, file=file, lonlat=point_lonlat)
+     print("DOM DONE")
+
+  print(data_domain)
+  return data_domain
 
 
 def setup_directory( path, folder_name):
@@ -126,4 +162,45 @@ def add_point_on_map(ax, lonlat = None, point_name=None, labels=None, colors=Non
                             color=colors[i], zorder=6, linestyle='None', edgecolors="k", linewidths=3)
         i+=1
 
+# for creating nice colormaps from hexcode, see https://towardsdatascience.com/beautiful-custom-colormaps-with-matplotlib-5bab3d1f0e72
+def get_continuous_cmap(hex_list, float_list=None):
+    ''' creates and returns a color map that can be used in heat map figures.
+        If float_list is not provided, colour map graduates linearly between each color in hex_list.
+        If float_list is provided, each color in hex_list is mapped to the respective location in float_list. 
+        
+        Parameters
+        ----------
+        hex_list: list of hex code strings
+        float_list: list of floats between 0 and 1, same length as hex_list. Must start with 0 and end with 1.
+        
+        Returns
+        ----------
+        colour map'''
+    rgb_list = [rgb_to_dec(hex_to_rgb(i)) for i in hex_list]
+    if float_list:
+        pass
+    else:
+        float_list = list(np.linspace(0,1,len(rgb_list)))
+        
+    cdict = dict()
+    for num, col in enumerate(['red', 'green', 'blue']):
+        col_list = [[float_list[i], rgb_list[i][num], rgb_list[i][num]] for i in range(len(float_list))]
+        cdict[col] = col_list
+    cmp = mcolors.LinearSegmentedColormap('my_cmp', segmentdata=cdict, N=256)
+    return cmp
+def hex_to_rgb(value):
+    '''
+    Converts hex to rgb colours
+    value: string of 6 characters representing a hex colour.
+    Returns: list length 3 of RGB values'''
+    value = value.strip("#") # removes hash symbol if present
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
+
+def rgb_to_dec(value):
+    '''
+    Converts rgb to decimal colours (i.e. divides each value by 256)
+    value: list (length 3) of RGB values
+    Returns: list (length 3) of decimal values'''
+    return [v/256 for v in value]
