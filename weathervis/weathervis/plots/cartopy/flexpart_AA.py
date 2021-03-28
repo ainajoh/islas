@@ -59,17 +59,20 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
     print(len(tim_data))
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
+        print(tim)
         ax1 = plt.subplot(projection=crs)
         epoch_now = tim_data[tim]
         time_read = dt_m.datetime.utcfromtimestamp(epoch_now)
         stepok = False
-        if tim < 0:  # do not need hourly steps for FP
-            stepok = True
-        elif (tim <= 36) and ((tim % 3) == 0):
-            stepok = True
-        elif (tim <= 120) and ((tim % 3) == 0):
-            stepok = True
-        if stepok==True:#
+        # determine if image should be created for this time step
+        stepok=False
+        if tim<25:
+           stepok=True
+        elif (tim<=36) and ((tim % 3) == 0):
+          stepok=True
+        elif (tim<=66) and ((tim % 6) == 0):
+          stepok=True
+        if stepok==True:  
             l=0
             for lev in levs[:]:
                 fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
