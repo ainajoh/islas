@@ -82,11 +82,6 @@ while [ $# -gt 0 ]; do
     modelrun_hour=("${1#*=}")
     fi
     ;;
-    --steps_max)
-    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    steps_max=("${1#*=}")
-    fi
-    ;;
     --domain_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
     domain_name="${1#*=}"
@@ -129,8 +124,6 @@ for md in ${model[@]}; do
 	  if [[ ${steps} != "None" ]]
           then
 	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --domain_name $pnam --point_name $pnam"
-          else
-	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $pnam --point_name $pnam"
           fi
 
     echo $runstring_Pmet

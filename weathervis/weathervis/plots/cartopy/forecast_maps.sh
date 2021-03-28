@@ -39,9 +39,9 @@ case "$model" in
          fi
         echo "exit 64" > /home/centos/batch/timeoutwrapper_AA_${runhour}.sh
 	
-	automate_all_meteogram_centos.sh --steps_max $steps --modelrun_hour $runhour 
+	automate_all_meteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-	automate_all_verticalmeteogram_centos.sh --steps_max $steps --modelrun_hour $runhour 
+	automate_all_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
 	#wait
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area

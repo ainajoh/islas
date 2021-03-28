@@ -24,13 +24,13 @@ import numpy as np
 import matplotlib.colors as colors
 import matplotlib as mpl
 from weathervis.checkget_data_handler import *
+from pylab import *
 
-
-def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
+def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
     for dt in datetime:
         date = dt[0:-2]
         hour = int(dt[-2:])
-        all_param = ['x_wind_pl','y_wind_pl','air_pressure_at_sea_level','surface_geopotential']
+        all_param = ['specific_humidity_pl','air_pressure_at_sea_level','surface_geopotential']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
                                                        step=steps,p_level=p_level, domain_name = domain_name)
         
@@ -50,7 +50,9 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
           (x[:-1, 1:] > 1e20) |
           (x[1:, 1:] > 1e20)
         )
-
+         
+       # print(OUTPUTPATH)
+       # print(dt)
         # plot map
         lon0 = dmet.longitude_of_central_meridian_projection_lambert
         lat0 = dmet.latitude_of_projection_origin_projection_lambert
@@ -59,10 +61,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
         globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0,
                                     standard_parallels=parallels,globe=globe)
-        make_modelrun_folder = setup_directory(OUTPUTPATH+ "{0}".format(dt))
-        # generation of discrete colormap
-        cm = colors.ListedColormap(['#f4f8f8','#98d1f0','#f9db65','#f45510',
-                                  '#c22ecb','#531357'])
+        make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
 
         # loop over pressure levels, do not forget the indent the whole routine
         for ip,p in enumerate(dmet.pressure):
@@ -88,24 +87,12 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                     ZS = dmet.surface_geopotential[tidx, 0, :, :]
                     MSLP = np.where(ZS < 3000, dmet.air_pressure_at_sea_level[tidx, 0, :, :],
                                     np.NaN).squeeze()
-                    # calculate windspeed
-                    WS = np.sqrt(dmet.x_wind_pl[tidx,ip,:,:]**2 + dmet.y_wind_pl[tidx,ip,:,:]**2)
-                    uxx = dmet.x_wind_pl[tidx, ip,:, :].squeeze()
-                    vxx = dmet.y_wind_pl[tidx, ip,:, :].squeeze()
- 
-                    #pcolor as pcolormesh and  this projection is not happy together. If u want faster, try imshow
-                    #data =  WS[:nx - 1, :ny - 1].copy()
-                    #data[mask] = np.nan
-                    #CC=ax1.pcolormesh(x, y,  data[:, :], cmap=plt.cm.get_cmap('Accent', 6), vmin=0, vmax=30,zorder=2)
-                    #######################
-                    # THIS MAKES THE COLORMAP, FOR AINA TO NOTICE ME
-                    #cm = get_continuous_cmap(C) # <-- HERE, HERE,HERE , not needed right now
-                    #########################
-                    CC=ax1.contourf(x,y,WS,levels=np.linspace(0.0, 30, 7),cmap=cm,zorder=2)
-                    # add the wind barbs or quivers
-                    skip = (slice(40, -40, 50), slice(40, -40, 50)) #70
-                    CVV = ax1.barbs( x[skip], y[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, zorder=3)
-    
+                    # plot spec humidity
+                    data = dmet.specific_humidity_pl[tidx,ip,:,:]*1000 # get g/kg
+                    CC=ax1.contourf(x,y,data,levels=[0.5,1.0, 1.5, 2.0, 2.5, 3.5, 5,10],
+                                    colors=('#FFFFFF','#ffffd9','#e0f3b2','#97d6b9','#41b6c4',
+                                            '#1f80b8','#24429b','#081d58','#800080'),vmin=0,
+                                    vmax=5,zorder=2,extend='both') 
                     # MSLP
                     # MSLP with contour labels every 10 hPa
                     C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=4, alpha=1.0,
@@ -119,9 +106,9 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                     # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                     if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
                          ax1.set_extent(data_domain.lonlat)
-                    ax1.text(0, 1, "{0}_WS_{1}_{2}+{3:02d}".format(model,int(p), dt, ttt), ha='left', va='bottom', \
+                    ax1.text(0, 1, "{0}_Q_{1}_{2}+{3:02d}".format(model,int(p), dt, ttt), ha='left', va='bottom', \
                                            transform=ax1.transAxes, color='black')
-                    print("filename: "+make_modelrun_folder +"/{0}_{1}_{2}_{3}_{4}+{5:02d}.png".format(model, domain_name, "WS",int(p), dt, ttt))
+                    print("filename: "+make_modelrun_folder +"/{0}_{1}_{2}_{3}_{4}+{5:02d}.png".format(model, domain_name, "Q",int(p), dt, ttt))
                     grid = True
                     if grid:
                          nicegrid(ax=ax1)
@@ -143,7 +130,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                         frame.set_alpha(0.8)
                         proxy = [plt.axhline(y=0, xmin=0, xmax=0, color="gray",zorder=7)]
     
-                    fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_{4}+{5:02d}.png".format(model, domain_name, "WS",int(p), dt, ttt), bbox_inches="tight", dpi=200)
+                    fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}_{4}+{5:02d}.png".format(model, domain_name, "Q",int(p), dt, ttt), bbox_inches="tight", dpi=200)
                     ax1.cla()
                     plt.clf()
                     plt.close(fig1)
@@ -167,18 +154,6 @@ if __name__ == "__main__":
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
 
-  # chunck it into 24-h steps, first find out how many chunks we need, s = steps
-  s  = np.arange(np.min(args.steps),np.max(args.steps))
-  cn = np.int(len(s)/24)
-  if cn == 0:  # length of 24 not exceeded
-      Wind_on_levels(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
-                     p_level=args.p_level,domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
-                     legend = args.legend,info = args.info,grid=args.grid)
-  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
-      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
-      chunks = np.array_split(s,cn+1)
-      for c in chunks:
-          Wind_on_level(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,p_level=args.p_level,
-                  domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
-                  info = args.info,grid=args.grid)
-
+  Q_on_levels(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
+                 p_level=args.p_level,domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
+                 legend = args.legend,info = args.info,grid=args.grid)

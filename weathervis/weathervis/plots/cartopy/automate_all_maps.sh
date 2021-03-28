@@ -159,7 +159,10 @@ for md in ${model[@]}; do
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
+    runstring_Q="python Q_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --p_level 700 800 925 --domain_name $domain_name"
     
+    echo $runstring_Q
+    $runstring_Q
     echo $runstring_wg
     $runstring_wg
     converting $modelrun

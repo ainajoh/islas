@@ -84,11 +84,6 @@ while [ $# -gt 0 ]; do
     modelrun_hour=("${1#*=}")
     fi
     ;;
-    --steps_max)
-    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    steps_max=("${1#*=}")
-    fi
-    ;;
     --steps)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
     steps=("${1#*=}")
@@ -137,8 +132,6 @@ for md in ${model[@]}; do
 		echo "${steps[0]}"
 		echo "test2"
 	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam"
-	 else
-	        runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --point_name $pnam"
  	 fi
     echo $runstring_PVmet
     $runstring_PVmet
