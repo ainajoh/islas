@@ -57,11 +57,10 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name
      print("GGGGGOOOO")
      data_domain = domain(dt, model, file=file, point_name=point_name)
      print("DOM DONE")
-  if (point_lonlat != None, point_name == None and domain_name == None and domain_lonlat == None):
-  #   print("GGGGGOOOO")
+  if (point_lonlat != None and point_name == None and domain_name == None and domain_lonlat == None):
+     print("GGGGGOOOO")
      data_domain = domain(dt, model, file=file, lonlat=point_lonlat)
      print("DOM DONE")
-
   print(data_domain)
   return data_domain
 
