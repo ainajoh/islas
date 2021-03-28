@@ -84,6 +84,18 @@ function getKind(n)
     case 15:
       return "_WG10";
       break;
+    case 16:
+      return "_Q_700";
+      break;
+    case 17:
+      return "_Q_800";
+      break;
+    case 18:
+      return "_Q_850";
+      break;
+    case 19:
+      return "_Q_925";
+      break;
     default: 
       return "_";
       break;
