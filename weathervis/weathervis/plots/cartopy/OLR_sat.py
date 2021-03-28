@@ -13,6 +13,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
 import pandas as pd
+
 def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
   if domain_name or domain_lonlat:
     if domain_lonlat:
@@ -74,6 +75,13 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax.pcolormesh(dmap_meps.x, dmap_meps.y, dmap_meps.integral_of_toa_outgoing_longwave_flux_wrt_time[0, 0, :, :], vmin=-230,
       #              vmax=-110, cmap=plt.cm.Greys_r)
       #ax.pcolormesh(dmap_meps.x, dmap_meps.y, dmap_meps.toa_outgoing_longwave_flux[tidx, 0, :, :], vmin=-230,vmax=-110, cmap=plt.cm.Greys_r)
+
+      # plot track of CMET_Balloon
+      track=True
+      if track:
+          gca=plt.gca()
+          tt = dmap_meps.time[tidx]
+          sc1 = plot_track_on_map(gca, ccrs, '#FFFFFF','#FF0000',tt)
 
       # MSLP
       # MSLP with contour labels every 10 hPa

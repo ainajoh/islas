@@ -32,7 +32,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
         hour = int(dt[-2:])
         all_param = ['x_wind_pl','y_wind_pl','air_pressure_at_sea_level','surface_geopotential']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
-                                                       step=steps,p_level=p_level)
+                                                       step=steps,p_level=p_level, domain_name = domain_name)
         
         dmet.air_pressure_at_sea_level /= 100
         # print(dmet.pressure) 

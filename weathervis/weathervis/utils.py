@@ -9,7 +9,8 @@ import matplotlib.colors as mcolors
 import pandas as pd
 import fileinput
 import sys
-
+import datetime
+from netCDF4 import num2date
 def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
 
     if domain_name or domain_lonlat:
@@ -205,3 +206,48 @@ def Extract_from_webpage():
                 else:
                     write_file.write(line)
     os.remove(read_file_name)
+
+def plot_track_on_map(gca,ccrs,c1,c2,tt):
+    # c1 : color of track
+    # c2 : color of last point
+    # tt : current model timestep
+    # get the data. can be local or on url -> to be modified!!!!!
+    url = '/Data/gfi/isomet/projects/ISLAS_marvin/Data_210327_0340Z'
+    cr = pd.read_csv(url,sep='\s+',skiprows=1,index_col=False,
+                     names=['Flight_Time_s', 'Julian_Day',
+                            'GpsLon_deg', 'GpsLat_deg', 'GpsAlt_m',
+                            'PresAlt_m', 'WindSpeed_m/s', 'WindDir_deg',
+                            'Tamb_K, Rh1_%', 'Rh2_%', 'Pa_Pa', 'PV_mA',
+                            'Vb_Volts'])
+    
+    # now get latest pair of lon/lat that is not NaN
+    cr = cr[(cr['GpsLon_deg'].notnull()) & (cr['GpsLat_deg'].notnull())]
+    sc1 = gca.scatter(cr['GpsLon_deg'].values, cr['GpsLat_deg'].values
+                      ,transform=ccrs.PlateCarree(),
+                      s=30, zorder=2,
+                      marker='o', linewidths=0.9,
+                      c=c1, alpha=0.8,label='CMET track')
+
+    # highlight last point, to know where the track ends
+    # highlight if the forcast and the ballon have matching windows 
+    # first convert the julian day to datetime
+    gg = []
+    for i in cr.Julian_Day.values:
+        year,julian = [2021,i+13] # 13 days offset in his file
+        gg.append(datetime.datetime(year, 1, 1)+datetime.timedelta(days=julian -1))
+        
+    # get datetime from model time
+    tt = num2date(tt,units='seconds since 1970-1-1 0:0:0')
+    # check if day, and hour are agreeing. That should be enough for the short
+    # forecast
+    idx = [i for i,x in enumerate(gg) if x.day == tt.day and x.hour == tt.hour]
+    if idx:
+        lo = cr['GpsLon_deg'].values
+        la = cr['GpsLat_deg'].values
+        sc2 = gca.scatter(lo[idx],
+                          la[idx],
+                          transform=ccrs.PlateCarree(),
+                          s=30, zorder=2,
+                          marker='o', linewidths=0.9,
+                          c=c2, alpha=0.8,label='CMET track, in model time step')
+    return sc1
