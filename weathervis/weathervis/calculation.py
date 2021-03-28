@@ -108,7 +108,7 @@ def get_samplesize(q, rho, a=0.5, b = 0.95, acc = 3):
             i+=1
         samplesize_acc[step,:,:,:] = s_acc #g
 
-    return samplesize_acc.squeeze()# samplesize_acc.squeeze()
+    return samplesize_acc#.squeeze()# samplesize_acc.squeeze()
 def precip_acc(precip, acc=1):
     """
 
@@ -207,9 +207,9 @@ def specific_humidity(T, rh,p):
 
 def dexcess(mslp,SST, q2m):
 
-    Q = q2m.squeeze()
-    mslp=mslp.squeeze()
-    SST=SST.squeeze()
+    Q = q2m#.squeeze()
+    mslp=mslp#.squeeze()
+    SST=SST#.squeeze()
 
     SST = SST - 273.15
     mslp = mslp / 100
@@ -220,7 +220,7 @@ def dexcess(mslp,SST, q2m):
     RH = Q / Qs * 100
     # print("RH: {}".format(RH_2m[0][0]))
     d = 48.2 - 0.54 * RH
-    return d.squeeze()
+    return d#.squeeze()
 
 def virtual_temp(air_temperature_ml, specific_humidity_ml):
     """
@@ -677,7 +677,11 @@ def pl2alt_sl( surface_geopotential, air_temperature_ml, specific_humidity_ml, p
     gph_m_gl = pl2alt_gl(air_temperature_ml, specific_humidity_ml, p, inputlevel, returnlevel)
     gph_m_sl = gph_m_gl + surface_geopotential/g
     return gph_m_sl
-
+def standard_pl2alt( surface_geopotential, air_temperature_ml, specific_humidity_ml, p, inputlevel="full", returnlevel="full"):     #https://confluence.ecmwf.int/pages/viewpage.action?pageId=68163209
+    g = 9.80665
+    gph_m_gl = pl2alt_gl(air_temperature_ml, specific_humidity_ml, p, inputlevel, returnlevel)
+    gph_m_sl = gph_m_gl + surface_geopotential/g
+    return gph_m_sl
 #ground level to sealevel and vicaverca
 def gl2sl(surface_geopotential, gph_m_gl):
     g = 9.80665
@@ -692,6 +696,7 @@ def sl2gl(surface_geopotential, gph_m_sl):
 def alt_gl2pl(surface_air_pressure,tv, alt_gl, outshape=None ):
     Rd = 287.06
     g = 9.80665
+    #    hsl = hgl + (surface_geopotential / g)    #
 
     #if type(alt_gl)==float or type(alt_gl) == int or type(alt_gl)==str:#if height is constant with time
     #    alt_gl = np.full(np.shape(data_altitude_sl[:, :, jindx, iindx]), float(alt_gl))

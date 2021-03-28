@@ -11,7 +11,7 @@ OUTPUTPATH = dname + "/../../../../../output/weathervis/"
 
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
-def setup_directory(OUTPUTPATH):
+def setup_directory_config(OUTPUTPATH):
 
     if not os.path.exists(OUTPUTPATH):
         os.makedirs(OUTPUTPATH)

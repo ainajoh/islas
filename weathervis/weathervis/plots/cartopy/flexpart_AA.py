@@ -38,9 +38,10 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     parallels = dmap_meps.standard_parallel_projection_lambert
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,globe=globe)
-    release_name = 'NYAlesund_S1'
-    path = "{0}/{1}/flexpart_run_d01_combined.nc".format(flex_base_path, release_name)
+    #release_name = 'NYAlesund_S1'
+    #path = "{0}/{1}/flexpart_run_d01_combined.nc".format(flex_base_path, release_name)
     #path = "/Users/ainajoh/Downloads/here.nc"
+    #path = "/Users/ainajoh/Downloads/cmet1.nc"
     print(path)
     #findpath = glob.glob(path)
     #print(findpath)
@@ -63,7 +64,15 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         ax1 = plt.subplot(projection=crs)
         epoch_now = tim_data[tim]
         time_read = dt_m.datetime.utcfromtimestamp(epoch_now)
-        stepok=True
+
+        stepok = False
+        if tim < 0:  # do not need hourly steps for FP
+            stepok = True
+        elif (tim <= 36) and ((tim % 3) == 0):
+            stepok = True
+        elif (tim <= 120) and ((tim % 3) == 0):
+            stepok = True
+
         if stepok==True:#
             l=0
             for lev in levs[:]:
@@ -89,15 +98,29 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
                 c = ['#F7A7FD','#A7D3FD','#FDDBA7',
                      '#00FF80', '#606060','#9933FF']
+
+                #cmap= [plt.cm.Reds,  plt.cm.Blues, plt.cm.Greens, plt.cm.Oranges, plt.cm.Purples]
+                cmapmy= ["Reds", "Blues", "Oranges","Greens", "Greys", "Purples"]
+
                 colorindx = 0
                 label_leg = []
                 for rel in range(0,np.shape(spec2a)[0]):
+                    print(colorindx)
                     print(c[colorindx])
                     cm = get_continuous_cmap( [ c[colorindx], c[colorindx] ] )
-                    FP = ax1.pcolormesh(lons, lats, spec2a[rel,:,:],  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=cm, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
+                    cm = cmapmy[colorindx]
+
+                    FP = ax1.pcolormesh(lons, lats, spec2a[rel,:,:],  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=cm, zorder=1, alpha=0.6, transform=ccrs.PlateCarree())
+                    #levels = np.linspace(1e-10,0.2,3)
+                    #levels = [0, 1e-10, 0.1]
+                    #if rel==0:
+                    #    fPC = ax1.contour(lons, lats, spec2a[rel,:,:], cmap=cm, zorder=2, levels= levels, alpha=1, transform=ccrs.PlateCarree())
+                    #if rel==1:
+                    #    fPC = ax1.contour(lons, lats, spec2a[rel, :, :], cmap=cm, zorder=2, levels=levels, alpha=1,linestyle="--",
+                    #                      transform=ccrs.PlateCarree())
                     labeltext = f"rel_{rel}"
                     #tot_patch = mpl.patches.Patch(color='gray', alpha=0.5, linewidth=0)
-                    label_leg += [Line2D([0], [0], marker="s", color=c[colorindx], label=labeltext, markersize=15,lw=0)]
+                    label_leg += [Line2D([0], [0], marker="s", color=cm[:-1], label=labeltext, markersize=15,lw=0)]
                     colorindx += 1
 
                 ax1.legend(handles=label_leg, loc='upper left').set_zorder(99999)
@@ -167,7 +190,7 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
-  parser.add_argument("--track", default=False, help="Display info")
+  parser.add_argument("--track", default=False, help="Display info", type=bool)
 
   args = parser.parse_args()
   print(args.__dict__)
