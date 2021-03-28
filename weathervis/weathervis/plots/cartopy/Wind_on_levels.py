@@ -59,7 +59,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
         globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0,
                                     standard_parallels=parallels,globe=globe)
-        make_modelrun_folder = setup_directory(OUTPUTPATH+ "{0}".format(dt))
+        make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
         # generation of discrete colormap
         cm = colors.ListedColormap(['#f4f8f8','#98d1f0','#f9db65','#f45510',
                                   '#c22ecb','#531357'])
