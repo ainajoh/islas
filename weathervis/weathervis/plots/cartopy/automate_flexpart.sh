@@ -5,14 +5,13 @@ function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
   cd /home/centos/output/weathervis/$1
-  mkdir small
-  for f in *.png; do 
-    convert -scale 40% $f small/$f
-  done
   if ! [ -d /home/centos/www/gfx/$1 ]; then
     mkdir /home/centos/www/gfx/$1
   fi
-  cp small/* /home/centos/www/gfx/$1
+  for f in *.png; do 
+    convert -scale 40% $f /home/centos/www/gfx/$1/$f
+    \rm $f
+  done
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
@@ -131,7 +130,6 @@ echo $modelrun
 #  domain_name="$4" #West_Norway
 #fi
 
-
 #modelrun=("2020100300") "2020021712" "2020021812" "2020021912"
 #modelrun=( "2020022712" "2020022812" "2020022912")
 #modelrun=("2020022012" "2020022112" )
@@ -162,7 +160,5 @@ for md in ${model[@]}; do
 
   done
 done
-
-rm -rf ~/output/weathervis/$modelrun
 
 # fin

@@ -178,7 +178,7 @@ if __name__ == "__main__":
       print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
       chunks = np.array_split(s,cn+1)
       for c in chunks:
-          Wind_on_level(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,p_level=args.p_level,
+          Wind_on_levels(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,p_level=args.p_level,
                   domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
                   info = args.info,grid=args.grid)
 

@@ -4,15 +4,13 @@ source ~/.bashrc
 function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
+  mkdir -p /home/centos/www/gfx/$1
+  mkdir -p /home/centos/output/weathervis/$1
   cd /home/centos/output/weathervis/$1
-  mkdir -p small
   for f in *.png; do 
-    convert -scale 40% $f small/$f
+    convert -scale 40% $f /home/centos/www/gfx/$1/$f
+    \rm $f
   done
-  if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir /home/centos/www/gfx/$1
-  fi
-  cp small/* /home/centos/www/gfx/$1
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
@@ -108,8 +106,8 @@ echo $modelrun_date
 echo $modelrun_hour
 echo $steps_max
 echo $domain_name
-modelrun=${modelrun_date}${modelrun_hour}
-echo $modelrun
+modelrun=(${modelrun_date}${modelrun_hour})
+echo ${modelrun}
 #modelrun=("2021010100")
 #model=("AromeArctic")
 #steps_max=(1)
@@ -161,55 +159,53 @@ for md in ${model[@]}; do
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_Q="python Q_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --p_level 700 800 925 --domain_name $domain_name"
     
-    echo $runstring_Q
-    $runstring_Q
-    echo $runstring_wg
-    $runstring_wg
-    converting $modelrun
-    echo $runstring_cloud_level
-    $runstring_cloud_level
-    converting $modelrun
-    echo $runstring_CT
-    $runstring_CT 
-    converting $modelrun
-    echo $runstring_LMH
-    $runstring_LMH 
-    converting $modelrun
-    echo $runstring_windlvl
-    $runstring_windlvl
-    converting $modelrun
-    echo $runstring_Z
-    $runstring_Z
-    converting $modelrun
     echo $runstring_OLR
     $runstring_OLR
-    converting $modelrun
+    converting ${modelrun[i]}
+    echo $runstring_wg
+    $runstring_wg
+    converting ${modelrun[i]}
+    echo $runstring_Q
+    $runstring_Q
+    converting ${modelrun[i]}
+    echo $runstring_cloud_level
+    $runstring_cloud_level
+    converting ${modelrun[i]}
+    echo $runstring_CT
+    $runstring_CT 
+    converting ${modelrun[i]}
+    echo $runstring_LMH
+    $runstring_LMH 
+    converting ${modelrun[i]}
+    echo $runstring_windlvl
+    $runstring_windlvl
+    converting ${modelrun[i]}
+    echo $runstring_Z
+    $runstring_Z
+    converting ${modelrun[i]}
     echo $runstring_T850
     $runstring_T850
-    converting $modelrun
+    converting ${modelrun[i]}
     echo $runstring_CAO
     $runstring_CAO
-    converting $modelrun
+    converting ${modelrun[i]}
     echo $runstring_BLH
     $runstring_BLH
-    converting $modelrun
+    converting ${modelrun[i]}
     echo $runstring_SURF
     $runstring_SURF
-    converting $modelrun
+    converting ${modelrun[i]}
     echo $runstring_dxs
     $runstring_dxs
-    converting $modelrun
+    converting ${modelrun[i]}
     echo $runstring_T2M
     $runstring_T2M
-    converting $modelrun
+    converting ${modelrun[i]}
     echo $runstring_WC
     $runstring_WC
-    converting $modelrun
+    converting ${modelrun[i]}
 
   done
 done
-
-# remove intermediate modelrun folder
-rm -rf /home/centos/output/weathervis/$modelrun
 
 # fin

@@ -3,23 +3,15 @@ source ~/.bashrc
 
 function converting {
   here=$( pwd )
-  # convert to smaller image size and transfer to web disk
-  cd /home/centos/output/weathervis/
-  if ! [ -d $1 ]; then
-     mkdir $1
-  fi
   cd /home/centos/output/weathervis/$1
-  mkdir small
-  for f in *.png; do 
-    echo $f
-    convert -scale 40% $f small/$f
-  done
-  wait
+  # convert to smaller image size and transfer to web disk
   if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir /home/centos/www/gfx/$1
+    mkdir -p /home/centos/www/gfx/$1
   fi
-  cp small/* /home/centos/www/gfx/$1
-  rm -rf ~/output/weathervis/$1
+  for f in *.png; do 
+    convert -scale 40% $f /home/centos/www/gfx/$1/$f
+    \rm $f
+  done
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
