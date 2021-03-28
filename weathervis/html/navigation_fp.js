@@ -19,8 +19,7 @@ var fdate = new Array(0,0); // forecast time step
 var vkind=new Array(0,1,2,3,4,5);
 var synced=true;
 var kind = 1;
-var domain = new Array(3,3);
-var sites = new Array(1,1);
+var domain = new Array(2,4);
 var bt = 0;
 
 // treshold settings and names
@@ -43,12 +42,21 @@ function getLevel(n)
       return "_L00500";
       break;
     case 1:
-      return "_L01500";
+      return "_L01000";
       break;
     case 2:
-      return "_L03000";
+      return "_L01500";
       break;
     case 3:
+      return "_L02000";
+      break;
+    case 4:
+      return "_L02500";
+      break;
+    case 5:
+      return "_L03000";
+      break;
+    case 6:
       return "_L00000";
       break;
     default: 
@@ -80,9 +88,6 @@ function getDomainname(n)
 		break;
 		case 6:
 		return "West_Norway";
-		break;
-		case 7:
-		return "Iceland";
 		break;
 		default:
 		return "None";
@@ -170,19 +175,6 @@ if (n>=1) {
 	document.getElementById("panel6").src=getFilename(vkind[5],1);
 	document.getElementById("panel6").alt=getFilename(vkind[5],1);
 }
-}
-
-function selectSite(n)
-{
-    switch(n) {
- 	case 0:
-	sites[0]=document.getElementById("site1").selectedIndex;
-	break;
- 	case 1:
-	sites[1]=document.getElementById("site2").selectedIndex;
-	break;
-    }
-    prepareFigure(2);
 }
 
 
