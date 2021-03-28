@@ -30,16 +30,18 @@ import itertools
 #        print(f"The requested parameters are not all available. Missing: {param_we_want_that_areNOT_available}")
 #            raise ValueError
 #            break
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name, point_lonlat=None):
+def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name, point_lonlat=None, use_latest=True):
   #print(point_name)
   #print(domain_name)
   #print(domain_lonlat)
+  print("TESTING DOM")
+  print(point_lonlat)
   if domain_name or domain_lonlat:
     if domain_lonlat:
       print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
+      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat,use_latest=use_latest)
     else:
-      data_domain = domain(dt, model, file=file)
+      data_domain = domain(dt, model, file=file,use_latest=use_latest)
 
     if domain_name != None and domain_name in dir(data_domain):
       print(f"\n####### Setting up domain: {domain_name} ##########")
@@ -58,11 +60,11 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name
     data_domain=None
   if (point_name !=None and domain_name == None and domain_lonlat == None):
      print("GGGGGOOOO")
-     data_domain = domain(dt, model, file=file, point_name=point_name)
+     data_domain = domain(dt, model, file=file, point_name=point_name,use_latest=use_latest)
      print("DOM DONE")
   if (point_lonlat != None and point_name == None and domain_name == None and domain_lonlat == None):
      print("IN WRONG ONE")
-     data_domain = domain(dt, model, file=file, lonlat=point_lonlat)
+     data_domain = domain(dt, model, file=file, lonlat=point_lonlat,use_latest=use_latest)
      print("DOM DONE")
   print(data_domain)
   return data_domain
@@ -174,11 +176,18 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name
         ourfileobj.reset_index(inplace=True, drop=True)
         print("data_domain")
         print(ourfileobj)
-        data_domain = domain_input_handler(dt=date, model=model, domain_name=domain_name, domain_lonlat=domain_lonlat,
-                                           file =ourfileobj, point_name=point_name, point_lonlat=point_lonlat,use_latest=use_latest)
+        print("JUST OUTSIDE DOM")
+        data_domain = domain_input_handler(dt=date,
+                                           model=model,
+                                           domain_name=domain_name,
+                                           domain_lonlat=domain_lonlat,
+                                           file =ourfileobj,
+                                           point_name=point_name,
+                                           point_lonlat=point_lonlat,
+                                           use_latest=use_latest)
         print("retrieve strt")
         print(data_domain)
-        dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date, m_level=m_level, p_level=p_level, data_domain=data_domain,use_latest=use_latest)
+        dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date, m_level=m_level, p_level=p_level, data_domain=data_domain, use_latest=use_latest)
         print("real retriete")
         print(dmet.url)
         dmet.retrieve()
@@ -280,7 +289,7 @@ if __name__ == "__main__":
     param_sfc = ["specific_humidity_2m"]
     all_param = param_sfc + param_ml + param_pl
 
-    fileobj = check_data(args.model, date=str(args.datetime[0]), step=args.steps).file
+    fileobj = check_data(args.model, date=str(args.datetime[0]), step=args.steps, use_latest=use_latest).file
     all_choices, bad_param = find_best_combinationoffiles(all_param, fileobj)
 
     #RETRIEVE FROM THE BEST COMBINATIONS AND TOWARDS WORSE COMBINATION IF ANY ERROR

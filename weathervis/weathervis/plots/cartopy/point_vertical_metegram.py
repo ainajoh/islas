@@ -474,8 +474,8 @@ class VERT_MET():
         #print(np.shape(BL)) #(11,)
         #print(tx)
 
-        #h_gl = dmet.atmosphere_boundary_layer_thickness[:, 0, jindx, iindx]
-        #h_sl = h_gl + dmet.surface_geopotential[:, 0, jindx, iindx] / 9.08
+        h_gl = dmet.atmosphere_boundary_layer_thickness[:, 0, jindx, iindx]
+        h_sl = h_gl + dmet.surface_geopotential[:, 0, jindx, iindx] / 9.08
         #
 
         #h = np.repeat(h_sl, repeats=len(dmet.hybrid), axis=0).reshape(
@@ -509,7 +509,7 @@ class VERT_MET():
         axm2T.set_ylim((T_f(ymin),T_f(ymax)))
         # set an invisible artist to twin axes 
         # to prevent falling back to initial values on rescale events
-        axm2T.plot([],[])
+        axm2T.plot(tx[:,0], h_sl, "X-", color="black", linewidth=3)
         #axis
         xfmt_maj = mdates.DateFormatter('%d.%m')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
         xfmt_min = mdates.DateFormatter('%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
