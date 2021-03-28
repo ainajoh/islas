@@ -11,7 +11,7 @@ OUTPUTPATH = dname + "/../../../output/weathervis/"
 
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
-def setup_directory(OUTPUTPATH):
+def setup_directory_cyclone(OUTPUTPATH):
 
     if not os.path.exists(OUTPUTPATH):
         os.makedirs(OUTPUTPATH)
@@ -20,6 +20,16 @@ def setup_directory(OUTPUTPATH):
         print("Directory ", OUTPUTPATH, " already exists")
 
     return OUTPUTPATH
+def setup_directory( path, folder_name):
+    projectpath= path+ folder_name
+    if not os.path.exists(projectpath):
+        os.makedirs(projectpath)
+        print("Directory ", projectpath, " Created ")
+    else:
+        print("Directory ", projectpath, " already exists")
+    return projectpath
+
+
 
 
 
@@ -38,7 +48,7 @@ def cyclone():
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     OUTPUTPATH = dname+"/../../../output/weathervis/"
-    OUTPUTPATH = setup_directory(OUTPUTPATH)
+    OUTPUTPATH = setup_directory_cyclone(OUTPUTPATH)
     return OUTPUTPATH
 
 def islas_server():
@@ -47,8 +57,8 @@ def islas_server():
     from subprocess import call
     cyclone_conf = dname + "/data/config/config_islas_server.sh"
     call(f"source {cyclone_conf}", shell=True)
-    OUTPUTPATH = dname+"/../../../../output/weathervis/"
-    OUTPUTPATH = setup_directory(OUTPUTPATH)
+    OUTPUTPATH = dname+"/../../../output/weathervis/"
+    OUTPUTPATH = setup_directory_cyclone(OUTPUTPATH)
     print(OUTPUTPATH)
     return OUTPUTPATH
 

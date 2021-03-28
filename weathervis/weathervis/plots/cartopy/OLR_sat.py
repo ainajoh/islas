@@ -77,7 +77,7 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       #ax.pcolormesh(dmap_meps.x, dmap_meps.y, dmap_meps.toa_outgoing_longwave_flux[tidx, 0, :, :], vmin=-230,vmax=-110, cmap=plt.cm.Greys_r)
 
       # plot track of CMET_Balloon
-      track=False
+      track=True
       if track:
           gca=plt.gca()
           tt = dmap_meps.time[tidx]
