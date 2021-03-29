@@ -211,8 +211,8 @@ function initWebsite()
 
 function skiponeback() 
 {
-	cday.setUTCHours(cday.getUTCHours()-24);
-	fdate+=24;
+	cday.setUTCHours(cday.getUTCHours()-12);
+	fdate+=12;
 	if (fdate>240) {
 		fdate=240;
 	}
@@ -224,8 +224,8 @@ function skiponeback()
 
 function skiponeforward() 
 {
-	cday.setUTCHours(cday.getUTCHours()+24);
-	fdate-=24;
+	cday.setUTCHours(cday.getUTCHours()+12);
+	fdate-=12;
 	if (fdate<0) {
 		fdate=0;
 	}
