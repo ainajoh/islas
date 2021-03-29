@@ -162,24 +162,6 @@ for md in ${model[@]}; do
     echo $runstring_OLR
     $runstring_OLR
     converting ${modelrun[i]}
-    #echo $runstring_wg
-    #$runstring_wg
-    #converting ${modelrun[i]}
-    #echo $runstring_Q
-    #$runstring_Q
-    #converting ${modelrun[i]}
-    #echo $runstring_cloud_level
-    #$runstring_cloud_level
-    #converting ${modelrun[i]}
-    #echo $runstring_CT
-    #$runstring_CT 
-    #converting ${modelrun[i]}
-    #echo $runstring_LMH
-    #$runstring_LMH 
-    #converting ${modelrun[i]}
-    #echo $runstring_windlvl
-    #$runstring_windlvl
-    #converting ${modelrun[i]}
     echo $runstring_Z
     $runstring_Z
     converting ${modelrun[i]}
@@ -203,6 +185,24 @@ for md in ${model[@]}; do
     converting ${modelrun[i]}
     echo $runstring_WC
     $runstring_WC
+    converting ${modelrun[i]}
+    #echo $runstring_wg
+    #$runstring_wg
+    #converting ${modelrun[i]}
+    #echo $runstring_Q
+    #$runstring_Q
+    #converting ${modelrun[i]}
+    echo $runstring_cloud_level
+    $runstring_cloud_level
+    converting ${modelrun[i]}
+    echo $runstring_CT
+    $runstring_CT 
+    converting ${modelrun[i]}
+    echo $runstring_LMH
+    $runstring_LMH 
+    converting ${modelrun[i]}
+    echo $runstring_windlvl
+    $runstring_windlvl
     converting ${modelrun[i]}
 
   done
