@@ -70,7 +70,7 @@ while [ $# -gt 0 ]; do
     model=("${1#*=}")
     fi
     ;;
-    --modelrun)
+    --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
     echo "teeees"
     modelrun_date=("${1#*=}")
@@ -159,48 +159,48 @@ for md in ${model[@]}; do
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name"
     runstring_Q="python Q_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --p_level 700 800 925 --domain_name $domain_name"
     
-    echo $runstring_OLR
-    $runstring_OLR
-    converting ${modelrun[i]}
-    echo $runstring_Z
-    $runstring_Z
-    converting ${modelrun[i]}
-    echo $runstring_T850
-    $runstring_T850
-    converting ${modelrun[i]}
-    echo $runstring_CAO
-    $runstring_CAO
-    converting ${modelrun[i]}
-    echo $runstring_BLH
-    $runstring_BLH
-    converting ${modelrun[i]}
-    echo $runstring_SURF
-    $runstring_SURF
-    converting ${modelrun[i]}
-    echo $runstring_dxs
-    $runstring_dxs
-    converting ${modelrun[i]}
-    echo $runstring_T2M
-    $runstring_T2M
-    converting ${modelrun[i]}
-    echo $runstring_WC
-    $runstring_WC
-    converting ${modelrun[i]}
-    #echo $runstring_wg
-    #$runstring_wg
+    #echo $runstring_OLR
+    #$runstring_OLR
     #converting ${modelrun[i]}
-    #echo $runstring_Q
-    #$runstring_Q
+    #echo $runstring_Z
+    #$runstring_Z
     #converting ${modelrun[i]}
-    echo $runstring_cloud_level
-    $runstring_cloud_level
-    converting ${modelrun[i]}
-    echo $runstring_CT
-    $runstring_CT 
-    converting ${modelrun[i]}
-    echo $runstring_LMH
-    $runstring_LMH 
-    converting ${modelrun[i]}
+    #echo $runstring_T850
+    #$runstring_T850
+    #converting ${modelrun[i]}
+    #echo $runstring_CAO
+    #$runstring_CAO
+    #converting ${modelrun[i]}
+    #echo $runstring_BLH
+    #$runstring_BLH
+    #converting ${modelrun[i]}
+    #echo $runstring_SURF
+    #$runstring_SURF
+    #converting ${modelrun[i]}
+    #echo $runstring_dxs
+    #$runstring_dxs
+    #converting ${modelrun[i]}
+    #echo $runstring_T2M
+    #$runstring_T2M
+    #converting ${modelrun[i]}
+    #echo $runstring_WC
+    #$runstring_WC
+    #converting ${modelrun[i]}
+    ##echo $runstring_wg
+    ##$runstring_wg
+    ##converting ${modelrun[i]}
+    ##echo $runstring_Q
+    ##$runstring_Q
+    ##converting ${modelrun[i]}
+    #echo $runstring_cloud_level
+    #$runstring_cloud_level
+    #converting ${modelrun[i]}
+    #echo $runstring_CT
+    #$runstring_CT 
+    #converting ${modelrun[i]}
+    #echo $runstring_LMH
+    #$runstring_LMH 
+    #converting ${modelrun[i]}
     echo $runstring_windlvl
     $runstring_windlvl
     converting ${modelrun[i]}

@@ -240,13 +240,5 @@ if __name__ == "__main__":
   args = parser.parse_args()
   print(args.__dict__)
 
-  BLH(datetime=args.datetime, steps = [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
+  BLH(datetime=args.datetime, steps = [0,np.max(args.steps)], model = args.model, domain_name = args.domain_name,
           domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>24:
-    BLH(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>36:
-    BLH(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-
-# fin
