@@ -60,6 +60,8 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                                 globe=globe)
 
     make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+    print(OUTPUTPATH, "{0}".format(dt))
+    print(datetime)
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
       fig, ax = plt.subplots(1, 1, figsize=(7, 9),
                                subplot_kw={'projection': crs})

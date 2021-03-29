@@ -13,14 +13,14 @@ from weathervis.checkget_data_handler import *
 import matplotlib.offsetbox as offsetbox
 
 
-#def setup_directory( path, folder_name):
-#    projectpath= path+ folder_name
-#    if not os.path.exists(projectpath):
-#        os.makedirs(projectpath)
-#        print("Directory ", projectpath, " Created ")
-#    else:
-#        print("Directory ", projectpath, " already exists")
-#    return projectpath
+def setup_directory( path, folder_name):
+    projectpath= path+ folder_name
+    if not os.path.exists(projectpath):
+        os.makedirs(projectpath)
+        print("Directory ", projectpath, " Created ")
+    else:
+        print("Directory ", projectpath, " already exists")
+    return projectpath
 
 
 def adjustable_colorbar_cax(fig1,ax1):#,data, **kwargs):
