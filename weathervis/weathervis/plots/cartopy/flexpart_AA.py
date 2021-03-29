@@ -163,7 +163,6 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         elif (tim<=66) and ((tim % 6) == 0):
             stepok=True
         if stepok==True:
-
             l=0
             last_lvl_idx_for_plotting=np.where(levs>5000)[0][0]
             print("hereee")
