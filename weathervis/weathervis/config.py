@@ -11,14 +11,13 @@ OUTPUTPATH = dname + "/../../../../../output/weathervis/"
 
 #package_path = os.path.dirname(__file__)
 #os.chdir(dname)
-def setup_directory(OUTPUTPATH):
-
-    if not os.path.exists(OUTPUTPATH):
-        os.makedirs(OUTPUTPATH)
-        print("Directory ", OUTPUTPATH, " Created ")
+def setup_directory(OUTPUTPATH,aditionalfolder=""):
+    projectpath= OUTPUTPATH + aditionalfolder
+    if not os.path.exists(projectpath):
+        os.makedirs(projectpath)
+        print("Directory ", projectpath, " Created ")
     else:
-        print("Directory ", OUTPUTPATH, " already exists")
-
+        print("Directory ", projectpath, " already exists")
     return OUTPUTPATH
 
 

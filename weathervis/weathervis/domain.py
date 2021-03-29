@@ -40,13 +40,14 @@ def idx2lonlat(idx, url):
 
 
 class domain():
-    def __init__(self, date, model, file, lonlat=None, idx=None,domain_name=None, point_name=None):
+    def __init__(self, date, model, file, lonlat=None, idx=None,domain_name=None, point_name=None, use_latest=True):
         self.date = date
         self.model = model
         self.lonlat = lonlat
         self.idx = idx
         self.domain_name = domain_name
         self.point_name=point_name
+        self.use_latest = use_latest
         if type(file)==pd.core.frame.DataFrame:
             self.file = file.loc[0,'File']
         else:
@@ -56,10 +57,19 @@ class domain():
         MM = self.date[4:6]
         DD = self.date[6:8]
         HH = self.date[8:10]
+
+
         if model == "AromeArctic":
-            url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+            if self.use_latest==False:
+              url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+            else:
+              url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/{self.file}?latitude,longitude"
+
         elif model == "MEPS":
-            url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+            if self.use_latest==False:
+              url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
+            else:
+              url = f"https://thredds.met.no/thredds/dodsC/meps25epslatest/{self.file}?latitude,longitude"
 
         self.url = url
 

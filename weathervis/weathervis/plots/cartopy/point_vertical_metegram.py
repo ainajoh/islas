@@ -118,7 +118,7 @@ def old_nice_vprof_colorbar(CF, ax, lvl=None, ticks=None, label=None, highlight_
 
 class VERT_MET():
     def __init__(self, model, date, steps, data=None, domain_name=None, domain_lonlat=None, legend=None, info=None,
-                 num_point=None, point_name=None, point_lonlat=None,m_level=None,p_level=None):
+                 num_point=None, point_name=None, point_lonlat=None):
         self.model = model
         self.date = date
         self.steps = steps
@@ -136,8 +136,8 @@ class VERT_MET():
         self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m","atmosphere_boundary_layer_thickness","surface_geopotential"]
         self.param_sfx = []
         self.param = self.param_ml + self.param_pl + self.param_sfc + self.param_sfx
-        self.p_level = p_level
-        self.m_level = m_level
+        self.p_level = None
+        self.m_level = None
         self.mbrs = None
         self.url = None
         self.point_lonlat = point_lonlat
@@ -474,8 +474,8 @@ class VERT_MET():
         #print(np.shape(BL)) #(11,)
         #print(tx)
 
-        #h_gl = dmet.atmosphere_boundary_layer_thickness[:, 0, jindx, iindx]
-        #h_sl = h_gl + dmet.surface_geopotential[:, 0, jindx, iindx] / 9.08
+        h_gl = dmet.atmosphere_boundary_layer_thickness[:, 0, jindx, iindx]
+        h_sl = h_gl + dmet.surface_geopotential[:, 0, jindx, iindx] / 9.08
         #
 
         #h = np.repeat(h_sl, repeats=len(dmet.hybrid), axis=0).reshape(
@@ -509,7 +509,7 @@ class VERT_MET():
         axm2T.set_ylim((T_f(ymin),T_f(ymax)))
         # set an invisible artist to twin axes 
         # to prevent falling back to initial values on rescale events
-        axm2T.plot([],[])
+        axm2T.plot(tx[:,0], h_sl, "X-", color="black", linewidth=3)
         #axis
         xfmt_maj = mdates.DateFormatter('%d.%m')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
         xfmt_min = mdates.DateFormatter('%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
@@ -580,7 +580,7 @@ if __name__ == "__main__":
 
         VM = VERT_MET(date=dt, steps=args.steps, model=args.model, domain_name=args.domain_name,
                       domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info, num_point=args.point_num,
-                      point_lonlat=args.point_lonlat, point_name=args.point_name, m_level=[25,64])
+                      point_lonlat=args.point_lonlat, point_name=args.point_name)
 
         VM.retrieve_handler()
         VM.calculations()

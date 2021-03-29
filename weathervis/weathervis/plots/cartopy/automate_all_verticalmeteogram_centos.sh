@@ -5,15 +5,13 @@ function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
   cd /home/centos/output/weathervis/$1
-  mkdir -p small
-  for f in *.png; do 
-    convert -scale 40% $f small/$f
-  done
   if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir /home/centos/www/gfx/$1
+    mkdir -p /home/centos/www/gfx/$1
   fi
-  cp small/* /home/centos/www/gfx/$1
-  rm -rf /home/centos/output/weathervis/$1
+  for f in *.png; do 
+    convert -scale 40% $f /home/centos/www/gfx/$1/$f
+    \rm $f
+  done
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
@@ -84,11 +82,6 @@ while [ $# -gt 0 ]; do
     modelrun_hour=("${1#*=}")
     fi
     ;;
-    --steps_max)
-    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    steps_max=("${1#*=}")
-    fi
-    ;;
     --steps)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
     steps=("${1#*=}")
@@ -118,7 +111,7 @@ echo $modelrun_date
 echo $modelrun_hour
 echo $steps_max
 echo $domain_name
-modelrun=${modelrun_date}${modelrun_hour}
+modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
 
 
@@ -137,12 +130,10 @@ for md in ${model[@]}; do
 		echo "${steps[0]}"
 		echo "test2"
 	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam"
-	 else
-	        runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --point_name $pnam"
  	 fi
     echo $runstring_PVmet
     $runstring_PVmet
-    converting $modelrun
+    converting ${modelrun[i]}
    done
   done
 done

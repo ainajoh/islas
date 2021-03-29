@@ -30,7 +30,7 @@ model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 levtype = [None,"pl","ml"] #include pl here aswell.
 
-use_latest = True
+#use_latest = True
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
@@ -94,7 +94,7 @@ def filter_any(file):
 
 class check_data():
 
-    def __init__(self, model, date = None,param=None, step=None, mbrs=None,levtype=None, p_level= None, m_level=None,file = None, numbervar = 100, search = None):
+    def __init__(self, model, date = None,param=None, step=None, mbrs=None,levtype=None, p_level= None, m_level=None,file = None, numbervar = 100, search = None, use_latest=True):
         """
         Parameters
         ----------
@@ -118,7 +118,7 @@ class check_data():
         self.p_level = p_level
         self.m_level = m_level
         self.maxstep = np.max(step) if step != None or type(step) != float or type(step) != int else step
-
+        self.use_latest=use_latest
 
         if p_level:
             self.levtype="pl"
@@ -244,7 +244,7 @@ class check_data():
         base_url=""
 
         # find out where to look for data
-        if use_latest == True:
+        if self.use_latest == True:
             archive_url = "latest"
         else:
             archive_url = "archive"
@@ -261,7 +261,7 @@ class check_data():
         print("Weathervis: base_url should be printed.")
 
         #Find what files exist at that date
-        if use_latest == True:
+        if self.use_latest == True:
           page = requests.get(base_url + "/catalog.html")
         else:
           page = requests.get(base_url + YYYY+"/"+MM+"/"+DD+ "/catalog.html")
@@ -283,7 +283,7 @@ class check_data():
         i=0
         while i<len(df):
             file=df["File"][i]
-            if use_latest == True:
+            if self.use_latest == True:
               url = base_urlfile + file
             else:
               url = base_urlfile + YYYY+"/"+MM+"/"+DD+ "/"+ file

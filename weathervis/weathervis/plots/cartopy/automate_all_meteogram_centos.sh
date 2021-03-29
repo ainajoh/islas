@@ -5,15 +5,13 @@ function converting {
   here=$( pwd )
   # convert to smaller image size and transfer to web disk
   cd /home/centos/output/weathervis/$1
-  mkdir -p small
-  for f in *.png; do 
-    convert -scale 40% $f small/$f
-  done
   if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir /home/centos/www/gfx/$1
+    mkdir -p /home/centos/www/gfx/$1
   fi
-  cp small/* /home/centos/www/gfx/$1
-  rm -rf /home/centos/output/weathervis/$1
+  for f in *.png; do 
+    convert -scale 40% $f /home/centos/www/gfx/$1/$f
+    \rm $f
+  done
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
@@ -61,7 +59,7 @@ modelrun_hour="00"
 model=("AromeArctic")
 steps_max=(66)
 domain_name="None"
-point_name=("pcmet1" "pcmet2" "pcmet3" "Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
+point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -80,11 +78,6 @@ while [ $# -gt 0 ]; do
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
     echo "teeees"
     modelrun_hour=("${1#*=}")
-    fi
-    ;;
-    --steps_max)
-    if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    steps_max=("${1#*=}")
     fi
     ;;
     --domain_name)
@@ -117,11 +110,10 @@ echo $modelrun_date
 echo $modelrun_hour
 echo $steps_max
 echo $domain_name
-modelrun=${modelrun_date}${modelrun_hour}
+modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
 
 #point_name=("Andenes" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
-#point_name=("CAO")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
@@ -129,13 +121,11 @@ for md in ${model[@]}; do
 	  if [[ ${steps} != "None" ]]
           then
 	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --domain_name $pnam --point_name $pnam"
-          else
-	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $pnam --point_name $pnam"
           fi
 
     echo $runstring_Pmet
     $runstring_Pmet
-    converting $modelrun
+    converting ${modelrun[i]}
    done
   done
 done

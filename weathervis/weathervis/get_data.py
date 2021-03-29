@@ -29,7 +29,7 @@ package_path = os.path.dirname(__file__)
 # Nice logging info saved to aditional file
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
-use_latest = True
+#use_latest = True
 
 def SomeError( exception = Exception, message = "Something did not go well" ):
     # Nice error messeges.
@@ -61,7 +61,7 @@ filter_function_for_file=lambda value: value if value is not None else SomeError
 #Domain filter not needed as it should be handled in domain itself
 class get_data():
 
-    def __init__(self, model=None, date=None, param=None, file=None, step=None, data_domain=None, p_level = None, m_level = None, mbrs=None, url=None):
+    def __init__(self, model=None, date=None, param=None, file=None, step=None, data_domain=None, p_level = None, m_level = None, mbrs=None, url=None, use_latest=True):
         """
 
         Parameters - Type - Info - Example
@@ -99,6 +99,8 @@ class get_data():
         self.mbrs = 0 if self.mbrs == None else mbrs
         self.url = url
         self.units = self.dummyobject()
+        self.use_latest=use_latest
+
 
 
         #Check and filter for valid settings. If any of these result in a error, this script stops
@@ -251,7 +253,7 @@ class get_data():
             param = self.param.copy()
             logging.info(file)
 
-            if use_latest==False:
+            if self.use_latest==False:
               url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
               url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/{file.loc['File']}?"
@@ -273,7 +275,7 @@ class get_data():
             param = self.param.copy() #has to be copied in order for not infinite loop when updating self.param
             logging.info(file)
 
-            if use_latest==False:
+            if self.use_latest==False:
               url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
               url = f"https://thredds.met.no/thredds/dodsC/meps25epslatest/{file.loc['File']}?"

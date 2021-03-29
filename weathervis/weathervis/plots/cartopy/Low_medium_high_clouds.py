@@ -26,7 +26,7 @@ import matplotlib as mpl
 from weathervis.checkget_data_handler import *
 
 
-def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
+def Low_medium_high_clouds(datetime, steps, model, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
     for dt in datetime:
         date = dt[0:-2]
         hour = int(dt[-2:])
@@ -34,7 +34,7 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                      'high_type_cloud_area_fraction','air_pressure_at_sea_level',
                      'surface_geopotential']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
-                                                           step=steps)
+                                                           step=steps,domain_name=domain_name)
         
         dmet.air_pressure_at_sea_level /= 100
         # Cloud top, cloud bse
@@ -86,9 +86,9 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 ZS = dmet.surface_geopotential[tidx, 0, :, :]
                 MSLP = np.where(ZS < 3000, dmet.air_pressure_at_sea_level[tidx, 0, :, :],
                                 np.NaN).squeeze()
-                LC = dmet.low_type_cloud_area_fraction[:,:].squeeze()
-                MC = dmet.medium_type_cloud_area_fraction[:,:].squeeze()
-                HC = dmet.high_type_cloud_area_fraction[:,:].squeeze()
+                LC = dmet.low_type_cloud_area_fraction[tidx,0,:,:].squeeze()
+                MC = dmet.medium_type_cloud_area_fraction[tidx,0,:,:].squeeze()
+                HC = dmet.high_type_cloud_area_fraction[tidx,0,:,:].squeeze()
                 # reduce the detail of the plot -> everythin larger 0.5 =1, rest is nan
                 # I chose the colormaps here due to their nice "end" colors
                 data =  LC[:, :].copy()
@@ -117,13 +117,13 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                                   levels=np.arange(960, 1050, 10),
                                   colors='grey', linewidths=1.0, label="MSLP [hPa]")
                 ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
-                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=5,facecolor="none",edgecolor="gray") 
+                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=5,facecolor="none",edgecolor="k") 
                 # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                 if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
                      ax1.set_extent(data_domain.lonlat)
-                ax1.text(0, 1, "{0}_CClmh_{1}_+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
+                ax1.text(0, 1, "{0}_CCLMH_{1}_+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
                                        transform=ax1.transAxes, color='black')
-                print("filename: "+make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CClmh", dt, ttt))
+                print("filename: "+make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CCLMH", dt, ttt))
                 grid = True
                 if grid:
                     nicegrid(ax=ax1)
@@ -142,7 +142,7 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                     frame.set_facecolor('white')
                     frame.set_alpha(0.8)
 
-                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CClmh", dt, ttt), bbox_inches="tight", dpi=200)
+                fig1.savefig(make_modelrun_folder +"/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "CCLMH", dt, ttt), bbox_inches="tight", dpi=200)
                 ax1.cla()
                 plt.clf()
                 plt.close(fig1)
@@ -165,18 +165,8 @@ if __name__ == "__main__":
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
 
-  # chunck it into 24-h steps, first find out how many chunks we need, s = steps
-  s  = np.arange(np.min(args.steps),np.max(args.steps))
-  cn = np.int(len(s)/24)
-  if cn == 0:  # length of 24 not exceeded
-      Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
-                     domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
-                     legend = args.legend,info = args.info,grid=args.grid)
-  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
-      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
-      chunks = np.array_split(s,cn+1)
-      for c in chunks:
-          Cloud_base_top(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,
-                  domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
-                  info = args.info,grid=args.grid)
+  Low_medium_high_clouds(datetime=args.datetime, steps = [np.min(args.steps),
+                         np.max(args.steps)], model = args.model,
+                         domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
+                         legend = args.legend,info = args.info,grid=args.grid)
 
