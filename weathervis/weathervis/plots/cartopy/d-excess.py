@@ -272,13 +272,7 @@ if __name__ == "__main__":
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
 
-  surf(datetime=args.datetime, steps = [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>24:
-    surf(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>36:
-    surf(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+  surf(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
           domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
 
 # fin

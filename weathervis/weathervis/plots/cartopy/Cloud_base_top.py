@@ -184,19 +184,9 @@ if __name__ == "__main__":
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
-
-  # chunck it into 24-h steps, first find out how many chunks we need, s = steps
-  s  = np.arange(np.min(args.steps),np.max(args.steps))
-  cn = np.int(len(s)/24)
-  if cn == 0:  # length of 24 not exceeded
-      Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
+  
+  Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
                      domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
                      legend = args.legend,info = args.info,grid=args.grid)
-  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
-      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
-      chunks = np.array_split(s,cn+1)
-      for c in chunks:
-          Cloud_base_top(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,
-                  domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
-                  info = args.info,grid=args.grid)
+
 

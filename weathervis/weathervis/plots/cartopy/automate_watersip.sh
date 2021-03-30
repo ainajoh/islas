@@ -1,25 +1,6 @@
 #!/bin/bash
 source ~/.bashrc
 
-function converting {
-  here=$( pwd )
-  # convert to smaller image size and transfer to web disk
-  cd /home/centos/output/weathervis/$1
-  if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir /home/centos/www/gfx/$1
-  fi
-  for f in *.png; do 
-    convert -scale 40% $f /home/centos/www/gfx/$1/$f
-    \rm $f
-  done
-  sudo chown -R centos:apache /home/centos/www/gfx/$1  
-  # transfer to webserver
-  if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-    scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/F* 158.39.201.233:/home/centos/www/gfx/$1
-  fi
-  cd $here
-}
-
 #dirname=$( pwd )
 dirname=""
 #set workingpath to where this file is located
@@ -49,9 +30,6 @@ else
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
-#modeldatehour="2021022000"
-#modeldatehour="2021031500"
-
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
 dd=${modeldatehour:6:2}
@@ -64,7 +42,7 @@ modelrun_hour="00"
 model=("AromeArctic")
 steps_max=(1)
 domain_name="None"
-release_name="NYA"
+release_name="AN"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -75,13 +53,11 @@ while [ $# -gt 0 ]; do
     ;;
     --modelrun)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_date=("${1#*=}")
     fi
     ;;
     --modelrun_hour)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_hour=("${1#*=}")
     fi
     ;;
@@ -101,9 +77,9 @@ while [ $# -gt 0 ]; do
     fi
     ;;
     *)
-      printf "******************************\n"
-      printf "* Error: Invalid argument $1.*\n"
-      printf "******************************\n"
+      printf "*******************************\n"
+      printf "* Error: Invalid argument: $1.*\n"
+      printf "*******************************\n"
       exit 1
   esac
   shift
@@ -117,6 +93,7 @@ echo $domain_name
 echo $release_name
 modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
+
 #modelrun=("2021010100")
 #model=("AromeArctic")
 #steps_max=(1)
@@ -129,18 +106,16 @@ echo $modelrun
 #then
 #  domain_name="$4" #West_Norway
 #fi
-
-#modelrun=("2021022300")
-#modelrun=("2021022500")
-#modelrun=("2021022600")
+#modelrun=("2021032800")
 
 #steps=0
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
 
-    python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name
+    python watersip_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name --release_name $release_name
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]} ${modelrun[i]}
+
   done
 done
 

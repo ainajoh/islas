@@ -72,6 +72,9 @@ case "$model" in
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
+        # also run watersip
+	automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name AN
+	automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name AN
     ;;
     *)
 	printf "***************************\n"

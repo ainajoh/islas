@@ -2,7 +2,8 @@
 # manually run all maps as in crontab
 #steps=114
 steps=66
-runhour=06
+runhour=00
+date=20210327
 #runhour=06
 #runhour=12
 #runhour=18
@@ -11,10 +12,16 @@ runhour=06
 #automate_cmet_meteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
 #automate_cmet_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
 #wait
-automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
-automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
-automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
+
+
+#automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --modelrun_date $date
+
+
+
+
+#automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
+#automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
+#automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
 #automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
 #automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name MEPS
 #automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Osteroy
@@ -26,4 +33,7 @@ automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $run
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
+# also run watersip
+automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name AN 
+automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name AN
 # fin

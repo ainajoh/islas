@@ -219,11 +219,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
           plt.clf()
           plt.close(fig1)
 
-        #proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
-        #         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
-        #fig2 = plt.figure(figsize=(2, 1.25))
-        #fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
-        #                          f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
         #fig2.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
         #plt.close(fig2)
         #try:
@@ -255,5 +250,5 @@ if __name__ == "__main__":
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
 
-  Z500_VEL(datetime=args.datetime, steps = [np.min(args.steps)], np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+  Z500_VEL(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model, domain_name = args.domain_name,
           domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)

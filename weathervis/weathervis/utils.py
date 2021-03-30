@@ -271,7 +271,7 @@ def plot_track_on_map(dt,model,tim,gca,ccrs,c1,c2,tt, url = '/Data/gfi/isomet/pr
     return sc1
 
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name, point_lonlat=None):
+def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name=None, point_lonlat=None):
   #print(point_name)
   #print(domain_name)
   #print(domain_lonlat)
