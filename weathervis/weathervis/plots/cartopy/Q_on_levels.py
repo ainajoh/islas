@@ -26,7 +26,16 @@ import matplotlib as mpl
 from weathervis.checkget_data_handler import *
 from pylab import *
 
-def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
+def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True,  runid=None, outpath=None):
+    global OUTPUTPATH
+    if outpath != None:
+        OUTPUTPATH=outpath
+        
+    for dt in datetime: #modelrun at time..
+        if runid !=None:
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
+        else:
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
     for dt in datetime:
         date = dt[0:-2]
         hour = int(dt[-2:])
@@ -61,7 +70,6 @@ def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonla
         globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0,
                                     standard_parallels=parallels,globe=globe)
-        make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
 
         # loop over pressure levels, do not forget the indent the whole routine
         for ip,p in enumerate(dmet.pressure):
@@ -152,8 +160,10 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
+  parser.add_argument("--id", default=None, help="Display legend", type=str)
+  parser.add_argument("--outpath", default=None, help="Display legend", type=str)
   args = parser.parse_args()
 
   Q_on_levels(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
                  p_level=args.p_level,domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
-                 legend = args.legend,info = args.info,grid=args.grid)
+                 legend = args.legend,info = args.info,grid=args.grid,runid =args.id, outpath=args.outpath)

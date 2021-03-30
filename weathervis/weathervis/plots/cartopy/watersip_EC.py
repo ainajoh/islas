@@ -21,28 +21,6 @@ print("done")
 warnings.filterwarnings("ignore", category=UserWarning)
 #warnings.filterwarnings("ignore", category=Downloading)
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
-  if domain_name or domain_lonlat:
-    if domain_lonlat:
-      print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
-    else:
-      data_domain = domain(dt, model, file=file)
-
-    if domain_name != None and domain_name in dir(data_domain):
-      print(f"\n####### Setting up domain: {domain_name} ##########")
-      domain_name = domain_name.strip()
-      if re.search("\(\)$", domain_name):
-        func = f"data_domain.{domain_name}"
-      else:
-        func = f"data_domain.{domain_name}()"
-      eval(func)
-    else:
-      print(f"No domain found with that name; {domain_name}")
-  else:
-    data_domain=None
-  return data_domain
-
 def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True, release_name = "AN"):
   # avoid problems when plotting beyond AROME forecast period
   rsteps=steps.copy()
@@ -53,54 +31,11 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     date = dt[0:-2]
     hour = int(dt[-2:])
     param_sfc = ["air_pressure_at_sea_level", "surface_geopotential"]
-    param = param_sfc
-    #print(type(steps))
-    split = False
-    print("\n######## Checking if your request is possible ############")
-    try:
-      check_all = check_data(date=dt, model=model, param=param, p_level = 850, step=rsteps)
-    except ValueError:
-      split = True
-      try:
-        print("--------> Splitting up your request to find match ############")
-        check_sfc = check_data(date=dt, model=model, param=param_sfc,step=rsteps)
-        #check_pl = check_data(date=dt, model=model, param=param_pl, p_level=850,step=steps)
-      except ValueError:
-        print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
-        break
-    print("--------> Found match for your request ############")
-
-    if not split:
-      file_all = check_all.file.loc[0]
-
-      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_all)
-
-      lonlat = np.array(data_domain.lonlat)
-      dmap_meps = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=rsteps,
-                           date=dt, p_level=[850])
-      print("\n######## Retrieving data ############")
-      print(f"--------> from: {dmap_meps.url} ")
-      dmap_meps.retrieve()
-      tmap_meps = dmap_meps # two names for same value, no copying done.
-    else:
-      # get sfc level data
-      file_sfc = check_sfc.file.loc[0]
-      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_sfc)
-      lonlat = np.array(data_domain.lonlat)
-      dmap_meps = get_data(model=model, param=param_sfc, file=file_sfc, step=rsteps, date=dt, data_domain=data_domain)
-      print("\n######## Retrieving data ############")
-      print(f"--------> from: {dmap_meps.url} ")
-      dmap_meps.retrieve()
-
-      # get pressure level data
-      #file_pl = check_pl.file
-      #tmap_meps = get_data(model=model, data_domain=data_domain, param=param_pl, file=file_pl, step=steps, date=dt, p_level = 850)
-      #print("\n######## Retrieving data ############")
-      #print(f"--------> from: {tmap_meps.url} ")
-      #tmap_meps.retrieve()
-
+    p_level=[850]
+    dmet,data_domain,bad_param = checkget_data_handler(all_param=param_sfc, date=dt, model=model,
+                                                       step=rsteps,p_level=p_level, domain_name = domain_name, use_latest = False)
     # convert fields
-    dmap_meps.air_pressure_at_sea_level /= 100
+    dmet.air_pressure_at_sea_level /= 100
 
     # read netcdf files with watersip output 
     #dt=2021031600
@@ -117,12 +52,12 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     print(upt.shape)
 
     # plot map
-    lonlat = [dmap_meps.longitude[0,0], dmap_meps.longitude[-1,-1], dmap_meps.latitude[0,0], dmap_meps.latitude[-1,-1]]
+    lonlat = [dmet.longitude[0,0], dmet.longitude[-1,-1], dmet.latitude[0,0], dmet.latitude[-1,-1]]
     #print(lonlat)
 
-    lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
-    lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
-    parallels = dmap_meps.standard_parallel_projection_lambert
+    lon0 = dmet.longitude_of_central_meridian_projection_lambert
+    lat0 = dmet.latitude_of_projection_origin_projection_lambert
+    parallels = dmet.standard_parallel_projection_lambert
 
     # setting up projection
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
@@ -153,13 +88,13 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
       del upt_plt
 
       if tim<66:
-          Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
-          MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+          Z = dmet.surface_geopotential[tidx, 0, :, :]
+          MSLP = np.where(Z < 50000, dmet.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
 
           # MSLP with contour labels every 10 hPa
-          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=6, alpha=1.0,
+          C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=6, alpha=1.0,
                             levels=np.arange(960, 1050, 1), colors='grey', linewidths=0.5,transform=crs)
-          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=7, alpha=1.0,
+          C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=7, alpha=1.0,
                             levels=np.arange(960, 1050, 10),
                            colors='grey', linewidths=1.0, label = "MSLP [hPa]",transform=crs)
           ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
@@ -175,9 +110,9 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                  plt.axhline(y=0, xmin=1, xmax=1, color="red", linestyle="dashed"),
                  plt.axhline(y=0, xmin=1, xmax=1, color="gray")]
         proxy.extend(proxy1)
-        lg = ax1.legend(proxy, [f"RH > 80% [%] at {dmap_meps.pressure[plev]:.0f} hPa",
-                              f"T>0 [C] at {dmap_meps.pressure[plev]:.0f} hPa",
-                              f"T<0 [C] at {dmap_meps.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
+        lg = ax1.legend(proxy, [f"RH > 80% [%] at {dmet.pressure[plev]:.0f} hPa",
+                              f"T>0 [C] at {dmet.pressure[plev]:.0f} hPa",
+                              f"T<0 [C] at {dmet.pressure[plev]:.0f} hPa", "MSLP [hPa]", ""])
         frame = lg.get_frame()
         frame.set_facecolor('white')
         frame.set_alpha(1)
@@ -186,16 +121,6 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
       #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
       #           fontsize=7)#, bbox=dict(facecolor='white', alpha=0.5))
 
-      ##########################################################
-
-      #plt.show()
-
-      #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
-      #          dmap_meps.latitude[-1, -1]]
-      # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
-      # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
-      #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
-      #fig1.savefig("../../../../output/{0}_T2M_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
 
       if grid:
         nicegrid(ax=ax1)

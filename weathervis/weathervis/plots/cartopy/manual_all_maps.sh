@@ -1,9 +1,10 @@
 #!/bin/bash
 # manually run all maps as in crontab
 #steps=114
-steps=66
+#steps=66
+steps=9
 runhour=00
-date=20210327
+dat=20210323
 #runhour=06
 #runhour=12
 #runhour=18
@@ -34,6 +35,6 @@ date=20210327
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
 # also run watersip
-automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name AN 
-automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name AN
+automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name AN --modelrun $dat
+automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name AN --modelrun $dat
 # fin

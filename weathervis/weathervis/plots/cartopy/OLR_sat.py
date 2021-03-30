@@ -20,8 +20,10 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
       OUTPUTPATH=outpath
 
   for dt in datetime: #modelrun at time..
-    if id != None:
-      OUTPUTPATH = f"{OUTPUTPATH}.{runid}/"
+    if runid !=None:
+        make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
+    else:
+        make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
 
     param = ["toa_outgoing_longwave_flux","air_pressure_at_sea_level","surface_geopotential"]
     check_all = check_data(date=dt, model=model, param=param, step=steps)
@@ -40,9 +42,8 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
     # setting up projection
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
-    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
-                                globe=globe)
-    make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,globe=globe)
+
     
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
       fig, ax = plt.subplots(1, 1, figsize=(7, 9),
@@ -131,18 +132,18 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                    transform=ax.transAxes, color='dimgrey')
           if grid:
             nicegrid(ax=ax,color="orange")
-
+          
           filename="{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt)
 
           print('Plotting {0} + {1:02d} UTC'.format(dt, ttt))
           print(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
-          fig.savefig(make_modelrun_folder + "/" + runid + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
+          fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
-      ax.cla()
+      ax1.cla()
       fig.clf()
       plt.close(fig)
 
-    ax.cla()
+    ax1.cla()
     plt.clf()
   plt.close("all")
 

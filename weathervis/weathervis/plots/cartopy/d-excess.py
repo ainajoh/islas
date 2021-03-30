@@ -29,31 +29,17 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
-    if domain_name or domain_lonlat:
-        if domain_lonlat:
-            print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-            data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
+def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, legend=False, info=False,grid=True, runid=None, outpath=None):
+    global OUTPUTPATH
+    if outpath != None:
+        OUTPUTPATH=outpath
+    
+    for dt in datetime: #modelrun at time..
+        if runid !=None:
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
         else:
-            data_domain = domain(dt, model, file=file)
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
 
-        if domain_name != None and domain_name in dir(data_domain):
-            print(f"\n####### Setting up domain: {domain_name} ##########")
-            domain_name = domain_name.strip()
-            if re.search("\(\)$", domain_name):
-                func = f"data_domain.{domain_name}"
-            else:
-                func = f"data_domain.{domain_name}()"
-            eval(func)
-        else:
-            print(f"No domain found with that name; {domain_name}")
-    else:
-        data_domain = None
-    return data_domain
-
-
-def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, legend=False, info=False,grid=True):
-    for dt in datetime:  # modelrun at time..
         date = dt[0:-2]
         hour = int(dt[-2:])
         # param_sfc = ["relative_humidity_2m", "air_temperature_2m", "specific_humidity_2m", "air_pressure_at_sea_level"]
@@ -111,8 +97,6 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
         crs = data
         crs_lon = ccrs.PlateCarree()
         # crs = ccrs.PlateCarree()
-
-        make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
 
         for tim in np.arange(np.min(steps), np.max(steps) + 1, 1):
 
@@ -270,9 +254,11 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
+  parser.add_argument("--id", default=None, help="Display legend", type=str)
+  parser.add_argument("--outpath", default=None, help="Display legend", type=str)
   args = parser.parse_args()
 
   surf(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid,  runid =args.id, outpath=args.outpath)
 
 # fin
