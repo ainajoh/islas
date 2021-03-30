@@ -43,7 +43,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True):
+def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True, release_name = "AN"):
   # avoid problems when plotting beyond AROME forecast period
   rsteps=steps.copy()
   rsteps[0]=steps[0]
@@ -104,7 +104,6 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
     # read netcdf files with watersip output 
     #dt=2021031600
-    release_name='AN'
     cdf = nc.Dataset("/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(release_name,dt[0:8]), "r")
     lats=cdf.variables["global_latitude"][:]
     lons=cdf.variables["global_longitude"][:]
@@ -227,6 +226,7 @@ if __name__ == "__main__":
   parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+")
   parser.add_argument("--steps", default=0, nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
   parser.add_argument("--model",default="MEPS", help="MEPS or AromeArctic")
+  parser.add_argument("--release_name",default="AN", help="AN or other sites")
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")
@@ -237,12 +237,12 @@ if __name__ == "__main__":
 
   # split up in 3 retrievals of up to 24h
   watersip_EC(datetime=args.datetime, steps =  [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, release_name=args.release_name)
   if np.max(args.steps)>24:
       watersip_EC(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, release_name=args.release_name)
   if np.max(args.steps)>36:
       watersip_EC(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
-              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, release_name=args.release_name)
 
 #fin
