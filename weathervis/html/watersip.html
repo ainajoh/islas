@@ -1,71 +1,56 @@
 <html>
 <head>
 <title>
-WaterSip moisture source forecasts for ISLAS2021
+AROME Arctic forecasts for ISLAS2021
 </title>
 <link rel='stylesheet' type='text/css' href='watersip.css'>
-<script type="text/javascript" src="navigation_arome.js"></script>
-<script type="text/javascript" src="page_navigation.js"></script>
+<script type="text/javascript" src="navigation_ws.js"></script>
 </head>
 
 <BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
   <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
     <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
-    <td width=1200 colspan=12><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td><td><a href=index.html>[System status]</td></tr>
+    <td width=1300 colspan=9><h2 align=center>AROME forecasts for ISLAS2021 field operations</h2></td><td><a href=index.html>[System status]</td></tr>
     <tr>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=flexpart_EC.html>Flexpart EC</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=flexpart_AA.html>Flexpart AA</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=probability.html>Probability maps</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms.html>Meteogram plots</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=watersip.html>WaterSip maps</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">ETH maps</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0 id=ARID><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart EC</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_AA.html>Flexpart AROME</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=forecast.html>AROME maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms.html>Surface meteograms</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms_vertical.html>Vertical meteograms</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=probability.html>EC Ensemble</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><b>WaterSip</b></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">ETH maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=satellites.html>Satellites</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=quicklooks.html>Quicklooks</a></td></tr>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=quicklooks.html>Quicklooks</a></td>
+    </tr>
     <tr>
-    <td width=1200 align=center colspan=12>Base: AROME Arctic forecast. Plots updated 4 times daily at 04, 10, 16, 22 UTC.</td></tr>
-    <tr><td></td></tr></table>
-  <table border=0 bgcolor=#ffffff width=1300 align=center>
+    <td width=1300 align=center colspan=11>Base: 12UTC ECMWF FLEXPART forecast. Plots updated 1 times daily at ca. 03 UTC.</td></tr>
+    </table>
+  <table border=0 bgcolor=#ffffff width=1200 align=center>
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="500px"></td>
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="500px"></td>
       <td align=center><img id="panel3" src="gfx/fc_20160929/fc_20160929.gif" alt="d-excess" height="500px"></td></tr>
     <tr><td align=center><select id="sel_v1" size=1 onChange="javascript:selectVar(1)">
-<option value=0 selected>CAO-index</option>
-<option value=1>OLR, SLP</option>
-<option value=2>Fluxes</option>
-<option value=3>VEL, P, Z500</option>
-<option value=4>T850, RH, SLP</option>
-<option value=5>d-excess</option>
-<option value=6>BLH, w</option>
-<option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=0 selected>500</option>
+<option value=1>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
 <td align=center><select id="sel_v2" size=1 onChange="javascript:selectVar(2)">
-<option value=0>CAO-index</option>
-<option value=1 selected>OLR, SLP</option>
-<option value=2>Fluxes</option>
-<option value=3>VEL, P, Z500</option>
-<option value=4>T850, RH, SLP</option>
-<option value=5>d-excess</option>
-<option value=6>BLH, w</option>
-<option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=0>500</option>
+<option value=1 selected>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
 <td align=center><select id="sel_v3" size=1 onChange="javascript:selectVar(3)">
-<option value=0>CAO-index</option>
-<option value=1>OLR, SLP</option>
-<option value=2 selected>Fluxes</option>
-<option value=3>VEL, P, Z500</option>
-<option value=4>T850, RH, SLP</option>
-<option value=5>d-excess</option>
-<option value=6>BLH, w</option>
-<option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=0>500</option>
+<option value=1>1500</option>
+<option value=2 selected>3000</option>
+<option value=3>total column</option></td>
   <tr><td colspan=3 width=1300 align=center>
   <form name="selpic" action="">
 	  <input id="sync" type="checkbox" checked=false onClick="javascript:checkSync()">Sync both rows
-			<b>Top row</b> Domain:
+			<b>Top row</b>
+   Domain:
    <select id="domain1" size=1 onChange="javascript:selectDomain(0)">
      <option value=0>NorwegianSea_area</option>
      <option value=1>Andenes_area</option>
@@ -74,12 +59,12 @@ WaterSip moisture source forecasts for ISLAS2021
      <option value=4>AromeArctic</option>
      <option value=5>South_Norway</option>
      <option value=6>West_Norway</option>
-     <option value=7>Osteroy</option>
+     <option value=7>Iceland</option>
    </select>
 			Base time:
-      <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(0)">
+      <input name="back" value="-24h" type="button" onClick="javascript:skiponeback(0)">
       <span id="btime0">now</span>
-      <input name="forward" value="+6h" type="button" onClick="javascript:skiponeforward(0)">
+      <input name="forward" value="+24h" type="button" onClick="javascript:skiponeforward(0)">
 			Forecast time:
       <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(0)">
       <span id="ftime0">t+00h</span>
@@ -90,7 +75,8 @@ WaterSip moisture source forecasts for ISLAS2021
   <tr><td colspan=3 align=center><span id=caption2></span></td></tr>
 <tr><td colspan=3 width=1300 align=center>
   <form name="selpic" action="">
-			<b>Bottom row:</b> Domain:
+			<b>Bottom row:</b>
+   Domain:
    <select id="domain2" size=1 onChange="javascript:selectDomain(1)">
      <option value=0>NorwegianSea_area</option>
      <option value=1>Andenes_area</option>
@@ -99,7 +85,7 @@ WaterSip moisture source forecasts for ISLAS2021
      <option value=4>AromeArctic</option>
      <option value=5>South_Norway</option>
      <option value=6>West_Norway</option>
-     <option value=7>Osteroy</option>
+     <option value=7>Iceland</option>
    </select>
 			Base time:
       <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(1)">
@@ -113,45 +99,27 @@ WaterSip moisture source forecasts for ISLAS2021
       </form>
   </td></tr>
     <tr><td align=center><select id="sel_v4" size=1 onChange="javascript:selectVar(4)">
-<option value=0>CAO-index</option>
-<option value=1>OLR, SLP</option>
-<option value=2>Fluxes</option>
-<option value=3 selected >VEL, P, Z500</option>
-<option value=4>T850, RH, SLP</option>
-<option value=5>d-excess</option>
-<option value=6>BLH, w</option>
-<option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=0 selected>500</option>
+<option value=1>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
 <td align=center><select id="sel_v5" size=1 onChange="javascript:selectVar(5)">
-<option value=0>CAO-index</option>
-<option value=1>OLR, SLP</option>
-<option value=2>Fluxes</option>
-<option value=3>VEL, P, Z500</option>
-<option value=4 selected>T850, RH, SLP</option>
-<option value=5>d-excess</option>
-<option value=6>BLH, w</option>
-<option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=0>500</option>
+<option value=1 selected>1500</option>
+<option value=2>3000</option>
+<option value=3>total column</option></td>
 <td align=center><select id="sel_v6" size=1 onChange="javascript:selectVar(6)">
-<option value=0>CAO-index</option>
-<option value=1>OLR, SLP</option>
-<option value=2>Fluxes</option>
-<option value=3>VEL, P, Z500</option>
-<option value=4>T850, RH, SLP</option>
-<option value=5 selected>d-excess</option>
-<option value=6>BLH, w</option>
-<option value=7>cloud water/ice</option>
-<option value=8>T at 2m</option>
-<option value=9>Flexpart</option></td>
+<option value=0>500</option>
+<option value=1>1500</option>
+<option value=2 selected>3000</option>
+<option value=3>total column</option></td>
   <tr><td align=center><img id="panel4" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 1" height="500px"></td>
       <td align=center><img id="panel5" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 2" height="500px"></td>
       <td align=center><img id="panel6" src="gfx/fc_20160929/fc_20160929.gif" alt="iwv member 3" height="500px"></td></tr>
   <tr><td colspan=3 align=center><span id=caption2></span><hr></td></tr>
   </table>
 <p>
-<p align=center>Website updated 4x daily at 04, 10, 16, 22 UTC. All times in UTC time.
+<p align=center>Products on this website updated 1x daily at ca 15 UTC. All times in UTC time.
 <p>
 Contact: <i>aina.johannessen@uib.no, harald.sodemann@uib.no</i>.
 <p>
