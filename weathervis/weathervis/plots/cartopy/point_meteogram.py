@@ -25,38 +25,28 @@ print(matplotlib.__version__)
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
-    if domain_name or domain_lonlat:
-        if domain_lonlat:
-            print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-            data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
-        else:
-            data_domain = domain(dt, model, file=file)
 
-        if domain_name != None and domain_name in dir(data_domain):
-            print(f"\n####### Setting up domain: {domain_name} ##########")
-            domain_name = domain_name.strip()
-            if re.search("\(\)$", domain_name):
-                func = f"data_domain.{domain_name}"
-            else:
-                func = f"data_domain.{domain_name}()"
-            eval(func)
+def setup_met_directory(modelrun, point_name, point_lonlat, model, runid=None, outpath=None): 
+    global OUTPUTPATH
+    if outpath != None:
+        OUTPUTPATH=outpath
+    if runid !=None:
+        projectpath = setup_directory( OUTPUTPATH, "{0}-{1}".format(modelrun,runid) )
     else:
-        data_domain = None
-    return data_domain
-def setup_met_directory(modelrun, point_name, point_lonlat, model):
-    projectpath = setup_directory(OUTPUTPATH, "{0}/".format(modelrun))
+        projectpath = setup_directory( OUTPUTPATH, "{0}".format(modelrun) )
+    
+    
     print("OROOOOJJ")
     print(projectpath)
-    # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
+    # dirName = projectpath + "/result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
         pname=str(point_lonlat)
         #dirName = projectpath + "/meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_lonlat)
-        dirName = projectpath #+ "/"+ str(point_lonlat)
+        dirName = projectpath + "/" #+ "/"+ str(point_lonlat)
 
     else:
         #dirName = projectpath + "/meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
-        dirName = projectpath
+        dirName = projectpath + "/"
         pname=str(point_name) #+ "/"+ str(point_name)
 
 
@@ -86,8 +76,9 @@ def setup_met_directory(modelrun, point_name, point_lonlat, model):
 
 class PMET():
     def __init__(self, model, date, steps, data = None, domain_name = None, domain_lonlat=None,legend=None,info=None,
-                 num_point=None,point_name=None, point_lonlat=None):
+                 num_point=None,point_name=None, point_lonlat=None,runid=None):
         print("pmet")
+        self.runid=runid
         self.model =model
         self.date=date
         self.steps=steps
@@ -114,6 +105,16 @@ class PMET():
         self.point_lonlat = point_lonlat
         self.num_point = num_point
         date = str(date)
+
+
+        #global OUTPUTPATH
+        #if outpath != None:
+        #    OUTPUTPATH=outpath
+        #
+        #if runid !=None:
+        #    make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(self.date,self.runid) )
+        #else:
+        #    make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(self.date) )
 
     def retrieve_handler(self):
         dmet_sfx = None;
@@ -1056,11 +1057,14 @@ if __name__ == "__main__":
     parser.add_argument("--plot", default="all", help="Display legend")
     parser.add_argument("--legend", default=False, help="Display legend")
     parser.add_argument("--info", default=False, help="Display info")
+    parser.add_argument("--id", default=None, help="Display legend", type=str)
+    parser.add_argument("--outpath", default=None, help="Display legend", type=str)
+
     args = parser.parse_args()
 
     for dt in args.datetime:
         dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3 = setup_met_directory(
-            dt, args.point_name, args.point_lonlat,model)
+            dt, args.point_name, args.point_lonlat,model, runid=args.id, outpath=args.outpath)
 
         VM = PMET(date=dt, steps=args.steps, model=args.model, domain_name=args.domain_name,
                       domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info, num_point=args.point_num,

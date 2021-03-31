@@ -65,8 +65,16 @@ def nearest_neighbour(plon,plat, longitudes, latitudes, nmin=1):
     """
     #source https://github.com/metno/NWPdocs/wiki/From-x-y-wind-to-wind-direction
     R = 6371.0 #model has 6371000.0
+    plat=float(plat)
+    plon=float(plon)
+    print(plat)
+    print(type(plat))
     dlat = np.radians(latitudes - plat) ##lat2 - lat1
+    print(plon)
+    print(longitudes)
+    print(type(plon))
     dlon = np.radians(longitudes - plon) #lon2 - lon1
+    print(dlon)
     platm = np.full(np.shape(latitudes), plat)
     a = (np.sin(dlat / 2) * np.sin(dlat / 2) +
          np.cos(np.radians(plat)) * np.cos(np.radians(latitudes)) *

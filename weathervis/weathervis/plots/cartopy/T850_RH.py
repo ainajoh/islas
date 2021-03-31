@@ -20,7 +20,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 #warnings.filterwarnings("ignore", category=Downloading)
 
 def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True, runid=None, outpath=None):
-global OUTPUTPATH
+  global OUTPUTPATH
   if outpath != None:
       OUTPUTPATH=outpath
 

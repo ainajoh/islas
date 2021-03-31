@@ -149,9 +149,9 @@ for md in ${model[@]}; do
     #$runstring_BLH
     #./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
     
-    #echo $runstring_CAO
-    #$runstring_CAO
-    # ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    echo $runstring_CAO
+    $runstring_CAO
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
     
     #echo $runstring_CT
     #$runstring_CT 
@@ -181,25 +181,25 @@ for md in ${model[@]}; do
     #$runstring_T2M
     #./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
 
-    echo $runstring_Z
-    $runstring_Z
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    #echo $runstring_Z
+    #$runstring_Z
+    #./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
     
-    echo $runstring_T850
-    $runstring_T850
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    #echo $runstring_T850
+    #$runstring_T850
+    #./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
     
-    echo $runstring_wg
-    $runstring_wg
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    #echo $runstring_wg
+    #$runstring_wg
+    #./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
 
-    echo $runstring_cloud_level
-    $runstring_cloud_level
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    #echo $runstring_cloud_level
+    #$runstring_cloud_level
+    #./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
     
-    echo $runstring_windlvl
-    $runstring_windlvl
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    #echo $runstring_windlvl
+    #$runstring_windlvl
+    #./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
 
   done
 done

@@ -1,25 +1,6 @@
 #!/bin/bash
 source ~/.bashrc
 
-function converting {
-  here=$( pwd )
-  # convert to smaller image size and transfer to web disk
-  cd /home/centos/output/weathervis/$1
-  if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir -p /home/centos/www/gfx/$1
-  fi
-  for f in *.png; do 
-    convert -scale 40% $f /home/centos/www/gfx/$1/$f
-    \rm $f
-  done
-  sudo chown -R centos:apache /home/centos/www/gfx/$1  
-  # transfer to webserver
-  if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-    scp -r -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1 158.39.201.233:/home/centos/www/gfx
-  fi
-  cd $here
-}
-
 #set workingpath to where this file is located
 echo "$(dirname "$0")"
 cd "$(dirname "$0")"
@@ -119,7 +100,8 @@ echo $modelrun
 #modelrun=("2020031512")
 #modelrun=("2020101012")
 #point_name=("pcmet1" "pcemet2" "pcmet3")
-#point_name=("NyAlesund")
+point_name=("NyAlesund")
+id=$$
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
@@ -129,12 +111,13 @@ for md in ${model[@]}; do
 		echo "test"
 		echo "${steps[0]}"
 		echo "test2"
-	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam"
+	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id"
  	 fi
     echo $runstring_PVmet
     $runstring_PVmet
-    converting ${modelrun[i]}
-   done
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    rm -rf /home/centos/output/weathervis/${modelrun[i]}-$id
+    done
   done
 done
 

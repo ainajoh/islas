@@ -30,38 +30,23 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name):
-    if domain_name or domain_lonlat or point_name:
-        if domain_lonlat:
-            print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-            data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
-        else:
-            data_domain = domain(dt, model, file=file)
-
-        if domain_name != None and domain_name in dir(data_domain):
-            print(f"\n####### Setting up domain: {domain_name} ##########")
-            domain_name = domain_name.strip()
-            if re.search("\(\)$", domain_name):
-                func = f"data_domain.{domain_name}"
-            else:
-                func = f"data_domain.{domain_name}()"
-            eval(func)
-        if point_name and domain_name == None and domain_lonlat ==None:
-            data_domain = domain(dt, model, file=file, point_name=point_name)
-
+def setup_met_directory(modelrun, point_name, point_lonlat, runid=None, outpath=None):
+    global OUTPUTPATH
+    if outpath != None:
+        OUTPUTPATH=outpath
+    if runid !=None:
+        projectpath = setup_directory( OUTPUTPATH, "{0}-{1}".format(modelrun,runid) )
     else:
-        data_domain = None
-    return data_domain
-def setup_met_directory(modelrun, point_name, point_lonlat):
-    projectpath = setup_directory(OUTPUTPATH, "{0}/".format(modelrun))
+        projectpath = setup_directory( OUTPUTPATH, "{0}".format(modelrun) )
+
     #figname = "fc_" + modelrun
     # dirName = projectpath + "result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
         pname = str(point_lonlat)
-        dirName = projectpath  # + "/"+ str(point_lonlat)
+        dirName = projectpath + "/"  # + "/"+ str(point_lonlat)
         #dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_lonlat)
     else:
-        dirName = projectpath
+        dirName = projectpath + "/"
         pname = str(point_name)  # + "/"+ str(point_name)
         #dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
 
@@ -572,11 +557,14 @@ if __name__ == "__main__":
     parser.add_argument("--plot", default="all", help="Display legend")
     parser.add_argument("--legend", default=False, help="Display legend")
     parser.add_argument("--info", default=False, help="Display info")
+    parser.add_argument("--id", default=None, help="Display legend", type=str)
+    parser.add_argument("--outpath", default=None, help="Display legend", type=str)
+
     args = parser.parse_args()
 
     for dt in args.datetime:
         dirName_b0, dirName_b1, dirName_b2, dirName_b3, figname_b0, figname_b1, figname_b2, figname_b3 = setup_met_directory(
-            dt, args.point_name, args.point_lonlat)
+            dt, args.point_name, args.point_lonlat, runid=args.id, outpath=args.outpath)
 
         VM = VERT_MET(date=dt, steps=args.steps, model=args.model, domain_name=args.domain_name,
                       domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info, num_point=args.point_num,

@@ -139,11 +139,11 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
           print(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
           fig.savefig(make_modelrun_folder + "/{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
 
-      ax1.cla()
+      ax.cla()
       fig.clf()
       plt.close(fig)
 
-    ax1.cla()
+    ax.cla()
     plt.clf()
   plt.close("all")
 
