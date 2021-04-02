@@ -94,7 +94,6 @@ echo $domain_name
 modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
 id=$$
-point_name=("Andenes") # "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do

@@ -100,7 +100,6 @@ echo $modelrun
 #modelrun=("2020031512")
 #modelrun=("2020101012")
 #point_name=("pcmet1" "pcemet2" "pcmet3")
-point_name=("NyAlesund")
 id=$$
 for md in ${model[@]}; do
   echo $md
