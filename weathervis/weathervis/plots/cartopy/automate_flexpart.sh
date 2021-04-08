@@ -51,6 +51,7 @@ fi
 
 #modeldatehour="2021022000"
 #modeldatehour="2021031500"
+modeldatehour="2021040500"
 
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}

@@ -115,24 +115,24 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     print(spec1a.shape)
 
     # read netcdf files with flexpart output 
-    release_name='HH'
-    cdf = nc.Dataset("/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
-    lats=cdf.variables["lat"][:]
-    lons=cdf.variables["lon"][:]
-    lons, lats = np.meshgrid(lons, lats)
-    tim=cdf.variables["time"][:]
-    levs=cdf.variables["level"][:]
-    spec1b=cdf.variables["spec001"][:]
+    #release_name='HH'
+    #cdf = nc.Dataset("/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
+    #lats=cdf.variables["lat"][:]
+    #lons=cdf.variables["lon"][:]
+    #lons, lats = np.meshgrid(lons, lats)
+    #tim=cdf.variables["time"][:]
+    #levs=cdf.variables["level"][:]
+    #spec1b=cdf.variables["spec001"][:]
 
     # read netcdf files with flexpart output 
-    release_name='ISL'
-    cdf = nc.Dataset("/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
-    lats=cdf.variables["lat"][:]
-    lons=cdf.variables["lon"][:]
-    lons, lats = np.meshgrid(lons, lats)
-    tim=cdf.variables["time"][:]
-    levs=cdf.variables["level"][:]
-    spec1c=cdf.variables["spec001"][:]
+    #release_name='ISL'
+    #cdf = nc.Dataset("/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
+    #lats=cdf.variables["lat"][:]
+    #lons=cdf.variables["lon"][:]
+    #lons, lats = np.meshgrid(lons, lats)
+    #tim=cdf.variables["time"][:]
+    #levs=cdf.variables["level"][:]
+    #spec1c=cdf.variables["spec001"][:]
 
     # plot map
     #lonlat = [dmap_meps.longitude[0,0], dmap_meps.longitude[-1,-1], dmap_meps.latitude[0,0], dmap_meps.latitude[-1,-1]]
@@ -175,15 +175,15 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                 spec2a=np.sum(spec1a[0, 0, tim, :, :, :],0).squeeze()
                 spec2b=np.sum(spec1a[0, 2, tim, :, :, :],0).squeeze()
                 spec2c=np.sum(spec1a[0, 4, tim, :, :, :],0).squeeze()
-                spec2e=np.sum(spec1b[0, 0, tim, :, :, :],0).squeeze()
-                spec2d=np.sum(spec1c[0, 0, tim, :, :, :],0).squeeze()
+                #spec2e=np.sum(spec1b[0, 0, tim, :, :, :],0).squeeze()
+                #spec2d=np.sum(spec1c[0, 0, tim, :, :, :],0).squeeze()
                 lev=0
               else: 
                 spec2a=(spec1a[0, 0, tim, l, :, :]).squeeze()
                 spec2b=(spec1a[0, 2, tim, l, :, :]).squeeze()
                 spec2c=(spec1a[0, 4, tim, l, :, :]).squeeze()
-                spec2e=(spec1b[0, 0, tim, l, :, :]).squeeze()
-                spec2d=(spec1c[0, 0, tim, l, :, :]).squeeze()
+                #spec2e=(spec1b[0, 0, tim, l, :, :]).squeeze()
+                #spec2d=(spec1c[0, 0, tim, l, :, :]).squeeze()
                 l=l+1
 
               #print(tidx)
@@ -192,14 +192,14 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               print(np.max(spec2a))
               print(np.max(spec2b))
               print(np.max(spec2c))
-              print(np.max(spec2d))
-              print(np.max(spec2e))
+              #print(np.max(spec2d))
+              #print(np.max(spec2e))
               #spec2[:,:]=0.01
               spec2a = np.where(spec2a > 1e-10, spec2a, np.NaN)
               spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
               spec2c = np.where(spec2c > 1e-10, spec2c, np.NaN)
-              spec2d = np.where(spec2d > 1e-10, spec2d, np.NaN)
-              spec2e = np.where(spec2e > 1e-10, spec2e, np.NaN)
+              #spec2d = np.where(spec2d > 1e-10, spec2d, np.NaN)
+              #spec2e = np.where(spec2e > 1e-10, spec2e, np.NaN)
 
               print('Plotting FLEXPART-EC {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
               # gather, filter and squeeze variables for plotting
@@ -209,13 +209,13 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
               F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.7, transform=ccrs.PlateCarree())
               F_P = ax1.pcolormesh(lons, lats, spec2c,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Greens, zorder=3, alpha=0.7, transform=ccrs.PlateCarree())
-              F_P = ax1.pcolormesh(lons, lats, spec2d,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Oranges, zorder=4, alpha=0.7, transform=ccrs.PlateCarree())
-              F_P = ax1.pcolormesh(lons, lats, spec2e,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Purples, zorder=5, alpha=0.7, transform=ccrs.PlateCarree())
+              #F_P = ax1.pcolormesh(lons, lats, spec2d,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Oranges, zorder=4, alpha=0.7, transform=ccrs.PlateCarree())
+              #F_P = ax1.pcolormesh(lons, lats, spec2e,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Purples, zorder=5, alpha=0.7, transform=ccrs.PlateCarree())
               del spec2a
               del spec2b
               del spec2c
-              del spec2d
-              del spec2e
+              #del spec2d
+              #del spec2e
 
               if tim<66:
                   Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
