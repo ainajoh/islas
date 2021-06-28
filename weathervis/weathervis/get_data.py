@@ -97,6 +97,7 @@ class get_data():
         self.mbrs = 0 if self.mbrs == None else mbrs
         self.url = url
         self.units = self.dummyobject()
+        self.FillValue = self.dummyobject()
         self.use_latest=use_latest
 
 
@@ -316,8 +317,22 @@ class get_data():
         for prm in self.param:
             iteration += 1
             logging.info(prm)
+            print(dataset.variables[prm].__dict__.keys())
             if "units" in dataset.variables[prm].__dict__.keys():
                 self.units.__dict__[prm] = dataset.variables[prm].__dict__["units"]
+            if "_FillValue" in dataset.variables[prm].__dict__.keys():
+                self.FillValue.__dict__[prm] = dataset.variables[prm].__dict__["_FillValue"]
+            else:
+                self.FillValue.__dict__[prm] = np.nan
+                #print(prm)
+                #print(dataset.variables[prm].__dict__["_FillValue"])
+                #print(self.__dict__[prm])
+                #print("hell")
+                #self.__dict__.prm[self.prm == dataset.variables[prm].__dict__["_FillValue"]] = np.nan
+
+                #self.__dict__[prm].replace(dataset.variables[prm].__dict__["_FillValue"], np.nan)
+
+
             if prm == "projection_lambert":
                 for k in dataset.variables[prm].__dict__.keys():
                     ss = f"{k}_{prm}"
@@ -328,7 +343,24 @@ class get_data():
             if not self.mbrs_bool and any(np.isin(dimlist, "ensemble_member")):#"ensemble_member" in dimlist:
                 indxmember = np.where(dimlist == "ensemble_member")[0][0]
                 varvar = dataset.variables[prm][:].squeeze(axis=indxmember)
+            #mask=np.where(varvar == self.FillValue.__dict__[prm],varvar)
+            #print(mask)
+            #mask2=[varvar==self.FillValue.__dict__[prm],varvar]
+            #print(mask2)
+
+            #varvar = np.ma.array(varvar, mask=mask)
+
+            #varvar=np.where(varvar == self.FillValue.__dict__[prm],varvar,np.nan)
+
+
             self.__dict__[prm] = varvar
+            #mask=np.where
+            #print(self.__dict__[prm])
+            #print("hell")
+            #setattr(self, prm, np.nan)
+            #self.__dict__[prm].replace(dataset.variables[prm].__dict__["_FillValue"], np.nan)
+
+            #self.__dict__[prm][self.__dict__[prm] == dataset.variables[prm].__dict__["_FillValue"]] = np.nan
         dataset.close()
         iteration += 1
 
@@ -352,4 +384,4 @@ class get_data():
         self.thredds(self.url, self.file)
         self.windcorr()
 
-    class dummyobject: pass
+    class dummyobject(object):pass
