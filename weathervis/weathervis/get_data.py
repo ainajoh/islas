@@ -19,7 +19,6 @@ This module gets the data defined by the user
 Usage:
 ------
 data =  get_data(model, date, param, file, step, data_domain=None, p_level = None, m_level = None, mbrs=None)
-
 Returns:
 ------
 data Object with properties
@@ -63,7 +62,6 @@ class get_data():
 
     def __init__(self, model=None, date=None, param=None, file=None, step=None, data_domain=None, p_level = None, m_level = None, mbrs=None, url=None, use_latest=True):
         """
-
         Parameters - Type - Info - Example
         ----------
         model: - String - The weather model we want data from            - Example: model = "MEPS"
@@ -102,9 +100,9 @@ class get_data():
         self.use_latest=use_latest
 
 
-
         #Check and filter for valid settings. If any of these result in a error, this script stops
         check_if_thredds_is_down("https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html")
+
         if self.url is None:
             filter_function_for_file(self.file)
             filter_function_for_models(self.model)
@@ -113,13 +111,15 @@ class get_data():
             filter_function_for_step(self.step,self.file)
             #print(np.array([self.p_level]))
             #print(self.file["p_levels"])
-            filter_function_for_p_level(np.array(self.p_level),self.file) if self.p_level != None else None
+            print(self.file.p_levels)
+            filter_function_for_p_level(np.array(self.p_level),self.file) if self.p_level != None and self.file.p_levels != None else None
+
             filter_function_for_m_level(np.array(self.m_level),self.file) if self.m_level != None and self.file.ml_bool else None
             filter_function_for_param(self.param, self.file) #this is kind of checked in check_data.py already.
 
             #Adjusting some parameters.
             #This is an option since users might not now how many pressure/model levels the model has and just want all.
-            if self.p_level == None:
+            if self.p_level == None or self.file.p_levels == None :
                 # If no pressure level is defined initially, we get all pressure levels for the paramter that depends on pressure.
                 if "pressure" in self.file["dim"].keys() :
                     self.p_level = self.file["p_levels"]
@@ -137,6 +137,7 @@ class get_data():
                 if "hybrid2" in self.file["dim"].keys() and maxpl <=1:
                     maxpl = self.file["dim"]["hybrid2"]["shape"] -1
                     self.m_level = [0,maxpl]
+
 
         #Make a url depending on preferences if no url is defined already.
         self.url = self.make_url() if self.url == None else self.adjust_user_url()
@@ -206,7 +207,6 @@ class get_data():
     def make_url(self):
         """
         Makes the OPENDAP url for the user specified model and parameters in a specific domain and time
-
         Returns
         -------
         url for thredds
@@ -299,15 +299,12 @@ class get_data():
     def thredds(self, url, file):
         """
         Retrieves the data from thredds and set it as attributes to the global object.
-
         Parameters
         ----------
         url:
         file
-
         Returns
         -------
-
         """
         logging.info("-------> start retrieve from thredds")
         dataset = Dataset(url) #fast
@@ -356,5 +353,3 @@ class get_data():
         self.windcorr()
 
     class dummyobject: pass
-
-

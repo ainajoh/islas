@@ -187,6 +187,8 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name
                                            use_latest=use_latest)
         print("retrieve strt")
         print(data_domain)
+        print(ourparam)#SST
+        print(ourfileobj.File[0]) #arome_arctic_sfx_2_5km_20200221T00Z.nc
         dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date, m_level=m_level, p_level=p_level, data_domain=data_domain, use_latest=use_latest)
         print("real retriete")
         print(dmet.url)
@@ -227,6 +229,8 @@ def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=N
     print(all_param)
     print("start finding choices")
     all_choices, bad_param  = find_best_combinationoffiles(all_param=all_param, fileobj=fileobj,m_level=m_level,p_level=p_level)
+    print("aina")
+    print(bad_param)
     bad_param_sfx=[]
     if bad_param:
         new_bad = ["SFX_"+x for x in bad_param]
