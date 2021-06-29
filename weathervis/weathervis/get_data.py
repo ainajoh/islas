@@ -110,12 +110,10 @@ class get_data():
             filter_function_for_mbrs(np.array(self.mbrs), self.file) if self.mbrs != None and self.mbrs_bool else None
             filter_function_for_date(self.date)
             filter_function_for_step(self.step,self.file)
-            #print(np.array([self.p_level]))
-            #print(self.file["p_levels"])
-            print(self.file.p_levels)
-            filter_function_for_p_level(np.array(self.p_level),self.file) if self.p_level != None and self.file.p_levels != None else None
 
+            filter_function_for_p_level(np.array(self.p_level),self.file) if self.p_level != None and self.file.p_levels != None else None
             filter_function_for_m_level(np.array(self.m_level),self.file) if self.m_level != None and self.file.ml_bool else None
+
             filter_function_for_param(self.param, self.file) #this is kind of checked in check_data.py already.
 
             #Adjusting some parameters.
@@ -229,6 +227,7 @@ class get_data():
         step = f"[{np.min(self.step)}:1:{np.max(self.step)}]"
         pl_idx = f"[{np.min(idx)}:1:{np.max(idx)}]"
         m_level  = f"[{np.min(self.m_level)}:1:{np.max(self.m_level)}]"
+
         mbrs = f"[{np.min(self.mbrs)}:1:{np.max(self.mbrs)}]"
         y = f"[{jindx.min()}:1:{jindx.max()}]"
         x = f"[{iindx.min()}:1:{iindx.max()}]"
@@ -307,6 +306,7 @@ class get_data():
         Returns
         -------
         """
+
         logging.info("-------> start retrieve from thredds")
         dataset = Dataset(url) #fast
         for k in dataset.__dict__.keys(): #info of the file
@@ -317,50 +317,27 @@ class get_data():
         for prm in self.param:
             iteration += 1
             logging.info(prm)
-            print(dataset.variables[prm].__dict__.keys())
             if "units" in dataset.variables[prm].__dict__.keys():
                 self.units.__dict__[prm] = dataset.variables[prm].__dict__["units"]
             if "_FillValue" in dataset.variables[prm].__dict__.keys():
-                self.FillValue.__dict__[prm] = dataset.variables[prm].__dict__["_FillValue"]
+                self.FillValue.__dict__[prm] = int(dataset.variables[prm].__dict__["_FillValue"])
             else:
                 self.FillValue.__dict__[prm] = np.nan
-                #print(prm)
-                #print(dataset.variables[prm].__dict__["_FillValue"])
-                #print(self.__dict__[prm])
-                #print("hell")
-                #self.__dict__.prm[self.prm == dataset.variables[prm].__dict__["_FillValue"]] = np.nan
-
-                #self.__dict__[prm].replace(dataset.variables[prm].__dict__["_FillValue"], np.nan)
 
 
             if prm == "projection_lambert":
                 for k in dataset.variables[prm].__dict__.keys():
                     ss = f"{k}_{prm}"
                     self.__dict__[ss] = dataset.variables[prm].__dict__[k]
-            print(prm)
             varvar = dataset.variables[prm][:] ##
             dimlist = np.array(list(file["var"][prm]["dim"]))  # ('time', 'pressure', 'ensemble_member', 'y', 'x')
             if not self.mbrs_bool and any(np.isin(dimlist, "ensemble_member")):#"ensemble_member" in dimlist:
                 indxmember = np.where(dimlist == "ensemble_member")[0][0]
                 varvar = dataset.variables[prm][:].squeeze(axis=indxmember)
-            #mask=np.where(varvar == self.FillValue.__dict__[prm],varvar)
-            #print(mask)
-            #mask2=[varvar==self.FillValue.__dict__[prm],varvar]
-            #print(mask2)
-
-            #varvar = np.ma.array(varvar, mask=mask)
-
-            #varvar=np.where(varvar == self.FillValue.__dict__[prm],varvar,np.nan)
 
 
             self.__dict__[prm] = varvar
-            #mask=np.where
-            #print(self.__dict__[prm])
-            #print("hell")
-            #setattr(self, prm, np.nan)
-            #self.__dict__[prm].replace(dataset.variables[prm].__dict__["_FillValue"], np.nan)
 
-            #self.__dict__[prm][self.__dict__[prm] == dataset.variables[prm].__dict__["_FillValue"]] = np.nan
         dataset.close()
         iteration += 1
 
@@ -374,7 +351,6 @@ class get_data():
             infile = package_path + "/data/alpha_full_MEPS.nc"
         alphadata = Dataset(infile)
         alpha = alphadata["alpha"][:]
-        print(infile)
         self.__dict__["alpha"] = alpha[jindx.min():jindx.max()+1,iindx.min():iindx.max()+1]
 
         alphadata.close()

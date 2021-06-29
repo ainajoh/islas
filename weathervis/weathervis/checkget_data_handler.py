@@ -3,7 +3,8 @@ from weathervis.domain import *
 from weathervis.utils import *
 from weathervis.check_data import *
 from weathervis.get_data import *
-
+import copy
+import gc
 from weathervis.calculation import *
 import os
 import matplotlib.pyplot as plt
@@ -34,7 +35,6 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name
   #print(point_name)
   #print(domain_name)
   #print(domain_lonlat)
-  print("TESTING DOM")
   print(point_lonlat)
   if domain_name or domain_lonlat:
     if domain_lonlat:
@@ -52,20 +52,15 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name
       else:
         func = f"data_domain.{domain_name}()"
       print(func)
-      print(domain_name)
       eval(func)
     else:
       print(f"No domain found with that name; {domain_name}")
   else:
     data_domain=None
   if (point_name !=None and domain_name == None and domain_lonlat == None):
-     print("GGGGGOOOO")
      data_domain = domain(dt, model, file=file, point_name=point_name,use_latest=use_latest)
-     print("DOM DONE")
   if (point_lonlat != None and point_name == None and domain_name == None and domain_lonlat == None):
-     print("IN WRONG ONE")
      data_domain = domain(dt, model, file=file, lonlat=point_lonlat,use_latest=use_latest)
-     print("DOM DONE")
   print(data_domain)
   return data_domain
 
@@ -106,25 +101,40 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
 
     def filer_param_by_modellevels(config_overrides_r,tot_param_we_want_that_are_available):
         print(len(fileobj))
+        print(fileobj)
         for i in range(0,len(fileobj)):
             thisfileobj = fileobj.loc[i]
+            print("Tina")
+            print(thisfileobj)
             varname = tot_param_we_want_that_are_available[i]
+            print(varname)
             if len(varname) == 0: #jump over file if no parameter needed in it
                 continue
             var = pd.DataFrame.from_dict(thisfileobj.loc["var"], orient="index")
             varname = [varname] if type(varname) is not list else varname
             pandas_df = var.loc[varname]
             f = pandas_df[pandas_df.dim.astype(str).str.contains("hybrid")] #keep only ml variables.
-
+            print("ffffff")
+            print(f)
             if len(f) != 0: #if var depends on hybrid.
+                print("var depends on hybrid")
                 dimen = [f.apply(lambda row: dict(zip(row['dim'],row['shape'])), axis=1)][0]#.loc["dim"]
+                print(dimen)
                 dimofmodellevel = [dimen.apply(lambda row: [value for key, value in row.items() if 'hybrid' in key.lower()])][0]#.loc["dim
+                print(dimofmodellevel)
                 removethese = dimofmodellevel[dimofmodellevel.apply(lambda row: row[0]<m_level)]#.loc["dim"]
+                print(removethese)
                 val = [*removethese.index]
-                key = thisfileobj["File"]
+                print("corr")
+                print(val) #['air_temperature_ml']
+                key = thisfileobj["File"] #arome_arctic_extracted_2_5km_20200221T00Z.nc
+                print(key)
+                print("----CONF")
+                print(config_overrides_r)
                 config_overrides_r[key] = [x for x in config_overrides_r[key] if x not in val]
-
-            return config_overrides_r
+                print(config_overrides_r)
+            print("first loop done")
+        return config_overrides_r #indent of this is impotant. resulted in error before when indent wrong
 
     config_overrides_r = filer_param_by_modellevels(config_overrides_r,tot_param_we_want_that_are_available)
     print(config_overrides_r)
@@ -153,6 +163,8 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
     ppd.reset_index(inplace=True)
     our_choice = ppd.loc[0] #The best combination retrieving from least amount of files.
     print(ppd)
+    print("ppd.combo")
+    print(ppd.combo[0])
     return ppd,bad_param
 
 def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name=None, domain_lonlat=None,bad_param=[],bad_param_sfx=[],point_name=None, point_lonlat=None, use_latest=True):
@@ -163,51 +175,35 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name
     #             "height0": non, "height1": non, "height2": non,
     #             "height3": non, "height7": non, "height6": non, 'height_above_msl': non, "mean_sea_level": non,
     #             "atmosphere_as_single_layer": non}
-    ap_prev = 0
-    b_prev = 0
-    ap2_prev = 0
-    b2_prev = 0
 
-    for i in range(0,len(our_choice.file)):
+    ourfilename = our_choice.file[0]
+    ourfileobj = fileobj[fileobj["File"].isin([ourfilename])]
+    ourfileobj.reset_index(inplace=True, drop=True)
+    data_domain = domain_input_handler(dt=date, model=model, domain_name=domain_name, domain_lonlat=domain_lonlat, file =ourfileobj,point_name=point_name,point_lonlat=point_lonlat, use_latest=use_latest)#
+    combo = our_choice.combo
+    ourparam = [k for k, v in combo.items() if v == ourfilename]
+    dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date, m_level=m_level, p_level=p_level, data_domain=data_domain, use_latest=use_latest)
+    dmet.retrieve()
+
+    for i in range(1,len(our_choice.file)):
         ourfilename = our_choice.file[i]
-        combo = our_choice.combo
-        ourparam = [k for k, v in combo.items() if v == ourfilename]
         ourfileobj = fileobj[fileobj["File"].isin([ourfilename])]
         ourfileobj.reset_index(inplace=True, drop=True)
-        print("data_domain")
-        print(ourfileobj)
-        print("JUST OUTSIDE DOM")
-        data_domain = domain_input_handler(dt=date,
-                                           model=model,
-                                           domain_name=domain_name,
-                                           domain_lonlat=domain_lonlat,
-                                           file =ourfileobj,
-                                           point_name=point_name,
-                                           point_lonlat=point_lonlat,
-                                           use_latest=use_latest)
-        print("retrieve strt")
-        print(data_domain)
-        print(ourparam)#SST
-        print(ourfileobj.File[0]) #arome_arctic_sfx_2_5km_20200221T00Z.nc
-        dmet = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date, m_level=m_level, p_level=p_level, data_domain=data_domain, use_latest=use_latest)
-        print("real retriete")
-        print(dmet.url)
-        dmet.retrieve()
-        print("retriete done ")
-        #for pm in dmet_new:
-        if i >= 1: #sec run
-            print("stat merging objects")
-            for pm in dmet_old.param:
-                #The if statements should be done more auto, maybe a dictionary.
-                if pm in fixed_var:
-                    ap_prev = len(getattr(dmet_old, pm)) if pm in dmet_old.param else 0
-                    ap_next = len(getattr(dmet, pm)) if pm in dmet.param else 0
-                    if ap_next > ap_prev:  # if next is bigger dont overwrite with old one
-                        continue
-                setattr(dmet, pm, getattr(dmet_old, pm))
-            print("done objects")
-        #add unit later
-        dmet_old = dmet
+        combo = our_choice.combo
+        ourparam = [k for k, v in combo.items() if v == ourfilename]
+        dmet_next = get_data(model=model, param=ourparam, file=ourfileobj, step=step, date=date, m_level=m_level,
+                     p_level=p_level, data_domain=data_domain, use_latest=use_latest)
+        dmet_next.retrieve()
+
+        for pm in dmet_next.param:
+            if pm in fixed_var:
+                ap_prev = len(getattr(dmet, pm)) if pm in dmet.param else 0
+                ap_next = len(getattr(dmet_next, pm)) if pm in dmet_next.param else 0
+                if ap_next > ap_prev:  # if next is bigger dont overwrite with old one
+                    continue
+            setattr(dmet, pm, getattr(dmet_next, pm))
+        del(dmet_next)
+
     for bparam in bad_param:
         setattr(dmet, bparam, None)
 
@@ -217,10 +213,7 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name
         gprm = gprmsfx.replace("SFX_","")
         setattr(dmet, gprm, getattr(dmet,gprmsfx))
 
-
-
-
-
+    gc.collect()
     return dmet, data_domain,bad_param
 
 def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=None, mbrs=None, domain_name=None, domain_lonlat=None, point_name=None,point_lonlat=None,use_latest=True):
@@ -248,13 +241,15 @@ def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=N
 
     # RETRIEVE FROM THE BEST COMBINATIONS AND TOWARDS WORSE COMBINATION IF ANY ERROR
     for i in range(0, len(all_choices)):
-
+        gc.collect()
+        print(all_choices.loc[i])
         try:
             print("getting data")#our_choice,model,step, date,fileobj,m_level, domain_name=None, domain_lonlat=None
             dmet,data_domain,bad_param = retrievenow(our_choice = all_choices.loc[i],model=model,step=step, date=date,fileobj=fileobj,
                                m_level=m_level,p_level=p_level,domain_name=domain_name, domain_lonlat=domain_lonlat,
                                 bad_param = bad_param,bad_param_sfx = bad_param_sfx,point_name=point_name,point_lonlat=point_lonlat,use_latest=use_latest)
             break
+        #    break
         except:
             #del (dmet)
             print("Oops!", sys.exc_info()[0], "occurred.")

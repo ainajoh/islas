@@ -60,6 +60,7 @@ def filter_type(file,mbrs,levtype, p_level,m_level):
     if mbrs != 0 and mbrs != None:
         file = file[file["mbr_bool"] == True]
     if m_level != None:
+
         file = file[file["ml_bool"] == True]
     elif p_level:
         file = file[~file.p_levels.isnull()]
@@ -142,7 +143,6 @@ class check_data():
 
 
         if date != None:
-            print("Weathervis: check_file start")
             self.file = self.check_files(date, model, param,  mbrs,levtype)
         if self.param == None and self.date != None:
             self.param = self.check_variable(self.file, self.search)
@@ -280,6 +280,8 @@ class check_data():
         df["mbr_bool"] = False
         df["ml_bool"] = False
         df["p_levels"] = False
+        df["m_levels"] = False
+
         i=0
         while i<len(df):
             file=df["File"][i]
