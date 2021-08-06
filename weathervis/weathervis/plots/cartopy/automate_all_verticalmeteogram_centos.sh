@@ -110,7 +110,7 @@ for md in ${model[@]}; do
 		echo "test"
 		echo "${steps[0]}"
 		echo "test2"
-	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id"
+	 	runstring_PVmet="python point_vertical_meteogram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id"
  	 fi
     echo $runstring_PVmet
     $runstring_PVmet

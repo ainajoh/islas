@@ -15,14 +15,13 @@ import math
 
 # In and outfiles
 # url = "http://thredds.met.no/thredds/dodsC/meps25files/meps_det_extracted_2_5km_latest.nc"
-#infile = "http://thredds.met.no/thredds/dodsC/meps25epsarchive/2016/11/29/meps_subset_2_5km_20161129T00Z.nc"
-#infile = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc"
+# infile = "http://thredds.met.no/thredds/dodsC/meps25epsarchive/2016/11/29/meps_subset_2_5km_20161129T00Z.nc"
+# infile = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc"
 infile = "https://thredds.met.no/thredds/dodsC/aromearcticarchive/2020/02/20/arome_arctic_extracted_2_5km_20200220T00Z.nc?"
 outfile = "alpha_full_AA.nc"
-#infile = "https://thredds.met.no/thredds/dodsC/mepslatest/meps_lagged_6_h_latest_2_5km_latest.nc"
-#infile = "https://thredds.met.no/thredds/dodsC/meps25epsarchive/2020/02/20/meps_det_2_5km_20200220T00Z.nc"
-#outfile = "alpha_full_MEPS.nc"
-
+# infile = "https://thredds.met.no/thredds/dodsC/mepslatest/meps_lagged_6_h_latest_2_5km_latest.nc"
+# infile = "https://thredds.met.no/thredds/dodsC/meps25epsarchive/2020/02/20/meps_det_2_5km_20200220T00Z.nc"
+# outfile = "alpha_full_MEPS.nc"
 
 
 def distance(origin, destination):
@@ -55,9 +54,9 @@ def distance(origin, destination):
 
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
-    a = (math.sin(dlat / 2) * math.sin(dlat / 2) +
-         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
-         math.sin(dlon / 2) * math.sin(dlon / 2))
+    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(
+        math.radians(lat1)
+    ) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) * math.sin(dlon / 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     d = radius * c
 
@@ -69,26 +68,26 @@ def distance(origin, destination):
 nc = NetCDFFile(infile)
 
 # Variables
-xx = nc.variables['x'][:]
-yy = nc.variables['y'][:]
-lat = nc.variables['latitude'][:]
-lon = nc.variables['longitude'][:]
+xx = nc.variables["x"][:]
+yy = nc.variables["y"][:]
+lat = nc.variables["latitude"][:]
+lon = nc.variables["longitude"][:]
 alpha = lat  # Target matrix
 
 for j in range(0, yy.size - 1):
     for i in range(0, xx.size - 1):
         # Prevent out of bounds
         if j == yy.size - 1:
-            j1 = j - 1;
+            j1 = j - 1
             j2 = j
         else:
-            j1 = j;
+            j1 = j
             j2 = j + 1
         if i == xx.size - 1:
-            i1 = i - 1;
+            i1 = i - 1
             i2 = i
         else:
-            i1 = i;
+            i1 = i
             i2 = i + 1
 
         dlatykm = distance([lat[j1, i1], lon[j1, i1]], [lat[j2, i1], lon[j1, i1]])

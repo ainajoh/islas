@@ -8,13 +8,13 @@ cd "$(dirname "$0")"
 cf=""
 if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
     cf="source ../../data/config/config_cyclone.sh"
-    fi
+fi
 if [[ "$HOSTNAME" == *"islas-forecast.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
-    fi
+fi
 if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
-    fi
+fi
 
 $cf
 
@@ -46,34 +46,34 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --model)
     if [[ "$1" != *=* ]]; then shift; # Value is next arg if no `=`
-    model=("${1#*=}")
+    	model=("${1#*=}")
     fi
     ;;
     --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
+    	echo "teeees"
     modelrun_date=("${1#*=}")
     fi
     ;;
     --modelrun_hour)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
+    	echo "teeees"
     modelrun_hour=("${1#*=}")
     fi
     ;;
     --domain_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
-    domain_name="${1#*=}"
+    	domain_name="${1#*=}"
     fi
     ;;
     --point_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
-    point_name=("${1#*=}")
+    	point_name=("${1#*=}")
     fi
     ;;
     --steps)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
-    steps=("${1#*=}")
+    	steps=("${1#*=}")
     fi
     ;;
     *)
