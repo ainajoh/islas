@@ -33,7 +33,7 @@ AROME Arctic forecasts for ISLAS2021
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="500px"></td>
       <td align=center><img id="panel3" src="gfx/fc_20160929/fc_20160929.gif" alt="d-excess" height="500px"></td></tr>
     <tr><td align=center><select id="sel_v1" size=1 onChange="javascript:selectVar(1)">
-<option value=0 selected>500</option>
+<option value=0 selected>300</option>
 <option value=1>1000</option>
 <option value=2>1500</option>
 <option value=3>2000</option>
@@ -41,7 +41,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>3000</option>
 <option value=6>total column</option></td>
 <td align=center><select id="sel_v2" size=1 onChange="javascript:selectVar(2)">
-<option value=0>500</option>
+<option value=0>300</option>
 <option value=1>1000</option>
 <option value=2 selected>1500</option>
 <option value=3>2000</option>
@@ -49,7 +49,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>3000</option>
 <option value=6>total column</option></td>
 <td align=center><select id="sel_v3" size=1 onChange="javascript:selectVar(3)">
-<option value=0>500</option>
+<option value=0>300</option>
 <option value=1>1000</option>
 <option value=2>1500</option>
 <option value=3>2000</option>
@@ -71,11 +71,11 @@ AROME Arctic forecasts for ISLAS2021
      <option value=6>West_Norway</option>
    </select>
 			Base time:
-      <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(0)">
+      <input name="back" value="-24h" type="button" onClick="javascript:skiponeback(0)">
       <span id="btime0">now</span>
       <input name="forward" value="+24h" type="button" onClick="javascript:skiponeforward(0)">
 			Forecast time:
-      <input name="back" value="-6h" type="button" onClick="javascript:skip1hback(0)">
+      <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(0)">
       <span id="ftime0">t+00h</span>
       <input name="forward" value="+1h" type="button" onClick="javascript:skip1hforward(0)">
        <b>Valid time: <span id="valid0">valid</span></b>
@@ -96,9 +96,9 @@ AROME Arctic forecasts for ISLAS2021
      <option value=6>West_Norway</option>
    </select>
 			Base time:
-      <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(1)">
+      <input name="back" value="-24h" type="button" onClick="javascript:skiponeback(1)">
       <span id="btime1">now</span>
-      <input name="forward" value="+6h" type="button" onClick="javascript:skiponeforward(1)">
+      <input name="forward" value="+24h" type="button" onClick="javascript:skiponeforward(1)">
 			Forecast time:
       <input name="back" value="-1h" type="button" onClick="javascript:skip1hback(1)">
       <span id="ftime1">t+00h</span>
@@ -107,7 +107,7 @@ AROME Arctic forecasts for ISLAS2021
       </form>
   </td></tr>
     <tr><td align=center><select id="sel_v4" size=1 onChange="javascript:selectVar(4)">
-<option value=0 selected>500</option>
+<option value=0 selected>300</option>
 <option value=1>1000</option>
 <option value=2>1500</option>
 <option value=3>2000</option>
@@ -115,7 +115,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>3000</option>
 <option value=6>total column</option></td>
 <td align=center><select id="sel_v5" size=1 onChange="javascript:selectVar(5)">
-<option value=0>500</option>
+<option value=0>300</option>
 <option value=1>1000</option>
 <option value=2 selected>1500</option>
 <option value=3>2000</option>
@@ -123,7 +123,7 @@ AROME Arctic forecasts for ISLAS2021
 <option value=5>3000</option>
 <option value=6>total column</option></td>
 <td align=center><select id="sel_v6" size=1 onChange="javascript:selectVar(6)">
-<option value=0>500</option>
+<option value=0>300</option>
 <option value=1>1000</option>
 <option value=2>1500</option>
 <option value=3>2000</option>
