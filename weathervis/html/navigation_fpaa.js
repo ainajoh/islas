@@ -37,7 +37,7 @@ function getLevel(n)
 {
   switch (n) {
     case 0:
-      return "_L00400";
+      return "_L00200";
       break;
     case 1:
       return "_L01000";
@@ -249,8 +249,8 @@ function initWebsite()
 
 function skiponeback(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()-6);
-	fdate[row]+=6;
+	cday[row].setUTCHours(cday[row].getUTCHours()-24);
+	fdate[row]+=24;
 	if ((fdate[row]>24) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] - (fdate[row] % 3)
 	}
@@ -269,8 +269,8 @@ function skiponeback(row)
 
 function skiponeforward(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()+6);
-	fdate[row]-=6;
+	cday[row].setUTCHours(cday[row].getUTCHours()+24);
+	fdate[row]-=24;
 	if ((fdate[row]>24) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] + (fdate[row] % 3)
 	}
