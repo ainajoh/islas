@@ -243,16 +243,20 @@ class check_data():
         HH = date[8:10]
         base_url=""
 
-        # find out where to look for data
-        if self.use_latest == True:
-            archive_url = "latest"
-        else:
-            archive_url = "archive"
 
+        # find out where to look for data
         if model=="MEPS":
-            base_url = "https://thredds.met.no/thredds/catalog/meps25eps{0}/".format(archive_url)   #info about date, years and filname of our model
-            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps25eps{0}/".format(archive_url) #info about variables in each file
+            if self.use_latest == True:
+                archive_url = "latest"
+            else:
+                archive_url = "25epsarchive"
+            base_url = "https://thredds.met.no/thredds/catalog/meps{0}/".format(archive_url)   #info about date, years and filname of our model
+            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps{0}/".format(archive_url) #info about variables in each file
         elif model == "AromeArctic":
+            if self.use_latest == True:
+                archive_url = "latest"
+            else:
+                archive_url = "archive"
             base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/".format(archive_url)
             base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearctic{0}/".format(archive_url)
         else:

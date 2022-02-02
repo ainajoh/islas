@@ -49,7 +49,9 @@ case "$model" in
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
     ;;
     MEPS)
-        url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/${yy}/${mm}/${dd}/meps_det_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+        #url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/${yy}/${mm}/${dd}/meps_det_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+        #url="https://thredds.met.no/thredds/dodsC/mepslatest/meps_det_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+        url="https://thredds.met.no/thredds/dodsC/mepslatest/meps_det_2_5km_${modelrun_date}T${modelrun_hour}Z.ncml.html"
 	echo $url
         web_code=$(curl -sL -w "%{http_code}\n" "$url" -o /dev/null)
         echo $web_code
@@ -64,7 +66,7 @@ case "$model" in
 	#automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Osteroy
 	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name South_Norway
 	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name West_Norway
-	#automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name MEPS
+	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name MEPS
     ;;
     FP)
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
@@ -75,6 +77,11 @@ case "$model" in
         # also run watersip
 	automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name AN
 	automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name AN
+    ;;
+    FPAA)
+	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
+	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
+	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard 
     ;;
     *)
 	printf "***************************\n"

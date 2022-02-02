@@ -1,5 +1,5 @@
 # %%
-#python flexpart_EC.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
+#python flexpart_AA.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 #
 from weathervis.config import *
 from weathervis.utils import *
@@ -43,8 +43,7 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True):
-  print("DOOOM")
+def flexpart_AA(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True):
   print(domain_name)
   for dt in datetime: #modelrun at time..
     print(dt)
@@ -64,7 +63,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
         check_sfc = check_data(date=dt, model=model, param=param_sfc,step=steps)
         #check_pl = check_data(date=dt, model=model, param=param_pl, p_level=850,step=steps)
       except ValueError:
-        print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
+        print("!!!!! Sorry this plot is not available for this date. Try with another datetime !!!!!")
         break
     print("--------> Found match for your request ############")
 
@@ -100,31 +99,30 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     # convert fields
     dmap_meps.air_pressure_at_sea_level /= 100
 
-    
-    
-    
     # read netcdf files with flexpart output
-    all_release_name=['NYAlesund_S1','Tromso_S1', 'cmet1', 'cmet2']
+    #all_release_name=['NYAlesund_S1','Tromso_S1', 'cmet1', 'cmet2']
+    all_release_name=['NYAlesund_S1']
     spec=[]
     for release_name in all_release_name:
-        path="/home/centos/flexpart-arome/{0}/{1}*/flexpart_run_d01_combined.nc".format(dt,release_name)
+        path="/home/centos/flexpart/fp_arome/fp_arome_{0}_forecast_S1.nc".format(dt)
         findpath= glob.glob(path)
-        print("PAATH")
         print(findpath)
         if findpath:
-            print("SHOULD BE ADDED########### !!!!!!!!!!!!!!!")
             cdf = nc.Dataset(findpath[0], "r") #"/home/centos/flexpart/{0}/grid_conc_{1}0000.nc".format(release_name,dt), "r")
             lats=cdf.variables["XLAT"][:]
             lons=cdf.variables["XLONG"][:]
             #lons, lats = np.meshgrid(lons, lats)
             tim=cdf.variables["time"][:]
             levs=cdf.variables["ZTOP"][:]
+            print(levs)
             spec1a=cdf.variables["CONC"][:]
             print(np.shape(spec1a))
-            spec.append(spec1a)
-            print(np.shape(spec))
+            print(cdf.NUMRELEASES)
+            numr=cdf.NUMRELEASES
+            for i in range(0,numr):
+                spec.append(spec1a[:,i,:,:,:].squeeze())
+                print(np.shape(spec))
 
-    print("####LENNNN")
     print(len(spec)) 
     print(np.shape(spec))
 
@@ -164,8 +162,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
             stepok=True
         if stepok==True:
             l=0
-            last_lvl_idx_for_plotting=np.where(levs>5000)[0][0]
-            print("hereee")
+            last_lvl_idx_for_plotting=np.where(levs>3000)[0][0]
             print(last_lvl_idx_for_plotting)
             for lev in levs[0:last_lvl_idx_for_plotting+1]:
               print(lev)
@@ -174,7 +171,6 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               tidx = tim - np.min(steps)
               spec_squeeze=[]
               if lev>=levs[last_lvl_idx_for_plotting]: # TOC for last levels
-                print("LAAAST LEVEL")
                 for i in range(0,len(spec)):
                     ss = spec[i]
                     spec_squeeze.append(np.sum(ss[tim, :, :, :],0).squeeze())
@@ -182,7 +178,6 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                     lev=0
               else:
                 for i in range(0,len(spec)):
-                    print("LLLLLLLLLLLLLLLLLLLL")
                     print(l)
                     ss = spec[i]
                     spec_squeeze.append((ss[tim, l, :, :]).squeeze())
@@ -194,7 +189,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
                   spec_squeeze[i] = np.where(ss > 1e-10, ss, np.NaN)
                   #spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
 
-              print('Plotting FLEXPART-EC {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
+              print('Plotting FLEXPART-AA {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
               # gather, filter and squeeze variables for plotting
               plev = 0
               #reduces noise over mountains by removing values over a certain height.
@@ -202,11 +197,9 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
               MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
               my_colors=[plt.cm.Reds, plt.cm.Blues, plt.cm.Greens, plt.cm.Purples, plt.cm.Greys, plt.cm.Oranges]
-              print("########BEFORE#############")
               print(len(spec))
               for i in range(0,len(spec)):
                   ss = spec_squeeze[i]
-                  print("SOMETHING IS DEF PLOTTED###################################################################")
                   F_P = ax1.pcolormesh(lons, lats, ss,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=my_colors[i], zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
                   ##F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=pl, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
                   #del ss
@@ -291,7 +284,7 @@ if __name__ == "__main__":
   parser.add_argument("--info", default=False, help="Display info")
   args = parser.parse_args()
   print(args.__dict__)
-  flexpart_EC(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
+  flexpart_AA(datetime=args.datetime, steps = args.steps, model = args.model, domain_name = args.domain_name,
          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
 
   # split up in 3 retrievals of up to 24h

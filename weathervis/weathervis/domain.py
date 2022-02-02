@@ -69,7 +69,7 @@ class domain():
             if self.use_latest==False:
               url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
             else:
-              url = f"https://thredds.met.no/thredds/dodsC/meps25epslatest/{self.file}?latitude,longitude"
+              url = f"https://thredds.met.no/thredds/dodsC/mepslatest/{self.file}?latitude,longitude"
 
         self.url = url
 
