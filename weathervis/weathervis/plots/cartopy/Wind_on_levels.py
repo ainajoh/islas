@@ -24,6 +24,7 @@ import numpy as np
 import matplotlib.colors as colors
 import matplotlib as mpl
 from weathervis.checkget_data_handler import *
+from add_overlays import *
 
 
 def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True,  runid=None, outpath=None):
@@ -134,6 +135,8 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                     grid = True
                     if grid:
                          nicegrid(ax=ax1)
+
+                    add_ISLAS_overlays(ax1,col='green')
     
                     legend = True
                     if legend:

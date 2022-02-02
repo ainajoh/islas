@@ -25,6 +25,7 @@ import matplotlib.colors as colors
 import matplotlib as mpl
 from weathervis.checkget_data_handler import *
 from pylab import *
+from add_overlays import *
 
 def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True,  runid=None, outpath=None):
     global OUTPUTPATH
@@ -120,6 +121,8 @@ def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonla
                     grid = True
                     if grid:
                          nicegrid(ax=ax1)
+
+                    add_ISLAS_overlays(ax1)
     
                     legend = True
                     if legend:

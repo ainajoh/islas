@@ -12,6 +12,7 @@ import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
+from add_overlays import *
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -172,6 +173,9 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
           ax1.text(0, 1, "{0}_Z500_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
           if grid:
             nicegrid(ax=ax1)
+
+          add_ISLAS_overlays(ax1)
+
           ##########################################################
           legend = True
           if legend:

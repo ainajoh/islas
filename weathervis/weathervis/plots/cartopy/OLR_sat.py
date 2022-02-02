@@ -13,6 +13,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
 import pandas as pd
+from add_overlays import *
 
 def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True, track=False, runid=None, outpath=None):
   global OUTPUTPATH 
@@ -132,6 +133,8 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                    transform=ax.transAxes, color='dimgrey')
           if grid:
             nicegrid(ax=ax,color="orange")
+
+          add_ISLAS_overlays(ax)
           
           filename="{0}_{1}_OLR_sat_{2}+{3:02d}.png".format(model, domain_name, dt, ttt)
 

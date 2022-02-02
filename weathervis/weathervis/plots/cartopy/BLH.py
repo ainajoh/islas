@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import warnings
 import cartopy.feature as cfeature
 from mpl_toolkits.axes_grid1 import make_axes_locatable ##__N
+from add_overlays import *
 
 
 # suppress matplotlib warning
@@ -207,6 +208,9 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           #plt.show()
           if grid:
             nicegrid(ax=ax1)
+
+          add_ISLAS_overlays(ax1,col='yellow')
+
           if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
             ax1.set_extent(data_domain.lonlat)
           #  print(data_domain.lonlat)

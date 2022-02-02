@@ -12,6 +12,7 @@ import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
+from add_overlays import *
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -138,6 +139,8 @@ def IWC_LWC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
                 print("filename: "+make_modelrun_folder + "/{0}_{1}_{2}_{3}+{4:02d}.png".format(model, domain_name, "LWP_IWP", dt, ttt))
                 if grid:
                      nicegrid(ax=ax1)
+
+                add_ISLAS_overlays(ax1)
 
                 legend = True
                 if legend:

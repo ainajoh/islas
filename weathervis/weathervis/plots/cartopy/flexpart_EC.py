@@ -15,6 +15,7 @@ import warnings
 import cartopy.feature as cfeature
 import netCDF4 as nc
 import matplotlib.colors as colors
+from add_overlays import *
 
 print("done")
 # suppress matplotlib warning
@@ -264,6 +265,8 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
               if grid:
                 nicegrid(ax=ax1)
+
+              add_ISLAS_overlays(ax1)
 
               #if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
               ax1.set_extent(lonlat)

@@ -13,6 +13,7 @@ from weathervis.calculation import *
 import matplotlib.pyplot as plt
 import warnings
 import cartopy.feature as cfeature
+from add_overlays import *
 
 print("done")
 # suppress matplotlib warning
@@ -191,6 +192,8 @@ def T2M(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
 
           if grid:
             nicegrid(ax=ax1)
+
+          add_ISLAS_overlays(ax1,col='black')
 
           if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
             ax1.set_extent(data_domain.lonlat)

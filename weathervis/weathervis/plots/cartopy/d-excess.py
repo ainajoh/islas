@@ -28,6 +28,7 @@ import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
+from add_overlays import *
 
 def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, legend=False, info=False,grid=True, runid=None, outpath=None):
     global OUTPUTPATH
@@ -132,7 +133,8 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                 if model == 'AromeArctic':
                     Q = dmap_meps.specific_humidity_2m[tidx, :, :].squeeze()
                 else:
-                    Q = 1
+                    #Q = 1
+                    Q = dmap_meps.specific_humidity_2m[tidx, :, :].squeeze()
                     # AT = dmap_meps.air_temperature_2m[tidx,:,:].squeeze()
                     # w =
                     # Q = w / (w+1)
@@ -230,6 +232,9 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                                                                                                  ttt))
                 if grid:
                     nicegrid(ax=ax1)
+
+                add_ISLAS_overlays(ax1)
+
                 if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
                     ax1.set_extent(data_domain.lonlat)
                 fig1.savefig(make_modelrun_folder + "/{0}_{1}_dxs_{2}+{3:02d}.png".format(model, domain_name, dt, ttt),

@@ -12,6 +12,7 @@ import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
+from add_overlays import *
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -161,6 +162,7 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           DELTAPT=dpt[tidx, 0, :, :]
           DELTAPT = dpt_sst[tidx,:,:]
           ICE = dmap_mepsdfx.SIC[tidx, :, :]
+          SImask = np.where(ICE.squeeze() >= 0.1, dmap_mepsdfx.SIC[tidx, :, :], np.NaN).squeeze()
           DELTAPT = np.where( ICE <= 0.99,DELTAPT,0)
           lvl = range(-1,13)
           C = [[255,255,255	],  # grey #[255,255,255],#gre
@@ -182,12 +184,13 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, DELTAPT, zorder=0,
                                 antialiased=True,extend = "max", levels=lvl, colors=C, vmin=0, vmax=12)#
 
-          CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=1, linewidths=2.5, colors="black", levels=[0.1, 0.5])  #
+          SI = ax1.contourf(dmap_meps.x, dmap_meps.y, SImask, zorder=1, alpha=1, colors='azure')
+          CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=2, linewidths=2.5, colors="black", levels=[0.1, 0.5])  #
           # MSLP with contour labels every 10 hPa
-          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=1, alpha=1.0,
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
                           levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
                           colors='grey', linewidths=0.5)
-          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=2, alpha=1.0,
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
                             levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
                             colors='grey', linewidths=1.0)
           ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
@@ -196,7 +199,7 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           #                  levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
           #ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
 
-          ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
+          ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  
           ax1.text(0, 1, "{0}_CAOi_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
 
           ##########################################################
@@ -219,6 +222,8 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
             frame.set_alpha(1)
           if grid:
             nicegrid(ax=ax1)
+
+          add_ISLAS_overlays(ax1)
 
           if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
             ax1.set_extent(data_domain.lonlat)

@@ -16,6 +16,7 @@ import warnings
 import matplotlib as mpl
 from matplotlib.axes import Axes
 from cartopy.vector_transform import vector_scalar_to_grid
+from add_overlays import *
 
 def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True, runid=None, outpath=None):
   global OUTPUTPATH
@@ -113,12 +114,12 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           tidx = tim - np.min(steps)
           print('Plotting surface fluxes {0} + {1:02d} UTC'.format(dt, ttt))
           ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
-          MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+          MSLP = np.where(ZS < 30, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
           #TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=1)[tidx, 0, :,:].squeeze()
           L = dmap_meps_sfx.LE[tidx,:,:].squeeze()
-          L = np.where(ZS < 3000, L, np.NaN).squeeze()
+          L = np.where(ZS < 30, L, np.NaN).squeeze()
           SH = dmap_meps_sfx.H[tidx,:,:].squeeze()
-          SH = np.where(ZS < 3000, SH, np.NaN).squeeze()
+          SH = np.where(ZS < 30, SH, np.NaN).squeeze()
           SST = dmap_meps_sfx.SST[tidx,:,:].squeeze()
           Ux = dmap_meps.x_wind_10m[tidx, 0, :, :].squeeze()
           Vx = dmap_meps.y_wind_10m[tidx, 0, :, :].squeeze()
@@ -163,7 +164,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           SST = SST - 273.15
           #levels = [np.min(SST), np.max(SST), 3]
           levels = [0,2,4,6,8,10,12,15,18,21,24]
-          C_SS = ax1.contour(dmap_meps.x, dmap_meps.y, SST, colors="darkred", linewidths=2, levels =levels, zorder=8)
+          C_SS = ax1.contour(dmap_meps.x, dmap_meps.y, SST, colors="black", linewidths=2, levels =levels, zorder=8)
           ax1.clabel(C_SS, C_SS.levels, inline=True, fmt="%3.0f", fontsize=10 )
 
           #MSLP
@@ -178,7 +179,8 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
 
           #wind#
           #skip = (slice(50, -50, 50), slice(50, -50, 50))
-          skip = (slice(10, -10, 30), slice(10, -10, 30)) #70
+          #skip = (slice(10, -10, 30), slice(10, -10, 30)) #70
+          skip = (slice(20, -20, 50), slice(20, -20, 50)) #70
           scale = 1.94384
           CVV = ax1.barbs(xm[skip], ym[skip], uxx[skip]*scale, vxx[skip]*scale, length=5.5, zorder=11)
 
@@ -228,6 +230,9 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           #print("{0}".format(dt))
           if grid:
             nicegrid(ax=ax1)
+
+          add_ISLAS_overlays(ax1,col='green')
+
           if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
             ax1.set_extent(data_domain.lonlat)
           fig1.savefig(make_modelrun_folder + "/{0}_{1}_surf_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)

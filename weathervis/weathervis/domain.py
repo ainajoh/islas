@@ -128,29 +128,25 @@ class domain():
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [15, 23, 77, 82]  #
-        self.idx = lonlat2idx(self.lonlat,
-                              url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+        self.idx = lonlat2idx(self.lonlat,url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard_z1(self):  # map
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
 
         self.lonlat = [4, 23, 76.3, 82]  #
-        self.idx = lonlat2idx(self.lonlat,
-                              url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+        self.idx = lonlat2idx(self.lonlat,url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard(self):  # data
         # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "Svalbard"
         self.lonlat = [-8, 30, 73, 82]  #
-        self.idx = lonlat2idx(self.lonlat,
-                              url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+        self.idx = lonlat2idx(self.lonlat,url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def North_Norway(self):  # data
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "North_Norway"
-        self.lonlat = [5, 20, 66.5, 76.2]  #
-        self.idx = lonlat2idx(self.lonlat,
-                              url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+        self.lonlat = [5, 25, 66.5, 77.2]  #
+        self.idx = lonlat2idx(self.lonlat,url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def KingsBay(self):  # bigger data
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
@@ -191,7 +187,8 @@ class domain():
     def Andenes_area(self):
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "Andenes_area"
-        self.lonlat = [12.0, 19.5, 68.0, 70.6]
+        self.lonlat = [5.0, 19.5, 67.5, 71.6]
+        #self.lonlat = [12.0, 19.5, 68.0, 70.6]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def Varlegenhuken(self):
