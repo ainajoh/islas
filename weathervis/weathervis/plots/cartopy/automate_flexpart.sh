@@ -9,13 +9,14 @@ function converting {
     mkdir /home/centos/www/gfx/$1
   fi
   for f in *.png; do 
-    convert -scale 30% $f /home/centos/www/gfx/$1/$f
+    convert -scale 35% $f /home/centos/www/gfx/$1/$f
     \rm $f
   done
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
   if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-    scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/F* 158.39.201.233:/home/centos/www/gfx/$1
+    #scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/F* 158.39.201.233:/home/centos/www/gfx/$1
+    rsync -am --stats -r -e "ssh -i /home/centos/.ssh/islas-key.pem" /home/centos/www/gfx/$1/F* 158.39.201.233:/home/centos/www/gfx/$1
   fi
   cd $here
 }

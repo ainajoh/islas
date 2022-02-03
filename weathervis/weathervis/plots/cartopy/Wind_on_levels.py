@@ -99,9 +99,11 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                     MSLP = np.where(ZS < 3000, dmet.air_pressure_at_sea_level[tidx, 0, :, :],
                                     np.NaN).squeeze()
                     # calculate windspeed
-                    WS = np.sqrt(dmet.x_wind_pl[tidx,ip,:,:]**2 + dmet.y_wind_pl[tidx,ip,:,:]**2)
                     uxx = dmet.x_wind_pl[tidx, ip,:, :].squeeze()
                     vxx = dmet.y_wind_pl[tidx, ip,:, :].squeeze()
+                    #uxx,vxx = xwind2uwind(dmet.x_wind_pl[tidx,ip,:,:].squeeze(),dmet.y_wind_pl[tidx,ip,:,:].squeeze(), dmet.alpha)
+                    #WS = np.sqrt(dmet.x_wind_pl[tidx,ip,:,:]**2 + dmet.y_wind_pl[tidx,ip,:,:]**2)
+                    WS = wind_speed(dmet.x_wind_pl[tidx,ip,:,:],dmet.y_wind_pl[tidx,ip,:,:])
  
                     #pcolor as pcolormesh and  this projection is not happy together. If u want faster, try imshow
                     #data =  WS[:nx - 1, :ny - 1].copy()
@@ -144,7 +146,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                         ax_cb = adjustable_colorbar_cax(fig1, ax1)
 
                         plt.colorbar(CC,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25,
-                                     label=r"wind speed [m/s]",extend='max')
+                                     label=r"wind speed (m/s)",extend='max')
 
                         proxy = [plt.axhline(y=0, xmin=0, xmax=0, color="gray",zorder=7)]
                         # proxy.extend(proxy1)

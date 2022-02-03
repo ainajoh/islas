@@ -126,10 +126,9 @@ def Wind_gusts(datetime, steps, model, domain_name = None, domain_lonlat = None,
                                   colors='grey', linewidths=0.5)
                 C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=5, alpha=1.0,
                                   levels=np.arange(960, 1050, 10),
-                                  colors='grey', linewidths=1.0, label="MSLP [hPa]")
+                                  colors='grey', linewidths=1.0, label="MSLP (hPa)")
                 ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
                 ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=6,facecolor="none",edgecolor="gray") 
-                # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                 if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
                      ax1.set_extent(data_domain.lonlat)
                 ax1.text(0, 1, "{0}_WG10_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
@@ -147,7 +146,7 @@ def Wind_gusts(datetime, steps, model, domain_name = None, domain_lonlat = None,
                     ax_cb = adjustable_colorbar_cax(fig1, ax1)
  
                     plt.colorbar(C_WS,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25,
-                                 label=r"U10 [m/s]")
+                                 label=r"10m wind speed (m/s)")
                     custom_lines = [Line2D([0], [0], color='grey', lw=2)]
  
                     lg = ax1.legend(loc='upper left')

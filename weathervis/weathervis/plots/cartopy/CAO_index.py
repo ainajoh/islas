@@ -184,8 +184,8 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, DELTAPT, zorder=0,
                                 antialiased=True,extend = "max", levels=lvl, colors=C, vmin=0, vmax=12)#
 
-          SI = ax1.contourf(dmap_meps.x, dmap_meps.y, SImask, zorder=1, alpha=1, colors='azure')
-          CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=2, linewidths=2.5, colors="black", levels=[0.1, 0.5])  #
+          SI = ax1.contourf(dmap_meps.x, dmap_meps.y, SImask, zorder=1, alpha=0.5, colors='azure')
+          CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=2, linewidths=2.0, colors="black", levels=[0.1, 0.5])  #
           # MSLP with contour labels every 10 hPa
           C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
                           levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
@@ -215,7 +215,7 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
             except:
               pass
 
-            lg = ax1.legend(proxy, [f"MSLP [hPa]",
+            lg = ax1.legend(proxy, [f"MSLP (hPa)",
                                    f"Sea ice at 10%, 80%, 99%"])
             frame = lg.get_frame()
             frame.set_facecolor('white')

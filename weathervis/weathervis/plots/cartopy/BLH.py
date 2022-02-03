@@ -170,7 +170,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
                             levels=np.linspace(-2.0,-0.07,4 ), colors="blue", linewidths=0.7)
           # boundary layer thickness
           CF_BLH = ax1.contourf(dmap_meps.x, dmap_meps.y, BLH, zorder=1, alpha=0.5,
-                            levels=np.arange(500, 3500, 500), linewidths=0.7,label = "BLH", cmap = "summer",extend="both")
+                            levels=[300,500,1000,1500,2000,2500,3000], linewidths=0.7,label = "BLH", cmap = "set3",extend="both")
           ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))
           #ax1.set_extent(data_domain.lonlat)
 
@@ -178,7 +178,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           #ax_cb = divider.new_horizontal(size="5%", pad=0.1, axes_class=plt.Axes) ##__N
           #fig1.add_axes(ax_cb) ##__N
           ax_cb = adjustable_colorbar_cax(fig1,ax1)
-          cb= fig1.colorbar(CF_BLH, fraction=0.046, pad=0.01,aspect=25,cax=ax_cb, label="Boundary layer thickness [m]", extend="both") ##__N
+          cb= fig1.colorbar(CF_BLH, fraction=0.046, pad=0.01,aspect=25,cax=ax_cb, label="Boundary layer thickness (m)", extend="both") ##__N
           #cb,fig1,ax1 = adjustable_colorbar(fig1,ax1,data= CF_BLH, fraction=0.046, pad=0.01,aspect=25, label="Boundary layer thickness [m]", extend="both")
           ax1.text(0, 1, "{0}_BLH_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', \
                    transform=ax1.transAxes, color='black')

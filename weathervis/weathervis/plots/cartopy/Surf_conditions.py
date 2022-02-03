@@ -114,12 +114,12 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           tidx = tim - np.min(steps)
           print('Plotting surface fluxes {0} + {1:02d} UTC'.format(dt, ttt))
           ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
-          MSLP = np.where(ZS < 30, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+          MSLP = np.where(ZS < 50, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
           #TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=1)[tidx, 0, :,:].squeeze()
           L = dmap_meps_sfx.LE[tidx,:,:].squeeze()
-          L = np.where(ZS < 30, L, np.NaN).squeeze()
+          L = np.where(ZS < 50, L, np.NaN).squeeze()
           SH = dmap_meps_sfx.H[tidx,:,:].squeeze()
-          SH = np.where(ZS < 30, SH, np.NaN).squeeze()
+          SH = np.where(ZS < 50, SH, np.NaN).squeeze()
           SST = dmap_meps_sfx.SST[tidx,:,:].squeeze()
           Ux = dmap_meps.x_wind_10m[tidx, 0, :, :].squeeze()
           Vx = dmap_meps.y_wind_10m[tidx, 0, :, :].squeeze()
@@ -163,7 +163,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           #levels=np.arange(270,294,2)
           SST = SST - 273.15
           #levels = [np.min(SST), np.max(SST), 3]
-          levels = [0,2,4,6,8,10,12,15,18,21,24]
+          levels = [-2,0,2,4,6,8,10]
           C_SS = ax1.contour(dmap_meps.x, dmap_meps.y, SST, colors="black", linewidths=2, levels =levels, zorder=8)
           ax1.clabel(C_SS, C_SS.levels, inline=True, fmt="%3.0f", fontsize=10 )
 
@@ -180,7 +180,7 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           #wind#
           #skip = (slice(50, -50, 50), slice(50, -50, 50))
           #skip = (slice(10, -10, 30), slice(10, -10, 30)) #70
-          skip = (slice(20, -20, 50), slice(20, -20, 50)) #70
+          skip = (slice(20, -20, 45), slice(20, -20, 45)) #70
           scale = 1.94384
           CVV = ax1.barbs(xm[skip], ym[skip], uxx[skip]*scale, vxx[skip]*scale, length=5.5, zorder=11)
 
@@ -216,10 +216,10 @@ def surf(datetime, steps=0, model= "AromeArctic", domain_name = None, domain_lon
           legend=True
           if legend:
             proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="blue"),
-                     plt.axhline(y=0, xmin=1, xmax=1, color="darkred")]
+                     plt.axhline(y=0, xmin=1, xmax=1, color="black")]
             lg = plt.legend(proxy, [f"Sensible heat [{dmap_meps_sfx.units.H}] ", f"SST [C]"],loc=1)
             ax_cb = adjustable_colorbar_cax(fig1, ax1)
-            cb = plt.colorbar(CLH, cax= ax_cb, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat [{dmap_meps_sfx.units.LE}]", extend = "both")
+            cb = plt.colorbar(CLH, cax= ax_cb, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label =f"Latent heat ({dmap_meps_sfx.units.LE})", extend = "both")
             frame = lg.get_frame()
             lg.set_zorder(102)
             frame.set_facecolor('lightgray')

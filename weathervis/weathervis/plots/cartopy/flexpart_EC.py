@@ -171,6 +171,13 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               ttt = tim
               tidx = tim - np.min(steps)
 
+              # plot white contours for domain limits
+              MSLP = dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :].squeeze()
+
+              # MSLP with contour labels every 10 hPa
+              C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=0, alpha=0.0,
+                                    levels=np.arange(960, 1050, 10), colors='white', linewidths=0.5,transform=crs)
+ 
               # plot low level releases for three 24h windows
               if lev>3000: # TOC for last levels
                 spec2a=np.sum(spec1a[0, 0, tim, :, :, :],0).squeeze()
@@ -207,11 +214,12 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               plev = 0
               #reduces noise over mountains by removing values over a certain height.
 
-              F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
-              F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.7, transform=ccrs.PlateCarree())
-              F_P = ax1.pcolormesh(lons, lats, spec2c,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Greens, zorder=3, alpha=0.7, transform=ccrs.PlateCarree())
-              #F_P = ax1.pcolormesh(lons, lats, spec2d,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Oranges, zorder=4, alpha=0.7, transform=ccrs.PlateCarree())
-              #F_P = ax1.pcolormesh(lons, lats, spec2e,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Purples, zorder=5, alpha=0.7, transform=ccrs.PlateCarree())
+              with ax1.hold_limits():
+                  F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
+                  F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.7, transform=ccrs.PlateCarree())
+                  F_P = ax1.pcolormesh(lons, lats, spec2c,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Greens, zorder=3, alpha=0.7, transform=ccrs.PlateCarree())
+                  #F_P = ax1.pcolormesh(lons, lats, spec2d,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Oranges, zorder=4, alpha=0.7, transform=ccrs.PlateCarree())
+                  #F_P = ax1.pcolormesh(lons, lats, spec2e,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Purples, zorder=5, alpha=0.7, transform=ccrs.PlateCarree())
               del spec2a
               del spec2b
               del spec2c
@@ -269,7 +277,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               add_ISLAS_overlays(ax1)
 
               #if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-              ax1.set_extent(lonlat)
+              #ax1.set_extent(lonlat)
 
               model='FLEXPART_EC'
               print(make_modelrun_folder+"/{0}_{1}_L{2:05.0f}_{3}+{4:02d}.png".format(model, domain_name, lev, dt, tim))

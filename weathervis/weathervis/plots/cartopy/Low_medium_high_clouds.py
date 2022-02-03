@@ -136,7 +136,7 @@ def Low_medium_high_clouds(datetime, steps, model, domain_name = None, domain_lo
                 if grid:
                     nicegrid(ax=ax1)
 
-                add_ISLAS_overlays(ax1)
+                add_ISLAS_overlays(ax1,col="green")
  
                 legend = True
                 if legend:

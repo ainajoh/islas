@@ -122,7 +122,7 @@ def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonla
                     if grid:
                          nicegrid(ax=ax1)
 
-                    add_ISLAS_overlays(ax1)
+                    add_ISLAS_overlays(ax1,col="blue")
     
                     legend = True
                     if legend:
@@ -130,7 +130,7 @@ def Q_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonla
                         ax_cb = adjustable_colorbar_cax(fig1, ax1)
 
                         plt.colorbar(CC,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25,
-                                     label=r"wind speed [m/s]",extend='max')
+                                     label=r"specific humidity (g/kg)",extend='max')
 
                         proxy = [plt.axhline(y=0, xmin=0, xmax=0, color="gray",zorder=7)]
                         # proxy.extend(proxy1)

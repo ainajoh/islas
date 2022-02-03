@@ -194,14 +194,16 @@ def flexpart_AA(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               # gather, filter and squeeze variables for plotting
               plev = 0
               #reduces noise over mountains by removing values over a certain height.
-
               Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
-              MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+              MSLP = np.where(Z < 30000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+              ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=0, alpha=0.0,
+                    levels=np.arange(960, 1050, 10), colors='white', linewidths=0.5,transform=crs)
               my_colors=[plt.cm.Reds, plt.cm.Blues, plt.cm.Greens, plt.cm.Purples, plt.cm.Greys, plt.cm.Oranges]
               print(len(spec))
               for i in range(0,len(spec)):
                   ss = spec_squeeze[i]
-                  F_P = ax1.pcolormesh(lons, lats, ss,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=my_colors[i], zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
+                  with ax1.hold_limits():
+                     F_P = ax1.pcolormesh(lons, lats, ss,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=my_colors[i], zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
                   ##F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=pl, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
                   #del ss
               # MSLP with contour labels every 10 hPa
@@ -234,18 +236,11 @@ def flexpart_AA(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               #  plt.text(x=0, y=-1, s="INFO: Reduced topographic noise by filtering with surface_geopotential bellow 3000",
               #           fontsize=7)#, bbox=dict(facecolor='white', alpha=0.5))
 
-
-              ##########################################################
-
-              #plt.show()
-
-
               #lonlat = [dmap_meps.longitude[0, 0], dmap_meps.longitude[-1, -1], dmap_meps.latitude[0, 0],
               #          dmap_meps.latitude[-1, -1]]
               # ax.set_extent((lonlat[0]-5, lonlat[1], lonlat[2], lonlat[3]))  # (x0, x1, y0, y1)
               # ax.set_extent((dmap_meps.x[0], dmap_meps.x[-1], dmap_meps.y[0], dmap_meps.y[-1]))  # (x0, x1, y0, y1)
               #ax1.set_extent((lonlat[0], lonlat[1], lonlat[2], lonlat[3]))
-              #fig1.savefig("../../../../output/{0}_T2M_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
 
               if grid:
                 nicegrid(ax=ax1)
@@ -253,7 +248,7 @@ def flexpart_AA(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               add_ISLAS_overlays(ax1)
 
               #if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-              ax1.set_extent(lonlat)
+              #ax1.set_extent(lonlat)
 
               model='FLEXPART_AA'
               print(make_modelrun_folder+"/{0}_{1}_L{2:05.0f}_{3}+{4:02d}.png".format(model, domain_name, lev, dt, tim))

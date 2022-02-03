@@ -90,7 +90,7 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     print(dmap_meps.units.precipitation_amount_acc)
     tmap_meps.geopotential_pl/=10.0
     tmap_meps.units.geopotential_pl ="m"
-    u,v = xwind2uwind(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl, tmap_meps.alpha)
+    #u,v = xwind2uwind(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl, tmap_meps.alpha)
     vel = wind_speed(tmap_meps.x_wind_pl,tmap_meps.y_wind_pl)
 
     # plot map
@@ -130,12 +130,12 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
           TP = precip_acc(dmap_meps.precipitation_amount_acc, acc=acc)[tidx, 0, :,:].squeeze()
           VEL = (vel[tidx, plev2, :, :]).squeeze()
           Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
-          Ux = u[tidx, 0,:, :].squeeze()
-          Vx = v[tidx, 0,:, :].squeeze()
+          #Ux = u[tidx, 0,:, :].squeeze()
+          #Vx = v[tidx, 0,:, :].squeeze()
           uxx = tmap_meps.x_wind_pl[tidx, 0,:, :].squeeze()
           vxx = tmap_meps.y_wind_pl[tidx, 0,:, :].squeeze()
           cmap = plt.get_cmap("tab20c")
-          lvl = [0.02, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, 25, 30]
+          lvl = [0.02, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2, 3, 5, 10, 15]
           norm = mcolors.BoundaryNorm(lvl, cmap.N)
 
           try: #workaround for a stupid matplotlib error not handling when all values are outside of range in lvl or all just nans..
@@ -161,7 +161,8 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
           skip=20
           skip = (slice(20, -20, 50), slice(20, -20, 50)) #70
           xm,ym=np.meshgrid(dmap_meps.x, dmap_meps.y)
-          CVV = ax1.barbs( xm[skip], ym[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, length=6.5, zorder=5)
+          scale=1.94384
+          CVV = ax1.barbs( xm[skip], ym[skip], uxx[skip]*scale, vxx[skip]*scale, length=5.5, zorder=5)
           #CS = ax1.contour(dmap_meps.x, dmap_meps.y, VEL, zorder=3, alpha=1.0,
           #                   levels=np.arange(-80, 80, 5), colors="green", linewidths=0.7)
           # geopotential

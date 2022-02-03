@@ -187,7 +187,7 @@ class domain():
     def Andenes_area(self):
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "Andenes_area"
-        self.lonlat = [5.0, 19.5, 67.5, 71.6]
+        self.lonlat = [6.0, 20.5, 67.5, 71.6]
         #self.lonlat = [12.0, 19.5, 68.0, 70.6]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
@@ -350,7 +350,7 @@ class domain():
     def NorwegianSea_area(self):  # PAraglidingstart
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "NorwegianSea_area"
-        self.lonlat = [-7, 16, 69.0, 77.2]  #
+        self.lonlat = [-3, 21, 69.0, 77.2]  #
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def GEOF322(self):  # PAraglidingstart

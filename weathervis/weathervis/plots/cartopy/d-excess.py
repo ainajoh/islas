@@ -222,7 +222,7 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
 
                     # cb = plt.colorbar(CSST, fraction=0.046, pad=0.01, ax=ax1, aspect=25, label ="RH [%]", extend = "both")
                     ax_cb = adjustable_colorbar_cax(fig1, ax1)
-                    cb = plt.colorbar(Cd, fraction=0.046, pad=0.01, ax=ax1, aspect=25, cax= ax_cb, label="d-excess [$\perthousand$]",
+                    cb = plt.colorbar(Cd, fraction=0.046, pad=0.01, ax=ax1, aspect=25, cax= ax_cb, label="d-excess ($\perthousand$)",
                                       extend="both")
 
                     frame = lg.get_frame()

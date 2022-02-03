@@ -147,7 +147,7 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                                   colors='grey', linewidths=0.5)
                 C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=3, alpha=1.0,
                                   levels=np.arange(960, 1050, 10),
-                                  colors='grey', linewidths=1.0, label="MSLP [hPa]")
+                                  colors='grey', linewidths=1.0, label="MSLP (hPa)")
                 ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
                 ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=7,facecolor="none",edgecolor="gray") 
                 # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
@@ -160,14 +160,14 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 if grid:
                     nicegrid(ax=ax1)
 
-                add_ISLAS_overlays(ax1,col='green')
+                add_ISLAS_overlays(ax1,col='red')
  
                 legend = True
                 if legend:
                     ax_cb = adjustable_colorbar_cax(fig1, ax1)
 
                     plt.colorbar(CCl,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25,
-                                 label=r"cloud top height [m]",extend='max')
+                                 label=r"cloud top height (m)",extend='max')
                     l1 = ax1.legend(loc='upper left')
                     frame = l1.get_frame()
                     frame.set_facecolor('white')
