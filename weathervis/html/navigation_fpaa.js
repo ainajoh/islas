@@ -40,16 +40,16 @@ function getLevel(n)
       return "_L00200";
       break;
     case 1:
-      return "_L01000";
+      return "_L00500";
       break;
     case 2:
-      return "_L01500";
+      return "_L01000";
       break;
     case 3:
-      return "_L02000";
+      return "_L01500";
       break;
     case 4:
-      return "_L02500";
+      return "_L02000";
       break;
     case 5:
       return "_L03000";

@@ -27,6 +27,39 @@ captions[0]="";
 captions[1]="";
 captions[2]="";
 
+document.addEventListener('keydown', (event) => {
+  const keyName = event.key;
+
+  if (keyName === 'Control') {
+    // do not alert when only Control key is pressed.
+    return;
+  }
+  if (keyName === 'ArrowRight') {
+    skip1hforward(0);
+    skip1hforward(1);
+  }
+  if (keyName === 'ArrowLeft') {
+    skip1hback(0);
+    skip1hback(1);
+  }
+  if (keyName === 'ArrowUp') {
+    skiponeforward(0);
+    skiponeforward(1);
+  }
+  if (keyName === 'ArrowDown') {
+    skiponeback(0);
+    skiponeback(1);
+  }
+
+  /*if (event.ctrlKey) {
+    // Even though event.key is not 'Control' (e.g., 'a' is pressed),
+    // event.ctrlKey may be true if Ctrl key is pressed at the same time.
+    alert(`Combination of ctrlKey + ${keyName}`);
+  } else {
+    alert(`Key pressed ${keyName}`);
+  }*/
+}, false);
+
 // functions
 function checkSync()
 {
@@ -64,37 +97,37 @@ function getKind(n)
       return "_T2M";
       break;
     case 9:
-      return "_WS_700";
-      break;
-    case 10:
       return "_WS_800";
       break;
-    case 11:
+    case 10:
       return "_WS_850";
       break;
-    case 12:
+    case 11:
       return "_WS_925";
       break;
-    case 13:
+    case 12:
       return "_CB_CT";
       break;
-    case 14:
+    case 13:
       return "_CCLMH";
       break;
-    case 15:
+    case 14:
       return "_WG10";
       break;
-    case 16:
-      return "_Q_700";
-      break;
-    case 17:
+    case 15:
       return "_Q_800";
       break;
-    case 18:
+    case 16:
       return "_Q_850";
       break;
-    case 19:
+    case 17:
       return "_Q_925";
+      break;
+    case 18:
+      return "_IWV";
+      break;
+    case 19:
+      return "_IVT";
       break;
     default: 
       return "_";
