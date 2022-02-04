@@ -116,7 +116,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                     CC=ax1.contourf(x,y,WS,levels=np.linspace(0.0, 30, 7),cmap=cm,zorder=2)
                     # add the wind barbs or quivers
                     skip = (slice(40, -40, 50), slice(40, -40, 50)) #70
-                    CVV = ax1.barbs( x[skip], y[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, zorder=3)
+                    CVV = ax1.barbs( x[skip], y[skip], uxx[skip]*1.94384, vxx[skip]*1.94384, length=5.5, zorder=3)
     
                     # MSLP
                     # MSLP with contour labels every 10 hPa

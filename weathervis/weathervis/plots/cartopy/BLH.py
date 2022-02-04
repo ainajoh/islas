@@ -170,7 +170,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
                             levels=np.linspace(-2.0,-0.07,4 ), colors="blue", linewidths=0.7)
           # boundary layer thickness
           CF_BLH = ax1.contourf(dmap_meps.x, dmap_meps.y, BLH, zorder=1, alpha=0.5,
-                            levels=[300,500,1000,1500,2000,2500,3000], linewidths=0.7,label = "BLH", cmap = "set3",extend="both")
+                            levels=[100,300,500,750,1000,1250,1500,2000,2500,3000], linewidths=0.7,label = "BLH", cmap = "Paired",extend="both")
           ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))
           #ax1.set_extent(data_domain.lonlat)
 
