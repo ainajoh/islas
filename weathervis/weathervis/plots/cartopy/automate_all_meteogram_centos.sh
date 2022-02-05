@@ -27,7 +27,6 @@ else
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
-
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
 dd=${modeldatehour:6:2}
@@ -40,7 +39,8 @@ modelrun_hour="00"
 model=("AromeArctic")
 steps_max=(66)
 domain_name="None"
-point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
+#point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
+point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla")
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -51,13 +51,11 @@ while [ $# -gt 0 ]; do
     ;;
     --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_date=("${1#*=}")
     fi
     ;;
     --modelrun_hour)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_hour=("${1#*=}")
     fi
     ;;
@@ -95,7 +93,8 @@ modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
 id=$$
 
-point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
+#point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
+point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
@@ -112,4 +111,26 @@ for md in ${model[@]}; do
     done
   done
 done
+
+#MEPS 
+
+model=("MEPS")
+point_name=("Bergen" "Trondheim")
+for md in ${model[@]}; do
+  echo $md
+  for ((i = 0; i < ${#modelrun[@]}; ++i)); do
+      for pnam in ${point_name[@]}; do
+	  if [[ ${steps} != "None" ]]
+          then
+	        runstring_Pmet="python point_meteogram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --domain_name $pnam --point_name $pnam --id $id"
+          fi
+
+    echo $runstring_Pmet
+    $runstring_Pmet
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    rm -f /home/centos/output/weathervis/${modelrun[i]}-$id
+    done
+  done
+done
+
 

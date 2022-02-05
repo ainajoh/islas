@@ -275,8 +275,68 @@ class domain():
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def MetBergen(self):
-        point_name = "MetBergen"
+    def Zeppelin(self):
+        point_name = "Zeppelin"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.32)
+        maxlon = float(plon + 0.28)
+        minlat = float(plat - 0.11)
+        maxlat = float(plat + 0.09)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Bergen(self):
+        point_name = "Bergen"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.32)
+        maxlon = float(plon + 0.28)
+        minlat = float(plat - 0.11)
+        maxlat = float(plat + 0.09)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Kirkenes(self):
+        point_name = "Kirkenes"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.32)
+        maxlon = float(plon + 0.28)
+        minlat = float(plat - 0.11)
+        maxlat = float(plat + 0.09)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Kiruna(self):
+        point_name = "Kiruna"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.32)
+        maxlon = float(plon + 0.28)
+        minlat = float(plat - 0.11)
+        maxlat = float(plat + 0.09)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Alta(self):
+        point_name = "Alta"
+        sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+        plon = float(sites.loc[point_name].lon)
+        plat = float(sites.loc[point_name].lat)
+        minlon = float(plon - 0.32)
+        maxlon = float(plon + 0.28)
+        minlat = float(plat - 0.11)
+        maxlat = float(plat + 0.09)
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Trondheim(self):
+        point_name = "Trondheim"
         sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
         plon = float(sites.loc[point_name].lon)
         plat = float(sites.loc[point_name].lat)

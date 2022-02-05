@@ -36,8 +36,7 @@ def setup_met_directory(modelrun, point_name, point_lonlat, model, runid=None, o
         projectpath = setup_directory( OUTPUTPATH, "{0}".format(modelrun) )
     
     
-    print("OROOOOJJ")
-    print(projectpath)
+    #print(projectpath)
     # dirName = projectpath + "/result/" + modelrun[0].strftime('%Y/%m/%d/%H/')
     if point_lonlat:
         pname=str(point_lonlat)
@@ -54,7 +53,7 @@ def setup_met_directory(modelrun, point_name, point_lonlat, model, runid=None, o
     figname_b1 = "vmet_" + modelrun
 
     dirName_b0 = dirName# + "met/"
-    figname_b0 = "PMETEOGRAM_" + pname + "_" + modelrun
+    figname_b0 = "PMET_" + pname + "_" + modelrun
 
     dirName_b2 = dirName #+ "map/"
     figname_b2 = "map_" + modelrun
@@ -77,7 +76,7 @@ def setup_met_directory(modelrun, point_name, point_lonlat, model, runid=None, o
 class PMET():
     def __init__(self, model, date, steps, data = None, domain_name = None, domain_lonlat=None,legend=None,info=None,
                  num_point=None,point_name=None, point_lonlat=None,runid=None):
-        print("pmet")
+        #print("pmet")
         self.runid=runid
         self.model =model
         self.date=date
@@ -582,13 +581,15 @@ class PMET():
         axm4.tick_params(axis="x", which="major", pad=12,top=True, labeltop=True)
 
 
-        print("before savefig")
+        #print("before savefig")
         #figm2.tight_layout()
         loc_name=self.point_name if self.point_name else self.point_lonlat
 
-        print(dirName_b0 + figname_b0 + "_LOC_" + str(loc_name) +
-                    "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
-                                                    dmet.latitude[jindx, iindx]) + ".png")
+        print(dirName_b0 + figname_b0 + "_op1.png" )
+        print(dirName_b0 + figname_b0 + "_op2.png" )
+        #print(dirName_b0 + figname_b0 + "_LOC_" + str(loc_name) +
+        #            "[" + "{0:.2f}_{1:.2f}]".format(dmet.longitude[jindx, iindx],
+        #                                            dmet.latitude[jindx, iindx]) + ".png")
         figm2.savefig(dirName_b0 + figname_b0 + "_op1" + ".png", bbox_inches = "tight", dpi = 200)
 
         figm3.savefig(dirName_b0 + figname_b0 + "_op2" + ".png", bbox_inches="tight",
@@ -1027,11 +1028,13 @@ class PMET():
         #figma2.tight_layout()
         loc_name=self.point_name if self.point_name else self.point_lonlat
 
-        print(dirName_b2 + figname_b2 + "_LOC_loc_name[" + sitename + "]" + ".png")
+        #print(dirName_b2 + figname_b2 + "_LOC_loc_name[" + sitename + "]" + ".png")
         #figm2.savefig(dirName_b0 + figname_b0 + "_op1" + ".png", bbox_inches = "tight", dpi = 200)
 
-        figma1.savefig(dirName_b0 + figname_b0 + "_op1_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
-        figma2.savefig(dirName_b0 + figname_b0 + "_op2_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        #figma1.savefig(dirName_b0 + figname_b0 + "_op1_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        #figma2.savefig(dirName_b0 + figname_b0 + "_op2_"+ "[" + sitename + "].png", bbox_inches = "tight", dpi = 200)
+        figma1.savefig(dirName_b0 + figname_b0 + "_op1_"+ sitename + ".png", bbox_inches = "tight", dpi = 200)
+        figma2.savefig(dirName_b0 + figname_b0 + "_op2_"+ sitename + ".png", bbox_inches = "tight", dpi = 200)
 
         plt.close()
 
@@ -1079,15 +1082,15 @@ if __name__ == "__main__":
             plt.close("all")
             ip += 1
 
-        averagesite = ["ALL_DOMAIN", "ALL_NEAREST", "LAND", "SEA"]  # "ALL_NEAREST", "LAND", "SEA",
+        averagesite = ["ALL", "LAND", "SEA"]  # "ALL_NEAREST", "LAND", "SEA",
 
         VM.meteogram_average( indx_sea, dirName_b3, figname_b3,  "SEA")
         #plot_maplocation(dmet, data_domain, indx_sea, dirName_b2, figname_b2, sitename, point_lonlat, all=True)
         VM.meteogram_average(indx_land, dirName_b3, figname_b3, "LAND")
         #plot_maplocation(dmet, data_domain, indx_land, dirName_b2, figname_b2, sitename, point_lonlat, all=True)
-        VM.meteogram_average(index_neares, dirName_b3, figname_b3, "ALL_NEAREST")
+        #VM.meteogram_average(index_neares, dirName_b3, figname_b3, "ALL_NEAREST")
         #plot_maplocation(dmet, data_domain, [jindx, iindx], dirName_b2, figname_b2, sitename, point_lonlat,all=True)
-        VM.meteogram_average(indx_alldomain, dirName_b3, figname_b3, "ALL_DOMAIN")
+        VM.meteogram_average(indx_alldomain, dirName_b3, figname_b3, "ALL")
         #plot_maplocation(dmet, data_domain, indx_alldomain, dirName_b2, figname_b2, sitename, point_lonlat,all=True)
         plt.close("all")
 

@@ -54,13 +54,11 @@ while [ $# -gt 0 ]; do
     ;;
     --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_date=("${1#*=}")
     fi
     ;;
     --modelrun_hour)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_hour=("${1#*=}")
     fi
     ;;

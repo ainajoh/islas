@@ -259,19 +259,19 @@ class VERT_MET():
 
         #lvl = np.linspace(np.min(mass_fraction_of_cloud_ice_in_air_ml),np.max(mass_fraction_of_cloud_ice_in_air_ml), 20)
         lvl = np.linspace(np.min(mass_fraction_of_cloud_ice_in_air_ml),np.max(mass_fraction_of_cloud_ice_in_air_ml), 4)
-        lvl = [0.00001,0.1, 0.2,0.5,2,10]
+        lvl = [0.01,0.1,0.2,1,10,50]
         print(np.max(mass_fraction_of_cloud_ice_in_air_ml))
         CF_ICE = axm1.contour(tx, p_p, mass_fraction_of_cloud_ice_in_air_ml,levels=lvl, zorder=12,
-                              colors="cyan", linewidths=3,linestyles="-", alpha=0.8,
+                              colors="cyan", linewidths=2,linestyles="-", alpha=0.8,
                               label="Inline label")
         axm1.clabel(CF_ICE, CF_ICE.levels, inline=False, fmt="%3.1f", fontsize=12)
         #marker=r"$C_H$"
 
         lvl = np.linspace(np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),np.max(mass_fraction_of_cloud_condensed_water_in_air_ml), 4)
-        lvl = [0.001,5,20,50,150]
+        lvl = [0.1,5,20,50,150]
         print(np.max(mass_fraction_of_cloud_condensed_water_in_air_ml))
         CF_C = axm1.contour(tx, p_p, mass_fraction_of_cloud_condensed_water_in_air_ml,levels=lvl, zorder=11,
-                            colors="gray", linewidths=3,linestyles="-", alpha=0.8,
+                            colors="yellow", linewidths=2,linestyles="-", alpha=0.8,
                             label="2Inline label") #lime
         axm1.clabel(CF_C, CF_C.levels, inline=False, fmt="%3.1f", fontsize=12,colors="gray")
         #axm1.pcolormesh(tx, p_p, mass_fraction_of_cloud_condensed_water_in_air_ml, zorder=10)
@@ -420,7 +420,7 @@ class VERT_MET():
         CF = axm1.pcolormesh(tx, p_p, dtdz_p, cmap=cmap, zorder=1,norm=norm) #dtdz_p
         cbar = nice_vprof_colorbar(CF=CF, ax=axm1,ticks=ticks, label = 'Lapse. rate. [C/km]', format='%.1f')
         #relative humidity
-        CS = axm1.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(0,100,10),colors="green")  #Purples BrBu  BrYlBu cool bwr RdYlBu_r
+        CS = axm1.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(60,100,20),colors="green")  #Purples BrBu  BrYlBu cool bwr RdYlBu_r
         axm1.clabel(CS, inline=True, fmt='%1.0f')  # '%1.0fK')
         #cloud
         Cfrac = axm1.contourf(tx, p_p, areafrac_cloud,hatches=['--','---'], colors="none", alpha = 0.0,levels= [1,50,100],zlevel=100)
@@ -451,7 +451,7 @@ class VERT_MET():
         cbar = nice_vprof_colorbar(CF=CF_2, ax=axm2, label = 'Temp. [K]', extend="both", format='%.0f')
 
         #RH
-        C = axm2.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(0,100,10),colors="green") #dtdz_p
+        C = axm2.contour(tx, p_p, rh_p, zorder=2, levels = np.arange(60,100,20),colors="green") #dtdz_p
         axm2.clabel(C, inline=True, fmt='%1.0f')  # '%1.0fK')
         #BLH
         #BL = dmet.BLH[:, 0, jindx, iindx]
@@ -494,7 +494,8 @@ class VERT_MET():
         axm2T.set_ylim((T_f(ymin),T_f(ymax)))
         # set an invisible artist to twin axes 
         # to prevent falling back to initial values on rescale events
-        axm2T.plot(tx[:,0], h_sl, "X-", color="black", linewidth=3)
+        axm2T.plot(tx[:,0], h_sl, "-", color="black", linewidth=1.5)
+        axm2.plot(tx[:,0], h_sl, "-", color="black", linewidth=1.5)
         #axis
         xfmt_maj = mdates.DateFormatter('%d.%m')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
         xfmt_min = mdates.DateFormatter('%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
