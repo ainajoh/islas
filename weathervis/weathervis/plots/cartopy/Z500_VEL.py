@@ -16,31 +16,17 @@ import warnings
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
-  if domain_name or domain_lonlat:
-    if domain_lonlat:
-      print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
-    else:
-      data_domain = domain(dt, model, file=file)
-
-    if domain_name != None and domain_name in dir(data_domain):
-      print(f"\n####### Setting up domain: {domain_name} ##########")
-      domain_name = domain_name.strip()
-      if re.search("\(\)$", domain_name):
-        func = f"data_domain.{domain_name}"
-      else:
-        func = f"data_domain.{domain_name}()"
-      eval(func)
-    else:
-      print(f"No domain found with that name; {domain_name}")
-  else:
-    data_domain=None
-  return data_domain
-
-def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
+def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True,runid=None, outpath=None):
+  global OUTPUTPATH
+  if outpath != None:
+      OUTPUTPATH=outpath
 
   for dt in datetime: #modelrun at time..
+    if runid !=None:
+        make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
+    else:
+        make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
+
     date = dt[0:-2]
     hour = int(dt[-2:])
     param_sfc = ["air_pressure_at_sea_level", "precipitation_amount_acc", "surface_geopotential"]
@@ -118,8 +104,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
     globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
     crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
                                 globe=globe)
-
-    make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
 
     for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
 
@@ -219,11 +203,6 @@ def Z500_VEL(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat
           plt.clf()
           plt.close(fig1)
 
-        #proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="green"),
-        #         plt.axhline(y=0, xmin=1, xmax=1, color="blue")]
-        #fig2 = plt.figure(figsize=(2, 1.25))
-        #fig2.legend(proxy, [f"Wind strength [m/s] at {tmap_meps.pressure[plev2]:.0f} hPa",
-        #                          f"Geopotential [{tmap_meps.units.geopotential_pl}]{tmap_meps.pressure[plev2]:.0f} hPa"])
         #fig2.savefig(make_modelrun_folder+"/{0}_Z500_VEL_P_LEGEND.png".format(model), bbox_inches="tight", dpi=200)
         #plt.close(fig2)
         #try:
@@ -253,15 +232,9 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
+  parser.add_argument("--id", default=None, help="Display legend", type=str)
+  parser.add_argument("--outpath", default=None, help="Display legend", type=str)
   args = parser.parse_args()
 
-  Z500_VEL(datetime=args.datetime, steps = [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>24:
-    Z500_VEL(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>36:
-    Z500_VEL(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-
-# fin
+  Z500_VEL(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid,  runid =args.id, outpath=args.outpath)

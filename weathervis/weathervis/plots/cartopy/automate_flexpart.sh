@@ -51,6 +51,7 @@ fi
 
 #modeldatehour="2021022000"
 #modeldatehour="2021031500"
+modeldatehour="2021040500"
 
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
@@ -101,10 +102,10 @@ while [ $# -gt 0 ]; do
     fi
     ;;
     *)
-      printf "***************************\n"
-      printf "* Error: Invalid argument.*\n"
-      printf "***************************\n"
-      #exit 1
+      printf "******************************\n"
+      printf "* Error: Invalid argument $1.*\n"
+      printf "******************************\n"
+      exit 1
   esac
   shift
 done
@@ -130,20 +131,6 @@ echo $modelrun
 #  domain_name="$4" #West_Norway
 #fi
 
-#modelrun=("2020100300") "2020021712" "2020021812" "2020021912"
-#modelrun=( "2020022712" "2020022812" "2020022912")
-#modelrun=("2020022012" "2020022112" )
-#modelrun=("2020021912" "2020022012" "2020022112" "2020022212" "2020022312" "2020022412" "2020022512" "2020022612")
-#modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
-#modelrun=("2020031512")
-#modelrun=("2020100412")
-#modelrun=("2020100412")
-#modelrun=("2020100512")
-#modelrun=("2020100612")
-#modelrun=("2020100712")
-#modelrun=("2020100812")
-#modelrun=("2020100912")
-#modelrun=("2020101012")
 #modelrun=("2021022300")
 #modelrun=("2021022500")
 #modelrun=("2021022600")
@@ -152,12 +139,9 @@ echo $modelrun
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_FP="python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name"
 
-    echo $runstring_FP
-    $runstring_FP
-    converting ${modelrun[i]}
-
+    python flexpart_EC.py --datetime ${modelrun[i]} --steps 0 ${steps_max[i]} --model $md --domain_name $domain_name
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]} ${modelrun[i]}
   done
 done
 

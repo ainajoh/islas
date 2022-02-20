@@ -40,8 +40,16 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True,grid=True):
+def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True, runid=None, outpath=None):
+  global OUTPUTPATH
+  if outpath != None:
+      OUTPUTPATH=outpath
+
   for dt in datetime: #modelrun at time..
+    if runid !=None:
+         make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
+    else:
+      make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
     print(dt)
     date = dt[0:-2]
     hour = int(dt[-2:])
@@ -119,7 +127,6 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
     #print("\nplotting")
     #fig1 = plt.figure(figsize=(7, 9), projection=crs)
     #print("\nplotting")
-    make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
                              
     for tim in np.arange(np.min(steps), np.max(steps)+1,1):
       #ax1 = plt.subplot(projection=crs)
@@ -237,16 +244,10 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
+  parser.add_argument("--id", default=None, help="Display legend", type=str)
+  parser.add_argument("--outpath", default=None, help="Display legend", type=str)
   args = parser.parse_args()
   print(args.__dict__)
 
-  BLH(datetime=args.datetime, steps = [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>24:
-    BLH(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-  if np.max(args.steps)>36:
-    BLH(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
-
-# fin
+  BLH(datetime=args.datetime, steps = [0,np.max(args.steps)], model = args.model, domain_name = args.domain_name,
+          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, runid =args.id, outpath=args.outpath)

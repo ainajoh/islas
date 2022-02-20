@@ -26,8 +26,17 @@ import matplotlib as mpl
 from weathervis.checkget_data_handler import *
 
 
-def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
-    for dt in datetime:
+def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True,  runid=None, outpath=None):
+    global OUTPUTPATH
+    if outpath != None:
+        OUTPUTPATH=outpath
+        
+    for dt in datetime: #modelrun at time..
+        if runid !=None:
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
+        else:
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
+
         date = dt[0:-2]
         hour = int(dt[-2:])
         all_param = ['x_wind_pl','y_wind_pl','air_pressure_at_sea_level','surface_geopotential']
@@ -59,7 +68,6 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
         globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0,
                                     standard_parallels=parallels,globe=globe)
-        make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
         # generation of discrete colormap
         cm = colors.ListedColormap(['#f4f8f8','#98d1f0','#f9db65','#f45510',
                                   '#c22ecb','#531357'])
@@ -79,6 +87,7 @@ def Wind_on_levels(datetime, steps, model,p_level, domain_name = None, domain_lo
                     stepok=True
                 elif (tim<=66) and ((tim % 6) == 0):
                     stepok=True
+
                 if stepok==True:
     
                     fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
@@ -165,20 +174,28 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
+  parser.add_argument("--id", default=None, help="Display legend", type=str)
+  parser.add_argument("--outpath", default=None, help="Display legend", type=str)
   args = parser.parse_args()
-
-  # chunck it into 24-h steps, first find out how many chunks we need, s = steps
-  s  = np.arange(np.min(args.steps),np.max(args.steps))
-  cn = np.int(len(s)/24)
-  if cn == 0:  # length of 24 not exceeded
-      Wind_on_levels(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
+  
+  Wind_on_levels(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
                      p_level=args.p_level,domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
-                     legend = args.legend,info = args.info,grid=args.grid)
-  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
-      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
-      chunks = np.array_split(s,cn+1)
-      for c in chunks:
-          Wind_on_levels(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,p_level=args.p_level,
-                  domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
-                  info = args.info,grid=args.grid)
+                     legend = args.legend,info = args.info,grid=args.grid,  runid =args.id, outpath=args.outpath)
+
+
+
+ # # chunck it into 24-h steps, first find out how many chunks we need, s = steps
+ # s  = np.arange(np.min(args.steps),np.max(args.steps))
+ # cn = np.int(len(s)/24)
+ # if cn == 0:  # length of 24 not exceeded
+ #     Wind_on_levels(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
+ #                    p_level=args.p_level,domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
+ #                    legend = args.legend,info = args.info,grid=args.grid)
+ # else: # lenght of 24 is exceeded, split in chunks, set by cn+1
+ #     print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
+ #     chunks = np.array_split(s,cn+1)
+ #     for c in chunks:
+ #         Wind_on_levels(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,p_level=args.p_level,
+ #                 domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
+ #                 info = args.info,grid=args.grid)
 

@@ -26,7 +26,17 @@ import matplotlib as mpl
 from weathervis.checkget_data_handler import *
 
 
-def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True):
+def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = None, legend=False, info = False, grid=True, runid=None, outpath=None):
+    global OUTPUTPATH
+    if outpath != None:
+        OUTPUTPATH=outpath
+
+    for dt in datetime: #modelrun at time..
+        if runid !=None:
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
+        else:
+            make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
+    
     for dt in datetime:
         date = dt[0:-2]
         hour = int(dt[-2:])
@@ -60,8 +70,6 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
         globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
         crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0,
                                     standard_parallels=parallels,globe=globe)
-        make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
-
            
         for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
 
@@ -183,20 +191,13 @@ if __name__ == "__main__":
   parser.add_argument("--legend", default=False, help="Display legend")
   parser.add_argument("--grid", default=True, help="Display legend")
   parser.add_argument("--info", default=False, help="Display info")
-  args = parser.parse_args()
+  parser.add_argument("--id", default=None, help="Display legend", type=str)
+  parser.add_argument("--outpath", default=None, help="Display legend", type=str)
 
-  # chunck it into 24-h steps, first find out how many chunks we need, s = steps
-  s  = np.arange(np.min(args.steps),np.max(args.steps))
-  cn = np.int(len(s)/24)
-  if cn == 0:  # length of 24 not exceeded
-      Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
+  args = parser.parse_args()
+  
+  Cloud_base_top(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
                      domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,
-                     legend = args.legend,info = args.info,grid=args.grid)
-  else: # lenght of 24 is exceeded, split in chunks, set by cn+1
-      print(f"\n####### request exceeds 24 timesteps, will be chunked to smaller bits due to request limit ##########")
-      chunks = np.array_split(s,cn+1)
-      for c in chunks:
-          Cloud_base_top(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model,
-                  domain_name = args.domain_name,domain_lonlat=args.domain_lonlat, legend = args.legend,
-                  info = args.info,grid=args.grid)
+                     legend = args.legend,info = args.info,grid=args.grid, runid =args.id, outpath=args.outpath)
+
 
