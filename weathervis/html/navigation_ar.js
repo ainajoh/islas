@@ -45,10 +45,10 @@ function getKind()
       return "_tp";
       break;
     case 7:
-      return "_CAO_";
+      return "_IWV_";
       break;
     case 8:
-      return "_IWV_";
+      return "_CAO_";
       break;
     default: 
       return "_";
@@ -78,10 +78,10 @@ function getProbKind()
       return "_tp";
       break;
     case 7:
-      return "_CAO";
+      return "_IWV";
       break;
     case 8:
-      return "_IWV";
+      return "_CAO";
       break;
     default: 
       return "_";
@@ -184,14 +184,14 @@ function prepareFigure()
 	if (kind>=7) {
 	document.getElementById("plot_mean").src=getFilename(0);
 	document.getElementById("plot_mean").alt=getFilename(0);
-	document.getElementById("plot_mean").width = "1000px";
+	//document.getElementById("plot_mean").width = "1000px";
 	document.getElementById("plot_prob").style.display = "none";
 	document.getElementById("plot_mem1").style.display = "none";
 	document.getElementById("plot_mem2").style.display = "none";
 	} else {
 	document.getElementById("plot_mean").src=getFilename(0);
 	document.getElementById("plot_mean").alt=getFilename(0);
-	document.getElementById("plot_mean").width = "500px";
+	//document.getElementById("plot_mean").width = "500px";
 	document.getElementById("plot_prob").style.display = "block";
 	document.getElementById("plot_prob").src=getFilename(1);
 	document.getElementById("plot_prob").alt=getFilename(1);

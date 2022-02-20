@@ -11,8 +11,6 @@ function setKind(id)
    document.getElementById('TPID').bgColor="#a0a0a0";
    document.getElementById('SSHID').bgColor="#a0a0a0";
    document.getElementById('SLOEID').bgColor="#a0a0a0";
-   document.getElementById('ARHM').bgColor="#a0a0a0";
-   document.getElementById('CAOHM').bgColor="#a0a0a0";
    document.getElementById(id).bgColor="#aaccff";
    switch (id) {
      case 'ARID':
