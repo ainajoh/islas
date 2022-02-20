@@ -14,8 +14,8 @@ var kind = 1;
 var bt = 0;
 
 // treshold settings and names
-var thresholdNames=new Array("14mm","20mm","20mm");
-var thresholds=new Array("th14","th20","th20");
+var thresholdNames=new Array("5mm","10mm");
+var thresholds=new Array("th05","th10");
 var threshold=0;
 var captions=new Array(2);
 captions[0]="";
@@ -44,6 +44,12 @@ function getKind()
     case 6:
       return "_tp";
       break;
+    case 7:
+      return "_CAO_";
+      break;
+    case 8:
+      return "_IWV_";
+      break;
     default: 
       return "_";
       break;
@@ -70,6 +76,12 @@ function getProbKind()
       break;
     case 6:
       return "_tp";
+      break;
+    case 7:
+      return "_CAO";
+      break;
+    case 8:
+      return "_IWV";
       break;
     default: 
       return "_";
@@ -149,6 +161,10 @@ function getBasetime()
 
 function getFilename(type)
 {
+        if (kind>=7) {
+  	return "./gfx/fc_"+getDatename()+"/EPS_heatmap_"+getDatename()+getBasetime()+getKind()+thresholds[threshold]+".png";
+	}
+
 	dzoom="";
 	if (zoom==true) {
 	  dzoom="_zoom";
@@ -160,24 +176,37 @@ function getFilename(type)
 	} else if (type==3) {
   	return "./gfx/fc_"+getDatename()+"/fc_"+getDatename()+"_"+getBasetime()+"_"+getFcStep()+"_m"+getMember(member2)+getKind()+dzoom+".gif";
 	}
-  return "./gfx/fc_"+getDatename()+"/fc_"+getDatename()+"_"+getBasetime()+"_"+getFcStep()+getKind()+"_ensmean"+dzoom+".gif";
+	return "./gfx/fc_"+getDatename()+"/fc_"+getDatename()+"_"+getBasetime()+"_"+getFcStep()+getKind()+"_ensmean"+dzoom+".gif";
 }
 
 function prepareFigure() 
 {
+	if (kind>=7) {
 	document.getElementById("plot_mean").src=getFilename(0);
 	document.getElementById("plot_mean").alt=getFilename(0);
+	document.getElementById("plot_mean").width = "1000px";
+	document.getElementById("plot_prob").style.display = "none";
+	document.getElementById("plot_mem1").style.display = "none";
+	document.getElementById("plot_mem2").style.display = "none";
+	} else {
+	document.getElementById("plot_mean").src=getFilename(0);
+	document.getElementById("plot_mean").alt=getFilename(0);
+	document.getElementById("plot_mean").width = "500px";
+	document.getElementById("plot_prob").style.display = "block";
 	document.getElementById("plot_prob").src=getFilename(1);
 	document.getElementById("plot_prob").alt=getFilename(1);
+	document.getElementById("plot_mem1").style.display = "block";
 	document.getElementById("plot_mem1").src=getFilename(2);
 	document.getElementById("plot_mem1").alt=getFilename(2);
+	document.getElementById("plot_mem2").style.display = "block";
 	document.getElementById("plot_mem2").src=getFilename(3);
 	document.getElementById("plot_mem2").alt=getFilename(3);
+	}
 }
 
 function selectThreshold()
 {
-	threshold=document.selpic.thresholds.selectedIndex;
+	threshold=document.getElementById("thresholds").selectedIndex;
 	prepareFigure();
 }
 
