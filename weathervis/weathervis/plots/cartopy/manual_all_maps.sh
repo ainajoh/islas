@@ -3,9 +3,9 @@
 #steps=120
 #steps=66
 steps=66
-runhour=00
+runhour=12
 #dat=20210323
-dat=20220208
+dat=20220222
 #runhour=06
 #runhour=12
 #runhour=18
@@ -23,7 +23,7 @@ dat=20220208
 
 #automate_all_meteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
 #automate_all_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
-#automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
+automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
 #automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
 #automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
 #automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area

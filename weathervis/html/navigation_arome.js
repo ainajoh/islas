@@ -5,11 +5,25 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
-day0.setUTCHours(0);
+hrs=day0.getUTCHours();
+if (hrs<4) {
+  day0.setUTCHours(18);
+  dy=day0.getDate();
+  day0.setDate(dy-1);
+} else if (hrs<10) {
+  day0.setUTCHours(0);
+} else if (hrs<15) {
+  day0.setUTCHours(6);
+} else if (hrs<22) {
+  day0.setUTCHours(12);
+} else {
+  day0.setUTCHours(18);
+}
 day0.setUTCMinutes(0);
 day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
-day1.setUTCHours(0);
+day1.setDate(day0.getDate());
+day1.setUTCHours(day0.getUTCHours());
 day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
