@@ -32,14 +32,58 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     date = dt[0:-2]
     hour = int(dt[-2:])
     param_sfc = ["air_pressure_at_sea_level", "surface_geopotential"]
-    p_level=[850]
-    dmet,data_domain,bad_param = checkget_data_handler(all_param=param_sfc, date=dt, model=model,
-                                                       step=rsteps,p_level=p_level, domain_name = domain_name, use_latest = False)
+    param = param_sfc
+    #print(type(steps))
+    split = False
+    print("\n######## Checking if your request is possible ############")
+    try:
+      check_all = check_data(date=dt, model=model, param=param, p_level = 850, step=rsteps)
+    except ValueError:
+      split = True
+      try:
+        print("--------> Splitting up your request to find match ############")
+        check_sfc = check_data(date=dt, model=model, param=param_sfc,step=rsteps)
+        #check_pl = check_data(date=dt, model=model, param=param_pl, p_level=850,step=steps)
+      except ValueError:
+        print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
+        break
+    print("--------> Found match for your request ############")
+
+    if not split:
+      file_all = check_all.file.loc[0]
+
+      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_all)
+
+      lonlat = np.array(data_domain.lonlat)
+      dmet = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=rsteps,
+                           date=dt, p_level=[850])
+      print("\n######## Retrieving data ############")
+      print(f"--------> from: {dmet.url} ")
+      dmet.retrieve()
+      tmap_meps = dmet # two names for same value, no copying done.
+    else:
+      # get sfc level data
+      file_sfc = check_sfc.file.loc[0]
+      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_sfc)
+      lonlat = np.array(data_domain.lonlat)
+      dmet = get_data(model=model, param=param_sfc, file=file_sfc, step=rsteps, date=dt, data_domain=data_domain)
+      print("\n######## Retrieving data ############")
+      print(f"--------> from: {dmet.url} ")
+      dmet.retrieve()
+
+      # get pressure level data
+      #file_pl = check_pl.file
+      #tmap_meps = get_data(model=model, data_domain=data_domain, param=param_pl, file=file_pl, step=steps, date=dt, p_level = 850)
+      #print("\n######## Retrieving data ############")
+      #print(f"--------> from: {tmap_meps.url} ")
+      #tmap_meps.retrieve()
+
     # convert fields
     dmet.air_pressure_at_sea_level /= 100
 
     # read netcdf files with watersip output 
     #dt=2021031600
+    print("/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(release_name,dt[0:8]))
     cdf = nc.Dataset("/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(release_name,dt[0:8]), "r")
     lats=cdf.variables["global_latitude"][:]
     lons=cdf.variables["global_longitude"][:]

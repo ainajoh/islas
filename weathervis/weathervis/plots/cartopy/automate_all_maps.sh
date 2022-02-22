@@ -138,6 +138,10 @@ for md in ${model[@]}; do
     runstring_windlvl="python Wind_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --p_level 800 850 925 --id $id"
     runstring_wg="python Wind_gusts.py  --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     
+    echo $runstring_CAO
+    $runstring_CAO
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+ 
     echo $runstring_BLH
     $runstring_BLH
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
@@ -154,11 +158,6 @@ for md in ${model[@]}; do
     $runstring_OLR
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
      
-   
-    echo $runstring_CAO
-    $runstring_CAO
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
-    
     echo $runstring_CT
     $runstring_CT 
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}

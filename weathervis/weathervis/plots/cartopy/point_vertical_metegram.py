@@ -51,11 +51,11 @@ def setup_met_directory(modelrun, point_name, point_lonlat, runid=None, outpath=
         #dirName = projectpath + "meteogram/" + "fc_" + modelrun[:-2] + "/" + str(point_name)
 
     dirName_b1 = dirName
-    figname_b1 = "VPMETEOGRAM_" + pname + "_" + modelrun
+    figname_b1 = "VPMET_" + pname + "_" + modelrun
 
 
     dirName_b0 = dirName  # + "met/"
-    figname_b0 = "PMETEOGRAM_" + pname + "_" + modelrun
+    figname_b0 = "PMET_" + pname + "_" + modelrun
 
     dirName_b2 = dirName  # + "map/"
     figname_b2 = "map_" + modelrun
@@ -103,7 +103,7 @@ def old_nice_vprof_colorbar(CF, ax, lvl=None, ticks=None, label=None, highlight_
 
 class VERT_MET():
     def __init__(self, model, date, steps, data=None, domain_name=None, domain_lonlat=None, legend=None, info=None,
-                 num_point=None, point_name=None, point_lonlat=None):
+                 num_point=None, point_name=None, point_lonlat=None, m_level=None):
         self.model = model
         self.date = date
         self.steps = steps
@@ -118,11 +118,11 @@ class VERT_MET():
                           "cloud_area_fraction_ml",
                          "mass_fraction_of_cloud_ice_in_air_ml",
                          "mass_fraction_of_cloud_condensed_water_in_air_ml"]
-        self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m","atmosphere_boundary_layer_thickness","surface_geopotential"]
+        self.param_sfc = ["surface_air_pressure", "air_pressure_at_sea_level", "air_temperature_0m","atmosphere_boundary_layer_thickness","surface_geopotential","atmosphere_level_of_max_icing","atmosphere_level_of_icing_top","atmosphere_level_of_icing_bottom"]
         self.param_sfx = []
         self.param = self.param_ml + self.param_pl + self.param_sfc + self.param_sfx
         self.p_level = None
-        self.m_level = None
+        self.m_level = m_level
         self.mbrs = None
         self.url = None
         self.point_lonlat = point_lonlat
@@ -147,20 +147,20 @@ class VERT_MET():
         print(np.shape(self.dmet.ap))
 
         self.dmet.u,self.dmet.v = xwind2uwind(self.dmet.x_wind_ml, self.dmet.y_wind_ml, self.dmet.alpha)
-        print("test1")
+        #print("test1")
         self.dmet.velocity = wind_speed(self.dmet.x_wind_ml, self.dmet.y_wind_ml)
-        print("test2")
+        #print("test2")
         self.dmet.heighttoreturn = ml2alt_gl(air_temperature_ml=self.dmet.air_temperature_ml,
                                            specific_humidity_ml=self.dmet.specific_humidity_ml, ap=self.dmet.ap,
                                            b=self.dmet.b,
                                            surface_air_pressure=self.dmet.surface_air_pressure)
-        print("test3")
+        #print("test3")
         self.dmet.dtdz = lapserate(self.dmet.air_temperature_ml, self.dmet.heighttoreturn, self.dmet.air_temperature_0m)
-        print("test4")
+        #print("test4")
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
-        print("test5")
+        #print("test5")
         self.dmet.theta = potential_temperatur(self.dmet.air_temperature_ml, self.dmet.p)
-        print("test6")
+        #print("test6")
         self.dmet.altfrom_pref = pl2alt_sl(self.dmet.surface_geopotential, self.dmet.air_temperature_ml, self.dmet.specific_humidity_ml, self.dmet.p*100)
 
         #self.dmet.reference_pressure=np.full(np.shape(self.dmet.surface_air_pressure),1013.)
@@ -173,7 +173,7 @@ class VERT_MET():
     def points(self):
         point_lonlat = self.point_lonlat; dmet = self.dmet; num_point = self.num_point
         print("find nearest")
-        print("#####################################################################")
+        #print("#####################################################################")
 
         if point_lonlat:
             ind_list = nearest_neighbour(point_lonlat[0], point_lonlat[1], dmet.longitude, dmet.latitude, num_point)
@@ -247,8 +247,18 @@ class VERT_MET():
         # FIG1 PLOT1###############################################################################################
         # P1: RH with lapserate and BLheight
         #################################
-        # spec humidity
 
+        # blh
+        h_gl = dmet.atmosphere_boundary_layer_thickness[:, 0, jindx, iindx]
+        Z0 =  dmet.surface_geopotential[:, 0, jindx, iindx] / 9.08
+        h_sl = h_gl + Z0
+
+        # icing layers
+        h_it = dmet.atmosphere_level_of_icing_top[:, 0, jindx, iindx] + Z0
+        h_ib = dmet.atmosphere_level_of_icing_bottom[:, 0, jindx, iindx] + Z0
+        h_im = dmet.atmosphere_level_of_max_icing[:, 0, jindx, iindx] + Z0
+
+        # spec humidity
         cmap = cm.get_cmap('gnuplot2_r')  # BrBu  BrYlBu
         lvl = np.linspace(np.min(q_p),np.max(q_p), 20)
         CF_Q = axm1.contourf(tx, p_p, q_p, levels=lvl, cmap=cmap,extend="both", zorder=1)
@@ -259,10 +269,10 @@ class VERT_MET():
 
         #lvl = np.linspace(np.min(mass_fraction_of_cloud_ice_in_air_ml),np.max(mass_fraction_of_cloud_ice_in_air_ml), 20)
         lvl = np.linspace(np.min(mass_fraction_of_cloud_ice_in_air_ml),np.max(mass_fraction_of_cloud_ice_in_air_ml), 4)
-        lvl = [0.01,0.1,0.2,1,10,50]
+        lvl = [0.01,0.2,1,10,50]
         print(np.max(mass_fraction_of_cloud_ice_in_air_ml))
         CF_ICE = axm1.contour(tx, p_p, mass_fraction_of_cloud_ice_in_air_ml,levels=lvl, zorder=12,
-                              colors="cyan", linewidths=2,linestyles="-", alpha=0.8,
+                              colors="cyan", linewidths=2.5,linestyles="-", alpha=0.8,
                               label="Inline label")
         axm1.clabel(CF_ICE, CF_ICE.levels, inline=False, fmt="%3.1f", fontsize=12)
         #marker=r"$C_H$"
@@ -271,7 +281,7 @@ class VERT_MET():
         lvl = [0.1,5,20,50,150]
         print(np.max(mass_fraction_of_cloud_condensed_water_in_air_ml))
         CF_C = axm1.contour(tx, p_p, mass_fraction_of_cloud_condensed_water_in_air_ml,levels=lvl, zorder=11,
-                            colors="yellow", linewidths=2,linestyles="-", alpha=0.8,
+                            colors="yellow", linewidths=2.5,linestyles="-", alpha=0.8,
                             label="2Inline label") #lime
         axm1.clabel(CF_C, CF_C.levels, inline=False, fmt="%3.1f", fontsize=12,colors="gray")
         #axm1.pcolormesh(tx, p_p, mass_fraction_of_cloud_condensed_water_in_air_ml, zorder=10)
@@ -281,7 +291,7 @@ class VERT_MET():
         #axm1.legend([CF_ICE[0],CF_C[0]],["1","2"])
         artists_C, labels = CF_C.legend_elements()
         artists_ICE, labels = CF_ICE.legend_elements()
-        cfrac_leg = axm1.legend((artists_C[0],artists_ICE[0]), ("cloud condensed water", "cloud ice"), handleheight=2, loc='upper left').set_zorder(99999)
+        cfrac_leg = axm1.legend((artists_C[0],artists_ICE[0]), ("Cloud condensed water", "Cloud ice"), handleheight=2, loc='upper left').set_zorder(99999)
 
         #legend((line1, line2, line3), ('label1', 'label2', 'label3'))
         axm1.invert_yaxis() #pressure from large to low
@@ -292,7 +302,7 @@ class VERT_MET():
         # we can take P0 from model and T0 from model, will test it for default
         # 1013 hPa and 263K 
         axm1T = axm1.twinx()
-        axm1T.set_ylabel('Altitude [m]')
+        axm1T.set_ylabel('Altitude (m)')
         P0 = 1000
         T0 = 273
         L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
@@ -335,11 +345,11 @@ class VERT_MET():
 
         #axm2.legend(CS, "Pot. Temp.", loc='upper left').set_zorder(99999)
         axm2.invert_yaxis()
-        axm2.set_ylabel("Pressure [hPa]")
+        axm2.set_ylabel("Pressure (hPa)")
         axm2.set_ylim(dmet.air_pressure_at_sea_level[:, 0, jindx, iindx].max() / 100, 600)
         # again creating the second y axis in m
         axm2T = axm2.twinx()
-        axm2T.set_ylabel('Altitude [m]')
+        axm2T.set_ylabel('Altitude (m)')
         P0 = 1000
         T0 = 273
         L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
@@ -433,7 +443,7 @@ class VERT_MET():
         #axm1.legend(Cfrac[0], "1%-50% Cloud cover")
 
         axm1T = axm1.twinx()
-        axm1T.set_ylabel('Altitude [m]')
+        axm1T.set_ylabel('Altitude (m)')
         P0 = 1000
         T0 = 273
         L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
@@ -444,6 +454,8 @@ class VERT_MET():
         ymin, ymax = axm1.get_ylim()
         # apply function and set transformed values to right axis limits
         axm1T.set_ylim((T_f(ymin),T_f(ymax)))
+        axm1T.plot(tx[:,0], h_sl, "-", color="black", linewidth=2)
+
         #TEMP
         cmap = cm.get_cmap('twilight_shifted')  # BrBu  BrYlBu
         norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=10)
@@ -459,8 +471,6 @@ class VERT_MET():
         #print(np.shape(BL)) #(11,)
         #print(tx)
 
-        h_gl = dmet.atmosphere_boundary_layer_thickness[:, 0, jindx, iindx]
-        h_sl = h_gl + dmet.surface_geopotential[:, 0, jindx, iindx] / 9.08
         #
 
         #h = np.repeat(h_sl, repeats=len(dmet.hybrid), axis=0).reshape(
@@ -481,7 +491,7 @@ class VERT_MET():
 
         # again the second axis in m, still an approximation!
         axm2T = axm2.twinx()
-        axm2T.set_ylabel('Altitude [m]')
+        axm2T.set_ylabel('Altitude (m)')
         P0 = 1000
         T0 = 273
         L = -6.5*10**-3 # atmospheric lapse  (can be adjusted to dry lapse rate)
@@ -494,8 +504,13 @@ class VERT_MET():
         axm2T.set_ylim((T_f(ymin),T_f(ymax)))
         # set an invisible artist to twin axes 
         # to prevent falling back to initial values on rescale events
-        axm2T.plot(tx[:,0], h_sl, "-", color="black", linewidth=1.5)
-        axm2.plot(tx[:,0], h_sl, "-", color="black", linewidth=1.5)
+        axm2T.plot(tx[:,0], h_sl, "-", color="black", linewidth=2)
+        ice_ct=axm2T.plot(tx[:,0], h_it, "--", color="red", linewidth=2)
+        ice_cm=axm2T.plot(tx[:,0], h_im, "--", color="orange", linewidth=2)
+        ice_cb=axm2T.plot(tx[:,0], h_ib, "--", color="yellow", linewidth=2)
+        axm2.legend([ice_ct,ice_cm,ice_cb], ["Icing top", "Icing max","Icing bottom"], handleheight=2, loc='upper left').set_zorder(99999)
+
+        artists, labels = Cfrac.legend_elements()
         #axis
         xfmt_maj = mdates.DateFormatter('%d.%m')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
         xfmt_min = mdates.DateFormatter('%HUTC')  # What format you want on the x-axis. d=day, m=month. H=hour, M=minute
@@ -516,7 +531,7 @@ class VERT_MET():
         axm2.tick_params(axis="x", which="major", pad=12)
 
         #figm2.tight_layout()
-        print(" SAVEIIING")
+        #print(" SAVEIIING")
         print(dirName_b1 + figname_b1 + "_op1"+ ".png")
         axm1.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm1.transAxes, color='black')
         axm2.text(0, 1, "{0}_VPMET_{1}_{2}".format(self.model,self.point_name, dt), ha='left', va='bottom', transform=axm2.transAxes, color='black')
@@ -524,7 +539,7 @@ class VERT_MET():
 
         plt.clf()
         plt.close()
-        print("DONE SAVE")
+        #print("DONE SAVE")
 
 def handle_input():
     param_ML = ["air_temperature_ml", "specific_humidity_ml", "x_wind_ml", "y_wind_ml", "cloud_area_fraction_ml"]
@@ -560,6 +575,7 @@ if __name__ == "__main__":
     parser.add_argument("--info", default=False, help="Display info")
     parser.add_argument("--id", default=None, help="Display legend", type=str)
     parser.add_argument("--outpath", default=None, help="Display legend", type=str)
+    parser.add_argument("--m_level", default=[0,64], nargs="+", type=int, help="model levels to retrieve --m_level 30 64 gives lowest 35 model levels")
 
     args = parser.parse_args()
 
@@ -569,7 +585,7 @@ if __name__ == "__main__":
 
         VM = VERT_MET(date=dt, steps=args.steps, model=args.model, domain_name=args.domain_name,
                       domain_lonlat=args.domain_lonlat, legend=args.legend, info=args.info, num_point=args.point_num,
-                      point_lonlat=args.point_lonlat, point_name=args.point_name)
+                      point_lonlat=args.point_lonlat, point_name=args.point_name, m_level=args.m_level)
 
         VM.retrieve_handler()
         VM.calculations()

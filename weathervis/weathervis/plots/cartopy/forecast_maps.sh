@@ -1,15 +1,15 @@
 #!/bin/bash
 # run maps from crontab
 
-function start_log ( name ) {
-  start = ( date -u )
-  echo "$name \n" >> forecast_profiling.log
-  echo "Start: $start \n" >> ./forecast_profiling.log
+function start_log () {
+  starts=$( date -u )
+  echo "$1" >> forecast_profiling.log
+  echo "Start: $starts" >> ./forecast_profiling.log
 }
 function end_log () {
-  end = ( date -u )
-  echo "End: $end \n" >> ./forecast_profiling.log
-  echo "---------------------------------\n" >> ./forecast_profiling.log
+  ends=$( date -u )
+  echo "End: $ends" >> ./forecast_profiling.log
+  echo "---------------------------------" >> ./forecast_profiling.log
 }
 
 
@@ -54,27 +54,28 @@ case "$model" in
          fi
         echo "exit 64" > /home/centos/batch/timeoutwrapper_AA_${runhour}.sh
 	
-	start_log("Point Meteograms")
-	automate_all_meteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
-	end_log()
-	start_log("AA North_Norway")
+	start_log "Point Meteograms" 
+	automate_all_meteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour  &
+	end_log
+	start_log "AA North_Norway" 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
-	end_log()
-	start_log("Vertical Meteograms")
-	automate_all_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour 
-	end_log()
-	start_log("AA Andenes_area")
+	end_log
+	start_log "Vertical Meteograms" 
+	automate_all_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour  &
+	end_log
+	start_log "AA Andenes_area" 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
-	end_log()
-	start_log("AA Svalbard")
+	end_log
+	start_log"AA Svalbard"
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-	end_log()
-	start_log("AA AromeArctic")
+	end_log
+	start_log"AA AromeArctic"
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
-	end_log()
-	start_log("AA NorwegianSea")
+	end_log
+	start_log"AA NorwegianSea"
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
-	end_log()
+	end_log
+	wait # wait for meteograms to finish
     ;;
     MEPS)
         #url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/${yy}/${mm}/${dd}/meps_det_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
@@ -92,54 +93,57 @@ case "$model" in
         echo "exit 64" > /home/centos/batch/timeoutwrapper_MEPS_${runhour}.sh
 
 	#automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Osteroy
-	start_log("MEPS South_Norway")
+	start_log"MEPS South_Norway"
 	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name South_Norway
-	end_log()
-	start_log("MEPS West_Norway")
+	end_log
+	start_log"MEPS West_Norway"
 	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name West_Norway
-	end_log()
-	start_log("MEPS MEPS")
+	end_log
+	start_log"MEPS MEPS"
 	automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name MEPS
-	end_log()
+	end_log
     ;;
     FP)
-	start_log("FP Svalbard")
+	start_log"FP Svalbard"
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-	end_log()
+	end_log
 	#automate_flexpart.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Iceland
-	start_log("FP AromeArctic")
+	start_log"FP AromeArctic"
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
-	end_log()
-	start_log("FP North_Norway")
+	end_log
+	start_log"FP North_Norway"
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
-	end_log()
-	start_log("FP Andenes_area")
+	end_log
+	start_log"FP Andenes_area"
 	automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
-	end_log()
+	end_log
         # also run watersip
-	start_log("WS AromeArctic")
+	start_log"WS AromeArctic"
 	automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name AN
-	end_log()
-	start_log("WS North_Norway")
+	end_log
+	start_log"WS North_Norway"
 	automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name AN
-	end_log()
+	end_log
+	start_log"WS Andenes_area"
+	automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area --release_name AN
+	end_log
     ;;
     FPAA)
-	start_log("FPAA Svalbard")
+	start_log"FPAA Svalbard"
 	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard 
-	end_log()
-	start_log("FPAA AromeArctic")
+	end_log
+	start_log"FPAA AromeArctic"
 	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
-	end_log()
-	start_log("FPAA North_Norway")
+	end_log
+	start_log"FPAA North_Norway"
 	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
-	end_log()
-	start_log("FPAA Andenes_area")
+	end_log
+	start_log"FPAA Andenes_area"
 	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
-	end_log()
-	start_log("FPAA NorwegianSea_area")
+	end_log
+	start_log"FPAA NorwegianSea_area"
 	automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
-	end_log()
+	end_log
     ;;
     *)
 	printf "***************************\n"

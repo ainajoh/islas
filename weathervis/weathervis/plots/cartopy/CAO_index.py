@@ -65,7 +65,7 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
       check_sfx = check_data(date=dt, model=model, param=param_sfx, step=steps)
 
     except ValueError:
-      split = True
+      split = False
       try:
         print("--------> Splitting up your request to find match ############")
         check_sfc = check_data(date=dt, model=model, param=param_sfc)
@@ -153,7 +153,7 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
           ttt = tim #+ np.min(steps)
           tidx = tim - np.min(steps)
-          print('Plotting CAO index {0} + {1:02d} UTC'.format(dt, ttt))
+          #print('Plotting CAO index {0} + {1:02d} UTC'.format(dt, ttt))
           plev2 = 0
           embr = 0
           ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
@@ -255,7 +255,16 @@ if __name__ == "__main__":
   parser.add_argument("--outpath", default=None, help="Display legend", type=str)
   args = parser.parse_args()
    
-  CAO(datetime=args.datetime, steps = [np.min([args.steps]), np.max([args.steps])], model = args.model, domain_name = args.domain_name,
-          domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, runid =args.id, outpath=args.outpath)
-
+  #CHUNCK SIZE TO BIG
+  s  = np.arange(np.min(args.steps),np.max(args.steps)+1)
+  cn = np.int(len(s) // 6)
+  if cn == 0:  # length of 6 not exceeded
+      CAO(datetime=args.datetime, steps = [np.min([args.steps]), np.max([args.steps])], model = args.model, domain_name = args.domain_name,
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, runid =args.id, outpath=args.outpath)
+  else: # lenght of 6 is exceeded, split in chunks, set by cn+1
+      print(f"\n####### request exceeds 6 timesteps, will be chunked to smaller bits due to request limit ##########")
+      chunks = np.array_split(s,cn+1)
+      for c in chunks:
+          CAO(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model, domain_name = args.domain_name,
+                  domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, runid =args.id, outpath=args.outpath)
 # fin
