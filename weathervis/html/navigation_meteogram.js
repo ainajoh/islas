@@ -14,11 +14,11 @@ day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
 var fdate = new Array(0,0); // forecast time step
-var vkind=new Array(4,4);
+var vkind=new Array(3,3);
 var mkind=new Array(0,1);
 var synced=true;
 var kind = 1;
-var domain = new Array(0,0);
+var domain = new Array(3,3);
 var bt = 0;
 
 // treshold settings and names
@@ -37,20 +37,17 @@ function checkSync()
 function getKind(n)
 {
   switch (n) {
-    case 4:
+    case 3:
       return "";
       break;
     case 0:
-      return "_[SEA]";
+      return "_SEA";
       break;
     case 1:
-      return "_[LAND]";
+      return "_LAND";
       break;
     case 2:
-      return "_[ALL_DOMAIN]";
-      break;
-    case 3:
-      return "_[ALL_NEAREST]";
+      return "_ALL";
       break;
     default: 
       return "_";
@@ -67,9 +64,7 @@ function getMeteogram(m)
 		case 1:
 		return "op2";
 		break;
-		case 2:
-		break;
-		default:
+	        default:
 		return "None";
 		break;
 	}
@@ -80,37 +75,58 @@ function getDomainname(n)
 {
 	switch (domain[n]) {
 		case 0:
-		return "PMETEOGRAM_Andenes_";
+		return "PMET_Kiruna_";
 		break;
 		case 1:
-		return "PMETEOGRAM_ALOMAR_";
+		return "PMET_ALOMAR_";
 		break;
 		case 2:
-		return "PMETEOGRAM_Tromso_";
+		return "PMET_Tromso_";
 		break;
 		case 3:
-		return "PMETEOGRAM_NyAlesund_";
+		return "PMET_NyAlesund_";
 		break;
 		case 4:
-		return "PMETEOGRAM_Longyearbyen_";
+		return "PMET_Longyearbyen_";
 		break;
 		case 5:
-		return "PMETEOGRAM_Bjornoya_";
+		return "PMET_Bjornoya_";
 		break;
 		case 6:
-		return "PMETEOGRAM_NorwegianSea_";
+		return "PMET_NorwegianSea_";
 		break;
 		case 7:
-		return "PMETEOGRAM_CAO_";
+		return "PMET_Andenes_";
 		break;
 	        case 8:
-                return "PMETEOGRAM_pcmet1_";
+                return "PMET_CAO_";
                 break;
 	        case 9:
-                return "PMETEOGRAM_pcmet2_";
+                return "PMET_Alta_";
                 break;
 		case 10:
-                return "PMETEOGRAM_pcmet3_";
+                return "PMET_Bodo_";
+                break;
+		case 11:
+                return "PMET_Kirkenes_";
+                break;
+		case 12:
+                return "PMET_Trondheim_";
+                break;
+		case 13:
+                return "PMET_Bergen_";
+                break;
+		case 14:
+                return "PMET_Sodankyla_";
+                break;
+		case 15:
+                return "PMET_pcmet1_";
+                break;
+		case 16:
+                return "PMET_pcmet2_";
+                break;
+		case 17:
+                return "PMET_pcmet3_";
                 break;
 		default:
 		return "None";

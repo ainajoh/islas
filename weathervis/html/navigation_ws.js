@@ -5,10 +5,12 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
+day0.setUTCHours(day0.getUTCHours()-24);
 day0.setUTCHours(0);
 day0.setUTCMinutes(0);
 day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
+day1.setUTCHours(day1.getUTCHours()-24);
 day1.setUTCHours(0);
 day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
@@ -17,7 +19,7 @@ var fdate = new Array(0,0); // forecast time step
 var vkind=new Array(0,1,2,3,4,5);
 var synced=true;
 var kind = 1;
-var domain = new Array(3,3);
+var domain = new Array(2,4);
 var bt = 0;
 
 // treshold settings and names
@@ -27,107 +29,35 @@ captions[0]="";
 captions[1]="";
 captions[2]="";
 
-document.addEventListener('keydown', (event) => {
-  const keyName = event.key;
-
-  if (keyName === 'Control') {
-    // do not alert when only Control key is pressed.
-    return;
-  }
-  if (keyName === 'ArrowRight') {
-    skip1hforward(0);
-    skip1hforward(1);
-  }
-  if (keyName === 'ArrowLeft') {
-    skip1hback(0);
-    skip1hback(1);
-  }
-  if (keyName === 'ArrowUp') {
-    skiponeforward(0);
-    skiponeforward(1);
-  }
-  if (keyName === 'ArrowDown') {
-    skiponeback(0);
-    skiponeback(1);
-  }
-
-  /*if (event.ctrlKey) {
-    // Even though event.key is not 'Control' (e.g., 'a' is pressed),
-    // event.ctrlKey may be true if Ctrl key is pressed at the same time.
-    alert(`Combination of ctrlKey + ${keyName}`);
-  } else {
-    alert(`Key pressed ${keyName}`);
-  }*/
-}, false);
-
 // functions
 function checkSync()
 {
   synced=document.getElementById("sync").checked;
 }
 
-function getKind(n)
+function getLevel(n)
 {
   switch (n) {
     case 0:
-      return "_CAOi";
+      return "_L00500";
       break;
     case 1:
-      return "_OLR_sat";
+      return "_L01000";
       break;
     case 2:
-      return "_surf";
+      return "_L01500";
       break;
     case 3:
-      return "_Z500_VEL_P";
+      return "_L02000";
       break;
     case 4:
-      return "_T850_RH";
+      return "_L02500";
       break;
     case 5:
-      return "_dxs";
+      return "_L03000";
       break;
     case 6:
-      return "_BLH";
-      break;
-    case 7:
-      return "_clouds";
-      break;
-    case 8:
-      return "_T2M";
-      break;
-    case 9:
-      return "_WS_800";
-      break;
-    case 10:
-      return "_WS_850";
-      break;
-    case 11:
-      return "_WS_925";
-      break;
-    case 12:
-      return "_CB_CT";
-      break;
-    case 13:
-      return "_CCLMH";
-      break;
-    case 14:
-      return "_WG10";
-      break;
-    case 15:
-      return "_Q_800";
-      break;
-    case 16:
-      return "_Q_850";
-      break;
-    case 17:
-      return "_Q_925";
-      break;
-    case 18:
-      return "_IWV";
-      break;
-    case 19:
-      return "_IVT";
+      return "_L00000";
       break;
     default: 
       return "_";
@@ -139,28 +69,25 @@ function getDomainname(n)
 {
 	switch (domain[n]) {
 		case 0:
-		return "AromeArctic_NorwegianSea_area";
+		return "NorwegianSea_area";
 		break;
 		case 1:
-		return "AromeArctic_Andenes_area";
+		return "Andenes_area";
 		break;
 		case 2:
-		return "AromeArctic_Svalbard";
+		return "Svalbard";
 		break;
 		case 3:
-		return "AromeArctic_North_Norway";
+		return "North_Norway";
 		break;
 		case 4:
-		return "AromeArctic_AromeArctic";
+		return "AromeArctic";
 		break;
 		case 5:
-		return "MEPS_MEPS";
-	        break;
-		case 6:
-		return "MEPS_South_Norway";
+		return "South_Norway";
 		break;
-		case 7:
-		return "MEPS_West_Norway";
+		case 6:
+		return "West_Norway";
 		break;
 		default:
 		return "None";
@@ -227,7 +154,7 @@ function getBasetime(row)
 
 function getFilename(n,k)
 {
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(k)+getKind(n)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/WATERSIP_EC_"+getDomainname(k)+"_"+getDatename(k)+getBasetime(k)+getFcStep(k)+".png";
 }
 
 function prepareFigure(n) 
@@ -249,6 +176,7 @@ if (n>=1) {
 	document.getElementById("panel6").alt=getFilename(vkind[5],1);
 }
 }
+
 
 function selectDomain(n)
 {
@@ -301,12 +229,12 @@ function initWebsite()
         if (cday[0].getUTCHours()<12) {
   	cday[0].setUTCHours(0,0,0);
     	} else {
-    	cday[0].setUTCHours(12,0,0);
+    	cday[0].setUTCHours(0,0,0);
     	}
         if (cday[1].getUTCHours()<12) {
   	cday[1].setUTCHours(0,0,0);
     	} else {
-    	cday[1].setUTCHours(12,0,0);
+    	cday[1].setUTCHours(0,0,0);
     	}
 	period=0;
 	site=0;
@@ -324,16 +252,16 @@ function initWebsite()
 
 function skiponeback(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()-6);
-	fdate[row]+=6;
-	if ((fdate[row]>24) && (fdate[row]<36)) {
+	cday[row].setUTCHours(cday[row].getUTCHours()-24);
+	fdate[row]+=24;
+	if ((fdate[row]>0) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] - (fdate[row] % 3)
 	}
-	if ((fdate[row]>36) && (fdate[row]<66)) {
+	if ((fdate[row]>36) && (fdate[row]<120)) {
 		fdate[row]=fdate[row] - (fdate[row] % 6)
 	}
-	if (fdate[row]>66) {
-		fdate[row]=66;
+	if (fdate[row]>120) {
+		fdate[row]=120;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
@@ -344,12 +272,12 @@ function skiponeback(row)
 
 function skiponeforward(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()+6);
-	fdate[row]-=6;
-	if ((fdate[row]>24) && (fdate[row]<36)) {
+	cday[row].setUTCHours(cday[row].getUTCHours()+24);
+	fdate[row]-=24;
+	if ((fdate[row]>0) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] + (fdate[row] % 3)
 	}
-	if ((fdate[row]>36) && (fdate[row]<66)) {
+	if ((fdate[row]>36) && (fdate[row]<120)) {
 		fdate[row]=fdate[row] + (fdate[row] % 6)
 	}
 	if (fdate[row]<0) {
@@ -365,14 +293,14 @@ function skiponeforward(row)
 function skip1hforward(row) 
 {
 	fdate[row]+=1;
-	if (fdate[row]>24) {
+	if (fdate[row]>0) {
 		fdate[row]=fdate[row]+2;
 	}
 	if (fdate[row]>36) {
 		fdate[row]=fdate[row]+3;
 	}
-	if (fdate[row]>66) {
-		fdate[row]=66;
+	if (fdate[row]>120) {
+		fdate[row]=120;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
@@ -386,7 +314,7 @@ function skip1hback(row)
 	if (fdate[row]>36) {
 		fdate[row]=fdate[row]-3;
 	}
-	if (fdate[row]>24) {
+	if (fdate[row]>0) {
 		fdate[row]=fdate[row]-2;
 	}
 	fdate[row]-=1;
