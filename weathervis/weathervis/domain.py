@@ -95,7 +95,7 @@ class domain:
             if self.use_latest == False:
                 url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{self.file}?latitude,longitude"
             else:
-                url = f"https://thredds.met.no/thredds/dodsC/meps25epslatest/{self.file}?latitude,longitude"
+                url = f"https://thredds.met.no/thredds/dodsC/mepslatest/{self.file}?latitude,longitude"
 
         self.url = url
 
@@ -323,11 +323,206 @@ class domain:
         self.lonlat = [15.8, 16.4, 69.2, 69.4]
         self.idx = lonlat2idx(self.lonlat, self.url)
 
+    def ALOMAR(self):
+        # 16.120;69.310;10
+        self.domain_name = "ALOMAR"
+        self.lonlat = [15.8, 16.4, 69.2, 69.4]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
     def NorwegianSea_area(self):  # PAraglidingstart
         url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.domain_name = "NorwegianSea_area"
         self.lonlat = [-7, 16, 69.0, 77.2]  #
         self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Andenes_area(self):
+        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        self.domain_name = "Andenes_area"
+        self.lonlat = [6.0, 20.5, 67.5, 71.6]
+        # self.lonlat = [12.0, 19.5, 68.0, 70.6]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def Varlegenhuken(self):
+    #     point_name = "Varlegenhuken"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def Iceland(self):
+        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        self.domain_name = "Iceland"
+        # self.lonlat = [12.0, 19.5, 68.0, 70.6]
+        # self.idx = lonlat2idx(self.lonlat, self.url)
+        # self.lonlat = [-65, 20., 58., 85]
+        self.lonlat = [-26.0, -8, 63.0, 67]
+
+    # def Longyearbyen(self):
+    #     point_name = "Longyearbyen"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def Hopen(self):
+    #     point_name = "Hopen"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def Bodo(self):
+    #     point_name = "Bodo"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def Tromso(self):
+    #     point_name = "Tromso"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def Bjornoya(self):
+    #     point_name = "Bjornoya"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def NyAlesund(self):
+    #     point_name = "NyAlesund"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def MetBergen(self):
+    #     point_name = "MetBergen"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.32)
+    #     maxlon = float(plon + 0.28)
+    #     minlat = float(plat - 0.11)
+    #     maxlat = float(plat + 0.09)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def Osteroy(self):
+    #     point_name = "Osteroy"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 1.70)
+    #     maxlon = float(plon + 1.10)
+    #     minlat = float(plat - 0.80)
+    #     maxlat = float(plat + 1.00)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def Olsnesnipa(self):  # PAraglidingstart
+    #     point_name = "Olsnesnipa"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def JanMayen(self):  # PAraglidingstart
+    #     point_name = "JanMayen"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def CAO(self):  # PAraglidingstart
+    #     point_name = "JanMayen"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def NorwegianSea(self):  # PAraglidingstart
+    #     point_name = "NorwegianSea"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def NorwegianSea_area(self):  # PAraglidingstart
+        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+        self.domain_name = "NorwegianSea_area"
+        self.lonlat = [-7, 16, 69.0, 77.2]  #
+        self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def GEOF322(self):  # PAraglidingstart
+    #     point_name = "GEOF322"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
     def Iceland(self):
         # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
@@ -338,6 +533,40 @@ class domain:
         self.lonlat = [-26.0, -8, 63.0, 67]
 
         self.idx = lonlat2idx(self.lonlat, self.url)
+
+    # def pcmet1(self):
+    #     point_name = "pcmet1"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+    # def pcmet2(self):
+    #     point_name = "pcmet2"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
+    # def pcmet3(self):
+    #     point_name = "pcmet3"
+    #     sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+    #     plon = float(sites.loc[point_name].lon)
+    #     plat = float(sites.loc[point_name].lat)
+    #     minlon = float(plon - 0.22)
+    #     maxlon = float(plon + 0.18)
+    #     minlat = float(plat - 0.08)
+    #     maxlat = float(plat + 0.05)
+    #     self.lonlat = [minlon, maxlon, minlat, maxlat]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
     def setup_point(self, name):
         """set up point attributes"""
@@ -352,11 +581,8 @@ class domain:
         minlat = float(point["lat"] - point["margin"]["south"])
         maxlat = float(point["lat"] + point["margin"]["north"])
 
-        self.lonlat = [minlon, maxlon, minlat, maxlat]
-        self.idx = lonlat2idx(self.lonlat, self.url)
 
-
-def setup_site(name, cfg="../../weathervis/weathervis/data/sites.yaml"):
+def setup_site(name, cfg="../../data/sites.yaml"):
     """set up site attributes
 
     Attributes are read from a yaml configuration file.

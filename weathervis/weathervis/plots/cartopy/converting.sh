@@ -13,7 +13,7 @@ lst=$( ls *.png )
 echo $lst
 for f in $lst; do 
   echo "converting $f"
-  convert -scale 40% $f /home/centos/www/gfx/$2/$f
+  convert -scale 35% $f /home/centos/www/gfx/$2/$f
   \rm $f
 done
 
@@ -22,7 +22,8 @@ sudo chown -R centos:apache /home/centos/www/gfx/$2
 
 # transfer to webserver
 if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-  scp -r -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$2 158.39.201.233:/home/centos/www/gfx
+  #scp -r -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$2 158.39.201.233:/home/centos/www/gfx
+  rsync -am --stats -r -e "ssh -i /home/centos/.ssh/islas-key.pem" /home/centos/www/gfx/$2 158.39.201.233:/home/centos/www/gfx
 fi
 
 # return to original folder

@@ -54,13 +54,11 @@ while [ $# -gt 0 ]; do
     ;;
     --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_date=("${1#*=}")
     fi
     ;;
     --modelrun_hour)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_hour=("${1#*=}")
     fi
     ;;
@@ -125,34 +123,47 @@ id=$$
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 $steps_max  --model $md --domain_name $domain_name --id $id"
-    runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
-    runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
+    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --m_level 24 64 --id $id"
+    runstring_IVT="python IVT_IWV.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --m_level 24 64 --id $id"
+    runstring_OLR="python OLR_sat.py --datetime ${modelrun[i]} --steps 0 $steps_max  --model $md --domain_name $domain_name --id $id" runstring_BLH="python BLH.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id" runstring_CAO="python CAO_index.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     runstring_CT="python Cloud_base_top.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     runstring_dxs="python d-excess.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     runstring_LMH="python Low_medium_high_clouds.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
-    runstring_WC="python LWC_IWC.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --m_level 24 64 --id $id"
-    runstring_Q="python Q_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --p_level 700 800 925 --domain_name $domain_name --id $id"
+    runstring_Q="python Q_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --p_level 800 850 925 --domain_name $domain_name --id $id"
     runstring_SURF="python Surf_conditions.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     runstring_T2M="python T2M.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     runstring_T850="python T850_RH.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
+    runstring_SLP="python SLP_static.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     runstring_Z="python Z500_VEL.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     runstring_cloud_level="python Low_medium_high_clouds.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
-    runstring_windlvl="python Wind_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --p_level 700 850 925 --id $id"
+    runstring_windlvl="python Wind_on_levels.py --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --p_level 800 850 925 --id $id"
     runstring_wg="python Wind_gusts.py  --datetime ${modelrun[i]} --steps 0 $steps_max --model $md --domain_name $domain_name --id $id"
     
+    echo $runstring_SLP
+    $runstring_SLP
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    exit 0
+ 
+    echo $runstring_CAO
+    $runstring_CAO
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+ 
+    echo $runstring_BLH
+    $runstring_BLH
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+ 
+    echo $runstring_WC
+    $runstring_WC 
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+
+    echo $runstring_IVT
+    $runstring_IVT
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+
     echo $runstring_OLR
     $runstring_OLR
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
      
-    echo $runstring_BLH
-    $runstring_BLH
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
-    
-    echo $runstring_CAO
-    $runstring_CAO
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
-    
     echo $runstring_CT
     $runstring_CT 
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
@@ -165,10 +176,6 @@ for md in ${model[@]}; do
     $runstring_LMH
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
     
-    echo $runstring_WC
-    $runstring_WC 
-    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
-
     echo $runstring_Q
     $runstring_Q
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}

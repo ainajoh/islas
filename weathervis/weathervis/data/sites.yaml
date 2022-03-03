@@ -1,19 +1,17 @@
-"""
 # example:
-<station name>:
-  lat: <station latitude (degree_north)>
-  lon: <station longitude (degree_east)>
-  height: <station height ()>
-  stationId: <station identifier>
-  WMOID:     <WMO identifier>
-  description: >
-    <description could be write on multilines>
-  margin: <create area around station to display>
-    north:  <adds X degree(s) north of station (degree)>
-    east:   <adds X degree(s) east of station (degree)>
-    south:  <substracts X degree(s) south of station (degree)>
-    west:   <substracts X degree(s) west of station (degree)>
-"""
+# <station name>:
+#   lat: <station latitude (degree_north)>
+#   lon: <station longitude (degree_east)>
+#   height: <station height ()>
+#   stationId: <station identifier>
+#   WMOID:     <WMO identifier>
+#   description: >
+#      <description could be write on multilines>
+#   margin: <create area around station to display>
+#     north:  <adds X degree(s) north of station (degree)>
+#     east:   <adds X degree(s) east of station (degree)>
+#     south:  <substracts X degree(s) south of station (degree)>
+#     west:   <substracts X degree(s) west of station (degree)>
 
 default: # set of default values applied if attribute is missing
   lat: 
@@ -31,23 +29,25 @@ default: # set of default values applied if attribute is missing
 OldPier:
   lat: 78.93030
   lon: 11.91929
+  height: 5
 
 OldPierG:
   lat: 78.929994
   lon: 11.918122
 
-ZeppelinObservatory:
+Zeppelin:
   lat: 78.90722
   lon: 11.88604
   height: 472
 
-MetBergen:
+Bergen:
   lat: 60.383669
   lon: 5.331850
 
 Osteroy:
   lat: 60.52
   lon: 5.55
+  height: 0
   margin:
     west: 1.70
     east: 1.10
@@ -57,7 +57,13 @@ Osteroy:
 NyAlesund:
   lat: 78.9243
   lon: 11.9312
+  height: 10
   stationID: SN99910
+
+Kiruna:
+   lat: 67.8222
+   lon: 20.31891
+   height: 530.0
 
 Andenes:
   lat: 69.310
@@ -82,6 +88,16 @@ Bjornoya:
   stationID: SN99700
   WMOID: 01028
 
+Alta:
+  lat: 69.96887
+  lon: 23.27163
+  height: 20.0
+
+Kirkenes:
+   lat: 69.72708
+   lon: 30.04511
+   height: 20.0
+
 Tromso:
   lat: 69.6538
   lon: 18.9095
@@ -92,12 +108,20 @@ Tromso:
 Bodo:
   lat: 67.267
   lon: 14.3637
-  height: 82290
-  stationID: 01162
+  height: 0
+  StationID: 82290
+  WMOID: 01162
+
+Trondheim:
+   lat: 63.43048
+   lon: 10.39506
+   height: 20.0
+
 
 Hopen:
   lat: 76.5097
   lon: 25.0133
+  height: 0
   stationID: 99720
   WMOID: 01062
 
@@ -145,6 +169,11 @@ NorwegianSea:
     south: 0.08
     north: 0.05
 
+Sodankyla:
+   lat: 67.3959
+   lon: 26.6308
+   height: 180
+
 CAO:
   lat: 70.824218
   lon: 0.04802
@@ -169,7 +198,7 @@ GEOF322:
 pcmet1:
   lat: 69.670501
   lon: 20.494432
-  height: 10
+  height: 0.0
   description: 'EaterAina'
   margin:
     west: 0.22
@@ -180,7 +209,7 @@ pcmet1:
 pcmet2:
   lat: 78.771857
   lon: 8.2396375
-  height: 1392.4
+  height: 0
   description: 9500
   margin:
     west: 0.22
@@ -192,7 +221,7 @@ pcmet3:
   lat: 78.201387
   lon: 1.333293
   height: 1214.1
-  description: 21439
+  description: 0.0
   margin:
     west: 0.22
     east: 0.18

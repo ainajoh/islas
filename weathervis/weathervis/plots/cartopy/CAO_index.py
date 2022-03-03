@@ -12,6 +12,7 @@ import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import warnings
+from add_overlays import *
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -41,404 +42,232 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
         data_domain = None
     return data_domain
 
+def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False,grid=True, runid=None, outpath=None):
+  global OUTPUTPATH
+  if outpath != None:
+      OUTPUTPATH=outpath
 
-def CAO(
-    datetime,
-    steps=0,
-    model="MEPS",
-    domain_name=None,
-    domain_lonlat=None,
-    legend=False,
-    info=False,
-    grid=True,
-    runid=None,
-    outpath=None,
-):
-    global OUTPUTPATH
-    if outpath != None:
-        OUTPUTPATH = outpath
+  for dt in datetime: #modelrun at time..
+    if runid !=None:
+        make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
+    else:
+        make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
+        
+  for dt in datetime: #modelrun at time..
+    date = dt[0:-2]
+    hour = int(dt[-2:])
+    param_sfc = ["air_pressure_at_sea_level", "surface_geopotential"]
+    param_pl = ["air_temperature_pl", "geopotential_pl"]  #"air_temperature_2m",
+    param_sfx = ["SST","SIC"] #add later
+    p_levels = [850,1000]
+    param = param_sfc + param_pl
+    split = False
+    print("\n######## Checking if your request is possible ############")
+    try:
+      check_all = check_data(date=dt, model=model, param=param, levtype="pl", p_level=p_levels, step=steps)
+      check_sfx = check_data(date=dt, model=model, param=param_sfx, step=steps)
 
-    for dt in datetime:  # modelrun at time..
-        if runid != None:
-            make_modelrun_folder = setup_directory(
-                OUTPUTPATH, "{0}-{1}".format(dt, runid)
-            )
-        else:
-            make_modelrun_folder = setup_directory(OUTPUTPATH, "{0}".format(dt))
+    except ValueError:
+      split = False
+      try:
+        print("--------> Splitting up your request to find match ############")
+        check_sfc = check_data(date=dt, model=model, param=param_sfc)
+        check_pl = check_data(date=dt, model=model, param=param_pl, levtype="pl", p_level=p_levels)
+        check_sfx = check_data(date=dt, model=model, param=param_sfx)
 
-    for dt in datetime:  # modelrun at time..
-        date = dt[0:-2]
-        hour = int(dt[-2:])
-        param_sfc = ["air_pressure_at_sea_level", "surface_geopotential"]
-        param_pl = ["air_temperature_pl", "geopotential_pl"]  # "air_temperature_2m",
-        param_sfx = ["SST", "SIC"]  # add later
-        p_levels = [850, 1000]
-        param = param_sfc + param_pl
-        split = False
-        print("\n######## Checking if your request is possible ############")
-        try:
-            check_all = check_data(
-                date=dt,
-                model=model,
-                param=param,
-                levtype="pl",
-                p_level=p_levels,
-                step=steps,
-            )
-            check_sfx = check_data(date=dt, model=model, param=param_sfx, step=steps)
+        print(check_pl.file)
+      except ValueError:
+        print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
+        break
+    print("--------> Found match for your request ############")
 
-        except ValueError:
-            split = True
+
+    if not split:
+      file_all = check_all.file.loc[0]
+
+      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_all)
+
+      #lonlat = np.array(data_domain.lonlat)
+      dmap_meps = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=steps,
+                           date=dt, p_level=p_levels)
+      dmap_mepsdfx = get_data(model=model, data_domain=data_domain, param=param_sfx, file=check_sfx.file.loc[0], step=steps,date=dt)
+      print("\n######## Retrieving data ############")
+      print(f"--------> from: {dmap_meps.url} ")
+      dmap_meps.retrieve()
+      tmap_meps = dmap_meps # two names for same value, no copying done.
+      dmap_mepsdfx.retrieve()
+    else:
+      # get sfc level data
+      file_sfc = check_sfc.file.loc[0]
+      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_sfc)
+      #lonlat = np.array(data_domain.lonlat)
+      dmap_meps = get_data(model=model, param=param_sfc, file=file_sfc, step=steps, date=dt, data_domain=data_domain)
+      print("\n######## Retrieving data ############")
+      print(f"--------> from: {dmap_meps.url} ")
+      dmap_meps.retrieve()
+
+      # get pressure level data
+      file_pl = check_pl.file.loc[0]
+      tmap_meps = get_data(model=model, data_domain=data_domain, param=param_pl, file=file_pl, step=steps, date=dt, p_level=p_levels)
+      print("\n######## Retrieving data ############")
+      print(f"--------> from: {tmap_meps.url} ")
+      tmap_meps.retrieve()
+
+      dmap_mepsdfx = get_data(model=model, data_domain=data_domain, param=param_sfx, file=check_sfx.file.loc[0],
+                              step=steps,
+                              date=dt)
+      dmap_mepsdfx.retrieve()
+
+    #CALCULATE
+
+    pt = potential_temperatur(dmap_meps.air_temperature_pl, dmap_meps.pressure*100.)
+    pt_sst = potential_temperatur(dmap_mepsdfx.SST, dmap_meps.air_pressure_at_sea_level[:,0,:,:])
+
+    dpt = pt[:,np.where(dmap_meps.pressure==1000)[0],:,:]-pt[:,np.where(dmap_meps.pressure==850)[0],:,:]
+    dpt_sst =pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze()
+    #dpt_sst =abs(pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze())
+
+    # convert fields
+    dmap_meps.air_pressure_at_sea_level/=100
+    tmap_meps.geopotential_pl/=10.0
+
+    lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
+    lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
+    parallels = dmap_meps.standard_parallel_projection_lambert
+
+    # setting up projection
+    # setting up projection
+    globe = ccrs.Globe(ellipse='sphere', semimajor_axis=6371000., semiminor_axis=6371000.)
+    crs = ccrs.LambertConformal(central_longitude=lon0, central_latitude=lat0, standard_parallels=parallels,
+                                 globe=globe)
+
+    for tim in np.arange(np.min(steps), np.max(steps)+1, 1):
+                               
+      # determine if image should be created for this time step
+      stepok=False
+      if tim<25:
+          stepok=True
+      elif (tim<=36) and ((tim % 3) == 0):
+          stepok=True
+      elif (tim<=66) and ((tim % 6) == 0):
+          stepok=True
+      if stepok==True:
+
+          fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
+          ttt = tim #+ np.min(steps)
+          tidx = tim - np.min(steps)
+          #print('Plotting CAO index {0} + {1:02d} UTC'.format(dt, ttt))
+          plev2 = 0
+          embr = 0
+          ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
+          MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
+          Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
+          DELTAPT=dpt[tidx, 0, :, :]
+          DELTAPT = dpt_sst[tidx,:,:]
+          ICE = dmap_mepsdfx.SIC[tidx, :, :]
+          SImask = np.where(ICE.squeeze() >= 0.1, dmap_mepsdfx.SIC[tidx, :, :], np.NaN).squeeze()
+          DELTAPT = np.where( ICE <= 0.99,DELTAPT,0)
+          lvl = range(-1,13)
+          C = [[255,255,255	],  # grey #[255,255,255],#gre
+               [204,191,189	],  # grey
+               [155,132,127	],  # grey
+               [118,86,80],  # lillac, 39	64	197	149,53,229
+               [138,109,81],  # blue dark,7,67,194 [218,81,14],
+               [181,165,102],  #
+               [229,226,124],  ##
+               [213,250,128],
+               [125,231,111],
+               [55,212,95],
+               [25,184,111],
+               [17,138,234],
+               [21,82,198],
+               [37,34,137]]
+          C = np.array(C)
+          C = np.divide(C, 255.)  # RGB has to be between 0 and 1 in python
+          CF_prec = plt.contourf(dmap_meps.x, dmap_meps.y, DELTAPT, zorder=0,
+                                antialiased=True,extend = "max", levels=lvl, colors=C, vmin=0, vmax=12)#
+
+          SI = ax1.contourf(dmap_meps.x, dmap_meps.y, SImask, zorder=1, alpha=0.5, colors='azure')
+          CF_ice = plt.contour(dmap_meps.x, dmap_meps.y, ICE, zorder=2, linewidths=2.0, colors="black", levels=[0.1, 0.5])  #
+          # MSLP with contour labels every 10 hPa
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
+                          levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 1),
+                          colors='grey', linewidths=0.5)
+          C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=3, alpha=1.0,
+                            levels=np.arange(round(np.nanmin(MSLP), -1) - 10, round(np.nanmax(MSLP), -1) + 10, 10),
+                            colors='grey', linewidths=1.0)
+          ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+
+          #CS = ax1.contour(dmap_meps.x, dmap_meps.y, Z, zorder=3, alpha=1.0,
+          #                  levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
+          #ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
+
+          ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'))  
+          ax1.text(0, 1, "{0}_CAOi_{1}+{2:02d}".format(model, dt, ttt), ha='left', va='bottom', transform=ax1.transAxes, color='black')
+
+          ##########################################################
+          legend=True
+          if legend:
+            proxy = [plt.axhline(y=0, xmin=1, xmax=1, color="grey"),
+                    plt.axhline(y=0, xmin=1, xmax=1, color="black",linewidth=4)]
             try:
-                print("--------> Splitting up your request to find match ############")
-                check_sfc = check_data(date=dt, model=model, param=param_sfc)
-                check_pl = check_data(
-                    date=dt, model=model, param=param_pl, levtype="pl", p_level=p_levels
-                )
-                check_sfx = check_data(date=dt, model=model, param=param_sfx)
+              ax_cb = adjustable_colorbar_cax(fig1, ax1)
 
-                print(check_pl.file)
-            except ValueError:
-                print(
-                    "!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!"
-                )
-                break
-        print("--------> Found match for your request ############")
+              plt.colorbar(CF_prec,cax = ax_cb, fraction=0.046, pad=0.01, aspect=25, label=r"$\theta_{SST}-\theta_{850}$", extend="both")
 
-        if not split:
-            file_all = check_all.file.loc[0]
+            except:
+              pass
 
-            data_domain = domain_input_handler(
-                dt, model, domain_name, domain_lonlat, file_all
-            )
+            lg = ax1.legend(proxy, [f"MSLP (hPa)",
+                                   f"Sea ice at 10%, 80%, 99%"])
+            frame = lg.get_frame()
+            frame.set_facecolor('white')
+            frame.set_alpha(1)
+          if grid:
+            nicegrid(ax=ax1)
 
-            # lonlat = np.array(data_domain.lonlat)
-            dmap_meps = get_data(
-                model=model,
-                data_domain=data_domain,
-                param=param,
-                file=file_all,
-                step=steps,
-                date=dt,
-                p_level=p_levels,
-            )
-            dmap_mepsdfx = get_data(
-                model=model,
-                data_domain=data_domain,
-                param=param_sfx,
-                file=check_sfx.file.loc[0],
-                step=steps,
-                date=dt,
-            )
-            print("\n######## Retrieving data ############")
-            print(f"--------> from: {dmap_meps.url} ")
-            dmap_meps.retrieve()
-            tmap_meps = dmap_meps  # two names for same value, no copying done.
-            dmap_mepsdfx.retrieve()
-        else:
-            # get sfc level data
-            file_sfc = check_sfc.file.loc[0]
-            data_domain = domain_input_handler(
-                dt, model, domain_name, domain_lonlat, file_sfc
-            )
-            # lonlat = np.array(data_domain.lonlat)
-            dmap_meps = get_data(
-                model=model,
-                param=param_sfc,
-                file=file_sfc,
-                step=steps,
-                date=dt,
-                data_domain=data_domain,
-            )
-            print("\n######## Retrieving data ############")
-            print(f"--------> from: {dmap_meps.url} ")
-            dmap_meps.retrieve()
+          add_ISLAS_overlays(ax1)
 
-            # get pressure level data
-            file_pl = check_pl.file.loc[0]
-            tmap_meps = get_data(
-                model=model,
-                data_domain=data_domain,
-                param=param_pl,
-                file=file_pl,
-                step=steps,
-                date=dt,
-                p_level=p_levels,
-            )
-            print("\n######## Retrieving data ############")
-            print(f"--------> from: {tmap_meps.url} ")
-            tmap_meps.retrieve()
+          if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
+            ax1.set_extent(data_domain.lonlat)
+          print("filename: "+make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt))
+          fig1.savefig(make_modelrun_folder + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(model, domain_name, dt, ttt), bbox_inches="tight", dpi=200)
+          ax1.cla()
+          plt.clf()
+          plt.close(fig1)
+  plt.close("all")
 
-            dmap_mepsdfx = get_data(
-                model=model,
-                data_domain=data_domain,
-                param=param_sfx,
-                file=check_sfx.file.loc[0],
-                step=steps,
-                date=dt,
-            )
-            dmap_mepsdfx.retrieve()
-
-        # CALCULATE
-
-        pt = potential_temperatur(
-            dmap_meps.air_temperature_pl, dmap_meps.pressure * 100.0
-        )
-        pt_sst = potential_temperatur(
-            dmap_mepsdfx.SST, dmap_meps.air_pressure_at_sea_level[:, 0, :, :]
-        )
-
-        dpt = (
-            pt[:, np.where(dmap_meps.pressure == 1000)[0], :, :]
-            - pt[:, np.where(dmap_meps.pressure == 850)[0], :, :]
-        )
-        dpt_sst = (
-            pt_sst[:, :, :]
-            - pt[:, np.where(dmap_meps.pressure == 850)[0], :, :].squeeze()
-        )
-        # dpt_sst =abs(pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze())
-
-        # convert fields
-        dmap_meps.air_pressure_at_sea_level /= 100
-        tmap_meps.geopotential_pl /= 10.0
-
-        lon0 = dmap_meps.longitude_of_central_meridian_projection_lambert
-        lat0 = dmap_meps.latitude_of_projection_origin_projection_lambert
-        parallels = dmap_meps.standard_parallel_projection_lambert
-
-        # setting up projection
-        # setting up projection
-        globe = ccrs.Globe(
-            ellipse="sphere", semimajor_axis=6371000.0, semiminor_axis=6371000.0
-        )
-        crs = ccrs.LambertConformal(
-            central_longitude=lon0,
-            central_latitude=lat0,
-            standard_parallels=parallels,
-            globe=globe,
-        )
-
-        for tim in np.arange(np.min(steps), np.max(steps) + 1, 1):
-
-            # determine if image should be created for this time step
-            stepok = False
-            if tim < 25:
-                stepok = True
-            elif (tim <= 36) and ((tim % 3) == 0):
-                stepok = True
-            elif (tim <= 66) and ((tim % 6) == 0):
-                stepok = True
-            if stepok == True:
-
-                fig1, ax1 = plt.subplots(
-                    1, 1, figsize=(7, 9), subplot_kw={"projection": crs}
-                )
-                ttt = tim  # + np.min(steps)
-                tidx = tim - np.min(steps)
-                print("Plotting CAO index {0} + {1:02d} UTC".format(dt, ttt))
-                plev2 = 0
-                embr = 0
-                ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
-                MSLP = np.where(
-                    ZS < 3000,
-                    dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :],
-                    np.NaN,
-                ).squeeze()
-                Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
-                DELTAPT = dpt[tidx, 0, :, :]
-                DELTAPT = dpt_sst[tidx, :, :]
-                ICE = dmap_mepsdfx.SIC[tidx, :, :]
-                DELTAPT = np.where(ICE <= 0.99, DELTAPT, 0)
-                lvl = range(-1, 13)
-                C = [
-                    [255, 255, 255],  # grey #[255,255,255],#gre
-                    [204, 191, 189],  # grey
-                    [155, 132, 127],  # grey
-                    [118, 86, 80],  # lillac, 39	64	197	149,53,229
-                    [138, 109, 81],  # blue dark,7,67,194 [218,81,14],
-                    [181, 165, 102],  #
-                    [229, 226, 124],  ##
-                    [213, 250, 128],
-                    [125, 231, 111],
-                    [55, 212, 95],
-                    [25, 184, 111],
-                    [17, 138, 234],
-                    [21, 82, 198],
-                    [37, 34, 137],
-                ]
-                C = np.array(C)
-                C = np.divide(C, 255.0)  # RGB has to be between 0 and 1 in python
-                CF_prec = plt.contourf(
-                    dmap_meps.x,
-                    dmap_meps.y,
-                    DELTAPT,
-                    zorder=0,
-                    antialiased=True,
-                    extend="max",
-                    levels=lvl,
-                    colors=C,
-                    vmin=0,
-                    vmax=12,
-                )  #
-
-                CF_ice = plt.contour(
-                    dmap_meps.x,
-                    dmap_meps.y,
-                    ICE,
-                    zorder=1,
-                    linewidths=2.5,
-                    colors="black",
-                    levels=[0.1, 0.5],
-                )  #
-                # MSLP with contour labels every 10 hPa
-                C_P = ax1.contour(
-                    dmap_meps.x,
-                    dmap_meps.y,
-                    MSLP,
-                    zorder=1,
-                    alpha=1.0,
-                    levels=np.arange(
-                        round(np.nanmin(MSLP), -1) - 10,
-                        round(np.nanmax(MSLP), -1) + 10,
-                        1,
-                    ),
-                    colors="grey",
-                    linewidths=0.5,
-                )
-                C_P = ax1.contour(
-                    dmap_meps.x,
-                    dmap_meps.y,
-                    MSLP,
-                    zorder=2,
-                    alpha=1.0,
-                    levels=np.arange(
-                        round(np.nanmin(MSLP), -1) - 10,
-                        round(np.nanmax(MSLP), -1) + 10,
-                        10,
-                    ),
-                    colors="grey",
-                    linewidths=1.0,
-                )
-                ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
-
-                # CS = ax1.contour(dmap_meps.x, dmap_meps.y, Z, zorder=3, alpha=1.0,
-                #                  levels=np.arange(4600, 5800, 20), colors="blue", linewidths=0.7)
-                # ax1.clabel(CS, CS.levels, inline=True, fmt="%4.0f", fontsize=10)
-
-                ax1.add_feature(
-                    cfeature.GSHHSFeature(scale="intermediate")
-                )  # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
-                ax1.text(
-                    0,
-                    1,
-                    "{0}_CAOi_{1}+{2:02d}".format(model, dt, ttt),
-                    ha="left",
-                    va="bottom",
-                    transform=ax1.transAxes,
-                    color="black",
-                )
-
-                ##########################################################
-                legend = True
-                if legend:
-                    proxy = [
-                        plt.axhline(y=0, xmin=1, xmax=1, color="grey"),
-                        plt.axhline(y=0, xmin=1, xmax=1, color="black", linewidth=4),
-                    ]
-                    try:
-                        ax_cb = adjustable_colorbar_cax(fig1, ax1)
-
-                        plt.colorbar(
-                            CF_prec,
-                            cax=ax_cb,
-                            fraction=0.046,
-                            pad=0.01,
-                            aspect=25,
-                            label=r"$\theta_{SST}-\theta_{850}$",
-                            extend="both",
-                        )
-
-                    except:
-                        pass
-
-                    lg = ax1.legend(proxy, [f"MSLP [hPa]", f"Sea ice at 10%, 80%, 99%"])
-                    frame = lg.get_frame()
-                    frame.set_facecolor("white")
-                    frame.set_alpha(1)
-                if grid:
-                    nicegrid(ax=ax1)
-
-                if (
-                    domain_name != model and data_domain != None
-                ):  # weird bug.. cuts off when sees no data value
-                    ax1.set_extent(data_domain.lonlat)
-                print(
-                    "filename: "
-                    + make_modelrun_folder
-                    + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(
-                        model, domain_name, dt, ttt
-                    )
-                )
-                fig1.savefig(
-                    make_modelrun_folder
-                    + "/{0}_{1}_CAOi_{2}+{3:02d}.png".format(
-                        model, domain_name, dt, ttt
-                    ),
-                    bbox_inches="tight",
-                    dpi=200,
-                )
-                ax1.cla()
-                plt.clf()
-                plt.close(fig1)
-    plt.close("all")
-
-
-#
+# 
 
 if __name__ == "__main__":
-    import argparse
-
-    def none_or_str(value):
-        if value == "None":
-            return None
-        return value
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+"
-    )
-    parser.add_argument(
-        "--steps",
-        default=0,
-        nargs="+",
-        type=int,
-        help="forecast times example --steps 0 3 gives time 0 to 3",
-    )
-    parser.add_argument("--model", default="MEPS", help="MEPS or AromeArctic")
-    parser.add_argument(
-        "--domain_name", default=None, help="see domain.py", type=none_or_str
-    )
-    parser.add_argument(
-        "--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]"
-    )
-    parser.add_argument("--legend", default=False, help="Display legend")
-    parser.add_argument("--grid", default=True, help="Display legend")
-    parser.add_argument("--info", default=False, help="Display info")
-    parser.add_argument("--id", default=None, help="Display legend", type=str)
-    parser.add_argument("--outpath", default=None, help="Display legend", type=str)
-    args = parser.parse_args()
-
-    CAO(
-        datetime=args.datetime,
-        steps=[np.min([args.steps]), np.max([args.steps])],
-        model=args.model,
-        domain_name=args.domain_name,
-        domain_lonlat=args.domain_lonlat,
-        legend=args.legend,
-        info=args.info,
-        grid=args.grid,
-        runid=args.id,
-        outpath=args.outpath,
-    )
-
+  import argparse
+  def none_or_str(value):
+    if value == 'None':
+      return None
+    return value
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+")
+  parser.add_argument("--steps", default=0, nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
+  parser.add_argument("--model",default="MEPS", help="MEPS or AromeArctic")
+  parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
+  parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
+  parser.add_argument("--legend", default=False, help="Display legend")
+  parser.add_argument("--grid", default=True, help="Display legend")
+  parser.add_argument("--info", default=False, help="Display info")
+  parser.add_argument("--id", default=None, help="Display legend", type=str)
+  parser.add_argument("--outpath", default=None, help="Display legend", type=str)
+  args = parser.parse_args()
+   
+  #CHUNCK SIZE TO BIG
+  s  = np.arange(np.min(args.steps),np.max(args.steps)+1)
+  cn = np.int(len(s) // 6)
+  if cn == 0:  # length of 6 not exceeded
+      CAO(datetime=args.datetime, steps = [np.min([args.steps]), np.max([args.steps])], model = args.model, domain_name = args.domain_name,
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, runid =args.id, outpath=args.outpath)
+  else: # lenght of 6 is exceeded, split in chunks, set by cn+1
+      print(f"\n####### request exceeds 6 timesteps, will be chunked to smaller bits due to request limit ##########")
+      chunks = np.array_split(s,cn+1)
+      for c in chunks:
+          CAO(datetime=args.datetime, steps = [np.min(c), np.max(c)], model = args.model, domain_name = args.domain_name,
+                  domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, runid =args.id, outpath=args.outpath)
 # fin

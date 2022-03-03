@@ -41,7 +41,8 @@ model=("AromeArctic")
 steps_max=66
 domain_name="None"
 
-point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
+#point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
+point_name=("NyAlesund" "Kiruna" "Andenes" "NorwegianSea" "Bjornoya" "Longyearbyen" "Tromso" "Alta" "Kirkenes" "Bodo" "Trondheim" "Bergen" "Sodankyla")
 steps="None"
 
 while [ $# -gt 0 ]; do
@@ -53,13 +54,11 @@ while [ $# -gt 0 ]; do
     ;;
     --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_date=("${1#*=}")
     fi
     ;;
     --modelrun_hour)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_hour=("${1#*=}")
     fi
     ;;
@@ -107,10 +106,10 @@ for md in ${model[@]}; do
       for pnam in ${point_name[@]}; do
 	 if [[ ${steps} != "None" ]]
 	 then
-		echo "test"
+		#echo "test"
 		echo "${steps[0]}"
-		echo "test2"
-	 	runstring_PVmet="python point_vertical_meteogram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id"
+		#echo "test2"
+	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id --m_level 20 64"
  	 fi
     echo $runstring_PVmet
     $runstring_PVmet

@@ -164,6 +164,7 @@ class check_data:
             if type(p_level) != list:
                 self.m_level = [m_level]
 
+
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
         try:
             webcheck = requests.head(url, timeout=5)
@@ -305,6 +306,7 @@ class check_data:
 
         return param.to_string()
 
+
     def check_variable(self, file, search):
         var_dict = file.at[0, "var"]
         param = []
@@ -332,28 +334,20 @@ class check_data:
         base_url = ""
 
         # find out where to look for data
-        if self.use_latest == True:
-            archive_url = "latest"
-        else:
-            archive_url = "archive"
-
-        if model == "MEPS":
-            # base_url = "https://thredds.met.no/thredds/catalog/meps25eps{0}/".format(archive_url)   #info about date, years and filname of our model
-            base_url = "https://thredds.met.no/thredds/catalog/meps{0}/".format(
-                archive_url
-            )  # info about date, years and filname of our model
-            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps25eps{0}/".format(
-                archive_url
-            )  # info about variables in each file
+        if model=="MEPS":
+            if self.use_latest == True:
+                archive_url = "latest"
+            else:
+                archive_url = "25epsarchive"
+            base_url = "https://thredds.met.no/thredds/catalog/meps{0}/".format(archive_url)   #info about date, years and filname of our model
+            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps{0}/".format(archive_url) #info about variables in each file
         elif model == "AromeArctic":
-            base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/".format(
-                archive_url
-            )
-            base_urlfile = (
-                "https://thredds.met.no/thredds/dodsC/aromearctic{0}/".format(
-                    archive_url
-                )
-            )
+            if self.use_latest == True:
+                archive_url = "latest"
+            else:
+                archive_url = "archive"
+            base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/".format(archive_url)
+            base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearctic{0}/".format(archive_url)
         else:
             pass
         print(base_url)

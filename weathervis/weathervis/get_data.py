@@ -446,7 +446,7 @@ class get_data:
             if self.use_latest == False:
                 url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
-                url = f"https://thredds.met.no/thredds/dodsC/meps25epslatest/{file.loc['File']}?"
+              url = f"https://thredds.met.no/thredds/dodsC/mepslatest/{file.loc['File']}?"
 
             for (
                 prm
