@@ -1856,71 +1856,65 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    site = setup_site(args.point_name)
-    if site["active"]:
-        for dt in args.datetime:
-            (
-                dirName_b0,
-                dirName_b1,
-                dirName_b2,
-                dirName_b3,
-                figname_b0,
-                figname_b1,
-                figname_b2,
-                figname_b3,
-            ) = setup_met_directory(
-                dt,
-                args.point_name,
-                args.point_lonlat,
-                model,
-                runid=args.id,
-                outpath=args.outpath,
-            )
-
-            VM = PMET(
-                date=dt,
-                steps=args.steps,
-                model=args.model,
-                domain_name=args.domain_name,
-                domain_lonlat=args.domain_lonlat,
-                legend=args.legend,
-                info=args.info,
-                num_point=args.point_num,
-                point_lonlat=args.point_lonlat,
-                point_name=args.point_name,
-            )
-            VM.retrieve_handler()
-            VM.calculations()
-            points, indx_sea, indx_land, indx_alldomain, index_neares = VM.points()
-            ip = 0
-            for po in points:
-                jindx, iindx = po
-                VM.plot_meteogram(
-                    jindx,
-                    iindx,
-                    dirName_b0,
-                    figname_b0,
-                    ip,
-                    indx_sea,
-                    indx_land,
-                    indx_alldomain,
-                    index_neares,
-                )
-                plt.close("all")
-                ip += 1
-
-            averagesite = ["ALL", "LAND", "SEA"]  # "ALL_NEAREST", "LAND", "SEA",
-
-            VM.meteogram_average(indx_sea, dirName_b3, figname_b3, "SEA")
-            # plot_maplocation(dmet, data_domain, indx_sea, dirName_b2, figname_b2, sitename, point_lonlat, all=True)
-            VM.meteogram_average(indx_land, dirName_b3, figname_b3, "LAND")
-            # plot_maplocation(dmet, data_domain, indx_land, dirName_b2, figname_b2, sitename, point_lonlat, all=True)
-            # VM.meteogram_average(index_neares, dirName_b3, figname_b3, "ALL_NEAREST")
-            # plot_maplocation(dmet, data_domain, [jindx, iindx], dirName_b2, figname_b2, sitename, point_lonlat,all=True)
-            VM.meteogram_average(indx_alldomain, dirName_b3, figname_b3, "ALL")
-            # plot_maplocation(dmet, data_domain, indx_alldomain, dirName_b2, figname_b2, sitename, point_lonlat,all=True)
-            plt.close("all")
-    else:
-        print(
-            f"Do not create meteogram for site {args.point_name}. site is inactive. See weathervis/data/sites.yaml"
+    for dt in args.datetime:
+        (
+            dirName_b0,
+            dirName_b1,
+            dirName_b2,
+            dirName_b3,
+            figname_b0,
+            figname_b1,
+            figname_b2,
+            figname_b3,
+        ) = setup_met_directory(
+            dt,
+            args.point_name,
+            args.point_lonlat,
+            model,
+            runid=args.id,
+            outpath=args.outpath,
         )
+
+        VM = PMET(
+            date=dt,
+            steps=args.steps,
+            model=args.model,
+            domain_name=args.domain_name,
+            domain_lonlat=args.domain_lonlat,
+            legend=args.legend,
+            info=args.info,
+            num_point=args.point_num,
+            point_lonlat=args.point_lonlat,
+            point_name=args.point_name,
+        )
+        VM.retrieve_handler()
+        VM.calculations()
+        points, indx_sea, indx_land, indx_alldomain, index_neares = VM.points()
+        ip = 0
+        for po in points:
+            jindx, iindx = po
+            VM.plot_meteogram(
+                jindx,
+                iindx,
+                dirName_b0,
+                figname_b0,
+                ip,
+                indx_sea,
+                indx_land,
+                indx_alldomain,
+                index_neares,
+            )
+            plt.close("all")
+            ip += 1
+
+        averagesite = ["ALL", "LAND", "SEA"]  # "ALL_NEAREST", "LAND", "SEA",
+
+        VM.meteogram_average(indx_sea, dirName_b3, figname_b3, "SEA")
+        # plot_maplocation(dmet, data_domain, indx_sea, dirName_b2, figname_b2, sitename, point_lonlat, all=True)
+        VM.meteogram_average(indx_land, dirName_b3, figname_b3, "LAND")
+        # plot_maplocation(dmet, data_domain, indx_land, dirName_b2, figname_b2, sitename, point_lonlat, all=True)
+        # VM.meteogram_average(index_neares, dirName_b3, figname_b3, "ALL_NEAREST")
+        # plot_maplocation(dmet, data_domain, [jindx, iindx], dirName_b2, figname_b2, sitename, point_lonlat,all=True)
+        VM.meteogram_average(indx_alldomain, dirName_b3, figname_b3, "ALL")
+        # plot_maplocation(dmet, data_domain, indx_alldomain, dirName_b2, figname_b2, sitename, point_lonlat,all=True)
+        plt.close("all")

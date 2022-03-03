@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import shapely as sh
-import yaml
 
 from weathervis.domain import list_sites, setup_site
 
@@ -35,18 +34,17 @@ def add_ISLAS_overlays(ax, col="red"):
     locs = list_sites()
     for loc in list(locs):
         site = setup_site(loc)
-        if site["active"]:
-            with ax.hold_limits():
-                ax.scatter(
-                    site["lon"],
-                    site["lat"],
-                    s=30,
-                    color=col,
-                    marker=".",
-                    zorder=12,
-                    transform=ccrs.PlateCarree(),
-                )
-                # ax.text(locs["lon"],locs["lat"],s=20,color='red',marker='+',zorder=12,transform=ccrs.PlateCarree())
+        with ax.hold_limits():
+            ax.scatter(
+                site["lon"],
+                site["lat"],
+                s=30,
+                color=col,
+                marker=".",
+                zorder=12,
+                transform=ccrs.PlateCarree(),
+            )
+            # ax.text(locs["lon"],locs["lat"],s=20,color='red',marker='+',zorder=12,transform=ccrs.PlateCarree())
 
     # add forecasting locations
     sites = "../../data/airports.csv"

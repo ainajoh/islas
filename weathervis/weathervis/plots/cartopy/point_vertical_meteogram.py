@@ -921,50 +921,44 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    site = setup_site(args.point_name)
-    if site["active"]:
-        for dt in args.datetime:
-            (
-                dirName_b0,
-                dirName_b1,
-                dirName_b2,
-                dirName_b3,
-                figname_b0,
-                figname_b1,
-                figname_b2,
-                figname_b3,
-            ) = setup_met_directory(
-                dt,
-                args.point_name,
-                args.point_lonlat,
-                runid=args.id,
-                outpath=args.outpath,
-            )
-
-            VM = VERT_MET(
-                date=dt,
-                steps=args.steps,
-                model=args.model,
-                domain_name=args.domain_name,
-                domain_lonlat=args.domain_lonlat,
-                legend=args.legend,
-                info=args.info,
-                num_point=args.point_num,
-                point_lonlat=args.point_lonlat,
-                point_name=args.point_name,
-                m_level=args.m_level,
-            )
-
-            VM.retrieve_handler()
-            VM.calculations()
-
-            points = VM.points()
-            ip = 0
-            for po in points:
-                jindx, iindx = po
-                VM.vertical_met(jindx, iindx, dirName_b1, figname_b1, ip)
-                ip += 1
-    else:
-        print(
-            f"Do not create vertical meteogram for site {args.point_name}. Site is inactive. See weathervis/data/sites.yaml"
+    for dt in args.datetime:
+        (
+            dirName_b0,
+            dirName_b1,
+            dirName_b2,
+            dirName_b3,
+            figname_b0,
+            figname_b1,
+            figname_b2,
+            figname_b3,
+        ) = setup_met_directory(
+            dt,
+            args.point_name,
+            args.point_lonlat,
+            runid=args.id,
+            outpath=args.outpath,
         )
+
+        VM = VERT_MET(
+            date=dt,
+            steps=args.steps,
+            model=args.model,
+            domain_name=args.domain_name,
+            domain_lonlat=args.domain_lonlat,
+            legend=args.legend,
+            info=args.info,
+            num_point=args.point_num,
+            point_lonlat=args.point_lonlat,
+            point_name=args.point_name,
+            m_level=args.m_level,
+        )
+
+        VM.retrieve_handler()
+        VM.calculations()
+
+        points = VM.points()
+        ip = 0
+        for po in points:
+            jindx, iindx = po
+            VM.vertical_met(jindx, iindx, dirName_b1, figname_b1, ip)
+            ip += 1
