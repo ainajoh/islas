@@ -581,6 +581,10 @@ class domain:
         minlat = float(point["lat"] - point["margin"]["south"])
         maxlat = float(point["lat"] + point["margin"]["north"])
 
+        self.lonlat = [minlon, maxlon, minlat, maxlat]
+        self.idx = lonlat2idx(self.lonlat, self.url)
+        self.active = point["active"]
+
 
 def setup_site(name, cfg="../../data/sites.yaml"):
     """set up site attributes

@@ -7,6 +7,7 @@
 #   WMOID:     <WMO identifier>
 #   description: >
 #      <description could be write on multilines>
+#   active: create plot or not
 #   margin: <create area around station to display>
 #     north:  <adds X degree(s) north of station (degree)>
 #     east:   <adds X degree(s) east of station (degree)>
@@ -20,6 +21,7 @@ default: # set of default values applied if attribute is missing
   stationID:
   WMOID:
   description:
+  active: True
   margin:
     west: 0.32
     east: 0.28
