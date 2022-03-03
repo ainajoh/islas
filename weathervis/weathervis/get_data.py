@@ -2,19 +2,21 @@
 # File name: get_data.py
 # This file is part of: weathervis
 ########################################################################
-from netCDF4 import Dataset
-import numpy as np
 import logging
-import pandas as pd
 import os
+import pkgutil
+import re
+
+import numpy as np
+import pandas as pd
+from netCDF4 import Dataset
+
 from weathervis.check_data import *  # require netcdf4
 from weathervis.domain import *  # require netcdf4
-import re
-import pkgutil
 
 """
 ###################################################################
-This module gets the data defined by the user 
+This module gets the data defined by the user
 ------------------------------------------------------------------------------
 Usage:
 ------
@@ -446,7 +448,7 @@ class get_data:
             if self.use_latest == False:
                 url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
-              url = f"https://thredds.met.no/thredds/dodsC/mepslatest/{file.loc['File']}?"
+                url = f"https://thredds.met.no/thredds/dodsC/mepslatest/{file.loc['File']}?"
 
             for (
                 prm

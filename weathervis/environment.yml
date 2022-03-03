@@ -14,6 +14,9 @@ dependencies:
   - pyyaml
   - shyaml
   - netCDF4
+  - pip
+  - pip:
+    - geog==0.0.2
   # Code quality
   - black
   - pre-commit

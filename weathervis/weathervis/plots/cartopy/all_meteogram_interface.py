@@ -1,31 +1,32 @@
-from weathervis.config import *
-from weathervis.utils import *
-from weathervis.domain import *
-from weathervis.get_data import *
-from weathervis.calculation import *
 import os
-from point_meteogram import *
-from point_vertical_meteogram import *
-from point_maploc import *
-import matplotlib.pyplot as plt
-import matplotlib
-import matplotlib.dates as mdates
-import matplotlib.cm as cm
-import pandas as pd
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib.lines import Line2D
-import matplotlib as mpl
+import sys
+from copy import deepcopy
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import sys
-import matplotlib.patheffects as pe
-from cartopy.io import (
-    shapereader,
-)  # For reading shapefiles containg high-resolution coastline.
-from copy import deepcopy
-import numpy as np
-import matplotlib.colors as colors
+import matplotlib
 import matplotlib as mpl
+import matplotlib.cm as cm
+import matplotlib.colors as colors
+import matplotlib.dates as mdates
+import matplotlib.patheffects as pe
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from cartopy.io import (
+    shapereader,  # For reading shapefiles containg high-resolution coastline.
+)
+from matplotlib.lines import Line2D
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from point_maploc import *
+from point_meteogram import *
+from point_vertical_meteogram import *
+
+from weathervis.calculation import *
+from weathervis.config import *
+from weathervis.domain import *
+from weathervis.get_data import *
+from weathervis.utils import *
 
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)

@@ -2,15 +2,16 @@
 # File name: check_data.py
 # This file is part of: imetkit
 ########################################################################
-import requests
-from bs4 import BeautifulSoup
+import logging
+import os
 import re
+from collections import Counter
+
 import numpy as np
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 from netCDF4 import Dataset
-import logging
-from collections import Counter
-import os
 
 """
 ###################################################################
@@ -164,7 +165,6 @@ class check_data:
             if type(p_level) != list:
                 self.m_level = [m_level]
 
-
         url = "https://thredds.met.no/thredds/catalog/meps25epsarchive/catalog.html"
         try:
             webcheck = requests.head(url, timeout=5)
@@ -306,7 +306,6 @@ class check_data:
 
         return param.to_string()
 
-
     def check_variable(self, file, search):
         var_dict = file.at[0, "var"]
         param = []
@@ -334,20 +333,30 @@ class check_data:
         base_url = ""
 
         # find out where to look for data
-        if model=="MEPS":
+        if model == "MEPS":
             if self.use_latest == True:
                 archive_url = "latest"
             else:
                 archive_url = "25epsarchive"
-            base_url = "https://thredds.met.no/thredds/catalog/meps{0}/".format(archive_url)   #info about date, years and filname of our model
-            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps{0}/".format(archive_url) #info about variables in each file
+            base_url = "https://thredds.met.no/thredds/catalog/meps{0}/".format(
+                archive_url
+            )  # info about date, years and filname of our model
+            base_urlfile = "https://thredds.met.no/thredds/dodsC/meps{0}/".format(
+                archive_url
+            )  # info about variables in each file
         elif model == "AromeArctic":
             if self.use_latest == True:
                 archive_url = "latest"
             else:
                 archive_url = "archive"
-            base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/".format(archive_url)
-            base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearctic{0}/".format(archive_url)
+            base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/".format(
+                archive_url
+            )
+            base_urlfile = (
+                "https://thredds.met.no/thredds/dodsC/aromearctic{0}/".format(
+                    archive_url
+                )
+            )
         else:
             pass
         print(base_url)

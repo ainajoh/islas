@@ -1,5 +1,6 @@
-import numpy as np
 import unittest
+
+import numpy as np
 from imetkit.check_data import check_data
 from imetkit.get_data import *
 

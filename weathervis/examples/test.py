@@ -1,10 +1,9 @@
-from loclib.domain import *  # require netcdf4
-from loclib.check_data import *
-from loclib.get_data import *
-from loclib.calculation import *
-from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
-
+from loclib.calculation import *
+from loclib.check_data import *
+from loclib.domain import *  # require netcdf4
+from loclib.get_data import *
+from mpl_toolkits.basemap import Basemap
 
 ##########################################################
 YYYY = ["2020"]

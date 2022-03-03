@@ -1,26 +1,27 @@
 # python point_meteogram.py --datetime 2021022800 --point_name Tromso --domain_name Tromso --steps 0 66
 
-from weathervis.config import *
-from weathervis.utils import *
-
-# from weathervis.domain import *
-# from weathervis.get_data import *
-# from weathervis.calculation import *
-from weathervis.checkget_data_handler import *
-from weathervis.domain import setup_site
 import os
-import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import matplotlib
-import matplotlib.dates as mdates
-import pandas as pd
-import yaml
 
 # import cartopy.crs as ccrs
 # import cartopy.feature as cfeature
 # from cartopy.io import shapereader  # For reading shapefiles containg high-resolution coastline.
 import warnings
+
+import matplotlib
+import matplotlib as mpl
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import yaml
+
+# from weathervis.domain import *
+# from weathervis.get_data import *
+# from weathervis.calculation import *
+from weathervis.checkget_data_handler import *
+from weathervis.config import *
+from weathervis.domain import setup_site
+from weathervis.utils import *
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -853,7 +854,7 @@ class PMET:
                 self.point_lonlat[0],
                 self.point_lonlat[1],
                 c="blue",
-                s=6 ** 2,
+                s=6**2,
                 transform=ccrs.PlateCarree(),
                 zorder=2,
             )
@@ -861,7 +862,7 @@ class PMET:
                 dmet.longitude,
                 dmet.latitude,
                 c="black",
-                s=5 ** 2,
+                s=5**2,
                 transform=ccrs.PlateCarree(),
                 zorder=1,
             )
@@ -869,7 +870,7 @@ class PMET:
                 dmet.longitude[jindx, iindx],
                 dmet.latitude[jindx, iindx],
                 c="red",
-                s=6 ** 2,
+                s=6**2,
                 transform=ccrs.PlateCarree(),
                 zorder=4,
             )
@@ -890,7 +891,7 @@ class PMET:
                 dmet.y[jindx],
                 facecolors="none",
                 edgecolors="r",
-                s=6 ** 2,
+                s=6**2,
                 zorder=1,
                 marker="s",
             )
@@ -1647,7 +1648,7 @@ class PMET:
                 self.point_lonlat[0],
                 self.point_lonlat[1],
                 c="blue",
-                s=6 ** 2,
+                s=6**2,
                 transform=ccrs.PlateCarree(),
                 zorder=2,
             )
@@ -1655,7 +1656,7 @@ class PMET:
                 dmet.longitude,
                 dmet.latitude,
                 c="black",
-                s=5 ** 2,
+                s=5**2,
                 transform=ccrs.PlateCarree(),
                 zorder=1,
             )
@@ -1663,7 +1664,7 @@ class PMET:
                 dmet.longitude[indx[0], indx[1]],
                 dmet.latitude[indx[0], indx[1]],
                 c="red",
-                s=6 ** 2,
+                s=6**2,
                 transform=ccrs.PlateCarree(),
                 zorder=4,
             )
@@ -1684,7 +1685,7 @@ class PMET:
                 dmet.y[jindx],
                 facecolors="none",
                 edgecolors="r",
-                s=6 ** 2,
+                s=6**2,
                 zorder=1,
                 marker="s",
             )

@@ -1,13 +1,15 @@
 # python T850_RH.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
+import warnings
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+
+from weathervis.calculation import *
+from weathervis.check_data import *
 from weathervis.config import *
 from weathervis.domain import *  # require netcdf4
-from weathervis.check_data import *
 from weathervis.get_data import *
-from weathervis.calculation import *
-from mpl_toolkits.basemap import Basemap
-import matplotlib.pyplot as plt
-import warnings
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)

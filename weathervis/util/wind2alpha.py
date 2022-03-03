@@ -1,5 +1,6 @@
-from netCDF4 import Dataset as NetCDFFile
 import math
+
+from netCDF4 import Dataset as NetCDFFile
 
 # ******************************************************************************
 # This routine calculates the local grid rotation (alpha) from input file,

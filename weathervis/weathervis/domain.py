@@ -1,9 +1,11 @@
 try:
     import logging
+
     import numpy as np
-    from netCDF4 import Dataset
-    import yaml
     import pandas as pd
+    import yaml
+    from netCDF4 import Dataset
+
     from weathervis.calculation import *
 except ImportError:
     logging.exception(f"Something goes wrong when importing python package")
@@ -630,3 +632,17 @@ def setup_site(name, cfg="../../data/sites.yaml"):
             f"Something goes wrong when loading location {name} from file -{cfg}-."
         )
         raise  # Throw exception again so calling code knows it happened
+
+
+def list_sites(cfg="../../data/sites.yaml"):
+    """list all sites
+
+    :return: list
+    """
+    with open(cfg, "r") as stream:
+        try:
+            sites = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            raise yaml.YAMLError(exc)
+    sites.pop("default")
+    return list(sites.keys())

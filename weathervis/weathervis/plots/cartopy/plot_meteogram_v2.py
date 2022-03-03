@@ -1,28 +1,29 @@
-from weathervis.config import *
-from weathervis.utils import *
-from weathervis.domain import *
-from weathervis.get_data import *
-from weathervis.calculation import *
 import os
-import matplotlib.pyplot as plt
-import matplotlib
-import matplotlib.dates as mdates
-import matplotlib.cm as cm
-import pandas as pd
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib.lines import Line2D
-import matplotlib as mpl
+import sys
+from copy import deepcopy
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import sys
-import matplotlib.patheffects as pe
-from cartopy.io import (
-    shapereader,
-)  # For reading shapefiles containg high-resolution coastline.
-from copy import deepcopy
-import numpy as np
-import matplotlib.colors as colors
+import matplotlib
 import matplotlib as mpl
+import matplotlib.cm as cm
+import matplotlib.colors as colors
+import matplotlib.dates as mdates
+import matplotlib.patheffects as pe
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from cartopy.io import (
+    shapereader,  # For reading shapefiles containg high-resolution coastline.
+)
+from matplotlib.lines import Line2D
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+from weathervis.calculation import *
+from weathervis.config import *
+from weathervis.domain import *
+from weathervis.get_data import *
+from weathervis.utils import *
 
 # (camp1) c02z62belvdl:cartopy ainajoh$ python plot_meteogram.py --datetime 2018031700 --point_num 1 --steps 0 60 --model AromeArctic --domain_lonlat 15.8 16.4 69.2 69.4 --point_lonlat 16.120 69.310
 
@@ -115,15 +116,15 @@ def nice_vprof_colorbar(
 
 def scewT(dmet, dmet_sfx, dmet_ml, jindx, iindx, dirName_b1, figname_b1, ip):
     import os
-    from netCDF4 import Dataset
     from collections import UserDict
+
     import matplotlib.pyplot as plt
-    import matplotlib.pyplot as plt
-    import numpy as np
     import metpy.calc as mpcalc
     import metpy.plots as mplt
+    import numpy as np
     from metpy.plots import SkewT
     from metpy.units import units
+    from netCDF4 import Dataset
 
     pass
 

@@ -1,8 +1,8 @@
-import numpy as np
 import unittest
+from datetime import datetime, timedelta
+
+import numpy as np
 from imetkit.check_data import check_data
-from datetime import timedelta
-from datetime import datetime
 
 # MethodName_StateUnderTest_ExpectedBehavior
 

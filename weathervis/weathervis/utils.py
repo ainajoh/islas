@@ -1,17 +1,19 @@
 # Useful function for setup
-import platform
+import datetime
 import os
-from mpl_toolkits.axes_grid1 import make_axes_locatable  ##__N
+import platform
+
+import matplotlib.colors as mcolors
+import matplotlib.offsetbox as offsetbox
 import matplotlib.pyplot as plt
 import numpy as np
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import matplotlib.colors as mcolors
 import pandas as pd
-import datetime
+from mpl_toolkits.axes_grid1 import make_axes_locatable  # #__N
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from netCDF4 import num2date
+
 from weathervis.checkget_data_handler import *
 from weathervis.domain import setup_site
-import matplotlib.offsetbox as offsetbox
 
 
 def setup_directory(path, folder_name):
@@ -162,7 +164,7 @@ def add_point_on_map(ax, lonlat=None, point_name=None, labels=None, colors=None)
         mainpoint = ax.scatter(
             it[0],
             it[1],
-            s=9.0 ** 2,
+            s=9.0**2,
             transform=ccrs.PlateCarree(),
             color=colors[i],
             zorder=6,

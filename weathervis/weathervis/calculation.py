@@ -3,8 +3,10 @@ Containing useful functions
 """
 
 import datetime as dt
-import numpy as np
 import math
+
+import numpy as np
+
 
 ####################################################################################################################
 # UTILITIES
@@ -143,7 +145,7 @@ def precip_acc(precip, acc=1):
 
 
 def round_up(n, decimals=0):
-    multiplier = 10 ** decimals
+    multiplier = 10**decimals
     return math.ceil(n * multiplier) / multiplier
 
 
@@ -956,7 +958,7 @@ def xwind2uwind(xwind, ywind, alpha):
 
 def wind_speed(xwind, ywind):
     # no matter if in modelgrid or earthrelativegrid
-    ws = np.sqrt(xwind ** 2 + ywind ** 2)
+    ws = np.sqrt(xwind**2 + ywind**2)
     return ws
 
 

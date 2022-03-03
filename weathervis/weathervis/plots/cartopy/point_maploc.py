@@ -1,28 +1,29 @@
-from weathervis.config import *
-from weathervis.utils import *
-from weathervis.domain import *
-from weathervis.get_data import *
-from weathervis.calculation import *
 import os
-import matplotlib.pyplot as plt
-import matplotlib
-import matplotlib.dates as mdates
-import matplotlib.cm as cm
-import pandas as pd
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib.lines import Line2D
-import matplotlib as mpl
+import sys
+from copy import deepcopy
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import sys
-import matplotlib.patheffects as pe
-from cartopy.io import (
-    shapereader,
-)  # For reading shapefiles containg high-resolution coastline.
-from copy import deepcopy
-import numpy as np
-import matplotlib.colors as colors
+import matplotlib
 import matplotlib as mpl
+import matplotlib.cm as cm
+import matplotlib.colors as colors
+import matplotlib.dates as mdates
+import matplotlib.patheffects as pe
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from cartopy.io import (
+    shapereader,  # For reading shapefiles containg high-resolution coastline.
+)
+from matplotlib.lines import Line2D
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+from weathervis.calculation import *
+from weathervis.config import *
+from weathervis.domain import *
+from weathervis.get_data import *
+from weathervis.utils import *
 
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
@@ -424,7 +425,7 @@ class MAP:
             plons,
             plats,
             c=values[0 : len(plons)],
-            s=15 ** 2,
+            s=15**2,
             transform=ccrs.PlateCarree(),
             cmap=mpl.colors.ListedColormap(col[0 : len(plons)]),
             zorder=1000,
@@ -543,7 +544,7 @@ class MAP:
             all_gridpoint = ax.scatter(
                 dmet.longitude,
                 dmet.latitude,
-                s=6.0 ** 2,
+                s=6.0**2,
                 transform=ccrs.PlateCarree(),
                 color="k",
                 zorder=4,
@@ -555,7 +556,7 @@ class MAP:
             mainpoint = ax.scatter(
                 point_lonlat[0],
                 point_lonlat[1],
-                s=9.0 ** 2,
+                s=9.0**2,
                 transform=ccrs.PlateCarree(),
                 color="lime",
                 zorder=6,
@@ -566,7 +567,7 @@ class MAP:
             closep = ax.scatter(
                 dmet.longitude[p],
                 dmet.latitude[p],
-                s=6.0 ** 2,
+                s=6.0**2,
                 transform=ccrs.PlateCarree(),
                 color="red",
                 zorder=5,
