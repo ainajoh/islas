@@ -468,4 +468,7 @@ class domain():
         maxlat = float(plat + 0.05)
         self.lonlat = [minlon, maxlon, minlat, maxlat]
         self.idx = lonlat2idx(self.lonlat, self.url)
-
+    def cross_region(self):
+        self.domain_name = "cross_region"
+        self.idx = []
+        self.lonlat = idx2lonlat[self.idx,self.url]
