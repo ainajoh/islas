@@ -193,7 +193,7 @@ def BLH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
             #proxy.extend(proxy1)
             lg = ax1.legend(proxy, [f"W [m s-1]>0.07 m/s at {dmap_meps.pressure[plev]:.0f} hPa",
                                     f"W [m s-1]<0.07 m/s at {dmap_meps.pressure[plev]:.0f} hPa",
-                                    "MSLP [hPa]", ""])
+                                    "MSLP [hPa]", ""],loc='upper left')
             frame = lg.get_frame()
             frame.set_facecolor('white')
             frame.set_alpha(1)
