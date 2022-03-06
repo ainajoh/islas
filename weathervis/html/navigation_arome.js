@@ -28,7 +28,7 @@ day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
 var fdate = new Array(0,0); // forecast time step
-var vkind=new Array(0,1,2,3,4,5);
+var vkind=new Array(0,1,14,11,18,19);
 var synced=true;
 var kind = 1;
 var domain = new Array(3,3);
@@ -79,6 +79,60 @@ function checkSync()
 {
   synced=document.getElementById("sync").checked;
 }
+
+function setKind(id) 
+{
+   document.getElementById('SET1').bgColor="#a0a0a0";
+   document.getElementById('SET2').bgColor="#a0a0a0";
+   document.getElementById('SET3').bgColor="#a0a0a0";
+   document.getElementById('SET4').bgColor="#a0a0a0";
+   document.getElementById(id).bgColor="#aaccff";
+   switch (id) {
+     case 'SET1':
+       vkind=[0,1,14,11,18,19];
+       document.getElementById("sel_v1").value = 0;
+       document.getElementById("sel_v2").value = 1;
+       document.getElementById("sel_v3").value = 14;
+       document.getElementById("sel_v4").value = 11;
+       document.getElementById("sel_v5").value = 18;
+       document.getElementById("sel_v6").value = 19;
+       break;
+     case 'SET2':
+       vkind=[0,1,7,3,13,12];
+       document.getElementById("sel_v1").value = 0;
+       document.getElementById("sel_v2").value = 1;
+       document.getElementById("sel_v3").value = 7;
+       document.getElementById("sel_v4").value = 3;
+       document.getElementById("sel_v5").value = 13;
+       document.getElementById("sel_v6").value = 12;
+       break;
+     case 'SET3':
+       vkind=[0,1,6,5,8,2];
+       document.getElementById("sel_v1").value = 0;
+       document.getElementById("sel_v2").value = 1;
+       document.getElementById("sel_v3").value = 6;
+       document.getElementById("sel_v4").value = 5;
+       document.getElementById("sel_v5").value = 8;
+       document.getElementById("sel_v6").value = 2;
+       break;
+     case 'SET4':
+       vkind=[0,1,4,16,8,20];
+       document.getElementById("sel_v1").value = 0;
+       document.getElementById("sel_v2").value = 1;
+       document.getElementById("sel_v3").value = 4;
+       document.getElementById("sel_v4").value = 16;
+       document.getElementById("sel_v5").value = 8;
+       document.getElementById("sel_v6").value = 20;
+       break;
+     default:
+       // do nothing
+       break;
+   }
+   prepareFigure(2);
+   return false;
+}
+
+
 
 function getKind(n)
 {
@@ -278,6 +332,7 @@ function selectDomain(n)
 	break;
     }
     prepareFigure(2);
+    syncFigures(n);
 }
 
 function selectVar(n)
@@ -423,17 +478,23 @@ function syncFigures(row)
 		if (row<1) {
 			cday[1]=cday[0];
 			fdate[1]=fdate[0];
+			domain[1]=domain[0];
+	                document.getElementById("domain1").value=domain[0];
 			document.getElementById("btime"+1).innerHTML=getDatename(1)+"_"+getBasetime(1);
 			document.getElementById("valid"+1).innerHTML=getFcdate(1);
 			document.getElementById("ftime"+1).innerHTML=getFcStep(1);
+			prepareFigure(0);
 			prepareFigure(1);
 		} else {
 			cday[0]=cday[1];
 			fdate[0]=fdate[1];
+			domain[0]=domain[1];
+	                document.getElementById("domain2").value=domain[1];
 			document.getElementById("btime"+0).innerHTML=getDatename(0)+"_"+getBasetime(0);
 			document.getElementById("valid"+0).innerHTML=getFcdate(0);
 			document.getElementById("ftime"+0).innerHTML=getFcStep(0);
 			prepareFigure(0);
+			prepareFigure(1);
 		}
 	}
 }
