@@ -4,22 +4,23 @@
 AROME Arctic meteogram forecasts for ISLAS2022
 </title>
 <link rel='stylesheet' type='text/css' href='watersip.css'>
-<script type="text/javascript" src="navigation_meteogram.js"></script>
+<script type="text/javascript" src="navigation_meteogram_vertical.js"></script>
 <script type="text/javascript" src="page_navigation.js"></script>
 </head>
 
 <BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
 
+
   <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
     <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
-    <td width=1300 colspan=9><h2 align=center>AROME meteogram forecasts for ISLAS2022</h2></td><td colspan=2 align=center><a href=index.html>[System status]</td><td colspan=2 align=center><a href=manual.html>[Instruction tables]</td></tr>
+    <td width=1300 colspan=9><h2 align=center>AROME cross-section forecasts for ISLAS2022</h2></td><td colspan=2 align=center><a href=index.html>[System status]</td><td colspan=2 align=center><a href=manual.html>[Instruction tables]</td></tr>
     <tr>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart IFS</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_AA.html>Flexpart AROME</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=forecast.html>AROME maps</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><b>Surface meteograms</b></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms.html>Surface meteograms</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms_vertical.html>Vertical meteograms</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=sections.html>Cross sections</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><b>Cross sections</b></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=probability.html>EPS maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=heatmaps.html>EPS heatmap</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=watersip.html>WaterSip</a></td>
@@ -38,8 +39,8 @@ AROME Arctic meteogram forecasts for ISLAS2022
       <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="800px"></td></tr>
   <tr><td align=center>
 Type:<select id="meteogram1" size=1 onChange="javascript:selectMeteogram(0)">
-<option value=0 selected>Synoptics</option>
-<option value=1>Precipitation</option>
+<option value=0 selected>Clouds</option>
+<option value=1>Wind</option>
 </select>
 Location:<select id="sel_v1" size=1 onChange="javascript:selectLocation(0)">
 <option value=0>Kiruna</option>
@@ -61,17 +62,11 @@ Location:<select id="sel_v1" size=1 onChange="javascript:selectLocation(0)">
 <option value=16>pcmet2</option>
 <option value=17>pcmet3</option>
 </select>
-Points:<select id="domain1" size=1 onChange="javascript:selectPoint(0)">
-<option value=0>Sea</option>
-<option value=1>Land</option>
-<option value=2>All points </option>
-<option value=3 selected>Point location</option>
-</select>
 </td>
 <td align=center>
 Type:<select id="meteogram2" size=1 onChange="javascript:selectMeteogram(1)">
-<option value=0>Synoptics</option>
-<option value=1 selected>Precipitation</option>
+<option value=0>Clouds</option>
+<option value=1 selected>Wind</option>
 </select>
 Location:<select id="sel_v2" size=1 onChange="javascript:selectLocation(1)">
 <option value=0>Kiruna</option>
@@ -94,12 +89,6 @@ Location:<select id="sel_v2" size=1 onChange="javascript:selectLocation(1)">
 <option value=17>pcmet3</option>
 </option>
 </select>
-Points: <select id="domain2" size=1 onChange="javascript:selectPoint(1)">
-<option value=0>Sea</option>
-<option value=1>Land</option>
-<option value=2>All points </option>
-<option value=3 selected>Point location</option>
-</select>
 </td></tr><tr><td align=center colspan=3>
   <form name="selpic" action="">
 Base time:
@@ -112,10 +101,9 @@ Base time:
   <tr><td colspan=3 align=center><span id=caption2></span><hr></td></tr>
   </table>
 <p>
-<p align=center>Website updated 4x daily at 04, 10, 16, 22 UTC. All times in UTC time.
+<p align=center>Website updated 4x daily at 04, 10, 16, 22 UTC. All times in UTC time. Data source: https://thredds.met.no/thredds/metno.html
 <p>
 Contact: <i>aina.johannessen@uib.no, harald.sodemann@uib.no</i>.
 <p>
-<a href="http://www.uib.no/gfi" target=main>[back to GFI Homepage]</a>
 </body>
 </html>
