@@ -143,6 +143,9 @@ function getKind(n)
     case 19:
       return "_IVT";
       break;
+    case 20:
+      return "_SLP";
+      break;
     default: 
       return "_";
       break;
