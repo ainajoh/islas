@@ -41,8 +41,6 @@ model=("AromeArctic")
 steps_max=66
 domain_name="None"
 
-#point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
-point_name=("NyAlesund" "Kiruna" "Andenes" "NorwegianSea" "Bjornoya" "Longyearbyen" "Tromso" "Alta" "Kirkenes" "Bodo" "Trondheim" "Bergen" "Sodankyla")
 steps="None"
 
 while [ $# -gt 0 ]; do
@@ -98,27 +96,20 @@ echo $modelrun
 #modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
 #modelrun=("2020031512")
 #modelrun=("2020101012")
-#point_name=("pcmet1" "pcemet2" "pcmet3")
 id=$$
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-      for pnam in ${point_name[@]}; do
-	 if [[ ${steps} != "None" ]]
-	 then
-		#echo "test"
-		echo "${steps[0]}"
-		#echo "test2"
-	 	runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id --m_level 20 64"
- 	 fi
-    echo $runstring_PVmet
-    $runstring_PVmet
+    # run the vertical cross-sections
+
+    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64"
+    echo $runstring_Vcross
+    $runstring_Vcross
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
     rm -rf /home/centos/output/weathervis/${modelrun[i]}-$id
-    done
+
   done
 done
-
 
 # fin
 

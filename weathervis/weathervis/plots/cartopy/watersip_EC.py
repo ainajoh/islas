@@ -129,7 +129,7 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
       # gather, filter and squeeze variables for plotting
       plev = 0
       #reduces noise over mountains by removing values over a certain height.
-      F_P = ax1.pcolormesh(lons, lats, upt_plt,  norm=colors.LogNorm(vmin=1e-20, vmax=1e-11), cmap=plt.cm.Blues, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
+      F_P = ax1.pcolormesh(lons, lats, upt_plt,  norm=colors.LogNorm(vmin=1e-20, vmax=1e-13), cmap=plt.cm.Blues, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
       del upt_plt
 
       if tim<66:
