@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="weathervis",
-    version="1.0",
+    version="2.0.0",
     packages=[
         "weathervis",
         "weathervis.plots",

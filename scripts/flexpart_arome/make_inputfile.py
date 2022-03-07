@@ -209,7 +209,7 @@ if __name__ == "__main__":
         default=None,
         help="[ lonmin, lonmax, latmin, latmax]",
     )
-    parser.add_argument("--point_name", default=None, help="see site.csv")
+    parser.add_argument("--point_name", default=None, help="see sites.yaml")
     parser.add_argument(
         "--point_lonlat",
         nargs="+",

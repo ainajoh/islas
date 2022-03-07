@@ -96,7 +96,6 @@ while [ $# -gt 0 ]; do
 
    # point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
    # point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla")
-   point_name=$(echo $( shyaml keys < ../../data/sites.yaml ) | sed s/'default '//)
    for md in ${model[@]}; do
       echo $md
       for ((i = 0; i < ${#modelrun[@]}; ++i)); do
@@ -114,7 +113,7 @@ while [ $# -gt 0 ]; do
       done
    done
 
-   #MEPS 
+   #MEPS
 
    model=("MEPS")
    point_name=("Bergen" "Trondheim")
@@ -134,5 +133,3 @@ while [ $# -gt 0 ]; do
          done
       done
    done
-
-
