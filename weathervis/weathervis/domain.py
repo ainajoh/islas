@@ -141,13 +141,14 @@ class domain:
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def AromeArctic(self):
-        # self.lonlat = [-10,60,30,90] #lonmin,lonmax,latmin,latmax,
+        # self.lonlat = [-10,60,30,90] # lonmin,lonmax,latmin,latmax,
+        # self.lonlat = [-30,90,10,91] # lonmin,lonmax,latmin,latmax,
         self.lonlat = [
             -18.0,
             80.0,
             62.0,
             88.0,
-        ]  # [-30,90,10,91] #lonmin,lonmax,latmin,latmax,
+        ]  # lonmin,lonmax,latmin,latmax,
 
         # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
         self.idx = lonlat2idx(
@@ -535,6 +536,11 @@ class domain:
         self.lonlat = [-26.0, -8, 63.0, 67]
 
         self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def cross_region(self):
+        self.domain_name = "cross_region"
+        self.idx = []
+        self.lonlat = idx2lonlat[self.idx, self.url]
 
     # def pcmet1(self):
     #     point_name = "pcmet1"

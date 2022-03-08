@@ -9,27 +9,37 @@ PlotExplorer for Campaign data, Geophysical Institute, University of Bergen, Nor
 </HEAD>
 
 <BODY bgcolor=#ffffff vlink=#000055 link=#0000d0 onload="setInitialPeriod()">
-<h2 align=center>PlotExplorer for ISLAS2021 Campaign data, Geophysical Institute, University of Bergen, Norway</h2>
-<p>
-<table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart EC</a></td>
+
+  <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
+    <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
+    <td width=1300 colspan=9><h2 align=center>Measurement data preview for ISLAS2022 field campaign</h2></td><td colspan=2 align=center><a href=index.html>[System status]</td><td colspan=2 align=center><a href=manual.html>[Instruction tables]</td></tr>
+    <tr>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart IFS</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_AA.html>Flexpart AROME</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=forecast.html>AROME maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms.html>Surface meteograms</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=meteograms_vertical.html>Vertical meteograms</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=probability.html>EC Ensemble</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=sections.html>Cross sections</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=probability.html>EPS maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=heatmaps.html>EPS heatmap</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=watersip.html>WaterSip</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">ETH maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">IFS Lagranto</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=satellites.html>Satellites</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><b>Quicklooks</b></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=ondemand.html>On Demand</a></td></tr>
     </tr>
-</table>
+    <tr>
+    <td width=1300 align=center colspan=12>Incoming data plots updated twice daily at 06 and 18 UTC.</td></tr>
+    </table>
+
 <P align=left>
 <table border=0 bgcolor=#ffffff>
     <tr><td width=50></td><td>
 Deployment: <select id="deployment" name="deployment" size=1 onChange="javascript:selDeployment(0)">
 
 <option>ISLAS2021 at Andoya</option>
+<option>ISLAS2022 at Andoya</option>
     </select></td><td>
     <i>Choose an instrument, parameter, and time period from the menu</i></td></tr></table>
 <p>

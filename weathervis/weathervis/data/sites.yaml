@@ -143,20 +143,19 @@ Olsnesnipa:
   lat: 60.48684
   lon: 5.65150
   height: 653
-  description: 'ParagliderstartinBergen'
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
 
 JanMayen:
   lat: 71.161223
   lon: -8.008265
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
 
 NorwegianSea:
@@ -164,9 +163,9 @@ NorwegianSea:
   lon: 5.112194
   height: 0
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
 
 Sodankyla:
@@ -179,9 +178,9 @@ CAO:
   lon: 0.04802
   height: 0
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
 
 GEOF322:
@@ -190,9 +189,9 @@ GEOF322:
   height: 60
   description: 'OS_HORDALAND'
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
 
 pcmet1:
@@ -201,9 +200,9 @@ pcmet1:
   height: 0.0
   description: 'EaterAina'
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
 
 pcmet2:
@@ -212,9 +211,9 @@ pcmet2:
   height: 0
   description: 9500
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
 
 pcmet3:
@@ -223,7 +222,7 @@ pcmet3:
   height: 1214.1
   description: 0.0
   margin:
-    west: 0.22
-    east: 0.18
-    south: 0.08
+    west: 0.15
+    east: 0.15
+    south: 0.05
     north: 0.05
