@@ -102,7 +102,13 @@ for md in ${model[@]}; do
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
     # run the vertical cross-sections
 
-    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64"
+    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64 --points_lonlat 12.1 20.18 78.93 67.50 --domain_lonlat 11.0 22.0 66.0 80.0 --start_name KRN --end_name NYA --orient 1"
+    echo $runstring_Vcross
+    $runstring_Vcross
+    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64 --points_lonlat 4.41 20.18 70.55 67.50 --domain_lonlat 3.5 22.0 66.0 72.0 --start_name SEA --end_name KRN --orient 0"
+    echo $runstring_Vcross
+    $runstring_Vcross
+    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64 --points_lonlat 20.18 28.27 67.50 67.10 --domain_lonlat 18.0 30.0 65.0 69.0 --start_name KRN --end_name RUS --orient 0"
     echo $runstring_Vcross
     $runstring_Vcross
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}

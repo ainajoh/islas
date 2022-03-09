@@ -22,7 +22,7 @@ print("done")
 warnings.filterwarnings("ignore", category=UserWarning)
 #warnings.filterwarnings("ignore", category=Downloading)
 
-def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True, release_name = "AN"):
+def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True, release_name = "ANX"):
   # avoid problems when plotting beyond AROME forecast period
   rsteps=steps.copy()
   rsteps[0]=steps[0]
@@ -83,18 +83,22 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
 
     # read netcdf files with watersip output 
     #dt=2021031600
-    print("/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(release_name,dt[0:8]))
-    cdf = nc.Dataset("/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(release_name,dt[0:8]), "r")
-    lats=cdf.variables["global_latitude"][:]
-    lons=cdf.variables["global_longitude"][:]
-    #lons, lats = np.meshgrid(lons, lats)
-    #print(lons)
-    tim=cdf.variables["time"][:]
-    ubl=cdf.variables["moisture_uptakes_boundary_layer"][:]
-    uft=cdf.variables["moisture_uptakes_free_troposphere"][:]
-    upt=ubl+uft
 
-    print(upt.shape)
+    upt = []
+    for rname in ["ANX", "ABS", "KRN"]:
+
+        print("/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(rname,dt[0:8]))
+        cdf = nc.Dataset("/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(rname,dt[0:8]), "r")
+        lats=cdf.variables["global_latitude"][:]
+        lons=cdf.variables["global_longitude"][:]
+        #lons, lats = np.meshgrid(lons, lats)
+        #print(lons)
+        tim=cdf.variables["time"][:]
+        ubl=cdf.variables["moisture_uptakes_boundary_layer"][:]
+        uft=cdf.variables["moisture_uptakes_free_troposphere"][:]
+        upt.append(ubl+uft)
+
+        #print(upt.shape)
 
     # plot map
     lonlat = [dmet.longitude[0,0], dmet.longitude[-1,-1], dmet.latitude[0,0], dmet.latitude[-1,-1]]
@@ -118,19 +122,26 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
       fig1, ax1 = plt.subplots(1, 1, figsize=(7, 9),subplot_kw={'projection': crs})
       tidx = tim - np.min(steps)
 
-      upt_plt=(upt[tim,:,:]).squeeze()
+      for n in np.arange(0,3):
+          print(n)
+          upt_plt=(upt[n][tim,:,:]).squeeze()
 
-      #print(tidx)
-      #print(np.min(upt_plt))
-      print(np.max(upt_plt))
-      upt_plt = np.where(upt_plt > 1e-20, upt_plt, np.NaN)
+          #print(tidx)
+          #print(np.min(upt_plt))
+          print(np.max(upt_plt))
+          upt_plt = np.where(upt_plt > 1e-20, upt_plt, np.NaN)
 
-      print('Plotting WaterSip-EC {0} + {1:02d} UTC'.format(dt,tim*3))
-      # gather, filter and squeeze variables for plotting
-      plev = 0
-      #reduces noise over mountains by removing values over a certain height.
-      F_P = ax1.pcolormesh(lons, lats, upt_plt,  norm=colors.LogNorm(vmin=1e-20, vmax=1e-13), cmap=plt.cm.Blues, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
-      del upt_plt
+          print('Plotting WaterSip-EC {0} + {1:02d} UTC'.format(dt,tim*3))
+          # gather, filter and squeeze variables for plotting
+          plev = 0
+          #reduces noise over mountains by removing values over a certain height.
+          if n==0:
+            F_P = ax1.pcolormesh(lons, lats, upt_plt,  norm=colors.LogNorm(vmin=1e-20, vmax=1e-13), cmap=plt.cm.Blues, zorder=3, alpha=0.6, transform=ccrs.PlateCarree())
+          elif n==1:
+            F_P = ax1.pcolormesh(lons, lats, upt_plt,  norm=colors.LogNorm(vmin=1e-20, vmax=1e-13), cmap=plt.cm.Reds, zorder=2, alpha=0.6, transform=ccrs.PlateCarree())
+          else:
+            F_P = ax1.pcolormesh(lons, lats, upt_plt,  norm=colors.LogNorm(vmin=1e-20, vmax=1e-13), cmap=plt.cm.Greens, zorder=1, alpha=0.6, transform=ccrs.PlateCarree())
+          del upt_plt
 
       if tim<66:
           Z = dmet.surface_geopotential[tidx, 0, :, :]
@@ -173,7 +184,7 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
       add_ISLAS_overlays(ax1)
 
       #if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-      ax1.set_extent(lonlat)
+      #ax1.set_extent(lonlat)
 
       model='WATERSIP_EC'
       print(make_modelrun_folder+"/{0}_{1}_{2}+{3:02d}.png".format(model, domain_name, dt, tim*3))
@@ -198,7 +209,7 @@ if __name__ == "__main__":
   parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+")
   parser.add_argument("--steps", default=0, nargs="+", type=int,help="forecast times example --steps 0 3 gives time 0 to 3")
   parser.add_argument("--model",default="MEPS", help="MEPS or AromeArctic")
-  parser.add_argument("--release_name",default="AN", help="AN or other sites")
+  parser.add_argument("--release_name",default="ANX", help="ANX or other sites")
   parser.add_argument("--domain_name", default=None, help="see domain.py", type = none_or_str)
   parser.add_argument("--domain_lonlat", default=None, help="[ lonmin, lonmax, latmin, latmax]")
   parser.add_argument("--legend", default=False, help="Display legend")

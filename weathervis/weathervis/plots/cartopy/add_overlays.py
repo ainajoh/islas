@@ -15,9 +15,28 @@ def add_ISLAS_overlays(ax,col='red'):
   #4  :  N58°3 E010°3	5  :  N58°3 E020�6  :  N65° - E022°
   #7  :  N65° - E029°	8  :  N79° - E0299  :  N79° - E010°
 
+  #GND-2500FT
+  lat_f1 = [69.43, 69.45, 69.05, 69.27, 69.33, 68.75, 67.9, 67.9, 
+          68.18, 68.28, 68.3, 68.44, 68.44, 69.23, 69.5, 69.5, 
+          69.67, 69.5, 69.5, 69.48, 69.42, 69.4, 69.43]
+  lon_f1 = [19.5, 20.0, 20.0, 18.75, 18.45, 17.02, 16.75, 16.75, 
+          14.9, 14.95, 14.58, 14.07, 14.07, 14.55, 16.67, 16.67, 
+          17.7, 18.17, 18.48, 18.4, 19.05, 19.03, 19.5]
+  #GND-FL115 (11500ft)
+  lat_f2 = [69.33, 69.27, 69.05, 69.033, 68.73, 68.7, 68.7, 68.3, 
+          68.6, 68.55, 68.52, 68.1, 68.2, 67.9, 68.37, 68.75, 69.33]
+  lon_f2 = [18.45, 18.75, 20.0, 20.05, 20.27, 20.22, 20.21, 20.0, 
+          18.4, 18.1, 18.11, 18.11, 17.41, 16.75, 16.92, 17.06, 18.45]
+
   # plot domain outline
   with ax.hold_limits():
     ax.plot(lon,lat,linewidth=1.5,color=col,linestyle='dashed',zorder=12,transform=ccrs.PlateCarree())
+
+  # plot CR22 outline
+  with ax.hold_limits():
+    ax.plot(lon_f1,lat_f1,linewidth=1.0,color=col,linestyle='dashed',zorder=12,transform=ccrs.PlateCarree())
+  with ax.hold_limits():
+    ax.plot(lon_f2,lat_f2,linewidth=1.0,color=col,linestyle='solid',zorder=12,transform=ccrs.PlateCarree())
 
   # add forecasting locations
   sites="../../data/sites.csv"

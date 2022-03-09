@@ -63,6 +63,9 @@ case "$model" in
 	start_log "Vertical Meteograms" 
 	automate_all_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour  &
 	end_log
+	start_log "Cross sections" 
+	automate_vertical_cross_section.sh --steps 0\ $steps --modelrun_hour $runhour  &
+	end_log
 	start_log "AA Andenes_area" 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
 	end_log

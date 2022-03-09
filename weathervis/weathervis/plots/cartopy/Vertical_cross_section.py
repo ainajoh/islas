@@ -155,8 +155,8 @@ class VERT_CROSS():
 
 
 
-    def crosssection_as_meteogramm(self,dirName,timest,extralines=None,kx=None,
-                                   extrst=None,extrend=None):
+    def crosssection_as_meteogramm(self,date,dirName,timest,extralines=None,kx=None,
+                                   extrst=None,extrend=None,st_nam="NYA",end_nam="KRN",coords=[12.1,20.18,67.50,78.93],orient=0):
         """create cross section 
          ----------
         timest:        
@@ -228,13 +228,17 @@ class VERT_CROSS():
         for i,z in enumerate(H[65-dimz:65]):
             HH[i,:,:] = z
         # give the height interval that the field is goid to be interpolated to. currently lowest 5000 m in 100m steps
-        heights=np.arange(0,5000,100)
-        # crosssections: first Ny-Ålesund - Kiruna, second Kiruna-Andernes-Zone, third Kiruna-Sodankylä-Russia
-        coos2 = [((12.1,78.93),(20.18,67.50)),((4.41,70.55),(20.18,67.50)),
-                 ((20.18,67.50),(29.268,67.102))] 
-        K=[1,0,0]
-        stnam = ['Ny-Ålesund','Zone end','Kiruna']
-        endnam   = ['Kiruna','Kiruna','Russia']
+        heights=np.arange(0,5000,200)
+        # crosssections: first Ny-Aesund - Kiruna, second Kiruna-Andernes-Zone, third Kiruna-Sodankylä-Russia
+        coos2=[(( coords[0],coords[2]),(coords[1],coords[3]))]
+        #coos2 = [((12.1,78.93),(20.18,67.50)),((4.41,70.55),(20.18,67.50)),
+        #         ((20.18,67.50),(29.268,67.102))] 
+        #K=[1,0,0]
+        K=[orient]
+        #stnam = ['Ny-Alesund','Zone end','Kiruna']
+        stnam=[st_nam]
+        #endnam   = ['Kiruna','Kiruna','Russia']
+        endnam=[end_nam]
         # in case of extra_lines
         if kx == 'lon':
             coos2.append(extralines)
@@ -252,7 +256,8 @@ class VERT_CROSS():
         clat = -23.6
         plon = -25.0
         plat  = 77.5
-        fignam = ['NyA-Kir','Zone-Kir','Kir-Rus']
+        #fignam = ['NyA-Kir','Zone-Kir','Kir-Rus']
+        fignam=[st_nam+'-'+end_nam]
         print('Point 4')
         #Compute cross section
         for cc,kk,st,ed,fnam in zip(coos2,K,stnam,endnam,fignam):
@@ -282,6 +287,7 @@ class VERT_CROSS():
             data['UU']    = cross.UU
             data['VV']    = cross.VV
             data['alpha'] = cross.alpha
+            del cross
             print('Point 6, '+st)
             wdir = wind_dir_for_cross(data['UU'],data['VV'],data['alpha'])
             u,v  = windfromspeed_dir(data['WS'],wdir)
@@ -366,8 +372,8 @@ class VERT_CROSS():
                 for a in aa:
                     a.invert_xaxis()
 
-            plt.savefig(dirName +"VCS_wind_"+ fnam+ "_step"+str(timest)+".png", bbox_inches = "tight", dpi = 200)
-            print('Saved crosssection as {}'.format(dirName +"VCS_wind_"+ fnam+ "_step"+str(timest)+".png"))
+            plt.savefig(dirName +"VCS_wind_"+fnam+"_{0}+{1:02d}.png".format(date,timest), bbox_inches = "tight", dpi = 200)
+            print('Saved crosssection as {}'.format(dirName +"VCS_wind_"+ fnam+ "_{0}+{1:02d}.png".format(date,timest)))
 
             plt.clf()
             plt.close()
@@ -441,8 +447,8 @@ class VERT_CROSS():
                 for a in aa:
                     a.invert_xaxis()
      
-            plt.savefig(dirName +"VCS_cloud_"+ fnam+"_step"+str(timest)+".png", bbox_inches = "tight", dpi = 200)
-            print('Saved crosssection as {}'.format(dirName +"VCS_cloud_"+ fnam+ "_step"+str(timest)+".png"))
+            plt.savefig(dirName +"VCS_cloud_"+fnam+"_{0}+{1:02d}.png".format(date,timest), bbox_inches = "tight", dpi = 200)
+            print('Saved crosssection as {}'.format(dirName +"VCS_cloud_"+ fnam+ "_{0}+{1:02d}.png".format(date,timest)))
 
 if __name__ == "__main__":
     import argparse
@@ -455,14 +461,18 @@ if __name__ == "__main__":
     parser.add_argument("--steps", default=[0, 10], nargs="+", type=int,
                         help="forecast times example --steps 0 3 gives time 0 to 3")
     parser.add_argument("--model", default="AromeArctic", help="MEPS or AromeArctic")
-    parser.add_argument("--domain_lonlat", default=[-4.770555, 41.700291, 64.6152131, 79.477055], help="[ lonmin, lonmax, latmin, latmax]")
+    parser.add_argument("--domain_lonlat", default=[-4.770555, 41.700291, 64.6152131, 79.477055], nargs="+", help="[ lonmin, lonmax, latmin, latmax]", type=float)
+    parser.add_argument("--points_lonlat", default=[-4.770555, 41.700291, 64.6152131, 79.477055], nargs="+", help="[ lonmin, lonmax, latmin, latmax]", type=float)
     parser.add_argument("--domain_name", default="cross_region", help="no help for you")
     parser.add_argument("--extra_names", default=None, help="give list of names for additional crossection")
     parser.add_argument("--extra_coords", default=None, help="give list of extra coordinates")
     parser.add_argument("--plot", default="all", help="Display legend")
     parser.add_argument("--info", default=False, help="Display info")
     parser.add_argument("--id", default=None, help="Display legend", type=str)
+    parser.add_argument("--orient", default=None, help="orientation", type=int)
     parser.add_argument("--outpath", default=None, help="Display legend", type=str)
+    parser.add_argument("--start_name",default="NYA",help="name of start location", type=str)
+    parser.add_argument("--end_name",default="KRN",help="name of end location", type=str)
     parser.add_argument("--m_level", default=[0,64], nargs="+", type=int, help="model levels to retrieve --m_level 30 64 gives lowest 35 model levels")
 
     args = parser.parse_args()
@@ -478,5 +488,5 @@ if __name__ == "__main__":
                             info=args.info, m_level=args.m_level)
             VC.retrieve_handler()
 
-            VC.crosssection_as_meteogramm(dirName=dirName,timest=st)
+            VC.crosssection_as_meteogramm(date=dt,dirName=dirName,timest=st,end_nam=args.end_name, st_nam=args.start_name,coords=args.points_lonlat,orient=args.orient)
 

@@ -226,7 +226,7 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               #del spec2d
               #del spec2e
 
-              if tim<66:
+              if tim<=66:
                   Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
                   MSLP = np.where(Z < 50000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze()
 
