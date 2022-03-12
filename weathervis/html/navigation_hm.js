@@ -28,6 +28,12 @@ function getKind()
     case 2:
       return "_CAO_";
       break;
+    case 3:
+      return "_TP_";
+      break;
+    case 4:
+      return "_SLP_";
+      break;
     default: 
       return "_";
       break;
@@ -42,6 +48,12 @@ function getProbKind()
       break;
     case 2:
       return "_CAO";
+      break;
+    case 3:
+      return "_TP";
+      break;
+    case 4:
+      return "_SLP";
       break;
     default: 
       return "_";
@@ -196,6 +208,8 @@ function setKind(id)
 {
    document.getElementById('ARHM').bgColor="#a0a0a0";
    document.getElementById('CAOHM').bgColor="#a0a0a0";
+   document.getElementById('TPHM').bgColor="#a0a0a0";
+   document.getElementById('MSLHM').bgColor="#a0a0a0";
    document.getElementById(id).bgColor="#aaccff";
    switch (id) {
      case 'ARHM':
@@ -217,6 +231,26 @@ function setKind(id)
        thresholds[1]="04K";
        thresholds[2]="08K";
        kind=2;
+       break;
+     case 'TPHM':
+       document.getElementById('ti_mean').innerHTML="heat map of TP probability (0-100%)";
+       document.getElementById('th0').innerHTML="0.5 mm";
+       document.getElementById('th1').innerHTML="1.0 mm";
+       document.getElementById('th2').innerHTML="2.0 mm";
+       thresholds[0]="0.5mm";
+       thresholds[1]="1.0mm";
+       thresholds[2]="2.0mm";
+       kind=3;
+       break;
+     case 'MSLHM':
+       document.getElementById('ti_mean').innerHTML="heat map of MSL probability (0-100%)";
+       document.getElementById('th0').innerHTML="980 hPa";
+       document.getElementById('th1').innerHTML="1010 hPa";
+       document.getElementById('th2').innerHTML="1030 hPa";
+       thresholds[0]="0980hPa";
+       thresholds[1]="1010hPa";
+       thresholds[2]="1030hPa";
+       kind=4;
        break;
      default:
        // do nothing
