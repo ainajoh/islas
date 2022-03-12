@@ -8,7 +8,7 @@ Forecasts for ISLAS2022
 <script type="text/javascript" src="page_navigation.js"></script>
 </head>
 
-<BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
+<BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0 onload="setKind('start')">
   <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
     <td width=100><img align=left src="gfx/uiblogo.gif" height=80></td>
     <td width=1300 colspan=9><h2 align=center>IFS Ensemble Prediction System Forecast for ISLAS2022</h2></td><td><a href=index.html>[System status]</td></tr>
@@ -27,12 +27,12 @@ Forecasts for ISLAS2022
     <td width=100 align=center bgcolor=#c0c0c0><a href=quicklooks.html>Quicklooks</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=ondemand.html>On Demand</a></td></tr>
     <tr>
-    <td width=100 align=center bgcolor=#a0a0a0 id=CAOID><a href="javascript:;" onClick="javascript:setKind('CAOID');">CAO probability</a></td>
-    <td width=100 align=center bgcolor=#aaccff id=ARID><a href="javascript:;" onClick="javascript:setKind('ARID');">AR probability</a></td>
-    <td width=100 align=center bgcolor=#a0a0a0 id=TPID><a href="javascript:;" onClick="javascript:setKind('TPID');">TP probability</a></td></tr>
+    <td width=100 align=center bgcolor=#aaccff id=CAOID><a href="javascript:;" onClick="javascript:setKind('CAOID');">CAO probability</a></td>
+    <td width=100 align=center bgcolor=#a0a0a0 id=ARID><a href="javascript:;" onClick="javascript:setKind('ARID');">AR probability</a></td>
+    <td width=100 align=center bgcolor=#a0a0a0 id=TPID><a href="javascript:;" onClick="javascript:setKind('TPID');">TP probability</a></td>
     <td width=100 align=center bgColor=#a0a0a0 id=EHSID><a href="javascript:;" onClick="javascript:setKind('EHSID');">EHS probability</a></td>
     <td width=100 align=center bgcolor=#a0a0a0 id=SSHID><a href="javascript:;" onClick="javascript:setKind('SSHID');">SSH probability</a></td>
-    <td width=100 align=center bgcolor=#a0a0a0 id=SLOEID><a href="javascript:;" onClick="javascript:setKind('SLOEID');">SLOE probability</a></td>
+    <td width=100 align=center bgcolor=#a0a0a0 id=SLOEID><a href="javascript:;" onClick="javascript:setKind('SLOEID');">SLOE probability</a></td></tr>
 
     <tr><td width=200 align=left colspan=2>Image size:<form name="selsize" action=""><input name="small" value="small" type="button" onClick="javascript:setSize(0)">
 	  <input name="large" value="large" type="button" onClick="javascript:setSize(1)">
@@ -50,7 +50,7 @@ Forecasts for ISLAS2022
    <select id="thresholds" size=1 onChange="javascript:selectThreshold()">
      <option value=0 selected id=th0>5mm</option>
      <option value=1 id=th1>10mm</option>
-     <option value=2 id=th2>15mm</option>
+     <option value=2 id=th2>12mm</option>
    </select>
 			Base time:
       <input name="back" value="-12h" type="button" onClick="javascript:skiponeback()">

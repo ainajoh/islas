@@ -4,10 +4,22 @@
 window.onload=initWebsite;
 
 // date settings
-//var cday = new Date(2018,2,18);
-var cday = new Date();
+var cday = new Date(Date.now());
+hrs=cday.getUTCHours();
+if (hrs<10) {
+  cday.setUTCHours(12);
+  dy=cday.getDate();
+  cday.setDate(dy-1);
+} else if (hrs<21) {
+  cday.setUTCHours(0);
+} else {
+  cday.setUTCHours(12);
+}
+cday.setUTCMinutes(0);
+cday.setUTCSeconds(0);
+
 var fdate = 0; // forecast time step
-var kind = 1;
+var kind = 2;
 var bt = 0;
 
 // treshold settings and names
@@ -206,6 +218,10 @@ function skip6hback()
 
 function setKind(id) 
 {
+   if (id == 'start') {
+	   id='CAOHM';
+	   initWebsite();
+   }
    document.getElementById('ARHM').bgColor="#a0a0a0";
    document.getElementById('CAOHM').bgColor="#a0a0a0";
    document.getElementById('TPHM').bgColor="#a0a0a0";
