@@ -106,7 +106,7 @@ def SLP_static(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonl
       stepok=False
       if tim<25:
           stepok=True
-      elif (tim<=36) and ((tim % 3) == 0):
+      elif (tim<=48) and ((tim % 3) == 0):
           stepok=True
       elif (tim<=66) and ((tim % 6) == 0):
           stepok=True
@@ -155,9 +155,8 @@ def SLP_static(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonl
           #fig1.savefig("../../../../output/{0}_T850_RH_{1}_{2:02d}.png".format(model,dt, tim), bbox_inches="tight", dpi=200)
 
           if grid:
-            nicegrid(ax=ax1,xx=np.arange(-20, 80, 1),yy=np.arange(50, 90, 1),color='grey',alpha=0,linestyle='--')
-            nicegrid(ax=ax1,xx=np.arange(-20, 80, 5),yy=np.arange(50, 90, 2),color='black',alpha=0,linestyle='--')
-            nicegrid(ax=ax1,xx=np.arange(-20, 80, 20),yy=np.arange(50, 90, 4),color='blue',alpha=0,linestyle='-')
+            nicegrid(ax=ax1,xx=np.arange(-20, 80, 2),yy=np.arange(50, 90, 1),color='green',alpha=0.8,linestyle='-')
+            nicegrid(ax=ax1,xx=np.arange(-20, 80, 10),yy=np.arange(50, 90, 5),color='blue',alpha=0.8,linestyle='-')
 
           add_ISLAS_overlays(ax1,col='red')
 

@@ -142,7 +142,6 @@ for md in ${model[@]}; do
     echo $runstring_SLP
     $runstring_SLP
     ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
-    exit 0
  
     echo $runstring_CAO
     $runstring_CAO

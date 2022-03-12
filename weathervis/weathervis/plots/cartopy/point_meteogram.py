@@ -537,7 +537,8 @@ class PMET():
 
             return axm6,axm6_1,axm6_0,axm6_L,subplot6_labels, labeltext6
         axm6,axm6_1,axm6_0,axm6_L, subplot6_labels, labeltext6 = loc2map(subplot6_labels, labeltext6)
-        axm6_L.legend(subplot6_labels, labeltext6, loc='best').set_zorder(99999)
+        # MK changes: loc = 'best' to loc = 'upper left'
+        axm6_L.legend(subplot6_labels, labeltext6, loc='upper left').set_zorder(99999)
 
         #################################
         # SET ADJUSTMENTS ON AXIS
@@ -981,7 +982,8 @@ class PMET():
 
             return axma6, axma6_1, axma6_0, axma6_L, subplot6_labels, labeltext6
         axma6, axma6_1, axma6_0, axma6_L, subplot6_labels, labeltext6 = loc2map(subplot6_labels, labeltext6)
-        axma6_L.legend(subplot6_labels, labeltext6, loc='best').set_zorder(99999)
+        # MK changes: loc = 'best' to loc = 'upper left'
+        axma6_L.legend(subplot6_labels, labeltext6, loc='upper left').set_zorder(99999)
 
         #################################
         # SET ADJUSTMENTS ON AXIS

@@ -426,7 +426,7 @@ class VERT_MET():
         lvl = np.append(lvl1, lvl2)
         lvl = np.append(lvl, lvl3)
         ticks = np.array([-9.8,-6.5, -3, 0, 3, 6])
-        norm = mpl.colors.DivergingNorm(vmin=-10., vcenter=0., vmax=6)
+        norm = mpl.colors.TwoSlopeNorm(vmin=-10., vcenter=0., vmax=6)
         CF = axm1.pcolormesh(tx, p_p, dtdz_p, cmap=cmap, zorder=1,norm=norm) #dtdz_p
         cbar = nice_vprof_colorbar(CF=CF, ax=axm1,ticks=ticks, label = 'Lapse. rate. [C/km]', format='%.1f')
         #relative humidity
@@ -458,7 +458,7 @@ class VERT_MET():
 
         #TEMP
         cmap = cm.get_cmap('twilight_shifted')  # BrBu  BrYlBu
-        norm = mpl.colors.DivergingNorm(vmin=-30., vcenter=0., vmax=10)
+        norm = mpl.colors.TwoSlopeNorm(vmin=-30., vcenter=0., vmax=10)
         CF_2 = axm2.pcolormesh(tx, p_p, temp_p, zorder=1, cmap=cmap, norm=norm) #dtdz_p
         cbar = nice_vprof_colorbar(CF=CF_2, ax=axm2, label = 'Temp. [K]', extend="both", format='%.0f')
 
