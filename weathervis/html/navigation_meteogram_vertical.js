@@ -142,6 +142,9 @@ function getDomainname(n)
 		case 17:
                 return "VPMET_pcmet3_";
                 break;
+		case 18:
+                return "VPMET_Abisko_";
+                break;
 		default:
 		return "None";
 		break;
