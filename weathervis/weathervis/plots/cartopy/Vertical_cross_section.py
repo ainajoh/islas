@@ -228,7 +228,7 @@ class VERT_CROSS():
         for i,z in enumerate(H[65-dimz:65]):
             HH[i,:,:] = z
         # give the height interval that the field is goid to be interpolated to. currently lowest 5000 m in 100m steps
-        heights=np.arange(0,5000,200)
+        heights=np.arange(0,5000,100)
         # crosssections: first Ny-Aesund - Kiruna, second Kiruna-Andernes-Zone, third Kiruna-Sodankylä-Russia
         coos2=[(( coords[0],coords[2]),(coords[1],coords[3]))]
         #coos2 = [((12.1,78.93),(20.18,67.50)),((4.41,70.55),(20.18,67.50)),
@@ -261,57 +261,52 @@ class VERT_CROSS():
         print('Point 4')
         #Compute cross section
         for cc,kk,st,ed,fnam in zip(coos2,K,stnam,endnam,fignam):
+            #cross = CrossSection(dmet,
             cross = CrossSection({'CAF':CAF,'CW':CW,'CI':CI,'QQ':QQ,'BLH':BLH,'WS':WS,
-                                  'PREC':Prec,'Upd':Upd,'hsurf':hsurf,'lat':lats,
-                                  'rlat':rlat,'lon':lons,'rlon':rlon,'p':P/100.,
-                                  'z':HH+hsurf,'UU':UU,'VV':VV,'alpha':alpha,
-                                  'TT':TT},
-                                 cc,heights,version='rotated',pollon=plon,
-                                 pollat=plat,flip=True,int2z=True,model=model) #polgam=180,
+                                   'PREC':Prec,'Upd':Upd,'hsurf':hsurf,'lat':lats,
+                                   'rlat':rlat,'lon':lons,'rlon':rlon,'p':P/100.,
+                                   'z':HH+hsurf,'UU':UU,'VV':VV,'alpha':alpha,
+                                   'TT':TT},
+                                   cc,heights,version='rotated',pollon=plon,
+                                   pollat=plat,flip=True,int2z=True,model=model) #polgam=180,
             #x,zi  = np.meshgrid(cross.lat,cross.pressure)
             print('Point 5, '+st)
-            if kk==0:x,zi  = np.meshgrid(cross.lon,cross.pressure)
-            else:x,zi  = np.meshgrid(cross.lat,cross.pressure)
+            if kk==0:
+                x,zi  = np.meshgrid(cross.lon,cross.pressure)
+            else:
+                x,zi  = np.meshgrid(cross.lat,cross.pressure)
     
+            print('================================')
+            print(coos2)
+            print(cross.lon[::30])
+            print(cross.lat[::30])
+            print('--------------------------------')
             data={}
-            data['CAF']  = cross.CAF
-            data['CW']   = cross.CW
-            data['CI']   = cross.CI
-            data['QQ']   = cross.QQ
-            data['BLH']  = cross.BLH+cross.hsurf
-            data['WS']   = cross.WS
-            data['PREC'] = cross.PREC
-            data['Upd']  = cross.Upd
-            data['TT']   = cross.TT
-            # for wdir
-            data['UU']    = cross.UU
-            data['VV']    = cross.VV
-            data['alpha'] = cross.alpha
-            del cross
+            cross.BLH  = cross.BLH+cross.hsurf
             print('Point 6, '+st)
-            wdir = wind_dir_for_cross(data['UU'],data['VV'],data['alpha'])
-            u,v  = windfromspeed_dir(data['WS'],wdir)
+            wdir = wind_dir_for_cross(cross.UU,cross.VV,cross.alpha)
+            u,v  = windfromspeed_dir(cross.WS,wdir)
             
             # the interpolated lapse rate somehwo alsways gives nan
-            dtdz2 = (data['TT'][1::,:]-data['TT'][0:-1,:]) *10 # C/ km, *10 due to the interpolated height intervals of 100m
+            dtdz2 = (cross.TT[1::,:]-cross.TT[0:-1,:]) *10 # C/ km, *10 due to the interpolated height intervals of 100m
             # for the CAF hashing
-            minCAF = np.zeros(np.shape(data['CAF']))
-            xx,yy= np.where(data['CAF']<0.5)
+            minCAF = np.zeros(np.shape(cross.CAF))
+            xx,yy= np.where(cross.CAF<0.5)
             minCAF[xx,yy] = 1
-            xx,yy= np.where(data['CAF']<0.01)
+            xx,yy= np.where(cross.CAF<0.01)
             minCAF[xx,yy] = 0
-            xx,yy= np.where(data['CAF']>0.5)
+            xx,yy= np.where(cross.CAF>0.5)
             minCAF[xx,yy] = 2
             minCAF[np.where(minCAF==0)] = np.nan
-            maxCAF = np.zeros(np.shape(data['CAF']))
-            xx,yy= np.where(data['CAF']>0.5)
+            maxCAF = np.zeros(np.shape(cross.CAF))
+            xx,yy= np.where(cross.CAF>0.5)
             maxCAF[xx,yy] = 1
             maxCAF[np.where(maxCAF==0)] = np.nan
             
-            prec =data['PREC'].copy()
+            prec =cross.PREC.copy()
             prec[np.where(prec<0.05)] = np.nan
             
-            Upd2 = data['Upd'].copy()
+            Upd2 = cross.Upd.copy()
             Upd2[np.where(np.abs(Upd2)<0.15)] = np.nan
             
             # plot
@@ -330,13 +325,13 @@ class VERT_CROSS():
             aa = [ax2,ax3]
             # the cloud area fraction and wind speed
             levels = np.linspace(0.0, 3, 21)
-            pc = ax2.contourf(x,zi,data['QQ']*1000,levels,cmap='gnuplot2_r',
+            pc = ax2.contourf(x,zi,cross.QQ*1000,levels,cmap='gnuplot2_r',
                               extend='both')
-            cs1 = ax2.contour(x,zi,data['CW']*1000,
-                              list(np.linspace(0.01,np.nanmax(data['CW']*1000),5)),
+            cs1 = ax2.contour(x,zi,cross.CW*1000,
+                              list(np.linspace(0.01,np.nanmax(cross.CW*1000),5)),
                               colors='red',linewidths=2)
-            cs2 = ax2.contour(x,zi,data['CI']*1000,
-                              list(np.linspace(0.001,np.nanmax(data['CI']*1000),5)),
+            cs2 = ax2.contour(x,zi,cross.CI*1000,
+                              list(np.linspace(0.001,np.nanmax(cross.CI*1000),5)),
                               colors='cyan',linewidths=2)
             custom_lines = [Line2D([0], [0], color='red', lw=4),
                             Line2D([0], [0], color='cyan', lw=4)]
@@ -352,7 +347,7 @@ class VERT_CROSS():
             cbar.ax.set_ylabel('Spec. Hum. [g/kg]',fontsize=15)
             ax2.invert_xaxis()
             levels = np.linspace(0.0, 21, 15)
-            pw = ax3.contourf(x,zi,data['WS'],levels,cmap='RdYlBu_r',
+            pw = ax3.contourf(x,zi,cross.WS,levels,cmap='RdYlBu_r',
                               extend='both')
             ax3.barbs(x[::6,::60], zi[::6,::60], u[::6,::60] * 1.943844,
                       v[::6,::60] * 1.943844, length=7, zorder=1000,alpha=0.5,
@@ -390,7 +385,7 @@ class VERT_CROSS():
             aa = [ax2,ax3]
             # the cloud area fraction and wind speed
             levels = np.linspace(0.0, 21.0, 7)
-            pc = ax2.pcolormesh(x,zi,dtdz2,vmin=-10,vmax=10,cmap='RdYlBu_r')
+            pc = ax2.pcolormesh(x[:-1,:],zi[:-1,:],dtdz2,vmin=-10,vmax=10,cmap='RdYlBu_r')
             #levels = np.linspace(0.0, 0.49, 7)
             rr = ax2.contourf(x,zi,prec,cmap='cool',
                               extend='both')
@@ -398,7 +393,7 @@ class VERT_CROSS():
             artists, labels = cf1.legend_elements(str_format='{:2.1f}'.format)
             ax2.legend(artists, ['1-50% Cloud cover','50-100% Cloud cover'],
                        handleheight=2,framealpha=0.3,loc='upper left',fontsize=14)
-            ax2.plot(x[-1,:],data['BLH'],linewidth=3,color='k')
+            ax2.plot(x[-1,:],cross.BLH,linewidth=3,color='k')
             ax2.set_ylim(ymin=0,ymax=5000)
             ax2.text(x[-1,0],-520,st,fontsize=15)
             ax2.text(x[1,-50],-520,ed,fontsize=15)
@@ -415,10 +410,10 @@ class VERT_CROSS():
             cbar2.ax.set_xlabel('Precip [g kg$^{-1}$]',fontsize=13)
             ax2.invert_xaxis()
     
-            pw = ax3.pcolormesh(x,zi,data['CAF'],cmap='Blues')
-            cs1 = ax3.contour(x,zi,data['TT']-273.15,[-40,-30,-20,-15,-10,-5,0,5],
+            pw = ax3.pcolormesh(x,zi,cross.CAF,cmap='Blues')
+            cs1 = ax3.contour(x,zi,cross.TT-273.15,[-40,-30,-20,-15,-10,-5,0,5],
                               colors='orange',linewidths=2,linestyles='solid')
-            #cs2 = ax3.contour(x,zi,data['Upd'],[-1.5,-1,-0.5,-0.2,0.2,0.5,1,1.5],
+            #cs2 = ax3.contour(x,zi,cross.Upd,[-1.5,-1,-0.5,-0.2,0.2,0.5,1,1.5],
              #                 colors='blueviolet',linewidths=2,linestyles='solid')
             cs2 = ax3.contourf(x,zi,Upd2,[-1.5,-1,-0.5,-0.2,0.2,0.5,1,1.5],
                               cmap='PRGn',alpha=0.7,extend='both')
@@ -459,7 +454,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--datetime", help="YYYYMMDDHH for modelrun", required=True, nargs="+")
     parser.add_argument("--steps", default=[0, 10], nargs="+", type=int,
-                        help="forecast times example --steps 0 3 gives time 0 to 3")
+                        help="forecast times example --steps 0 12 gives time 0 to 12 in steps of 6")
     parser.add_argument("--model", default="AromeArctic", help="MEPS or AromeArctic")
     parser.add_argument("--domain_lonlat", default=[-4.770555, 41.700291, 64.6152131, 79.477055], nargs="+", help="[ lonmin, lonmax, latmin, latmax]", type=float)
     parser.add_argument("--points_lonlat", default=[-4.770555, 41.700291, 64.6152131, 79.477055], nargs="+", help="[ lonmin, lonmax, latmin, latmax]", type=float)
@@ -480,7 +475,7 @@ if __name__ == "__main__":
     for dt in args.datetime:
         dirName = setup_met_directory(dt, runid=args.id, outpath=args.outpath)
 
-        for st in range(args.steps[-1]): # for now assuming that we start at 0
+        for st in np.arange(args.steps[0],args.steps[1],6): # for now assuming that we start at 0
 
             VC = VERT_CROSS(date=dt, steps=st, model=args.model, domain_lonlat = args.domain_lonlat,
                             extra_names = args.extra_names,
