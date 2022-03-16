@@ -147,7 +147,7 @@ def T850_RH(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
 
           # relative humidity above 80%
           CF_RH = ax1.contour(dmap_meps.x, dmap_meps.y, RH, zorder=4, alpha=0.5,
-                            levels=np.linspace(70, 100, 4), colors="blue", linewidths=0.7,label = "RH 70-100% ")
+                            levels=np.linspace(70, 90, 3), colors="blue", linewidths=0.7,label = "RH 70-90% ")
 
           #lat_p = 60.2
           #lon_p = 5.4167

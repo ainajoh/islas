@@ -46,6 +46,9 @@ def IVT_IWV(datetime, steps, model, domain_name = None, domain_lonlat = None, le
 
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
                                                        step=steps,m_level=m_level, domain_name = domain_name)
+        print(dmet)
+        print(data_domain)
+        print(bad_param)
         dmet.air_pressure_at_sea_level /= 100
 
         # prepare plot
@@ -247,7 +250,7 @@ if __name__ == "__main__":
 
   #CHUNCK SIZE TO BIG
   s  = np.arange(np.min(args.steps),np.max(args.steps)+1)
-  cn = np.int(len(s) // 4)
+  cn = int(len(s) // 4)
   if cn == 0:  # length of 6 not exceeded
       IVT_IWV(datetime=args.datetime, steps = [np.min(args.steps), np.max(args.steps)], model = args.model,
                  m_level=args.m_level,domain_name = args.domain_name, domain_lonlat=args.domain_lonlat,

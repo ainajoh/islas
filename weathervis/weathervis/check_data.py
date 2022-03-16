@@ -255,10 +255,12 @@ class check_data():
         elif model == "AromeArctic":
             if self.use_latest == True:
                 archive_url = "latest"
+                add_url="latest/"
             else:
                 archive_url = "archive"
-            base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/".format(archive_url)
-            base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearctic{0}/".format(archive_url)
+                add_url = ""
+            base_url = "https://thredds.met.no/thredds/catalog/aromearctic{0}/{1}".format(archive_url,add_url)
+            base_urlfile = "https://thredds.met.no/thredds/dodsC/aromearctic{0}/{1}".format(archive_url,add_url)
         else:
             pass
         print(base_url)
@@ -273,7 +275,7 @@ class check_data():
         soup = BeautifulSoup(page.text, 'html.parser')
         rawfiles= soup.table.find_all("a")
         ff =[i.text for i in rawfiles]
-        pattern=re.compile(f'.*{YYYY}{MM}{DD}T{HH}Z.nc')
+        pattern=re.compile(f'.*{YYYY}{MM}{DD}T{HH}Z.ncml')
         ff= pd.DataFrame( data = list(filter(pattern.match,ff)), columns=["File"])
         drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk","_preop_"]
         df = ff.copy()[~ff["File"].str.contains('|'.join(drop_files))] #(drop_files)])
