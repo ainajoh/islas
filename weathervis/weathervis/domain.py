@@ -126,13 +126,13 @@ class domain():
                               url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard_z2(self):  # map
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
         self.lonlat = [15, 23, 77, 82]  #
         self.idx = lonlat2idx(self.lonlat,url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def Svalbard_z1(self):  # map
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
         self.lonlat = [4, 23, 76.3, 82]  #
         self.idx = lonlat2idx(self.lonlat,url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
@@ -144,25 +144,25 @@ class domain():
         self.idx = lonlat2idx(self.lonlat,url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def North_Norway(self):  # data
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
         self.domain_name = "North_Norway"
         self.lonlat = [5, 25, 66.5, 77.2]  #
-        self.idx = lonlat2idx(self.lonlat,url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+        self.idx = lonlat2idx(self.lonlat,url=self.url)  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
     def KingsBay(self):  # bigger data
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
         self.lonlat = [10, 13.3, 78.6, 79.3]
         self.idx = lonlat2idx(self.lonlat, url)  # Rough
 
     def KingsBay_Z0(self):  # map
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
         self.lonlat = [11, 13., 78.73, 79.16]
         self.idx = lonlat2idx(self.lonlat, url)  # Rough
 
     def KingsBay_Z1(self):  # smaller data
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
         self.idx = np.array([[517, 517, 518, 518, 518, 518, 518, 519, 519, 519, 519, 519, 519, 520, 520, 520, 520, 520,
                               520, 520, 520, 520, 521, 521, 521, 521, 521, 521, 521, 521, 521, 522, 522, 522, 522, 522,
@@ -186,7 +186,7 @@ class domain():
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def Andenes_area(self):
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
         self.domain_name = "Andenes_area"
         self.lonlat = [6.0, 20.5, 67.5, 71.6]
         #self.lonlat = [12.0, 19.5, 68.0, 70.6]
@@ -409,7 +409,7 @@ class domain():
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def NorwegianSea_area(self):  # PAraglidingstart
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+        #url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
         self.domain_name = "NorwegianSea_area"
         self.lonlat = [-3, 21, 69.0, 77.2]  #
         self.idx = lonlat2idx(self.lonlat, self.url)
@@ -433,7 +433,6 @@ class domain():
         #self.idx = lonlat2idx(self.lonlat, self.url)
         #self.lonlat = [-65, 20., 58., 85]
         self.lonlat = [-26., -8, 63., 67]
-
         self.idx = lonlat2idx(self.lonlat, self.url)
 
     def pcmet1(self):
