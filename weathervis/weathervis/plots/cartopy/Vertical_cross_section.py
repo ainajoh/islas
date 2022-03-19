@@ -155,7 +155,7 @@ class VERT_CROSS():
 
 
 
-    def crosssection_as_meteogramm(self,dirName,timest,extralines=None,kx=None,
+    def crosssection_as_meteogramm(self,date,dirName,timest,extralines=None,kx=None,
                                    extrst=None,extrend=None):
         """create cross section 
          ----------
@@ -228,12 +228,12 @@ class VERT_CROSS():
         for i,z in enumerate(H[65-dimz:65]):
             HH[i,:,:] = z
         # give the height interval that the field is goid to be interpolated to. currently lowest 5000 m in 100m steps
-        heights=np.arange(0,5000,100)
-        # crosssections: first Ny-Ålesund - Kiruna, second Kiruna-Andernes-Zone, third Kiruna-Sodankylä-Russia
+        heights=np.arange(0,5000,500)
+        # crosssections: first Ny-Aesund - Kiruna, second Kiruna-Andernes-Zone, third Kiruna-Sodankylä-Russia
         coos2 = [((12.1,78.93),(20.18,67.50)),((4.41,70.55),(20.18,67.50)),
                  ((20.18,67.50),(29.268,67.102))] 
         K=[1,0,0]
-        stnam = ['Ny-Ålesund','Zone end','Kiruna']
+        stnam = ['Ny-Alesund','Zone end','Kiruna']
         endnam   = ['Kiruna','Kiruna','Russia']
         # in case of extra_lines
         if kx == 'lon':
@@ -366,8 +366,8 @@ class VERT_CROSS():
                 for a in aa:
                     a.invert_xaxis()
 
-            plt.savefig(dirName +"VCS_wind_"+ fnam+ "_step"+str(timest)+".png", bbox_inches = "tight", dpi = 200)
-            print('Saved crosssection as {}'.format(dirName +"VCS_wind_"+ fnam+ "_step"+str(timest)+".png"))
+            plt.savefig(dirName +"VCS_wind_"+fnam+"_{0}+{1:02d}.png".format(date,timest), bbox_inches = "tight", dpi = 200)
+            print('Saved crosssection as {}'.format(dirName +"VCS_wind_"+ fnam+ "_{0}+{1:02d}.png".format(date,timest)))
 
             plt.clf()
             plt.close()
@@ -441,8 +441,8 @@ class VERT_CROSS():
                 for a in aa:
                     a.invert_xaxis()
      
-            plt.savefig(dirName +"VCS_cloud_"+ fnam+"_step"+str(timest)+".png", bbox_inches = "tight", dpi = 200)
-            print('Saved crosssection as {}'.format(dirName +"VCS_cloud_"+ fnam+ "_step"+str(timest)+".png"))
+            plt.savefig(dirName +"VCS_cloud_"+fnam+"_{0}+{1:02d}.png".format(date,timest), bbox_inches = "tight", dpi = 200)
+            print('Saved crosssection as {}'.format(dirName +"VCS_cloud_"+ fnam+ "_{0}+{1:02d}.png".format(date,timest)))
 
 if __name__ == "__main__":
     import argparse
@@ -478,5 +478,5 @@ if __name__ == "__main__":
                             info=args.info, m_level=args.m_level)
             VC.retrieve_handler()
 
-            VC.crosssection_as_meteogramm(dirName=dirName,timest=st)
+            VC.crosssection_as_meteogramm(date=dt,dirName=dirName,timest=st)
 

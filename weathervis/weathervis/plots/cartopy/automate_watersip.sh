@@ -42,7 +42,7 @@ modelrun_hour="00"
 model=("AromeArctic")
 steps_max=(1)
 domain_name="None"
-release_name="AN"
+release_name="ANX"
 
 while [ $# -gt 0 ]; do
   case "$1" in
