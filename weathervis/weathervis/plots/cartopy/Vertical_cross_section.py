@@ -384,7 +384,7 @@ class VERT_CROSS():
             ax3.set_facecolor('grey')
             aa = [ax2,ax3]
             # the cloud area fraction and wind speed
-            levels = np.linspace(0.0, 21.0, 7)
+            levels = np.linspace(0.0, 31.0, 10)
             pc = ax2.pcolormesh(x[:-1,:],zi[:-1,:],dtdz2,vmin=-10,vmax=10,cmap='RdYlBu_r')
             #levels = np.linspace(0.0, 0.49, 7)
             rr = ax2.contourf(x,zi,prec,cmap='cool',
