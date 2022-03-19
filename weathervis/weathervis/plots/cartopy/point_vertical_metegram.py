@@ -13,18 +13,19 @@ import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from cartopy.io import (
-    shapereader,  # For reading shapefiles containg high-resolution coastline.
+from cartopy.io import (  # For reading shapefiles containg high-resolution coastline.
+    shapereader,
 )
 from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
+
+# from weathervis.get_data import *
+# from weathervis.check_data import *
 from weathervis.calculation import *
-from weathervis.check_data import *
 from weathervis.checkget_data_handler import *
 from weathervis.config import *
 from weathervis.domain import *
-from weathervis.get_data import *
 from weathervis.utils import *
 
 abspath = os.path.abspath(__file__)
@@ -248,7 +249,7 @@ class VERT_MET:
         # print("test4")
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
         # print("test5")
-        self.dmet.theta = potential_temperatur(
+        self.dmet.theta = potential_temperature(
             self.dmet.air_temperature_ml, self.dmet.p
         )
         # print("test6")
@@ -282,17 +283,17 @@ class VERT_MET:
                 num_point,
             )
         else:
-            sites = pd.read_csv("../../data/sites.csv", sep=";", header=0, index_col=0)
+            site = setup_site(self.poit_name)
             ind_list = nearest_neighbour(
-                sites.loc[self.point_name].lon,
-                sites.loc[self.point_name].lat,
+                site["lon"],
+                site["lat"],
                 dmet.longitude,
                 dmet.latitude,
                 num_point,
             )
             point_lonlat = [
-                sites.loc[self.point_name].lon,
-                sites.loc[self.point_name].lat,
+                site["lon"],
+                site["lat"],
             ]
         poi = ind_list[0:num_point]
         return poi
@@ -680,7 +681,7 @@ class VERT_MET:
         lvl = np.append(lvl1, lvl2)
         lvl = np.append(lvl, lvl3)
         ticks = np.array([-9.8, -6.5, -3, 0, 3, 6])
-        norm = mpl.colors.DivergingNorm(vmin=-10.0, vcenter=0.0, vmax=6)
+        norm = mpl.colors.TwoSlopeNorm(vmin=-10.0, vcenter=0.0, vmax=6)
         CF = axm1.pcolormesh(tx, p_p, dtdz_p, cmap=cmap, zorder=1, norm=norm)  # dtdz_p
         cbar = nice_vprof_colorbar(
             CF=CF, ax=axm1, ticks=ticks, label="Lapse. rate. [C/km]", format="%.1f"
@@ -732,7 +733,7 @@ class VERT_MET:
 
         # TEMP
         cmap = cm.get_cmap("twilight_shifted")  # BrBu  BrYlBu
-        norm = mpl.colors.DivergingNorm(vmin=-30.0, vcenter=0.0, vmax=10)
+        norm = mpl.colors.TwoSlopeNorm(vmin=-30.0, vcenter=0.0, vmax=10)
         CF_2 = axm2.pcolormesh(
             tx, p_p, temp_p, zorder=1, cmap=cmap, norm=norm
         )  # dtdz_p
@@ -906,7 +907,7 @@ if __name__ == "__main__":
         type=float,
         help="lonmin lonmax latmin latmax",
     )
-    parser.add_argument("--point_name", default=None, help="see sites.csv")
+    parser.add_argument("--point_name", default=None, help="see sites.yaml")
     parser.add_argument(
         "--point_lonlat", default=None, nargs="+", type=float, help="lon lat"
     )

@@ -173,6 +173,11 @@ Sodankyla:
    lon: 26.6308
    height: 180
 
+Abisko:
+   lat: 68.3532
+   lon: 19.0506
+   height: 360
+
 CAO:
   lat: 70.824218
   lon: 0.04802
@@ -195,21 +200,30 @@ GEOF322:
     north: 0.05
 
 pcmet1:
-  lat: 69.670501
-  lon: 20.494432
+   # lat: 69.670501
+   # lon: 20.494432
+   # height: 0.0
+   # description: 'EaterAina'
+  lat: 77.0
+  lon: 10.0
   height: 0.0
-  description: 'EaterAina'
+  description: 'FramStrait'
   margin:
     west: 0.15
     east: 0.15
     south: 0.05
     north: 0.05
 
+
 pcmet2:
-  lat: 78.771857
-  lon: 8.2396375
-  height: 0
-  description: 9500
+   # lat: 78.771857
+   # lon: 8.2396375
+   # height: 0
+   # description: 9500
+  lat: 72.0
+  lon: 24.0
+  height: 0.0
+  description: 'BarentsSea'
   margin:
     west: 0.15
     east: 0.15
@@ -217,10 +231,14 @@ pcmet2:
     north: 0.05
 
 pcmet3:
-  lat: 78.201387
-  lon: 1.333293
-  height: 1214.1
-  description: 0.0
+   # lat: 78.201387
+   # lon: 1.333293
+   # height: 1214.1
+   # description: 0.0
+  lat: 70.0
+  lon: 4.0
+  height: 0.0
+  decription: 'NorwegianSea'
   margin:
     west: 0.15
     east: 0.15

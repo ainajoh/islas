@@ -74,7 +74,7 @@ def CAO(
         hour = int(dt[-2:])
         param_sfc = ["air_pressure_at_sea_level", "surface_geopotential"]
         param_pl = ["air_temperature_pl", "geopotential_pl"]  # "air_temperature_2m",
-        param_sfx = ["SST", "SIC"]  # add later
+        param_sfx = ["SFX_SST", "SFX_SIC"]  # add later
         p_levels = [850, 1000]
         param = param_sfc + param_pl
         split = False
@@ -184,11 +184,11 @@ def CAO(
 
         # CALCULATE
 
-        pt = potential_temperatur(
+        pt = potential_temperature(
             dmap_meps.air_temperature_pl, dmap_meps.pressure * 100.0
         )
-        pt_sst = potential_temperatur(
-            dmap_mepsdfx.SST, dmap_meps.air_pressure_at_sea_level[:, 0, :, :]
+        pt_sst = potential_temperature(
+            dmap_mepsdfx.SFX_SST, dmap_meps.air_pressure_at_sea_level
         )
 
         dpt = (
@@ -227,7 +227,7 @@ def CAO(
             stepok = False
             if tim < 25:
                 stepok = True
-            elif (tim <= 36) and ((tim % 3) == 0):
+            elif (tim <= 48) and ((tim % 3) == 0):
                 stepok = True
             elif (tim <= 66) and ((tim % 6) == 0):
                 stepok = True
@@ -248,13 +248,15 @@ def CAO(
                     np.NaN,
                 ).squeeze()
                 Z = (tmap_meps.geopotential_pl[tidx, plev2, :, :]).squeeze()
-                DELTAPT = dpt[tidx, 0, :, :]
-                DELTAPT = dpt_sst[tidx, :, :]
-                ICE = dmap_mepsdfx.SIC[tidx, :, :]
+                # DELTAPT=dpt[tidx, 0, :, :]
+                # print(np.shape(DELTAPT))
+                # print(tidx)
+                DELTAPT = np.squeeze(dpt_sst[tidx, 0, :, :])
+                ICE = np.squeeze(dmap_mepsdfx.SFX_SIC[tidx, :, :])
                 SImask = np.where(
-                    ICE.squeeze() >= 0.1, dmap_mepsdfx.SIC[tidx, :, :], np.NaN
+                    ICE >= 0.1, dmap_mepsdfx.SFX_SIC[tidx, :, :], np.NaN
                 ).squeeze()
-                DELTAPT = np.where(ICE <= 0.99, DELTAPT, 0)
+                DELTAPT = np.where(ICE <= 0.99, (DELTAPT).squeeze(), 0)
                 lvl = range(-1, 13)
                 C = [
                     [255, 255, 255],  # grey #[255,255,255],#gre

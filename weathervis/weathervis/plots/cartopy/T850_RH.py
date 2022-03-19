@@ -175,7 +175,7 @@ def T850_RH(
             stepok = False
             if tim < 25:
                 stepok = True
-            elif (tim <= 36) and ((tim % 3) == 0):
+            elif (tim <= 48) and ((tim % 3) == 0):
                 stepok = True
             elif (tim <= 66) and ((tim % 6) == 0):
                 stepok = True
@@ -252,10 +252,10 @@ def T850_RH(
                     RH,
                     zorder=4,
                     alpha=0.5,
-                    levels=np.linspace(70, 100, 4),
+                    levels=np.linspace(70, 90, 3),
                     colors="blue",
                     linewidths=0.7,
-                    label="RH 70-100% ",
+                    label="RH 70-90% ",
                 )
 
                 # lat_p = 60.2
@@ -304,6 +304,7 @@ def T850_RH(
                             "MSLP [hPa]",
                             "",
                         ],
+                        loc="upper right",
                     )
                     frame = lg.get_frame()
                     frame.set_facecolor("white")

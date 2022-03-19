@@ -16,10 +16,11 @@ Bergen;60.383669;5.331850;None;None;None;None
 JanMayen;71.161223;-8.008265;None;None;None
 NorwegianSea;72.953497;5.112194;0;None;None;None
 Sodankyla;67.3959;26.6308;180;None;None;None
+Abisko;68.3532;19.0506;360;None;None;None
 CAO;70.824218;0.04802;0;None;None;None
-pcmet1;69.670501;20.494432;0.0;None;None;EaterAina
-pcmet2;78.771857;8.2396375;0.0;None;None;9500
-pcmet3;78.201387;1.333293;0.0;None;None;21439
+pcmet1;77.0;10.0;0.0;None;None;FramStrait
+pcmet2;72.0;24.0;0.0;None;None;BarentsSea
+pcmet3;70.0;4.0;0.0;None;None;NorwegianSea
 Varlegenhuken;80.0592;16.25;8;99927;01002;None
 OldPier;78.93030;11.91929;5;None;None;None
 GEOF322;60.2;5.41667;60;None;None;OS_HORDALAND

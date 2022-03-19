@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from add_overlays import *
-from cartopy.io import (
-    shapereader,  # For reading shapefiles containg high-resolution coastline.
+from cartopy.io import (  # For reading shapefiles containg high-resolution coastline.
+    shapereader,
 )
 from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
@@ -118,7 +118,7 @@ def Wind_on_levels(
                 stepok = False
                 if tim < 25:
                     stepok = True
-                elif (tim <= 36) and ((tim % 3) == 0):
+                elif (tim <= 48) and ((tim % 3) == 0):
                     stepok = True
                 elif (tim <= 66) and ((tim % 6) == 0):
                     stepok = True

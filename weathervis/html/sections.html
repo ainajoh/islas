@@ -4,7 +4,7 @@
 AROME Arctic meteogram forecasts for ISLAS2022
 </title>
 <link rel='stylesheet' type='text/css' href='watersip.css'>
-<script type="text/javascript" src="navigation_meteogram_vertical.js"></script>
+<script type="text/javascript" src="navigation_sections.js"></script>
 <script type="text/javascript" src="page_navigation.js"></script>
 </head>
 
@@ -36,65 +36,28 @@ AROME Arctic meteogram forecasts for ISLAS2022
 
   <table border=0 bgcolor=#ffffff width=1300 align=center>
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="800px"></td>
-      <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="800px"></td></tr>
+      </tr>
   <tr><td align=center>
 Type:<select id="meteogram1" size=1 onChange="javascript:selectMeteogram(0)">
 <option value=0 selected>Clouds</option>
 <option value=1>Wind</option>
 </select>
 Location:<select id="sel_v1" size=1 onChange="javascript:selectLocation(0)">
-<option value=0>Kiruna</option>
-<option value=1>ALOMAR</option>
-<option value=2>Tromso</option>
-<option value=3 selected>Ny Alesund</option>
-<option value=4>Longyearbyen</option>
-<option value=5>Bjornoya</option>
-<option value=6>NorwegianSea</option>
-<option value=7>Andenes</option>
-<option value=8>CAO</option>
-<option value=9>Alta</option>
-<option value=10>Bodo</option>
-<option value=11>Kirkenes</option>
-<option value=12>Trondheim</option>
-<option value=13>Bergen</option>
-<option value=14>Sodankyla</option>
-<option value=15>pcmet1</option>
-<option value=16>pcmet2</option>
-<option value=17>pcmet3</option>
+<option value=0 selected>Kiruna-Ny Alesund</option>
+<option value=1>Kiruna-Norwegian Sea</option>
+<option value=2>Kiruna-Russia</option>
 </select>
 </td>
-<td align=center>
-Type:<select id="meteogram2" size=1 onChange="javascript:selectMeteogram(1)">
-<option value=0>Clouds</option>
-<option value=1 selected>Wind</option>
-</select>
-Location:<select id="sel_v2" size=1 onChange="javascript:selectLocation(1)">
-<option value=0>Kiruna</option>
-<option value=1>ALOMAR</option>
-<option value=2>Tromso</option>
-<option value=3 selected>Ny Alesund</option>
-<option value=4>Longyearbyen</option>
-<option value=5>Bjornoya</option>
-<option value=6>NorwegianSea</option>
-<option value=7>Andenes</option>
-<option value=8>CAO</option>
-<option value=9>Alta</option>
-<option value=10>Bodo</option>
-<option value=11>Kirkenes</option>
-<option value=12>Trondheim</option>
-<option value=13>Bergen</option>
-<option value=14>Sodankyla</option>
-<option value=15>pcmet1</option>
-<option value=16>pcmet2</option>
-<option value=17>pcmet3</option>
-</option>
-</select>
-</td></tr><tr><td align=center colspan=3>
+</tr><tr><td align=center colspan=3>
   <form name="selpic" action="">
 Base time:
       <input name="back" value="-6h" type="button" onClick="javascript:skiponeback(0)">
       <span id="btime0">now</span>
       <input name="forward" value="+6h" type="button" onClick="javascript:skiponeforward(0)">
+Forecast time:
+<input name="back" value="-1h" type="button" onClick="javascript:skip1hback(0)">
+<span id="ftime0">t+00h</span>
+<input name="forward" value="+1h" type="button" onClick="javascript:skip1hforward(0)">
        <b>Valid time: <span id="valid0">valid</span></b>
       </form>
   </td></tr>

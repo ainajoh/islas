@@ -1,35 +1,10 @@
 #!/bin/bash
 source ~/.bashrc
 
-function converting {
-  here=$( pwd )
-  cd /home/centos/output/weathervis/$1
-  # convert to smaller image size and transfer to web disk
-  if ! [ -d /home/centos/www/gfx/$1 ]; then
-    mkdir -p /home/centos/www/gfx/$1
-  fi
-  for f in *.png; do 
-    convert -scale 30% $f /home/centos/www/gfx/$1/$f
-    \rm $f
-  done
-  sudo chown -R centos:apache /home/centos/www/gfx/$1  
-  # transfer to webserver
-  if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
-    #copy="scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/FLEXPART_AA* 158.39.201.233:/home/centos/www/gfx/$1/"
-    rsync -am --stats -r -e "ssh -i /home/centos/.ssh/islas-key.pem" /home/centos/www/gfx/$1/FLEXPART_AA* 158.39.201.233:/home/centos/www/gfx/$1
-    #echo $copy
-    #$copy
-  fi
-  cd $here
-}
-
-#dirname=$( pwd )
-dirname=""
 #set workingpath to where this file is located
 echo "$(dirname "$0")"
 cd "$(dirname "$0")"
 
-#echo $hostname
 cf=""
 if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
     cf="source ../../data/config/config_cyclone.sh"
@@ -52,7 +27,6 @@ else
   #date -v-60M -u +%Y%m%d%H%M
 fi
 
-#modeldatehour="2021022000"
 
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
@@ -64,10 +38,11 @@ yymmdd="${yy}${mm}${dd}"
 modelrun_date=$yymmdd
 modelrun_hour="00"
 model=("AromeArctic")
-steps_max=(66)
+steps_max=66
 domain_name="None"
-release_name="NYA"
-domain_name=("AromeArctic" "North_Norway" "Svalbard" "Andenes_area" NorwegianSea_area)
+
+steps="None"
+
 while [ $# -gt 0 ]; do
   case "$1" in
     --model)
@@ -75,31 +50,29 @@ while [ $# -gt 0 ]; do
     model=("${1#*=}")
     fi
     ;;
-    --modelrun)
+    --modelrun_date)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_date=("${1#*=}")
     fi
     ;;
     --modelrun_hour)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    echo "teeees"
     modelrun_hour=("${1#*=}")
     fi
     ;;
-    --steps_max)
+    --steps)
     if [[ "$1" != *=* ]]; then shift;  # Value is next arg if no `=`
-    steps_max=("${1#*=}")
+    steps=("${1#*=}")
     fi
     ;;
     --domain_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
-    domain_name=("${1#*=}")
+    domain_name="${1#*=}"
     fi
     ;;
-    --release_name)
+    --point_name)
     if [[ "$1" != *=* ]]; then shift;# Value is next arg if no `=`
-    release_name="${1#*=}"
+    point_name=("${1#*=}")
     fi
     ;;
     *)
@@ -110,45 +83,39 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
-#domain_name=($domain_name)
-echo domain_name
+
 echo $model
 echo $modelrun_date
 echo $modelrun_hour
 echo $steps_max
 echo $domain_name
-echo $release_name
 modelrun=("${modelrun_date}${modelrun_hour}")
 echo $modelrun
-#modelrun=("2021010100")
-#model=("AromeArctic")
-#steps_max=(1)
-#domain_name="West_Norwa
-#domain_name=""
-#model=("$1")
-#modelrun=("$2")
-#steps_max=($3)
-#if [$4]
-#then
-#  domain_name="$4" #West_Norway
-#fi
 
 
 #modelrun=("2020022712" "2020022812" "2020022912" "2020030112" "2020030212" "2020030312" "2020030412" "2020030512" "2020030612" "2020030712" "2020030812" "2020030912" "2020031012" "2020031112" "2020031212" "2020031312" "2020031412" "2020031516" "2020031612")
-#modelrun=("2021030400")
-#steps=0
+#modelrun=("2020031512")
+#modelrun=("2020101012")
+id=$$
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do
-	  for dom in ${domain_name[@]}; do
-    		runstring_FP="python flexpart_AA.py --datetime ${modelrun[i]} --steps 0 ${steps_max} --model $md --domain_name $dom"
-		
-    		echo $runstring_FP
-    		$runstring_FP
-    		converting ${modelrun[i]}
-	done
+    # run the vertical cross-sections
+
+    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64 --points_lonlat 4.41 20.18 70.55 67.50 --domain_lonlat 3.5 22.0 66.0 72.0 --start_name SEA --end_name KRN --orient 0"
+    echo $runstring_Vcross
+    $runstring_Vcross
+    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64 --points_lonlat 20.18 28.27 67.50 67.10 --domain_lonlat 18.0 30.0 65.0 69.0 --start_name KRN --end_name RUS --orient 0"
+    echo $runstring_Vcross
+    $runstring_Vcross
+    runstring_Vcross="python Vertical_cross_section.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --id $id --m_level 20 64 --points_lonlat 12.1 20.18 78.93 67.50 --domain_lonlat 11.0 22.0 66.0 80.0 --start_name KRN --end_name NYA --orient 1"
+    echo $runstring_Vcross
+    $runstring_Vcross
+    ./converting.sh /home/centos/output/weathervis/${modelrun[i]}-$id ${modelrun[i]}
+    rm -rf /home/centos/output/weathervis/${modelrun[i]}-$id
 
   done
 done
 
 # fin
+

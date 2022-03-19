@@ -27,7 +27,6 @@ else
    #date -v-60M -u +%Y%m%d%H%M
 fi
 
-
 yy=${modeldatehour:0:4}
 mm=${modeldatehour:4:2}
 dd=${modeldatehour:6:2}

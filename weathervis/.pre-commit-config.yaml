@@ -14,3 +14,9 @@ repos:
     rev: 22.1.0
     hooks:
       - id: black
+
+# sets up .pre-commit-ci.yaml to ensure pre-commit dependencies stay up to date
+ci:
+    autoupdate_schedule: weekly
+    skip: []
+    submodules: false

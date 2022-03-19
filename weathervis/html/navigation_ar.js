@@ -4,13 +4,25 @@
 window.onload=initWebsite;
 
 // date settings
-//var cday = new Date(2018,2,18);
-var cday = new Date();
+var cday = new Date(Date.now());
+hrs=cday.getUTCHours();
+if (hrs<10) {
+  cday.setUTCHours(12);
+  dy=cday.getDate();
+  cday.setDate(dy-1);
+} else if (hrs<21) {
+  cday.setUTCHours(0);
+} else {
+  cday.setUTCHours(12);
+}
+cday.setUTCMinutes(0);
+cday.setUTCSeconds(0);
+
 var fdate = 0; // forecast time step
 var member1 = 1;
 var member2 = 1;
 var zoom=false;
-var kind = 1;
+var kind = 2;
 var bt = 0;
 
 // treshold settings and names
@@ -228,6 +240,7 @@ function initWebsite()
 	period=0;
 	site=0;
 	type=0;
+	kind=2;
 	threshold=0;
 	selectThreshold();
 	document.getElementById("btime").innerHTML=getDatename()+"_"+getBasetime();

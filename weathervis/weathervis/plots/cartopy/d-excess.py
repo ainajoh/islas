@@ -56,7 +56,7 @@ def surf(
             "air_pressure_at_sea_level",
             "surface_geopotential",
         ]
-        param_sfx = ["SST", "SIC"]
+        param_sfx = ["SFX_SST", "SFX_SIC"]
         param_pl = []
         param = param_sfc + param_pl
         split = False
@@ -138,7 +138,7 @@ def surf(
             stepok = False
             if tim < 25:
                 stepok = True
-            elif (tim <= 36) and ((tim % 3) == 0):
+            elif (tim <= 48) and ((tim % 3) == 0):
                 stepok = True
             elif (tim <= 66) and ((tim % 6) == 0):
                 stepok = True
@@ -150,9 +150,9 @@ def surf(
                 ttt = tim  # + np.min(steps)
                 tidx = tim - np.min(steps)
                 print("Plotting d-excess {0} + {1:02d} UTC".format(dt, ttt))
-                SI = dmap_meps_sfx.SIC[tidx, :, :].squeeze()
+                SI = dmap_meps_sfx.SFX_SIC[tidx, :, :].squeeze()
                 SImask = np.where(
-                    SI >= 0.1, dmap_meps_sfx.SIC[tidx, :, :], np.NaN
+                    SI >= 0.1, dmap_meps_sfx.SFX_SIC[tidx, :, :], np.NaN
                 ).squeeze()
 
                 ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
@@ -171,7 +171,7 @@ def surf(
                 # L = np.where(ZS < 3000, L, np.NaN).squeeze()
                 # SH = dmap_meps_sfx.H[tidx,:,:].squeeze()
                 # SH = np.where(ZS < 3000, SH, np.NaN).squeeze()
-                SST = dmap_meps_sfx.SST[tidx, :, :].squeeze() - 273.15
+                SST = dmap_meps_sfx.SFX_SST[tidx, :, :].squeeze() - 273.15
                 es = 6.1094 * np.exp(17.625 * SST / (SST + 243.04))
                 mslp = dmap_meps.air_pressure_at_sea_level[tidx, :, :].squeeze() / 100
                 if model == "AromeArctic":

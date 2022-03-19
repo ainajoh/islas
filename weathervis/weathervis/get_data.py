@@ -272,7 +272,9 @@ class get_data:
             "mean_sea_level": non,
             "atmosphere_as_single_layer": non,
             "top_of_atmosphere": non,
+            "surface": non,
         }
+
         # fixed_var: The fixed variables we always want
         fixed_var = np.array(
             [
@@ -378,6 +380,7 @@ class get_data:
             "mean_sea_level": non,
             "atmosphere_as_single_layer": non,
             "top_of_atmosphere": non,
+            "surface": non,
         }
 
         # fixed_var: The fixed variables we always want
@@ -410,7 +413,7 @@ class get_data:
             if self.use_latest == False:
                 url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
-                url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/{file.loc['File']}?"
+                url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/{file.loc['File']}?"
 
             for (
                 prm

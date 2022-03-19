@@ -88,7 +88,7 @@ def OLR_sat(
             stepok = False
             if tim < 25:
                 stepok = True
-            elif (tim <= 36) and ((tim % 3) == 0):
+            elif (tim <= 48) and ((tim % 3) == 0):
                 stepok = True
             elif (tim <= 66) and ((tim % 6) == 0):
                 stepok = True
@@ -162,9 +162,8 @@ def OLR_sat(
                 ].copy()
                 data[mask] = np.nan
 
-                ax.pcolormesh(
-                    x, y, data[:, :], vmin=-230, vmax=-110, cmap=plt.cm.Greys_r
-                )
+                ax.pcolormesh(x, y, data[:, :], cmap=plt.cm.Greys_r)
+                # ax.pcolormesh(x, y, data[ :, :], vmin=-230,vmax=-110, cmap=plt.cm.Greys_r)
                 # lat_p = 78.9243
                 # lon_p = 11.9312
                 # mainpoint = ax.scatter(lon_p, lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),

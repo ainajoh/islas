@@ -202,7 +202,7 @@ def BLH(
             stepok = False
             if tim < 25:
                 stepok = True
-            elif (tim <= 36) and ((tim % 3) == 0):
+            elif (tim <= 48) and ((tim % 3) == 0):
                 stepok = True
             elif (tim <= 66) and ((tim % 6) == 0):
                 stepok = True
@@ -342,6 +342,7 @@ def BLH(
                             "MSLP [hPa]",
                             "",
                         ],
+                        loc="upper left",
                     )
                     frame = lg.get_frame()
                     frame.set_facecolor("white")

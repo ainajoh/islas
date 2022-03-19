@@ -157,7 +157,7 @@ def timestamp2utc(timestamp):
 ####################################################################################################################
 # THERMODYNAMICS
 #####################################################################################################################
-def potential_temperatur(temperature, pressure):
+def potential_temperature(temperature, pressure):
     """
     Parameters
     ----------

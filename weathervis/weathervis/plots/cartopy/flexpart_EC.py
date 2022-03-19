@@ -316,7 +316,7 @@ def flexpart_EC(
                     # del spec2d
                     # del spec2e
 
-                    if tim < 66:
+                    if tim <= 66:
                         Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
                         MSLP = np.where(
                             Z < 50000,

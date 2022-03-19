@@ -34,7 +34,7 @@ def watersip_EC(
     info=False,
     save=True,
     grid=True,
-    release_name="AN",
+    release_name="ANX",
 ):
     # avoid problems when plotting beyond AROME forecast period
     rsteps = steps.copy()
@@ -120,27 +120,31 @@ def watersip_EC(
 
         # read netcdf files with watersip output
         # dt=2021031600
-        print(
-            "/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(
-                release_name, dt[0:8]
-            )
-        )
-        cdf = nc.Dataset(
-            "/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(
-                release_name, dt[0:8]
-            ),
-            "r",
-        )
-        lats = cdf.variables["global_latitude"][:]
-        lons = cdf.variables["global_longitude"][:]
-        # lons, lats = np.meshgrid(lons, lats)
-        # print(lons)
-        tim = cdf.variables["time"][:]
-        ubl = cdf.variables["moisture_uptakes_boundary_layer"][:]
-        uft = cdf.variables["moisture_uptakes_free_troposphere"][:]
-        upt = ubl + uft
 
-        print(upt.shape)
+        upt = []
+        for rname in ["ANX", "ABS", "KRN"]:
+
+            print(
+                "/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(
+                    rname, dt[0:8]
+                )
+            )
+            cdf = nc.Dataset(
+                "/home/centos/watersip/{0}/fc_{1}_{0}_grid_steps.nc".format(
+                    rname, dt[0:8]
+                ),
+                "r",
+            )
+            lats = cdf.variables["global_latitude"][:]
+            lons = cdf.variables["global_longitude"][:]
+            # lons, lats = np.meshgrid(lons, lats)
+            # print(lons)
+            tim = cdf.variables["time"][:]
+            ubl = cdf.variables["moisture_uptakes_boundary_layer"][:]
+            uft = cdf.variables["moisture_uptakes_free_troposphere"][:]
+            upt.append(ubl + uft)
+
+            # print(upt.shape)
 
         # plot map
         lonlat = [
@@ -177,28 +181,53 @@ def watersip_EC(
             )
             tidx = tim - np.min(steps)
 
-            upt_plt = (upt[tim, :, :]).squeeze()
+            for n in np.arange(0, 3):
+                print(n)
+                upt_plt = (upt[n][tim, :, :]).squeeze()
 
-            # print(tidx)
-            # print(np.min(upt_plt))
-            print(np.max(upt_plt))
-            upt_plt = np.where(upt_plt > 1e-20, upt_plt, np.NaN)
+                # print(tidx)
+                # print(np.min(upt_plt))
+                print(np.max(upt_plt))
+                upt_plt = np.where(upt_plt > 1e-20, upt_plt, np.NaN)
 
-            print("Plotting WaterSip-EC {0} + {1:02d} UTC".format(dt, tim * 3))
-            # gather, filter and squeeze variables for plotting
-            plev = 0
-            # reduces noise over mountains by removing values over a certain height.
-            F_P = ax1.pcolormesh(
-                lons,
-                lats,
-                upt_plt,
-                norm=colors.LogNorm(vmin=1e-20, vmax=1e-11),
-                cmap=plt.cm.Blues,
-                zorder=1,
-                alpha=0.7,
-                transform=ccrs.PlateCarree(),
-            )
-            del upt_plt
+                print("Plotting WaterSip-EC {0} + {1:02d} UTC".format(dt, tim * 3))
+                # gather, filter and squeeze variables for plotting
+                plev = 0
+                # reduces noise over mountains by removing values over a certain height.
+                if n == 0:
+                    F_P = ax1.pcolormesh(
+                        lons,
+                        lats,
+                        upt_plt,
+                        norm=colors.LogNorm(vmin=1e-20, vmax=1e-13),
+                        cmap=plt.cm.Blues,
+                        zorder=3,
+                        alpha=0.6,
+                        transform=ccrs.PlateCarree(),
+                    )
+                elif n == 1:
+                    F_P = ax1.pcolormesh(
+                        lons,
+                        lats,
+                        upt_plt,
+                        norm=colors.LogNorm(vmin=1e-20, vmax=1e-13),
+                        cmap=plt.cm.Reds,
+                        zorder=2,
+                        alpha=0.6,
+                        transform=ccrs.PlateCarree(),
+                    )
+                else:
+                    F_P = ax1.pcolormesh(
+                        lons,
+                        lats,
+                        upt_plt,
+                        norm=colors.LogNorm(vmin=1e-20, vmax=1e-13),
+                        cmap=plt.cm.Greens,
+                        zorder=1,
+                        alpha=0.6,
+                        transform=ccrs.PlateCarree(),
+                    )
+                del upt_plt
 
             if tim < 66:
                 Z = dmet.surface_geopotential[tidx, 0, :, :]
@@ -325,7 +354,7 @@ if __name__ == "__main__":
         help="forecast times example --steps 0 3 gives time 0 to 3",
     )
     parser.add_argument("--model", default="MEPS", help="MEPS or AromeArctic")
-    parser.add_argument("--release_name", default="AN", help="AN or other sites")
+    parser.add_argument("--release_name", default="ANX", help="ANX or other sites")
     parser.add_argument(
         "--domain_name", default=None, help="see domain.py", type=none_or_str
     )

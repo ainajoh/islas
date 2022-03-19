@@ -45,7 +45,7 @@ def domain_input_handler(
     # print(point_name)
     # print(domain_name)
     # print(domain_lonlat)
-    print("TESTING DOM")
+    # print("TESTING DOM")
     print(point_lonlat)
     if domain_name or domain_lonlat:
         if domain_lonlat:
@@ -58,43 +58,38 @@ def domain_input_handler(
         else:
             data_domain = domain(dt, model, file=file, use_latest=use_latest)
 
-        if domain_name != None:
-            try:
-                if domain_name in dir(data_domain):
-                    print(f"\n####### Setting up domain: {domain_name} ##########")
-                    domain_name = domain_name.strip()
-                    # data_domain = domain(dt, model, file=file, domain_name=domain_name)
-                    if re.search("\(\)$", domain_name):
-                        func = f"data_domain.{domain_name}"
-                    else:
-                        func = f"data_domain.{domain_name}()"
-                    print(func)
-                    print(domain_name)
-                    eval(func)
-                else:
-                    data_domain.setup_point(domain_name)
-            except Exception:
-                logging.exception(f"No domain found with that name; {domain_name}")
-                raise
+        if domain_name != None and domain_name in dir(data_domain):
+            print(f"\n####### Setting up domain: {domain_name} ##########")
+            domain_name = domain_name.strip()
+            # data_domain = domain(dt, model, file=file, domain_name=domain_name)
+            if re.search("\(\)$", domain_name):
+                func = f"data_domain.{domain_name}"
+            else:
+                func = f"data_domain.{domain_name}()"
+            print(func)
+            print(domain_name)
+            eval(func)
+        else:
+            print(f"No domain found with that name; {domain_name}")
     else:
         data_domain = None
     if point_name != None and domain_name == None and domain_lonlat == None:
-        print("GGGGGOOOO")
+        # print("GGGGGOOOO")
         data_domain = domain(
             dt, model, file=file, point_name=point_name, use_latest=use_latest
         )
-        print("DOM DONE")
+        # print("DOM DONE")
     if (
         point_lonlat != None
         and point_name == None
         and domain_name == None
         and domain_lonlat == None
     ):
-        print("IN WRONG ONE")
+        # print("IN WRONG ONE")
         data_domain = domain(
             dt, model, file=file, lonlat=point_lonlat, use_latest=use_latest
         )
-        print("DOM DONE")
+        # print("DOM DONE")
     print(data_domain)
     return data_domain
 
@@ -235,7 +230,7 @@ def retrievenow(
     point_lonlat=None,
     use_latest=True,
 ):
-    print("HEEEE")
+    # print("HEEEE")
     fixed_var = [
         "ap",
         "b",
@@ -262,9 +257,9 @@ def retrievenow(
         ourparam = [k for k, v in combo.items() if v == ourfilename]
         ourfileobj = fileobj[fileobj["File"].isin([ourfilename])]
         ourfileobj.reset_index(inplace=True, drop=True)
-        print("data_domain")
-        print(ourfileobj)
-        print("JUST OUTSIDE DOM")
+        # print("data_domain")
+        # print(ourfileobj)
+        # print("JUST OUTSIDE DOM")
         data_domain = domain_input_handler(
             dt=date,
             model=model,
@@ -275,7 +270,7 @@ def retrievenow(
             point_lonlat=point_lonlat,
             use_latest=use_latest,
         )
-        print("retrieve strt")
+        # print("retrieve strt")
         print(data_domain)
         dmet = get_data(
             model=model,
@@ -288,13 +283,13 @@ def retrievenow(
             data_domain=data_domain,
             use_latest=use_latest,
         )
-        print("real retriete")
+        # print("real retriete")
         print(dmet.url)
         dmet.retrieve()
-        print("retriete done ")
+        # print("retriete done ")
         # for pm in dmet_new:
         if i >= 1:  # sec run
-            print("stat merging objects")
+            # print("stat merging objects")
             for pm in dmet_old.param:
                 # The if statements should be done more auto, maybe a dictionary.
                 if pm in fixed_var:
@@ -305,7 +300,7 @@ def retrievenow(
                     ):  # if next is bigger dont overwrite with old one
                         continue
                 setattr(dmet, pm, getattr(dmet_old, pm))
-            print("done objects")
+            # print("done objects")
         # add unit later
         dmet_old = dmet
     for bparam in bad_param:
@@ -335,9 +330,9 @@ def checkget_data_handler(
     use_latest=True,
 ):
     fileobj = check_data(model, date=date, step=step, use_latest=use_latest).file
-    print(fileobj)
+    # print(fileobj)
     print(all_param)
-    print("start finding choices")
+    # print("start finding choices")
     all_choices, bad_param = find_best_combinationoffiles(
         all_param=all_param, fileobj=fileobj, m_level=m_level, p_level=p_level
     )
@@ -348,18 +343,19 @@ def checkget_data_handler(
         all_choices, bad_param_sfx = find_best_combinationoffiles(
             all_param=all_param, fileobj=fileobj, m_level=m_level, p_level=p_level
         )
-        print("bad_param")
-        print(bad_param)
-        print("bad_param_sfx")
-        print(bad_param_sfx)
+        # print("bad_param")
+        # print(bad_param)
+        # print("bad_param_sfx")
+        # print(bad_param_sfx)
         # Ass SFX_param to it and try again.
 
     print(all_choices)
-    print("stopped finding choices")
+    # print("stopped finding choices")
 
     # RETRIEVE FROM THE BEST COMBINATIONS AND TOWARDS WORSE COMBINATION IF ANY ERROR
     for i in range(0, len(all_choices)):
 
+        print(i)
         try:
             print(
                 "getting data"
@@ -386,8 +382,7 @@ def checkget_data_handler(
             print("Oops!", sys.exc_info()[0], "occurred.")
             print("Next entry.")
             print(" ")
-    # for i in range(0,bad_param):
-
+    print(dmet)
     return dmet, data_domain, bad_param
 
 
