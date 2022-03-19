@@ -5,6 +5,7 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
+hrs=day0.getUTCHours();
 if (hrs<15) {
   dy=day0.getDate();
   day0.setDate(dy-1);

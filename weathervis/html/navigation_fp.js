@@ -5,15 +5,19 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
-day0.setUTCHours(day0.getUTCHours()-24);
+hrs=day0.getUTCHours();
+if (hrs<14) {
+  dy=day0.getDate();
+  day0.setDate(dy-1);
+}
 day0.setUTCHours(0);
-day0.setUTCMinutes(0);
-day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
-day1.setUTCHours(day1.getUTCHours()-24);
+hrs=day1.getUTCHours();
+if (hrs<14) {
+  dy=day1.getDate();
+  day1.setDate(dy-1);
+}
 day1.setUTCHours(0);
-day1.setUTCMinutes(0);
-day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
 var fdate = new Array(0,0); // forecast time step
 var vkind=new Array(0,1,2,3,4,5);
