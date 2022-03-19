@@ -111,8 +111,8 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
  
                 # plot 
                 CT2 = CT.copy()
-                # set all cloud tops above 7000m to nan
-                CT2[np.where(CT2>7000)] = np.nan
+                # set all cloud tops above 14000m to nan, choose 14000 to align more with LMH plot
+                CT2[np.where(CT2>14000)] = np.nan
                 data =  CT2[:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
                 cmap = plt.cm.get_cmap('rainbow_r', 6)
@@ -126,19 +126,19 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 yy = y.copy()
                 xx[np.where(np.isnan(CB1))] = np.nan
                 yy[np.where(np.isnan(CB1))] = np.nan
-                sc1 = ax1.scatter(xx[skip], yy[skip], s=10, zorder=2, marker='o', linewidths=0.9,
+                sc1 = ax1.scatter(xx[skip], yy[skip], s=30, zorder=2, marker='o', linewidths=0.9,
                                   c=co, alpha=0.75,label='[0m, 1000 m]')
                 xx = x.copy()
                 yy = y.copy()
                 xx[np.where(np.isnan(CB2))] = np.nan
                 yy[np.where(np.isnan(CB2))] = np.nan
-                sc2 = ax1.scatter(xx[skip], yy[skip], s=20, zorder=2, marker='o', linewidths=0.9,
-                                  c=co, alpha=0.75,label='[1000m, 2000m]')
+                sc2 = ax1.scatter(xx[skip], yy[skip], s=30, zorder=2, marker='o', linewidths=0.9,
+                                  facecolors='none',edgecolors=co, alpha=0.75,label='[1000m, 2000m]')
                 xx = x.copy()
                 yy = y.copy()
                 xx[np.where(np.isnan(CB3))] = np.nan
                 yy[np.where(np.isnan(CB3))] = np.nan
-                sc3 = ax1.scatter(xx[skip], yy[skip], s=40, zorder=2, marker='o', linewidths=0.9,
+                sc3 = ax1.scatter(xx[skip], yy[skip], s=30, zorder=2, marker='x', linewidths=0.9,
                        c=co, alpha=0.75,label='[2000m, 3000m]')
                 # MSLP
                 # MSLP with contour labels every 10 hPa, commented out due to cluttering
