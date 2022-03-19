@@ -5,20 +5,26 @@ window.onload=initWebsite;
 
 // date settings
 var day0 = new Date(Date.now());
-day0.setUTCHours(0);
+hrs=day0.getUTCHours();
+if (hrs<14) {
+  day0.setUTCHours(0);
+  dy=day0.getDate();
+  day0.setDate(dy-1);
+}
 day0.setUTCMinutes(0);
 day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
-day1.setUTCHours(0);
+day1.setDate(day0.getDate());
+day1.setUTCHours(day0.getUTCHours());
 day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
 var fdate = new Array(0,0); // forecast time step
-var mkind=new Array(0,1);
-var dkind=new Array(0,0);
+var vkind=new Array(0,0);
+var mkind=new Array(0,0);
 var synced=true;
 var kind = 1;
-var tim = new Array(0,0);
+var domain = new Array(0,0);
 var bt = 0;
 
 // treshold settings and names
@@ -29,32 +35,49 @@ captions[1]="";
 captions[2]="";
 
 // functions
-// 20220318_201113_channel5_AROME_Arctic.png
-
-function getDomain(m)
+function checkSync()
 {
-	switch (dkind[m]) {
-		case 0:
-                return "_AROME_Arctic.png";
-		break;
-		case 1:
-                return "_Greenland.png";
-		break;
-		default:
-		return "None";
-		break;
-	}
+  synced=document.getElementById("sync").checked;
 }
 
-
-function getChannel(m)
+function getVariable(m)
 {
 	switch (mkind[m]) {
 		case 0:
-                return "_channel5";
+		return "p";
 		break;
 		case 1:
-                return "_channel1,2,3";
+		return "lon";
+		break;
+		case 2:
+		return "lat";
+		break;
+		case 3:
+		return "alt";
+		break;
+		case 4:
+		return "vel";
+		break;
+		case 5:
+		return "w";
+		break;
+		case 6:
+		return "hdist";
+		break;
+		case 7:
+		return "hsep";
+		break;
+		case 8:
+		return "vdist";
+		break;
+		case 9:
+		return "vsep";
+		break;
+		case 10:
+		return "bldist";
+		break;
+		case 11:
+		return "tdist";
 		break;
 		default:
 		return "None";
@@ -62,12 +85,6 @@ function getChannel(m)
 	}
 }
 
-function getTime(n)
-{
-	var sel = document.getElementById("sel_time"+n);
-	return sel.options[tim[n]].text;
-        //return sel.options[1].text;
-}
 
 function getDatename() 
 {
@@ -130,54 +147,56 @@ function getBasetime()
 	return bfill+btim;
 }
 
-function getFilename(k)
+function getFilename(k,n)
 {
-  return "./gfx/sat_"+getDatename()+"/"+getDatename()+'_'+getTime(k)+getChannel(k)+getDomain(k);
+  return "./gfx/fc_"+getDatename(k)+"/RDF_map_"+getDatename(k)+getBasetime(k)+getFcStep()+'_36-48_'+getVariable(n)+".png";
 }
 
 function prepareFigure() 
 {
-	document.getElementById("panel1").src=getFilename(0);
-	document.getElementById("panel1").alt=getFilename(0);
+	document.getElementById("panel1").src=getFilename(vkind[0],0);
+	document.getElementById("panel1").alt=getFilename(vkind[0],0);
+	document.getElementById("panel2").src=getFilename(vkind[1],1);
+	document.getElementById("panel2").alt=getFilename(vkind[1],1);
 }
 
-function selectDomain(n)
+function selectVariable(n)
 {
     switch(n) {
  	case 0:
-	  dkind[0]=document.getElementById("domain0").selectedIndex;
+	  mkind[0]=document.getElementById("meteogram1").selectedIndex;
 	  break;
  	case 1:
-	  dkind[1]=document.getElementById("domain1").selectedIndex;
-	  break;
-    }
-    prepareFigure();
-}
-
-function selectChannel(n)
-{
-    switch(n) {
- 	case 0:
-	  mkind[0]=document.getElementById("channel0").selectedIndex;
-	  break;
- 	case 1:
-	  mkind[1]=document.getElementById("channel1").selectedIndex;
+	  mkind[1]=document.getElementById("meteogram2").selectedIndex;
 	  break;
     }
     prepareFigure();
 }
 
 
-function selectTime(n)
+function selectPoint(n)
+{
+    switch(n) {
+ 	case 0:
+	  vkind[0]=document.getElementById("domain1").selectedIndex;
+	  break;
+ 	case 1:
+	  vkind[1]=document.getElementById("domain2").selectedIndex;
+	  break;
+    }
+    prepareFigure();
+}
+
+function selectLocation(n)
 {
     switch(n) {
 	case 0:
-	  tim[0]=document.getElementById("sel_time0").selectedIndex;
-	  document.getElementById("panel1").src=getFilename(0);
+	  domain[0]=document.getElementById("sel_v1").selectedIndex;
+	  document.getElementById("panel1").src=getFilename(vkind[0],0);
 	  break;
 	case 1:
-	  tim[1]=document.getElementById("sel_time1").selectedIndex;
-	  document.getElementById("panel2").src=getFilename(1);
+	  domain[1]=document.getElementById("sel_v2").selectedIndex;
+	  document.getElementById("panel2").src=getFilename(vkind[1],1);
 	  break;
         default:
 	  break;
@@ -202,6 +221,8 @@ function initWebsite()
 	type=0;
         row=0
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
+	document.getElementById("valid"+row).innerHTML=getFcdate();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure(); // prepare both rows
 }
 
@@ -210,7 +231,12 @@ function skiponeback()
 	row=0;
 	cday[row].setUTCHours(cday[row].getUTCHours()-24);
 	fdate[row]+=24;
+	if (fdate[row]>60) {
+		fdate[row]=60;
+	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
+	document.getElementById("valid"+row).innerHTML=getFcdate();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
@@ -219,7 +245,38 @@ function skiponeforward()
 	row=0;
 	cday[row].setUTCHours(cday[row].getUTCHours()+24);
 	fdate[row]-=24;
+	if (fdate[row]<0) {
+		fdate[row]=0;
+	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
+	document.getElementById("valid"+row).innerHTML=getFcdate();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
+	prepareFigure();
+}
+
+function skip1hforward() 
+{
+	row=0;
+	fdate[row]+=12;
+	if (fdate[row]>60) {
+		fdate[row]=60;
+	}
+	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
+	document.getElementById("valid"+row).innerHTML=getFcdate();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
+	prepareFigure();
+}
+
+function skip1hback() 
+{
+	row=0;
+	fdate[row]-=12;
+	if (fdate[row]<0) {
+		fdate[row]=0;
+	}
+	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
+	document.getElementById("valid"+row).innerHTML=getFcdate();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 

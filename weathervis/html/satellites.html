@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>
-AROME Arctic NOAA satellite images for ISLAS2022
+NOAA satellite images for ISLAS2022
 </title>
 <link rel='stylesheet' type='text/css' href='watersip.css'>
 <script type="text/javascript" src="navigation_sat.js"></script>
@@ -9,10 +9,9 @@ AROME Arctic NOAA satellite images for ISLAS2022
 </head>
 
 <BODY bgcolor=#f0f0f0 vlink=#000055 link=#0000d0>
-
   <table border=0 bgcolor=#f0f0f0 width=1300 align=center><tr>
     <td width=100><img align=left src="gfx/uiblogo.gif" height=60></td>
-    <td width=1300 colspan=9><h2 align=center>NOAA satellite images for ISLAS2022</h2></td><td colspan=2 align=center><a href=index.html>[System status]</td><td colspan=2 align=center><a href=manual.html>[Instruction tables]</td></tr>
+    <td width=1200 colspan=7><h2 align=center>NOAA satellite images for ISLAS2022 field operations</h2></td></tr>
     <tr>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_EC.html>Flexpart IFS</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_AA.html>Flexpart AROME</a></td>
@@ -23,57 +22,47 @@ AROME Arctic NOAA satellite images for ISLAS2022
     <td width=100 align=center bgcolor=#c0c0c0><a href=probability.html>EPS maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=heatmaps.html>EPS heatmap</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=watersip.html>WaterSip</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_RDF.html>FLEXPART RDF</a></td>
-    <td width=100 align=center bgcolor=#c0c0c0><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">IFS Lagranto</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=flexpart_RDF.html>FLEXPART FDF</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=watersip.html>WaterSip</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=https://iacweb.ethz.ch/staff/lpapritz/forecasts/arctic/index_na.html target="_blank">ETH maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=http://gws-access.jasmin.ac.uk/public/mo_forecasts/restricted/ACAO/mo_f_acao_dtime.html target="_blank">ACAO maps</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><b>Satellites</b></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=quicklooks.html>Quicklooks</a></td>
+    <td width=100 align=center bgcolor=#c0c0c0><a href=index.html>Quicklooks</a></td>
     <td width=100 align=center bgcolor=#c0c0c0><a href=ondemand.html>On Demand</a></td></tr>
-    </tr>
     <tr>
-    <td width=1200 align=center colspan=12>Base: NOAA polar orbiting satellites, IR and VIS channels. Plots updated 1 times daily at 06 UTC.</td></tr>
-    </table>
-
-  <table border=0 bgcolor=#ffffff width=1300 align=center>
+    <td width=1200 align=center colspan=17>Base: NOAA polar orbiting satellites, IR and VIS channels. Plots updated every 2h from 00 UTC.</td></tr>
+    <tr><td></td></tr></table>
+  <table border=0 bgcolor=#ffffff width=800 align=center>
   <tr><td align=center><img id="panel1" src="gfx/fc_20160929/fc_20160929.gif" alt="integrated water vapour" height="800px"></td>
-      <td align=center><img id="panel2" src="gfx/fc_20160929/fc_20160929.gif" alt="CAO index" height="800px"></td></tr>
-  <tr><td align=center>
-Domain:<select id="domain0" size=1 onChange="javascript:selectDomain(0)">
-<option value=0 selected>AromeArctic</option>
-<option value=1>Greenland sea</option>
+      <td align=center>
+Time:<br><select id="sel_time0" size=18 onChange="javascript:selectTime(0)">
+VISOPTIONS
+<option>003141</option> <option>012130</option> <option>021116</option> <option>030104</option> <option>035216</option> <option>044041</option> <option>044204</option> <option>051400</option> <option>053150</option> <option>060200</option> <option>062138</option> <option>062215</option> <option>065600</option> <option>071001</option> <option>074300</option> <option>075821</option> <option>080335</option> <option>082258</option>
 </select>
-Type:<select id="channel0" size=1 onChange="javascript:selectChannel(0)">
-<option value=0 selected>IR channel 2</option>
-<option value=1>VIS/IR composite</option>
-</select>
-Time:<select id="sel_time0" size=1 onChange="javascript:selectTime(0)">
-<option>0043</option> <option>0133</option> <option>0222</option> <option>0312</option> <option>0403</option> <option>0441</option> <option>0452</option> <option>0453</option> <option>0521</option> <option>0543</option> <option>0608</option> <option>0615</option> <option>0633</option> <option>0710</option> <option>0721</option> <option>0756</option> <option>0757</option> <option>0810</option> <option>0843</option> <option>0858</option> <option>0930</option> <option>0938</option> <option>0946</option> <option>1024</option> <option>1036</option> <option>1111</option> <option>1118</option> <option>1126</option> <option>1204</option> <option>1216</option> <option>1256</option> <option>1258</option> <option>1307</option> <option>1349</option> <option>1400</option> <option>1431</option> <option>1438</option> <option>1527</option> <option>1548</option> <option>1607</option> <option>1617</option> <option>1629</option> <option>1704</option> <option>1725</option> <option>1744</option> <option>1758</option> <option>1809</option> <option>1842</option> <option>1904</option> <option>1928</option> <option>1954</option> <option>2022</option>
-</select>
-</td>
-<td align=center>
-Domain:<select id="domain1" size=1 onChange="javascript:selectDomain(1)">
-<option value=0 selected>AromeArctic</option>
-<option value=1>Greenland sea</option>
-</select>
-Type:<select id="channel1" size=1 onChange="javascript:selectChannel(1)">
-<option value=0>IR channel 2</option>
-<option value=1 selected>VIS/IR composite</option>
-</select>
-Time:<select id="sel_time1" size=1 onChange="javascript:selectTime(1)">
-<option>0312</option> <option>0403</option> <option>0441</option> <option>0453</option> <option>0543</option> <option>0615</option> <option>0633</option> <option>0721</option> <option>0757</option> <option>0810</option> <option>0858</option> <option>0938</option> <option>0946</option> <option>1036</option> <option>1118</option> <option>1126</option> <option>1216</option> <option>1258</option> <option>1307</option> <option>1400</option> <option>1438</option> <option>1527</option> <option>1548</option> <option>1607</option> <option>1617</option> <option>1629</option> <option>1704</option> <option>1725</option> <option>1744</option> <option>1758</option> <option>1809</option> <option>1842</option> <option>1904</option>
-</select>
-</td></tr><tr><td>
+      </td></tr>
+      <tr>
+<td align=center colspan=2>
   <form name="selpic" action="">
 Base time:
       <input name="back" value="-24h" type="button" onClick="javascript:skiponeback(0)">
       <span id="btime0">now</span>
       <input name="forward" value="+24h" type="button" onClick="javascript:skiponeforward(0)">
-      </form>
-  </td></tr>
-  <tr><td colspan=3 align=center><span id=caption2></span><hr></td></tr>
+Domain:<select id="domain0" size=1 onChange="javascript:selectDomain(0)">
+<option value=0 selected>AromeArctic</option>
+<option value=1>Greenland sea</option>
+</select>
+Type:<select id="channel0" size=1 onChange="javascript:selectChannel(0)">
+<option value=0 selected>Infrared (Channel 5)</option>
+<option value=1>Visible (Channel 1,2,3 composite)</option>
+</select>
+</form>
+</td>
+</tr>
+  <tr><td colspan=2 align=center><span id=caption2></span><hr></td></tr>
   </table>
 <p>
-<p align=center>Website updated 1x daily at 7 UTC. All times in UTC time. Data source: https://thredds.met.no/thredds/metno.html
+<p align=center>Website updated 12x daily, every 2h from  0 UTC. All times in UTC time. Data source: Meteorologisk Institutt, GFI
 <p>
 Contact: <i>alena.dekhtyareva@uib.no, harald.sodemann@uib.no</i>.
 <p>
