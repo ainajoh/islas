@@ -164,10 +164,11 @@ class get_data():
 
         # indexidct Keeps track of dimensions for the different independent variables.
         indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
-                     "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level, "hybrid0": non,
-                     "height0": non, "height1": non, "height2": non,
-                     "height3": non, "height7": non, "height6": non, 'height_above_msl': non, "mean_sea_level": non,
-                     "atmosphere_as_single_layer": non,"top_of_atmosphere":non}
+             "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level,"hybrid0": non,
+             "height0": non, "height1": non, "height2": non,
+             "height3": non, "height7": non, "height6": non,'height_above_msl': non, "mean_sea_level":non,
+             "atmosphere_as_single_layer":non,"top_of_atmosphere":non, "surface":non}
+
         # fixed_var: The fixed variables we always want
         fixed_var = np.array(
             ["latitude", "longitude", "forecast_reference_time", "projection_lambert", "ap", "b", "ap2", "b2"])
@@ -234,10 +235,10 @@ class get_data():
         non = f"[0:1:0]"
         #indexidct Keeps track of dimensions for the different independent variables.
         indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
-                     "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level,"hybrid0": non,
-                     "height0": non, "height1": non, "height2": non,
-                     "height3": non, "height7": non, "height6": non,'height_above_msl': non, "mean_sea_level":non,
-                     "atmosphere_as_single_layer":non,"top_of_atmosphere":non}
+             "pressure": pl_idx, "hybrid": m_level, "hybrid2": m_level,"hybrid0": non,
+             "height0": non, "height1": non, "height2": non,
+             "height3": non, "height7": non, "height6": non,'height_above_msl': non, "mean_sea_level":non,
+             "atmosphere_as_single_layer":non,"top_of_atmosphere":non, "surface":non}
 
         # fixed_var: The fixed variables we always want
         fixed_var = np.array(["latitude","longitude","forecast_reference_time","projection_lambert", "ap","b", "ap2","b2"])
@@ -256,7 +257,7 @@ class get_data():
             if self.use_latest==False:
               url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
-              url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/{file.loc['File']}?"
+              url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/{file.loc['File']}?"
 
             for prm in param: #loop that updates the url to include each parameter with its dimensions
                 url += f"{prm}"                           # example:  url =url+x_wind_pl

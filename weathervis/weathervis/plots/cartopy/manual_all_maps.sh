@@ -5,7 +5,7 @@ steps=66
 #steps=2
 runhour=00
 #dat=20210323
-dat=20220306
+dat=20220316
 #runhour=06
 #runhour=12
 #runhour=18
@@ -44,9 +44,9 @@ dat=20220306
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
 # also run watersip
-automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name ANX --modelrun $dat
-automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name ANX --modelrun $dat
-automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area --release_name ANX --modelrun $dat
-automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard --release_name ANX --modelrun $dat
-automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area --release_name ANX --modelrun $dat
+#automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name ANX --modelrun $dat
+#automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name ANX --modelrun $dat
+#automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area --release_name ANX --modelrun $dat
+#automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard --release_name ANX --modelrun $dat
+#automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area --release_name ANX --modelrun $dat
 # fin

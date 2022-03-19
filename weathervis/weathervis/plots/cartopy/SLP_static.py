@@ -106,7 +106,7 @@ def SLP_static(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonl
       stepok=False
       if tim<25:
           stepok=True
-      elif (tim<=36) and ((tim % 3) == 0):
+      elif (tim<=48) and ((tim % 3) == 0):
           stepok=True
       elif (tim<=66) and ((tim % 6) == 0):
           stepok=True

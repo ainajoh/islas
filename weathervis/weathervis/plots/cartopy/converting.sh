@@ -13,7 +13,7 @@ lst=$( ls *.png )
 echo $lst
 for f in $lst; do 
   echo "converting $f"
-  convert -scale 35% $f /home/centos/www/gfx/$2/$f
+  convert -scale 30% $f /home/centos/www/gfx/$2/$f
   \rm $f
 done
 

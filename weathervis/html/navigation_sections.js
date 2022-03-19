@@ -28,11 +28,11 @@ day1.setUTCMinutes(0);
 day1.setUTCSeconds(0);
 var cday = new Array(day0, day1);
 var fdate = new Array(0,0); // forecast time step
-var vkind=new Array(3,3);
-var mkind=new Array(0,1);
+var vkind=new Array(0,0);
+var mkind=new Array(0,0);
 var synced=true;
 var kind = 1;
-var domain = new Array(3,3);
+var domain = new Array(0,0);
 var bt = 0;
 
 // treshold settings and names
@@ -48,35 +48,14 @@ function checkSync()
   synced=document.getElementById("sync").checked;
 }
 
-function getKind(n)
-{
-  switch (n) {
-    case 3:
-      return "";
-      break;
-    case 0:
-      return "_SEA";
-      break;
-    case 1:
-      return "_LAND";
-      break;
-    case 2:
-      return "_ALL";
-      break;
-    default: 
-      return "_";
-      break;
-  }
-}
-
 function getMeteogram(m)
 {
 	switch (mkind[m]) {
 		case 0:
-		return "op1";
+		return "cloud_";
 		break;
 		case 1:
-		return "op2";
+		return "wind_";
 		break;
 		default:
 		return "None";
@@ -89,62 +68,14 @@ function getDomainname(n)
 {
 	switch (domain[n]) {
 		case 0:
-		return "VPMET_Kiruna_";
+		return "KRN-NYA_";
 		break;
 		case 1:
-		return "VPMET_ALOMAR_";
+		return "SEA-KRN_";
 		break;
 		case 2:
-		return "VPMET_Tromso_";
+		return "KRN-RUS_";
 		break;
-		case 3:
-		return "VPMET_NyAlesund_";
-		break;
-		case 4:
-		return "VPMET_Longyearbyen_";
-		break;
-		case 5:
-		return "VPMET_Bjornoya_";
-		break;
-		case 6:
-		return "VPMET_NorwegianSea_";
-		break;
-		case 7:
-		return "VPMET_Andenes_";
-		break;
-	        case 8:
-                return "VPMET_CAO_";
-                break;
-	        case 9:
-                return "VPMET_Alta_";
-                break;
-		case 10:
-                return "VPMET_Bodo_";
-                break;
-		case 11:
-                return "VPMET_Kirkenes_";
-                break;
-		case 12:
-                return "VPMET_Trondheim_";
-                break;
-		case 13:
-                return "VPMET_Bergen_";
-                break;
-		case 14:
-                return "VPMET_Sodankyla_";
-                break;
-		case 15:
-                return "VPMET_pcmet1_";
-                break;
-		case 16:
-                return "VPMET_pcmet2_";
-                break;
-		case 17:
-                return "VPMET_pcmet3_";
-                break;
-		case 18:
-                return "VPMET_Abisko_";
-                break;
 		default:
 		return "None";
 		break;
@@ -214,7 +145,7 @@ function getBasetime()
 
 function getFilename(k,n)
 {
-  return "./gfx/"+getDatename(k)+getBasetime(k)+"/"+getDomainname(n)+getDatename(k)+getBasetime(k)+"_"+getMeteogram(n)+".png";
+  return "./gfx/"+getDatename(k)+getBasetime(k)+"/VCS_"+getMeteogram(n)+getDomainname(n)+getDatename(k)+getBasetime(k)+getFcStep()+".png";
 }
 
 function prepareFigure() 
@@ -287,7 +218,7 @@ function initWebsite()
         row=0
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	//document.getElementById("ftime"+row).innerHTML=getFcStep();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure(); // prepare both rows
 }
 
@@ -296,18 +227,12 @@ function skiponeback()
 	row=0;
 	cday[row].setUTCHours(cday[row].getUTCHours()-6);
 	fdate[row]+=6;
-	if ((fdate[row]>24) && (fdate[row]<36)) {
-		fdate[row]=fdate[row] - (fdate[row] % 3)
-	}
-	if ((fdate[row]>36) && (fdate[row]<66)) {
-		fdate[row]=fdate[row] - (fdate[row] % 6)
-	}
 	if (fdate[row]>66) {
 		fdate[row]=66;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	//document.getElementById("ftime"+row).innerHTML=getFcStep();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
@@ -316,56 +241,38 @@ function skiponeforward()
 	row=0;
 	cday[row].setUTCHours(cday[row].getUTCHours()+6);
 	fdate[row]-=6;
-	if ((fdate[row]>24) && (fdate[row]<36)) {
-		fdate[row]=fdate[row] + (fdate[row] % 3)
-	}
-	if ((fdate[row]>36) && (fdate[row]<66)) {
-		fdate[row]=fdate[row] + (fdate[row] % 6)
-	}
 	if (fdate[row]<0) {
 		fdate[row]=0;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	//document.getElementById("ftime"+row).innerHTML=getFcStep();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
 function skip1hforward() 
 {
 	row=0;
-	fdate[row]+=1;
-	if (fdate[row]>24) {
-		fdate[row]=fdate[row]+2;
-	}
-	if (fdate[row]>36) {
-		fdate[row]=fdate[row]+3;
-	}
+	fdate[row]+=6;
 	if (fdate[row]>66) {
 		fdate[row]=66;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	//document.getElementById("ftime"+row).innerHTML=getFcStep();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 
 function skip1hback() 
 {
 	row=0;
-	if (fdate[row]>36) {
-		fdate[row]=fdate[row]-3;
-	}
-	if (fdate[row]>24) {
-		fdate[row]=fdate[row]-2;
-	}
-	fdate[row]-=1;
+	fdate[row]-=6;
 	if (fdate[row]<0) {
 		fdate[row]=0;
 	}
 	document.getElementById("btime"+row).innerHTML=getDatename()+"_"+getBasetime();
 	document.getElementById("valid"+row).innerHTML=getFcdate();
-	//document.getElementById("ftime"+row).innerHTML=getFcStep();
+	document.getElementById("ftime"+row).innerHTML=getFcStep();
 	prepareFigure();
 }
 

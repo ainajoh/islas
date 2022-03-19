@@ -24,7 +24,7 @@ $cf
 #fclagh=2400 #24 hours before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
-  modeldatehour=$(date -u --date "today - $((2400*60/100)) minutes" +'%Y%m%d%H%M')
+  modeldatehour=$(date -u --date "today - $((0*60/100)) minutes" +'%Y%m%d%H%M')
 else
   modeldatehour=$(date -v-$((2400*60/100))M -u +%Y%m%d%H%M)
   #date -v-60M -u +%Y%m%d%H%M

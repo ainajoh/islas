@@ -5,6 +5,10 @@
 
 function setKind(id) 
 {
+   if (id == 'start') {
+	   id='CAOID';
+	   initWebsite();
+   }
    document.getElementById('ARID').bgColor="#a0a0a0";
    document.getElementById('CAOID').bgColor="#a0a0a0";
    document.getElementById('EHSID').bgColor="#a0a0a0";

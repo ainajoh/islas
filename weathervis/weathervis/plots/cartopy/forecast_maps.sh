@@ -42,7 +42,7 @@ echo "" > ./forecast_profiling.log
 case "$model" in
     AA)
 	#url="https://thredds.met.no/thredds/dodsC/aromearcticarchive/${yy}/${mm}/${dd}/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
-        url="https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_${modelrun_date}T${modelrun_hour}Z.nc.html"
+        url="https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_${modelrun_date}T${modelrun_hour}Z.ncml.html"
 	echo $url
         web_code=$(curl -sL -w "%{http_code}\n" "$url" -o /dev/null)
         echo $web_code
@@ -62,6 +62,9 @@ case "$model" in
 	end_log
 	start_log "Vertical Meteograms" 
 	automate_all_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour  &
+	end_log
+	start_log "Cross sections" 
+	automate_vertical_cross_section.sh --steps 0\ $steps --modelrun_hour $runhour  &
 	end_log
 	start_log "AA Andenes_area" 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
