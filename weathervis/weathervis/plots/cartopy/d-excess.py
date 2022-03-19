@@ -45,7 +45,7 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
         hour = int(dt[-2:])
         # param_sfc = ["relative_humidity_2m", "air_temperature_2m", "specific_humidity_2m", "air_pressure_at_sea_level"]
         param_sfc = ["air_temperature_2m", "specific_humidity_2m", "air_pressure_at_sea_level", "surface_geopotential"]
-        param_sfx = ["SST", "SIC"]
+        param_sfx = ["SFX_SST", "SFX_SIC"]
         param_pl = []
         param = param_sfc + param_pl
         split = False
@@ -115,8 +115,8 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                 ttt = tim  # + np.min(steps)
                 tidx = tim - np.min(steps)
                 print('Plotting d-excess {0} + {1:02d} UTC'.format(dt, ttt))
-                SI = dmap_meps_sfx.SIC[tidx, :, :].squeeze()
-                SImask = np.where(SI >= 0.1, dmap_meps_sfx.SIC[tidx, :, :], np.NaN).squeeze()
+                SI = dmap_meps_sfx.SFX_SIC[tidx, :, :].squeeze()
+                SImask = np.where(SI >= 0.1, dmap_meps_sfx.SFX_SIC[tidx, :, :], np.NaN).squeeze()
 
                 ZS = dmap_meps.surface_geopotential[tidx, 0, :, :]
                 MSLP = np.where(ZS < 3000, dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :], np.NaN).squeeze() / 100
@@ -127,7 +127,7 @@ def surf(datetime, steps=0, model=model, domain_name=None, domain_lonlat=None, l
                 # L = np.where(ZS < 3000, L, np.NaN).squeeze()
                 # SH = dmap_meps_sfx.H[tidx,:,:].squeeze()
                 # SH = np.where(ZS < 3000, SH, np.NaN).squeeze()
-                SST = dmap_meps_sfx.SST[tidx, :, :].squeeze() - 273.15
+                SST = dmap_meps_sfx.SFX_SST[tidx, :, :].squeeze() - 273.15
                 es = 6.1094 * np.exp(17.625 * SST / (SST + 243.04))
                 mslp = dmap_meps.air_pressure_at_sea_level[tidx, :, :].squeeze() / 100
                 if model == 'AromeArctic':

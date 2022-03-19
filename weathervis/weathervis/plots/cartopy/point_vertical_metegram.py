@@ -1,8 +1,9 @@
 from weathervis.config import *
 from weathervis.utils import *
 from weathervis.domain import *
-from weathervis.get_data import *
-from weathervis.check_data import *
+#from weathervis.get_data import *
+#from weathervis.check_data import *
+from weathervis.checkget_data_handler import *
 
 from weathervis.calculation import *
 import os
@@ -159,7 +160,7 @@ class VERT_MET():
         #print("test4")
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
         #print("test5")
-        self.dmet.theta = potential_temperatur(self.dmet.air_temperature_ml, self.dmet.p)
+        self.dmet.theta = potential_temperature(self.dmet.air_temperature_ml, self.dmet.p)
         #print("test6")
         self.dmet.altfrom_pref = pl2alt_sl(self.dmet.surface_geopotential, self.dmet.air_temperature_ml, self.dmet.specific_humidity_ml, self.dmet.p*100)
 

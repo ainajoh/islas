@@ -97,7 +97,8 @@ def OLR_sat(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat 
           data =  dmap_meps.toa_outgoing_longwave_flux[tidx, 0,:nx - 1, :ny - 1].copy()
           data[mask] = np.nan
 
-          ax.pcolormesh(x, y, data[ :, :], vmin=-230,vmax=-110, cmap=plt.cm.Greys_r)
+          ax.pcolormesh(x, y, data[ :, :], cmap=plt.cm.Greys_r)
+          #ax.pcolormesh(x, y, data[ :, :], vmin=-230,vmax=-110, cmap=plt.cm.Greys_r)
           #lat_p = 78.9243
           #lon_p = 11.9312
           #mainpoint = ax.scatter(lon_p, lat_p, s=9.0 ** 2, transform=ccrs.PlateCarree(),

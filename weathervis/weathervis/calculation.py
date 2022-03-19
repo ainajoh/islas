@@ -146,7 +146,7 @@ def timestamp2utc(timestamp):
 ####################################################################################################################
 # THERMODYNAMICS
 #####################################################################################################################
-def potential_temperatur(temperature, pressure):
+def potential_temperature(temperature, pressure):
     """
     Parameters
     ----------
@@ -161,7 +161,6 @@ def potential_temperatur(temperature, pressure):
     Rd = 287.05  #[J/kg K] Gas constant for dry air
     cp = 1004.  #[J/kg] specific heat for dry air (WH)
     theta = np.full(np.shape(temperature), np.nan)
-    #print(np.shape(theta))
     #print(len(np.shape(theta)))
     if len(np.shape(theta)) ==4:
         if len(np.shape(pressure)) ==1:

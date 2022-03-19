@@ -9,7 +9,7 @@ function converting {
     mkdir /home/centos/www/gfx/$1
   fi
   for f in *.png; do 
-    convert -scale 35% $f /home/centos/www/gfx/$1/$f
+    convert -scale 30% $f /home/centos/www/gfx/$1/$f
     \rm $f
   done
   sudo chown -R centos:apache /home/centos/www/gfx/$1  

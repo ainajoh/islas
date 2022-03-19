@@ -936,7 +936,7 @@ def calculate_data(dmet, dmet_ml, dmet_sfx):
     dmet.precip3h = precip_acc(dmet.precipitation_amount_acc, acc=3)
     # future speedup.. maybe do it for only points needed? But units changes as it is used for display later.
     dmet_ml.p = ml2pl(dmet_ml.ap, dmet_ml.b, dmet_ml.surface_air_pressure)
-    dmet_ml.theta = potential_temperatur(dmet_ml.air_temperature_ml, dmet_ml.p)
+    dmet_ml.theta = potential_temperature(dmet_ml.air_temperature_ml, dmet_ml.p)
     dmet_ml.specific_humidity_mlgkg = dmet_ml.specific_humidity_ml * 1000.  # g/kg
     dmet_ml.heighttoreturn = ml2alt_gl(air_temperature_ml=dmet_ml.air_temperature_ml,
                                        specific_humidity_ml=dmet_ml.specific_humidity_ml, ap=dmet_ml.ap, b=dmet_ml.b,

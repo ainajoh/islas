@@ -40,7 +40,7 @@ model=("AromeArctic")
 steps_max=(66)
 domain_name="None"
 #point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
-point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla" "Abisko")
+point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla" "Abisko", "JanMayen")
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -94,7 +94,7 @@ echo $modelrun
 id=$$
 
 #point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
-point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla")
+point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla" "Abisko" "JanMayen")
 for md in ${model[@]}; do
   echo $md
   for ((i = 0; i < ${#modelrun[@]}; ++i)); do

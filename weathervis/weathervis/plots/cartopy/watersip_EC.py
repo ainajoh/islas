@@ -184,7 +184,7 @@ def watersip_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
       add_ISLAS_overlays(ax1)
 
       #if domain_name != model and data_domain != None:  # weird bug.. cuts off when sees no data value
-      #ax1.set_extent(lonlat)
+      ax1.set_extent(lonlat)
 
       model='WATERSIP_EC'
       print(make_modelrun_folder+"/{0}_{1}_{2}+{3:02d}.png".format(model, domain_name, dt, tim*3))

@@ -42,7 +42,7 @@ steps_max=66
 domain_name="None"
 
 #point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
-point_name=("NyAlesund" "Kiruna" "Andenes" "NorwegianSea" "Bjornoya" "Longyearbyen" "Tromso" "Alta" "Kirkenes" "Bodo" "Trondheim" "Bergen" "Sodankyla" "Abisko")
+point_name=("NyAlesund" "Kiruna" "Andenes" "NorwegianSea" "Bjornoya" "Longyearbyen" "Tromso" "Alta" "Kirkenes" "Bodo" "Trondheim" "Bergen" "Sodankyla" "Abisko" "JanMayen")
 steps="None"
 
 while [ $# -gt 0 ]; do
