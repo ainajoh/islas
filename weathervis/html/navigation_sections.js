@@ -68,7 +68,7 @@ function getDomainname(n)
 {
 	switch (domain[n]) {
 		case 0:
-		return "KRN-NYA_";
+		return "NYA-KRN_";
 		break;
 		case 1:
 		return "SEA-KRN_";

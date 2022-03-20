@@ -38,7 +38,7 @@ function getDomain(m)
                 return "_AROME_Arctic.png";
 		break;
 		case 1:
-                return "_Greenland.png";
+                return "_North_Norway.png";
 		break;
 		default:
 		return "None";

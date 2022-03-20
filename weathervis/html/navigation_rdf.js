@@ -7,10 +7,10 @@ window.onload=initWebsite;
 var day0 = new Date(Date.now());
 hrs=day0.getUTCHours();
 if (hrs<14) {
-  day0.setUTCHours(0);
   dy=day0.getDate();
   day0.setDate(dy-1);
 }
+day0.setUTCHours(0);
 day0.setUTCMinutes(0);
 day0.setUTCSeconds(0);
 var day1 = new Date(Date.now());
