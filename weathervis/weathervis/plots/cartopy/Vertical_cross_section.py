@@ -324,7 +324,7 @@ class VERT_CROSS():
             ax3.set_ylabel('Altitude [m]',fontsize=15)
             aa = [ax2,ax3]
             # the cloud area fraction and wind speed
-            levels = np.linspace(0.0, 3, 21)
+            levels = np.linspace(0.0, 4, 21)
             pc = ax2.contourf(x,zi,cross.QQ*1000,levels,cmap='gnuplot2_r',
                               extend='both')
             cs1 = ax2.contour(x,zi,cross.CW*1000,
@@ -346,7 +346,7 @@ class VERT_CROSS():
             cbar.ax.tick_params(labelsize=15)
             cbar.ax.set_ylabel('Spec. Hum. [g/kg]',fontsize=15)
             ax2.invert_xaxis()
-            levels = np.linspace(0.0, 21, 15)
+            levels = np.linspace(0.0, 30, 21)
             pw = ax3.contourf(x,zi,cross.WS,levels,cmap='RdYlBu_r',
                               extend='both')
             ax3.barbs(x[::6,::60], zi[::6,::60], u[::6,::60] * 1.943844,
