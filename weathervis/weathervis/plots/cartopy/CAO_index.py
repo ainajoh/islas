@@ -122,8 +122,15 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
 
     dpt = pt[:,np.where(dmap_meps.pressure==1000)[0],:,:]-pt[:,np.where(dmap_meps.pressure==850)[0],:,:]
     dpt_sst =pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze()
+    # issue of CAO jumping is due to dpt_sst structure
     #dpt_sst =abs(pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze())
-
+    # testing dpt_sst
+    #print(dpt_sst.shape)
+    #for i in range(4):
+    #    plt.pcolormesh(dpt_sst[-1,i,:,:],vmin=0,vmax=12)
+    #    plt.savefig(make_modelrun_folder + "/MKtest_"+str(i)+"_1.png", bbox_inches="tight", dpi=200)
+    #for i in range(4):
+    #    plt.pcolormesh(dpt_sst[i,:,:],vmin=0,vmax=12)
     # convert fields
     dmap_meps.air_pressure_at_sea_level/=100
     tmap_meps.geopotential_pl/=10.0
@@ -162,7 +169,8 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
           #DELTAPT=dpt[tidx, 0, :, :]
           #print(np.shape(DELTAPT))
           #print(tidx)
-          DELTAPT=np.squeeze(dpt_sst[tidx,0,:,:])
+          #DELTAPT=np.squeeze(dpt_sst[tidx,0,:,:])
+          DELTAPT=np.squeeze(dpt_sst[0,tidx,:,:])
           ICE = np.squeeze(dmap_mepsdfx.SFX_SIC[tidx, :, :])
           SImask = np.where(ICE >= 0.1, dmap_mepsdfx.SFX_SIC[tidx, :, :], np.NaN).squeeze()
           DELTAPT = np.where( ICE <= 0.99,(DELTAPT).squeeze(),0)
