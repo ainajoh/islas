@@ -123,7 +123,6 @@ def CAO(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = No
     dpt = pt[:,np.where(dmap_meps.pressure==1000)[0],:,:]-pt[:,np.where(dmap_meps.pressure==850)[0],:,:]
     dpt_sst =pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze()
     # issue of CAO jumping is due to dpt_sst structure
-    #dpt_sst = dpt_sst[0,:,:,:]
     #dpt_sst =abs(pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze())
     # testing dpt_sst
     #print(dpt_sst.shape)
