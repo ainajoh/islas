@@ -118,7 +118,7 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 cmap = plt.cm.get_cmap('rainbow_r', 6)
                 cmap.set_over('lightgrey')
                 CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=cmap,
-                                       vmin=0, vmax=3000,zorder=2)
+                                       vmin=0, vmax=6000,zorder=2)
                 # indicate cloud base height by markers
                 co = '#393939'
                 skip = (slice(10, None, 20), slice(10, None, 20))
