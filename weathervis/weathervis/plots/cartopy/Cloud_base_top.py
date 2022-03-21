@@ -133,18 +133,15 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 caf3 = dmet.cloud_area_fraction_ml[tidx,:,:,:].copy()
                 caf3 = caf3[14:65,:,:] # only the levels wie are interested in
                 buf = np.zeros(caf3.shape)
-                thresh = 0.05 # threshold for cloud .. very low right now,  open for debate
-                buf[np.where(caf3<thresh)] = 1  
-                buf2 = np.zeros(caf3.shape)
-                buf2[np.where(caf3==0)] = 2 # I do not want to capture cloud free
-                buf3 = buf-buf2 # = 1 when there is cloud cover but it is below 0.05
-                buf3[np.where(buf3 < 1)] = 0 # so now find the frist instances of buf3==1 
+                thresh = 0.43 # threshold for cloud ..kind of aligns with MET values
+                buf[np.where(caf3>=thresh)] = 1  
                 HH3 = HH[14:65,:,:]
                 ### this can for sure be improved!
                 CT_new = np.zeros([949,739])
                 for z in range(HH3.shape[0]-1,0,-1):# go from lowest to topmost and overwrite values
-                    xx,yy = np.where(buf3[z,:,:]==1)
+                    xx,yy = np.where(buf[z,:,:]==1)
                     CT_new[xx,yy] = HH3[z,xx,yy]
+                CT_new[np.where(CT_new==0)] = np.nan # filter out cloud free areas
                 # plot 
                 #CT2 = CT.copy()
                 # set all cloud tops above 14000m to nan, choose 14000 to align more with LMH plot
