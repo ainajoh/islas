@@ -18,5 +18,6 @@ dependencies:
   - pip:
     - geog==0.0.2
   # Code quality
+  - flake8-isort
   - black
   - pre-commit

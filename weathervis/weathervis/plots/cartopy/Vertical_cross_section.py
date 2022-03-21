@@ -5,36 +5,37 @@ Created on Thu Feb 10 17:05:13 2022
 
 @author: marvink
 """
-# %%
-from weathervis.config import *
-from weathervis.utils import *
-from weathervis.domain import *
-from weathervis.get_data import *
-from weathervis.check_data import *
-
-from weathervis.calculation import *
 import os
-import matplotlib.pyplot as plt
-import matplotlib
-import matplotlib.dates as mdates
-import matplotlib.cm as cm
-import pandas as pd
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib.lines import Line2D
-import matplotlib as mpl
+import sys
+from copy import deepcopy
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import sys
-import matplotlib.patheffects as pe
-from matplotlib import gridspec
-from cartopy.io import (
-    shapereader,
-)  # For reading shapefiles containg high-resolution coastline.
-from copy import deepcopy
-import numpy as np
-import matplotlib.colors as colors
+import matplotlib
 import matplotlib as mpl
+import matplotlib.cm as cm
+import matplotlib.colors as colors
+import matplotlib.dates as mdates
+import matplotlib.patheffects as pe
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from cartopy.io import (  # For reading shapefiles containg high-resolution coastline.
+    shapereader,
+)
+from matplotlib import gridspec
+from matplotlib.lines import Line2D
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+from weathervis.calculation import *
+from weathervis.check_data import *
 from weathervis.checkget_data_handler import *
+
+# %%
+from weathervis.config import *
+from weathervis.domain import *
+from weathervis.get_data import *
+from weathervis.utils import *
 
 sys.path.insert(0, "/home/centos/plots/Marvin/")
 from small_tools_meps import *

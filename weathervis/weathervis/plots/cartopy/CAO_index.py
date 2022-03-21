@@ -1,18 +1,20 @@
 # %%
 # python CAO.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
-from weathervis.config import *
-from weathervis.utils import *
-from weathervis.check_data import *
-from weathervis.domain import *
-from weathervis.get_data import *
-from weathervis.calculation import *
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
+import warnings
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import warnings
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
 from add_overlays import *
+
+from weathervis.calculation import *
+from weathervis.check_data import *
+from weathervis.config import *
+from weathervis.domain import *
+from weathervis.get_data import *
+from weathervis.utils import *
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)

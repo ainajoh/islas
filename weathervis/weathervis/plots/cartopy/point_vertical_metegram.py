@@ -19,7 +19,6 @@ from cartopy.io import (  # For reading shapefiles containg high-resolution coas
 from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-
 # from weathervis.get_data import *
 # from weathervis.check_data import *
 from weathervis.calculation import *
