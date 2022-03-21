@@ -37,11 +37,28 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
             make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}-{1}".format(dt,runid) )
         else:
             make_modelrun_folder = setup_directory( OUTPUTPATH, "{0}".format(dt) )
-    
+    # can be replaced at some time with proper height at model levels, but works for now        
+    H = [24122.6894480669, 20139.2203688489,17982.7817599549, 16441.7123200128,
+    15221.9607620438, 14201.9513633491, 13318.7065659522, 12535.0423836784,
+    11827.0150898454, 11178.2217936245, 10575.9136768674, 10010.4629764989,
+    9476.39726730647, 8970.49319005479, 8490.10422494626, 8033.03285976169,
+    7597.43079283063, 7181.72764002209, 6784.57860867911, 6404.82538606181,
+    6041.46303718354, 5693.61312218488, 5360.50697368367, 5041.46826162131,
+    4735.90067455394, 4443.27792224573, 4163.13322354697, 3895.05391218293,
+    3638.67526925036, 3393.67546498291, 3159.77069480894, 2936.71247430545,
+    2724.28467132991, 2522.30099074027, 2330.60301601882, 2149.05819142430,
+    1977.55945557602, 1816.02297530686, 1664.38790901915, 1522.61641562609,
+    1390.69217292080, 1268.36594816526, 1154.95528687548, 1049.75817760629,
+    952.260196563843, 861.980320753114, 778.466725603312, 701.292884739207,
+    630.053985133223, 564.363722589458, 503.851644277509, 448.161118360263,
+    396.946085973573, 349.869544871297, 306.601457634038, 266.817025119099,
+    230.194566908004, 196.413229972062, 165.151934080260, 136.086183243070,
+    108.885366240509, 83.2097562375566,58.7032686584901, 34.9801888163106,
+    11.6284723290378]
     for dt in datetime:
         date = dt[0:-2]
         hour = int(dt[-2:])
-        all_param = ['cloud_base_altitude','cloud_top_altitude','air_pressure_at_sea_level','surface_geopotential']
+        all_param = ['cloud_base_altitude','cloud_top_altitude','air_pressure_at_sea_level','surface_geopotential','cloud_area_fraction_ml','high_type_cloud_area_fraction']
         dmet,data_domain,bad_param = checkget_data_handler(all_param=all_param, date=dt, model=model,
                                                            step=steps, domain_name=domain_name)
         
@@ -109,16 +126,40 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 CB3[np.where(~np.isnan(CB2))] = np.nan # no double counting
                 CB3[np.where(CB>3000)]        = np.nan
  
+                HH = np.zeros([65,949,739])
+                for i,z in enumerate(H):
+                    HH[i,:,:] = z + dmet.surface_geopotential[tidx,0,:,:]/9.81
+                
+                caf3 = dmet.cloud_area_fraction_ml[tidx,:,:,:].copy()
+                caf3 = caf3[14:65,:,:] # only the levels wie are interested in
+                buf = np.zeros(caf3.shape)
+                thresh = 0.05 # threshold for cloud .. very low right now,  open for debate
+                buf[np.where(caf3<thresh)] = 1  
+                buf2 = np.zeros(caf3.shape)
+                buf2[np.where(caf3==0)] = 2 # I do not want to capture cloud free
+                buf3 = buf-buf2 # = 1 when there is cloud cover but it is below 0.05
+                buf3[np.where(buf3 < 1)] = 0 # so now find the frist instances of buf3==1 
+                HH3 = HH[14:65,:,:]
+                ### this can for sure be improved!
+                CT_new = np.zeros([949,739])
+                for z in range(HH3.shape[0]-1,0,-1):# go from lowest to topmost and overwrite values
+                    xx,yy = np.where(buf3[z,:,:]==1)
+                    CT_new[xx,yy] = HH3[z,xx,yy]
                 # plot 
-                CT2 = CT.copy()
+                #CT2 = CT.copy()
                 # set all cloud tops above 14000m to nan, choose 14000 to align more with LMH plot
-                CT2[np.where(CT2>14000)] = np.nan
-                data =  CT2[:nx - 1, :ny - 1].copy()
+                #CT2[np.where(CT2>14000)] = np.nan
+                #data =  CT2[:nx - 1, :ny - 1].copy()
+                data =  CT_new[:nx - 1, :ny - 1].copy()
                 data[mask] = np.nan
-                cmap = plt.cm.get_cmap('rainbow_r', 6)
+                # making a contour for cirrus clouds, make a rough estimate of 0.5
+                highC = dmet.high_type_cloud_area_fraction[tidx,0,:,:]
+                highC[np.where(highC>0.5)] = 1
+                highC[np.where(highC<=0.5)] = 0
+                cmap = plt.cm.get_cmap('rainbow_r', 9)
                 cmap.set_over('lightgrey')
                 CCl   = ax1.pcolormesh(x, y,  data[:, :], cmap=cmap,
-                                       vmin=0, vmax=6000,zorder=2)
+                                       vmin=0, vmax=9000,zorder=2)
                 # indicate cloud base height by markers
                 co = '#393939'
                 skip = (slice(10, None, 20), slice(10, None, 20))
@@ -142,14 +183,18 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                        c=co, alpha=0.75,label='[2000m, 3000m]')
                 # MSLP
                 # MSLP with contour labels every 10 hPa, commented out due to cluttering
-                C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=3, alpha=1.0,
-                                  levels=np.arange(960, 1050, 1),
-                                  colors='grey', linewidths=0.5)
-                C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=3, alpha=1.0,
-                                  levels=np.arange(960, 1050, 10),
-                                  colors='grey', linewidths=1.0, label="MSLP (hPa)")
-                ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
-                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=7,facecolor="none",edgecolor="gray") 
+                # for now commeted out for readability
+                #C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=3, alpha=1.0,
+                #                  levels=np.arange(960, 1050, 1),
+                #                  colors='grey', linewidths=0.5)
+                #C_P = ax1.contour(dmet.x, dmet.y, MSLP, zorder=3, alpha=1.0,
+                #                  levels=np.arange(960, 1050, 10),
+                #                  colors='grey', linewidths=1.0, label="MSLP (hPa)")
+                #ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
+
+                # instead plot a contour of high cloud cover for clarity of plot
+                ax1.contour(x, y, highC, colors='white',zorder=2)
+                ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=7,facecolor="none",edgecolor="black") 
                 # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                 if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
                      ax1.set_extent(data_domain.lonlat)
