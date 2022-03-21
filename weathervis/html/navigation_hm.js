@@ -260,10 +260,10 @@ function setKind(id)
        break;
      case 'MSLHM':
        document.getElementById('ti_mean').innerHTML="heat map of MSL probability (0-100%)";
-       document.getElementById('th0').innerHTML="980 hPa";
+       document.getElementById('th0').innerHTML="990 hPa";
        document.getElementById('th1').innerHTML="1010 hPa";
        document.getElementById('th2').innerHTML="1030 hPa";
-       thresholds[0]="0980hPa";
+       thresholds[0]="0990hPa";
        thresholds[1]="1010hPa";
        thresholds[2]="1030hPa";
        kind=4;

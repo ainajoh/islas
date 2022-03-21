@@ -5,37 +5,36 @@ Created on Thu Feb 10 17:05:13 2022
 
 @author: marvink
 """
-import os
-import sys
-from copy import deepcopy
-
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-import matplotlib
-import matplotlib as mpl
-import matplotlib.cm as cm
-import matplotlib.colors as colors
-import matplotlib.dates as mdates
-import matplotlib.patheffects as pe
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from cartopy.io import (
-    shapereader,  # For reading shapefiles containg high-resolution coastline.
-)
-from matplotlib import gridspec
-from matplotlib.lines import Line2D
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
-from weathervis.calculation import *
-from weathervis.check_data import *
-from weathervis.checkget_data_handler import *
-
 # %%
 from weathervis.config import *
+from weathervis.utils import *
 from weathervis.domain import *
 from weathervis.get_data import *
-from weathervis.utils import *
+from weathervis.check_data import *
+
+from weathervis.calculation import *
+import os
+import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.dates as mdates
+import matplotlib.cm as cm
+import pandas as pd
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from matplotlib.lines import Line2D
+import matplotlib as mpl
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+import sys
+import matplotlib.patheffects as pe
+from matplotlib import gridspec
+from cartopy.io import (
+    shapereader,
+)  # For reading shapefiles containg high-resolution coastline.
+from copy import deepcopy
+import numpy as np
+import matplotlib.colors as colors
+import matplotlib as mpl
+from weathervis.checkget_data_handler import *
 
 sys.path.insert(0, "/home/centos/plots/Marvin/")
 from small_tools_meps import *
@@ -500,7 +499,7 @@ class VERT_CROSS:
             ax3.set_ylabel("Altitude [m]", fontsize=15)
             aa = [ax2, ax3]
             # the cloud area fraction and wind speed
-            levels = np.linspace(0.0, 3, 21)
+            levels = np.linspace(0.0, 4, 21)
             pc = ax2.contourf(
                 x, zi, cross.QQ * 1000, levels, cmap="gnuplot2_r", extend="both"
             )
@@ -539,7 +538,7 @@ class VERT_CROSS:
             cbar.ax.tick_params(labelsize=15)
             cbar.ax.set_ylabel("Spec. Hum. [g/kg]", fontsize=15)
             ax2.invert_xaxis()
-            levels = np.linspace(0.0, 21, 15)
+            levels = np.linspace(0.0, 30, 21)
             pw = ax3.contourf(x, zi, cross.WS, levels, cmap="RdYlBu_r", extend="both")
             ax3.barbs(
                 x[::6, ::60],
@@ -593,7 +592,7 @@ class VERT_CROSS:
             ax3.set_facecolor("grey")
             aa = [ax2, ax3]
             # the cloud area fraction and wind speed
-            levels = np.linspace(0.0, 21.0, 7)
+            levels = np.linspace(0.0, 31.0, 10)
             pc = ax2.pcolormesh(
                 x[:-1, :], zi[:-1, :], dtdz2, vmin=-10, vmax=10, cmap="RdYlBu_r"
             )

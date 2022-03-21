@@ -1,20 +1,18 @@
 # %%
 # python CAO.py --datetime 2020091000 --steps 0 1 --model MEPS --domain_name West_Norway
 
-import warnings
-
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-import matplotlib.colors as mcolors
-import matplotlib.pyplot as plt
-from add_overlays import *
-
-from weathervis.calculation import *
-from weathervis.check_data import *
 from weathervis.config import *
+from weathervis.utils import *
+from weathervis.check_data import *
 from weathervis.domain import *
 from weathervis.get_data import *
-from weathervis.utils import *
+from weathervis.calculation import *
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+import warnings
+from add_overlays import *
 
 # suppress matplotlib warning
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -199,7 +197,15 @@ def CAO(
             pt_sst[:, :, :]
             - pt[:, np.where(dmap_meps.pressure == 850)[0], :, :].squeeze()
         )
+        # issue of CAO jumping is due to dpt_sst structure
         # dpt_sst =abs(pt_sst[:,:,:] - pt[:,np.where(dmap_meps.pressure==850)[0],:,:].squeeze())
+        # testing dpt_sst
+        # print(dpt_sst.shape)
+        # for i in range(4):
+        #    plt.pcolormesh(dpt_sst[-1,i,:,:],vmin=0,vmax=12)
+        #    plt.savefig(make_modelrun_folder + "/MKtest_"+str(i)+"_1.png", bbox_inches="tight", dpi=200)
+        # for i in range(4):
+        #    plt.pcolormesh(dpt_sst[i,:,:],vmin=0,vmax=12)
 
         # convert fields
         dmap_meps.air_pressure_at_sea_level /= 100
@@ -251,7 +257,8 @@ def CAO(
                 # DELTAPT=dpt[tidx, 0, :, :]
                 # print(np.shape(DELTAPT))
                 # print(tidx)
-                DELTAPT = np.squeeze(dpt_sst[tidx, 0, :, :])
+                # DELTAPT=np.squeeze(dpt_sst[tidx,0,:,:])
+                DELTAPT = np.squeeze(dpt_sst[0, tidx, :, :])
                 ICE = np.squeeze(dmap_mepsdfx.SFX_SIC[tidx, :, :])
                 SImask = np.where(
                     ICE >= 0.1, dmap_mepsdfx.SFX_SIC[tidx, :, :], np.NaN

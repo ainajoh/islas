@@ -1,32 +1,32 @@
-import os
-import sys
-from copy import deepcopy
-
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-import matplotlib
-import matplotlib as mpl
-import matplotlib.cm as cm
-import matplotlib.colors as colors
-import matplotlib.dates as mdates
-import matplotlib.patheffects as pe
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from add_overlays import *
-from cartopy.io import (  # For reading shapefiles containg high-resolution coastline.
-    shapereader,
-)
-from matplotlib.lines import Line2D
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
-from weathervis.calculation import *
-from weathervis.check_data import *
-from weathervis.checkget_data_handler import *
 from weathervis.config import *
+from weathervis.utils import *
 from weathervis.domain import *
 from weathervis.get_data import *
-from weathervis.utils import *
+from weathervis.check_data import *
+
+from weathervis.calculation import *
+import os
+import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.dates as mdates
+import matplotlib.cm as cm
+import pandas as pd
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from matplotlib.lines import Line2D
+import matplotlib as mpl
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+import sys
+import matplotlib.patheffects as pe
+from cartopy.io import (
+    shapereader,
+)  # For reading shapefiles containg high-resolution coastline.
+from copy import deepcopy
+import numpy as np
+import matplotlib.colors as colors
+import matplotlib as mpl
+from weathervis.checkget_data_handler import *
+from add_overlays import *
 
 
 def Cloud_base_top(
@@ -145,8 +145,8 @@ def Cloud_base_top(
 
                 # plot
                 CT2 = CT.copy()
-                # set all cloud tops above 7000m to nan
-                CT2[np.where(CT2 > 7000)] = np.nan
+                # set all cloud tops above 14000m to nan, choose 14000 to align more with LMH plot
+                CT2[np.where(CT2 > 14000)] = np.nan
                 data = CT2[: nx - 1, : ny - 1].copy()
                 data[mask] = np.nan
                 cmap = plt.cm.get_cmap("rainbow_r", 6)
@@ -164,7 +164,7 @@ def Cloud_base_top(
                 sc1 = ax1.scatter(
                     xx[skip],
                     yy[skip],
-                    s=10,
+                    s=30,
                     zorder=2,
                     marker="o",
                     linewidths=0.9,
@@ -179,11 +179,12 @@ def Cloud_base_top(
                 sc2 = ax1.scatter(
                     xx[skip],
                     yy[skip],
-                    s=20,
+                    s=30,
                     zorder=2,
                     marker="o",
                     linewidths=0.9,
-                    c=co,
+                    facecolors="none",
+                    edgecolors=co,
                     alpha=0.75,
                     label="[1000m, 2000m]",
                 )
@@ -194,9 +195,9 @@ def Cloud_base_top(
                 sc3 = ax1.scatter(
                     xx[skip],
                     yy[skip],
-                    s=40,
+                    s=30,
                     zorder=2,
-                    marker="o",
+                    marker="x",
                     linewidths=0.9,
                     c=co,
                     alpha=0.75,
