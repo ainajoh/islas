@@ -190,7 +190,7 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 #ax1.clabel(C_P, C_P.levels, inline=True, fmt="%3.0f", fontsize=10)
 
                 # instead plot a contour of high cloud cover for clarity of plot
-                ax1.contour(x, y, highC, colors='white',zorder=2)
+                ax1.contour(x, y, highC, colors='grey',zorder=2)
                 ax1.add_feature(cfeature.GSHHSFeature(scale='intermediate'),zorder=7,facecolor="none",edgecolor="black") 
                 # ‘auto’, ‘coarse’, ‘low’, ‘intermediate’, ‘high, or ‘full’ (default is ‘auto’).
                 if domain_name != model and data_domain !=None: #weird bug.. cuts off when sees no data value
