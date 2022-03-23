@@ -12,7 +12,7 @@ if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
 if [[ "$HOSTNAME" == *"islas-forecast.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
     fi
-if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+if [[ "$HOSTNAME" == *"islas-plotting.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
     fi
 
@@ -40,7 +40,7 @@ model=("AromeArctic")
 steps_max=(66)
 domain_name="None"
 #point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
-point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla" "Abisko", "JanMayen")
+point_name=("Kiruna" "Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen" "Alta" "Kirkenes" "Bodo" "Sodankyla" "Abisko" "JanMayen")
 
 while [ $# -gt 0 ]; do
   case "$1" in
