@@ -125,8 +125,9 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 CB3[np.where(~np.isnan(CB1))] = np.nan # no double counting
                 CB3[np.where(~np.isnan(CB2))] = np.nan # no double counting
                 CB3[np.where(CB>3000)]        = np.nan
- 
-                HH = np.zeros([65,949,739])
+                xxx = CT.shape[0]
+                yyy = CT.shape[1]
+                HH = np.zeros([65,xxx,yyy])
                 for i,z in enumerate(H):
                     HH[i,:,:] = z + dmet.surface_geopotential[tidx,0,:,:]/9.81
                 
@@ -137,7 +138,7 @@ def Cloud_base_top(datetime, steps, model, domain_name = None, domain_lonlat = N
                 buf[np.where(caf3>=thresh)] = 1  
                 HH3 = HH[14:65,:,:]
                 ### this can for sure be improved!
-                CT_new = np.zeros([949,739])
+                CT_new = np.zeros([xxx,yyy])
                 for z in range(HH3.shape[0]-1,0,-1):# go from lowest to topmost and overwrite values
                     xx,yy = np.where(buf[z,:,:]==1)
                     CT_new[xx,yy] = HH3[z,xx,yy]
