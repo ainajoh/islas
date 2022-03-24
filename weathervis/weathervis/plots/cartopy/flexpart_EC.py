@@ -22,13 +22,13 @@ print("done")
 warnings.filterwarnings("ignore", category=UserWarning)
 #warnings.filterwarnings("ignore", category=Downloading)
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
+def domain_input_handler(dt, model, domain_name, domain_lonlat, file, use_latest):
   if domain_name or domain_lonlat:
     if domain_lonlat:
       print(f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########")
-      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
+      data_domain = domain(dt, model, file=file, lonlat=domain_lonlat, use_latest=use_latest)
     else:
-      data_domain = domain(dt, model, file=file)
+      data_domain = domain(dt, model, file=file, use_latest=use_latest)
 
     if domain_name != None and domain_name in dir(data_domain):
       print(f"\n####### Setting up domain: {domain_name} ##########")
@@ -44,11 +44,13 @@ def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
     data_domain=None
   return data_domain
 
-def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True):
+def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lonlat = None, legend=False, info = False, save = True, grid=True,latest=True):
   # avoid problems when plotting beyond AROME forecast period
   rsteps=steps.copy()
   rsteps[0]=steps[0]
   rsteps[1]=np.min([steps[1],66])
+  print('rsteps')
+  print(rsteps)
   for dt in datetime: #modelrun at time..
     print(dt)
     date = dt[0:-2]
@@ -59,13 +61,13 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     split = False
     print("\n######## Checking if your request is possible ############")
     try:
-      check_all = check_data(date=dt, model=model, param=param, p_level = 850, step=rsteps)
+      check_all = check_data(date=dt, model=model, param=param, p_level = 850, step=rsteps, use_latest=latest)
     except ValueError:
       split = True
       try:
         print("--------> Splitting up your request to find match ############")
-        check_sfc = check_data(date=dt, model=model, param=param_sfc,step=rsteps)
-        #check_pl = check_data(date=dt, model=model, param=param_pl, p_level=850,step=steps)
+        check_sfc = check_data(date=dt, model=model, param=param_sfc,step=rsteps, use_latest=latest)
+        #check_pl = check_data(date=dt, model=model, param=param_pl, p_level=850,step=steps, use_latest=latest)
       except ValueError:
         print("!!!!! Sorry this plot is not availbale for this date. Try with another datetime !!!!!")
         break
@@ -74,11 +76,11 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     if not split:
       file_all = check_all.file.loc[0]
 
-      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_all)
+      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_all,use_latest=latest)
 
       lonlat = np.array(data_domain.lonlat)
       dmap_meps = get_data(model=model, data_domain=data_domain, param=param, file=file_all, step=rsteps,
-                           date=dt, p_level=[850])
+                           date=dt, p_level=[850],use_latest=latest)
       print("\n######## Retrieving data ############")
       print(f"--------> from: {dmap_meps.url} ")
       dmap_meps.retrieve()
@@ -86,9 +88,9 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
     else:
       # get sfc level data
       file_sfc = check_sfc.file.loc[0]
-      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_sfc)
+      data_domain = domain_input_handler(dt, model,domain_name, domain_lonlat, file_sfc,use_latest=latest)
       lonlat = np.array(data_domain.lonlat)
-      dmap_meps = get_data(model=model, param=param_sfc, file=file_sfc, step=rsteps, date=dt, data_domain=data_domain)
+      dmap_meps = get_data(model=model, param=param_sfc, file=file_sfc, step=rsteps, date=dt, data_domain=data_domain,use_latest=latest)
       print("\n######## Retrieving data ############")
       print(f"--------> from: {dmap_meps.url} ")
       dmap_meps.retrieve()
@@ -171,9 +173,11 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               ttt = tim
               tidx = tim - np.min(steps)
 
-              # plot white contours for domain limits
-              MSLP = dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :].squeeze()
+              # extract current MSL if below 120h time limit
+              if tim<=66:
+                  MSLP = dmap_meps.air_pressure_at_sea_level[tidx, 0, :, :].squeeze()
 
+              # plot white contours for domain limits
               # MSLP with contour labels every 10 hPa
               C_P = ax1.contour(dmap_meps.x, dmap_meps.y, MSLP, zorder=0, alpha=0.0,
                                     levels=np.arange(960, 1050, 10), colors='white', linewidths=0.5,transform=crs)
@@ -181,17 +185,17 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               # plot low level releases for three 24h windows
               if lev>3000: # TOC for last levels
                 spec2a=np.sum(spec1a[0, 0, tim, :, :, :],0).squeeze()
-                spec2b=np.sum(spec1a[0, 2, tim, :, :, :],0).squeeze()
-                spec2c=np.sum(spec1a[0, 4, tim, :, :, :],0).squeeze()
-                #spec2e=np.sum(spec1b[0, 0, tim, :, :, :],0).squeeze()
-                #spec2d=np.sum(spec1c[0, 0, tim, :, :, :],0).squeeze()
+                spec2b=np.sum(spec1a[0, 1, tim, :, :, :],0).squeeze()
+                spec2c=np.sum(spec1a[0, 2, tim, :, :, :],0).squeeze()
+                spec2d=np.sum(spec1a[0, 3, tim, :, :, :],0).squeeze()
+                spec2e=np.sum(spec1a[0, 4, tim, :, :, :],0).squeeze()
                 lev=0
               else: 
                 spec2a=(spec1a[0, 0, tim, l, :, :]).squeeze()
-                spec2b=(spec1a[0, 2, tim, l, :, :]).squeeze()
-                spec2c=(spec1a[0, 4, tim, l, :, :]).squeeze()
-                #spec2e=(spec1b[0, 0, tim, l, :, :]).squeeze()
-                #spec2d=(spec1c[0, 0, tim, l, :, :]).squeeze()
+                spec2b=(spec1a[0, 1, tim, l, :, :]).squeeze()
+                spec2c=(spec1a[0, 2, tim, l, :, :]).squeeze()
+                spec2d=(spec1a[0, 3, tim, l, :, :]).squeeze()
+                spec2e=(spec1a[0, 4, tim, l, :, :]).squeeze()
                 l=l+1
 
               #print(tidx)
@@ -203,11 +207,11 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               #print(np.max(spec2d))
               #print(np.max(spec2e))
               #spec2[:,:]=0.01
-              spec2a = np.where(spec2a > 1e-10, spec2a, np.NaN)
-              spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
-              spec2c = np.where(spec2c > 1e-10, spec2c, np.NaN)
-              #spec2d = np.where(spec2d > 1e-10, spec2d, np.NaN)
-              #spec2e = np.where(spec2e > 1e-10, spec2e, np.NaN)
+              spec2a = np.where(spec2a > 1e-8, spec2a, np.NaN)
+              spec2b = np.where(spec2b > 1e-8, spec2b, np.NaN)
+              spec2c = np.where(spec2c > 1e-0, spec2c, np.NaN)
+              spec2d = np.where(spec2d > 1e-8, spec2d, np.NaN)
+              spec2e = np.where(spec2e > 1e-8, spec2e, np.NaN)
 
               print('Plotting FLEXPART-EC {0} + {1:02d} UTC, level {2}'.format(dt,tim,lev))
               # gather, filter and squeeze variables for plotting
@@ -215,16 +219,16 @@ def flexpart_EC(datetime, steps=0, model= "MEPS", domain_name = None, domain_lon
               #reduces noise over mountains by removing values over a certain height.
 
               with ax1.hold_limits():
-                  F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Reds, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
-                  F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Blues, zorder=2, alpha=0.7, transform=ccrs.PlateCarree())
-                  F_P = ax1.pcolormesh(lons, lats, spec2c,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Greens, zorder=3, alpha=0.7, transform=ccrs.PlateCarree())
-                  #F_P = ax1.pcolormesh(lons, lats, spec2d,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Oranges, zorder=4, alpha=0.7, transform=ccrs.PlateCarree())
-                  #F_P = ax1.pcolormesh(lons, lats, spec2e,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=plt.cm.Purples, zorder=5, alpha=0.7, transform=ccrs.PlateCarree())
+                  F_P = ax1.pcolormesh(lons, lats, spec2a,  norm=colors.LogNorm(vmin=1e-8, vmax=0.1), cmap=plt.cm.Reds, zorder=1, alpha=0.7, transform=ccrs.PlateCarree())
+                  F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-8, vmax=0.1), cmap=plt.cm.Blues, zorder=2, alpha=0.7, transform=ccrs.PlateCarree())
+                  F_P = ax1.pcolormesh(lons, lats, spec2c,  norm=colors.LogNorm(vmin=1e-8, vmax=0.1), cmap=plt.cm.Greens, zorder=3, alpha=0.7, transform=ccrs.PlateCarree())
+                  F_P = ax1.pcolormesh(lons, lats, spec2d,  norm=colors.LogNorm(vmin=1e-8, vmax=0.1), cmap=plt.cm.Oranges, zorder=4, alpha=0.7, transform=ccrs.PlateCarree())
+                  F_P = ax1.pcolormesh(lons, lats, spec2e,  norm=colors.LogNorm(vmin=1e-8, vmax=0.1), cmap=plt.cm.Purples, zorder=5, alpha=0.7, transform=ccrs.PlateCarree())
               del spec2a
               del spec2b
               del spec2c
-              #del spec2d
-              #del spec2e
+              del spec2d
+              del spec2e
 
               if tim<=66:
                   Z = dmap_meps.surface_geopotential[tidx, 0, :, :]
@@ -311,12 +315,12 @@ if __name__ == "__main__":
 
   # split up in 3 retrievals of up to 24h
   flexpart_EC(datetime=args.datetime, steps =  [0, np.min([24, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+         domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, latest=False)
   if np.max(args.steps)>24:
       flexpart_EC(datetime=args.datetime, steps = [27, np.min([36, np.max(args.steps)])], model = args.model, domain_name = args.domain_name,
-              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, latest=False)
   if np.max(args.steps)>36:
       flexpart_EC(datetime=args.datetime, steps = [42, np.max(args.steps)], model = args.model, domain_name = args.domain_name,
-              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid)
+              domain_lonlat=args.domain_lonlat, legend = args.legend, info = args.info, grid=args.grid, latest=False)
 
 #fin

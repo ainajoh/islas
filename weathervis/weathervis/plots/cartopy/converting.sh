@@ -21,7 +21,7 @@ done
 sudo chown -R centos:apache /home/centos/www/gfx/$2
 
 # transfer to webserver
-if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+if [[ "$HOSTNAME" == *"islas-plotting.novalocal"* ]]; then
   #scp -r -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$2 158.39.201.233:/home/centos/www/gfx
   rsync -am --stats -r -e "ssh -i /home/centos/.ssh/islas-key.pem" /home/centos/www/gfx/$2 158.39.201.233:/home/centos/www/gfx
 fi

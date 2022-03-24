@@ -54,11 +54,17 @@ case "$model" in
          fi
         echo "exit 64" > /home/centos/batch/timeoutwrapper_AA_${runhour}.sh
 	
+	start_log"AA AromeArctic"
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
+	end_log
 	start_log "Point Meteograms" 
 	automate_all_meteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour  &
 	end_log
 	start_log "AA North_Norway" 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
+	end_log
+	start_log"AA Svalbard"
+	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard &
 	end_log
 	start_log "Vertical Meteograms" 
 	automate_all_verticalmeteogram_centos.sh --steps 0\ $steps --modelrun_hour $runhour  &
@@ -68,12 +74,6 @@ case "$model" in
 	end_log
 	start_log "AA Andenes_area" 
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
-	end_log
-	start_log"AA Svalbard"
-	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-	end_log
-	start_log"AA AromeArctic"
-	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
 	end_log
 	start_log"AA NorwegianSea"
 	automate_all_maps.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area

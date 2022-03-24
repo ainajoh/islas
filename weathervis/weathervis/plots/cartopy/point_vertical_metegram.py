@@ -278,8 +278,8 @@ class VERT_MET():
         axm1.clabel(CF_ICE, CF_ICE.levels, inline=False, fmt="%3.1f", fontsize=12)
         #marker=r"$C_H$"
 
-        lvl = np.linspace(np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),np.max(mass_fraction_of_cloud_condensed_water_in_air_ml), 4)
-        lvl = [0.1,5,20,50,150]
+        #lvl = np.linspace(np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),np.max(mass_fraction_of_cloud_condensed_water_in_air_ml), 4)
+        lvl = [0.5,5,20,50,150]
         print(np.max(mass_fraction_of_cloud_condensed_water_in_air_ml))
         CF_C = axm1.contour(tx, p_p, mass_fraction_of_cloud_condensed_water_in_air_ml,levels=lvl, zorder=11,
                             colors="yellow", linewidths=2.5,linestyles="-", alpha=0.8,

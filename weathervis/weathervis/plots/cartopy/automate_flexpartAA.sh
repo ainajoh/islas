@@ -14,7 +14,7 @@ function converting {
   done
   sudo chown -R centos:apache /home/centos/www/gfx/$1  
   # transfer to webserver
-  if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+  if [[ "$HOSTNAME" == *"islas-plotting.novalocal"* ]]; then
     #copy="scp -i /home/centos/.ssh/islas-key.pem /home/centos/www/gfx/$1/FLEXPART_AA* 158.39.201.233:/home/centos/www/gfx/$1/"
     rsync -am --stats -r -e "ssh -i /home/centos/.ssh/islas-key.pem" /home/centos/www/gfx/$1/FLEXPART_AA* 158.39.201.233:/home/centos/www/gfx/$1
     #echo $copy
@@ -37,7 +37,7 @@ if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
 if [[ "$HOSTNAME" == *"islas-forecast.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
     fi
-if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+if [[ "$HOSTNAME" == *"islas-plotting.novalocal"* ]]; then
     cf="source ../../data/config/config_islas_server.sh"
     fi
 

@@ -99,6 +99,12 @@ def add_ISLAS_overlays(ax,col='red'):
     ax.scatter(locs["lon"],locs["lat"],s=100,color=col,marker='+',zorder=12,transform=ccrs.PlateCarree())
     #ax.text(locs["lon"],locs["lat"],s=20,color='red',marker='+',zorder=12,transform=ccrs.PlateCarree())
 
+  # add ship track
+  ship="/home/centos/ship/marinetraffic_positions"
+  locs = pd.read_csv(ship,sep=',',skipinitialspace=True)
+  with ax.hold_limits():
+    ax.plot(locs["LON"],locs["LAT"],'-',color=col,marker='.',zorder=12,transform=ccrs.PlateCarree())
+ 
   # add range circle for Kiruna
   p = sh.geometry.Point([20.31891,67.8222]) # location
   n_points = 50

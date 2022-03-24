@@ -258,6 +258,7 @@ class get_data():
               url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
               url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/{file.loc['File']}?"
+            print(url)
 
             for prm in param: #loop that updates the url to include each parameter with its dimensions
                 url += f"{prm}"                           # example:  url =url+x_wind_pl
