@@ -250,12 +250,12 @@ function setKind(id)
        break;
      case 'TPHM':
        document.getElementById('ti_mean').innerHTML="heat map of TP probability (0-100%)";
-       document.getElementById('th0').innerHTML="0.5 mm";
-       document.getElementById('th1').innerHTML="1.0 mm";
-       document.getElementById('th2').innerHTML="2.0 mm";
-       thresholds[0]="0.5mm";
-       thresholds[1]="1.0mm";
-       thresholds[2]="2.0mm";
+       document.getElementById('th0').innerHTML="1.0 mm day-1";
+       document.getElementById('th1').innerHTML="5.0 mm day-1";
+       document.getElementById('th2').innerHTML="10.0 mm day-1";
+       thresholds[0]="1.0mm";
+       thresholds[1]="5.0mm";
+       thresholds[2]="10.0mm";
        kind=3;
        break;
      case 'MSLHM':
