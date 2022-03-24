@@ -37,24 +37,18 @@ function getLevel(n)
 {
   switch (n) {
     case 0:
-      return "_L00200";
-      break;
-    case 1:
       return "_L00500";
       break;
-    case 2:
+    case 1:
       return "_L01000";
       break;
-    case 3:
-      return "_L01500";
-      break;
-    case 4:
+    case 2:
       return "_L02000";
       break;
-    case 5:
+    case 3:
       return "_L03000";
       break;
-    case 6:
+    case 4:
       return "_L00000";
       break;
     default: 
@@ -185,7 +179,7 @@ function selectDomain(n)
 	domain[1]=document.getElementById("domain2").selectedIndex;
 	break;
     }
-    prepareFigure(2);
+    prepareFigure(0);
 }
 
 function selectVar(n)
@@ -218,7 +212,7 @@ function selectVar(n)
         default:
 	  break;
 	}
-  prepareFigure(2);
+  prepareFigure(0);
 }
 
 function initWebsite()
@@ -240,17 +234,13 @@ function initWebsite()
 	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
 	document.getElementById("valid"+row).innerHTML=getFcdate(row);
 	document.getElementById("ftime"+row).innerHTML=getFcStep(row);
-        row=1
-	document.getElementById("btime"+row).innerHTML=getDatename(row)+"_"+getBasetime(row);
-	document.getElementById("valid"+row).innerHTML=getFcdate(row);
-	document.getElementById("ftime"+row).innerHTML=getFcStep(row);
-	prepareFigure(2); // prepare both rows
+	prepareFigure(0); // prepare both rows
 }
 
 function skiponeback(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()-24);
-	fdate[row]+=24;
+	cday[row].setUTCHours(cday[row].getUTCHours()-6);
+	fdate[row]+=6;
 	if ((fdate[row]>24) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] - (fdate[row] % 3)
 	}
@@ -269,8 +259,8 @@ function skiponeback(row)
 
 function skiponeforward(row) 
 {
-	cday[row].setUTCHours(cday[row].getUTCHours()+24);
-	fdate[row]-=24;
+	cday[row].setUTCHours(cday[row].getUTCHours()+6);
+	fdate[row]-=6;
 	if ((fdate[row]>24) && (fdate[row]<36)) {
 		fdate[row]=fdate[row] + (fdate[row] % 3)
 	}
