@@ -414,6 +414,7 @@ class get_data:
                 url = f"https://thredds.met.no/thredds/dodsC/aromearcticarchive/{YYYY}/{MM}/{DD}/{file.loc['File']}?"
             else:
                 url = f"https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/{file.loc['File']}?"
+            print(url)
 
             for (
                 prm

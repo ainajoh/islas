@@ -19,9 +19,10 @@ from cartopy.io import (  # For reading shapefiles containg high-resolution coas
 from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
+from weathervis.calculation import *
+
 # from weathervis.get_data import *
 # from weathervis.check_data import *
-from weathervis.calculation import *
 from weathervis.checkget_data_handler import *
 from weathervis.config import *
 from weathervis.domain import *
@@ -438,12 +439,8 @@ class VERT_MET:
         axm1.clabel(CF_ICE, CF_ICE.levels, inline=False, fmt="%3.1f", fontsize=12)
         # marker=r"$C_H$"
 
-        lvl = np.linspace(
-            np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),
-            np.max(mass_fraction_of_cloud_condensed_water_in_air_ml),
-            4,
-        )
-        lvl = [0.1, 5, 20, 50, 150]
+        # lvl = np.linspace(np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),np.max(mass_fraction_of_cloud_condensed_water_in_air_ml), 4)
+        lvl = [0.5, 5, 20, 50, 150]
         print(np.max(mass_fraction_of_cloud_condensed_water_in_air_ml))
         CF_C = axm1.contour(
             tx,
@@ -906,7 +903,7 @@ if __name__ == "__main__":
         type=float,
         help="lonmin lonmax latmin latmax",
     )
-    parser.add_argument("--point_name", default=None, help="see sites.yaml")
+    parser.add_argument("--point_name", default=None, help="see sites.csv")
     parser.add_argument(
         "--point_lonlat", default=None, nargs="+", type=float, help="lon lat"
     )

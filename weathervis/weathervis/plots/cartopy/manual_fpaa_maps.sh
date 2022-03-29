@@ -1,11 +1,11 @@
 #!/bin/bash
 # manually run all maps as in crontab
-steps=120
-#steps=66
+#steps=120
+steps=66
 #steps=2
 runhour=00
 #dat=20210323
-dat=20220322
+dat=20220324
 #runhour=06
 #runhour=12
 #runhour=18
@@ -33,17 +33,17 @@ dat=20220322
 #automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Osteroy
 #automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name South_Norway
 #automate_all_maps.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name West_Norway
-#automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
-#automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-#automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
-#automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
-#automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
+automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
+automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
+automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
+automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
+automate_flexpartAA.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
 #automate_flexpart.sh --model MEPS --steps_max $steps --modelrun_hour $runhour --domain_name Iceland
 #automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Svalbard
-automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun $dat --modelrun_hour $runhour --domain_name North_Norway
-automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun $dat --modelrun_hour $runhour --domain_name AromeArctic
-automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun $dat --modelrun_hour $runhour --domain_name Andenes_area
-automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun $dat --modelrun_hour $runhour --domain_name NorwegianSea_area
+#automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway
+#automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic
+#automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name Andenes_area
+#automate_flexpart.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name NorwegianSea_area
 # also run watersip
 #automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name AromeArctic  --release_name ANX --modelrun $dat
 #automate_watersip.sh --model AromeArctic --steps_max $steps --modelrun_hour $runhour --domain_name North_Norway --release_name ANX --modelrun $dat

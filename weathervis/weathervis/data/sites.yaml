@@ -204,10 +204,14 @@ pcmet1:
    # lon: 20.494432
    # height: 0.0
    # description: 'EaterAina'
-  lat: 77.0
-  lon: 10.0
+   # lat: 77.0
+   # lon: 10.0
+   # height: 0.0
+   # description: 'FramStrait'
+  lat: 78.75
+  lon: 9.5
   height: 0.0
-  description: 'FramStrait'
+  description: 'Box1'
   margin:
     west: 0.15
     east: 0.15
@@ -220,10 +224,14 @@ pcmet2:
    # lon: 8.2396375
    # height: 0
    # description: 9500
-  lat: 72.0
-  lon: 24.0
+   # lat: 72.0
+   # lon: 24.0
+   # height: 0.0
+   # description: 'BarentsSea'
+  lat: 78.0
+  lon: 25.0
   height: 0.0
-  description: 'BarentsSea'
+  description: 'Box2'
   margin:
     west: 0.15
     east: 0.15
@@ -235,10 +243,14 @@ pcmet3:
    # lon: 1.333293
    # height: 1214.1
    # description: 0.0
-  lat: 70.0
-  lon: 4.0
+   # lat: 70.0
+   # lon: 4.0
+   # height: 0.0
+   # decription: 'NorwegianSea'
+  lat: 73.3
+  lon: 30.0
   height: 0.0
-  decription: 'NorwegianSea'
+  description: 'NorwegianSea'
   margin:
     west: 0.15
     east: 0.15

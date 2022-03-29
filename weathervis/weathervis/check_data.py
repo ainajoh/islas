@@ -366,8 +366,10 @@ class check_data:
             )
         else:
             pass
+        print("Weathervis: base_url :")
         print(base_url)
-        print("Weathervis: base_url should be printed.")
+        print(model)
+        print(self.use_latest)
 
         # Find what files exist at that date
         if self.use_latest == True:
@@ -375,10 +377,14 @@ class check_data:
         else:
             page = requests.get(base_url + YYYY + "/" + MM + "/" + DD + "/catalog.html")
 
+        print(base_url + YYYY + "/" + MM + "/" + DD + "/catalog.html")
         soup = BeautifulSoup(page.text, "html.parser")
         rawfiles = soup.table.find_all("a")
         ff = [i.text for i in rawfiles]
-        pattern = re.compile(f".*{YYYY}{MM}{DD}T{HH}Z.ncml")
+        if self.use_latest == True:
+            pattern = re.compile(f".*{YYYY}{MM}{DD}T{HH}Z.ncml")
+        else:
+            pattern = re.compile(f".*{YYYY}{MM}{DD}T{HH}Z.nc")
         ff = pd.DataFrame(data=list(filter(pattern.match, ff)), columns=["File"])
         drop_files = [
             "_vc_",
@@ -408,6 +414,7 @@ class check_data:
             else:
                 url = base_urlfile + YYYY + "/" + MM + "/" + DD + "/" + file
 
+            print(url)
             dataset = Dataset(url)
             # for all independent var (dimensions) make a column with dict
             dn = dataset.dimensions.keys()

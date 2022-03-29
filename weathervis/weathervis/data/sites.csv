@@ -18,9 +18,9 @@ NorwegianSea;72.953497;5.112194;0;None;None;None
 Sodankyla;67.3959;26.6308;180;None;None;None
 Abisko;68.3532;19.0506;360;None;None;None
 CAO;70.824218;0.04802;0;None;None;None
-pcmet1;77.0;10.0;0.0;None;None;FramStrait
-pcmet2;72.0;24.0;0.0;None;None;BarentsSea
-pcmet3;70.0;4.0;0.0;None;None;NorwegianSea
+pcmet1;78.75;9.5;0.0;None;None;Box1
+pcmet2;78.0;25.0;0.0;None;None;Box2
+pcmet3;73.3;30.0;0.0;None;None;NorwegianSea
 Varlegenhuken;80.0592;16.25;8;99927;01002;None
 OldPier;78.93030;11.91929;5;None;None;None
 GEOF322;60.2;5.41667;60;None;None;OS_HORDALAND

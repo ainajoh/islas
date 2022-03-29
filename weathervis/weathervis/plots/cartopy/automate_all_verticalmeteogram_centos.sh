@@ -12,7 +12,7 @@ fi
 if [[ "$HOSTNAME" == *"islas-forecast.novalocal"* ]]; then
    cf="source ../../data/config/config_islas_server.sh"
 fi
-if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+if [[ "$HOSTNAME" == *"islas-plotting.novalocal"* ]]; then
    cf="source ../../data/config/config_islas_server.sh"
 fi
 
@@ -42,7 +42,7 @@ steps_max=66
 domain_name="None"
 
 # point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Andenes" "CAO" "NorwegianSea" "Bjornoya" "Longyearbyen" "ALOMAR" "Tromso")
-# point_name=("NyAlesund" "Kiruna" "Andenes" "NorwegianSea" "Bjornoya" "Longyearbyen" "Tromso" "Alta" "Kirkenes" "Bodo" "Trondheim" "Bergen" "Sodankyla")
+# point_name=("NyAlesund" "pcmet1" "pcmet2" "pcmet3" "Kiruna" "Andenes" "NorwegianSea" "Bjornoya" "Longyearbyen" "Tromso" "Alta" "Kirkenes" "Bodo" "Trondheim" "Bergen" "Sodankyla" "Abisko" "JanMayen")
 point_name=$(echo $( shyaml keys < ../../data/sites.yaml ) | sed s/'default '//)
 steps="None"
 
@@ -110,7 +110,7 @@ while [ $# -gt 0 ]; do
                #echo "test"
                echo "${steps[0]}"
                #echo "test2"
-               runstring_PVmet="python point_vertical_meteogram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id --m_level 20 64"
+               runstring_PVmet="python point_vertical_metegram.py --datetime ${modelrun[i]} --steps ${steps[0]} ${steps[1]} --model $md --point_name $pnam --id $id --m_level 20 64"
             fi
             echo $runstring_PVmet
             $runstring_PVmet

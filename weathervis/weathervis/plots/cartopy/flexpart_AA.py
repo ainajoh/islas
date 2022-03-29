@@ -244,8 +244,8 @@ def flexpart_AA(
 
                     for i in range(0, len(spec)):
                         ss = spec_squeeze[i]
-                        spec_squeeze[i] = np.where(ss > 1e-10, ss, np.NaN)
-                        # spec2b = np.where(spec2b > 1e-10, spec2b, np.NaN)
+                        spec_squeeze[i] = np.where(ss > 1e-8, ss, np.NaN)
+                        # spec2b = np.where(spec2b > 1e-8, spec2b, np.NaN)
 
                     print(
                         "Plotting FLEXPART-AA {0} + {1:02d} UTC, level {2}".format(
@@ -283,18 +283,26 @@ def flexpart_AA(
                     print(len(spec))
                     for i in range(0, len(spec)):
                         ss = spec_squeeze[i]
+                        if lev >= levs[last_lvl_idx_for_plotting]:
+                            ss = np.sum(spec1a[i, tim, :, :, :], 2).squeeze()
+                        else:
+                            print(np.shape(spec1a))
+                            print(i)
+                            print(tim)
+                            print(l)
+                            ss = np.squeeze(spec1a[tim, i, l, :, :])
                         with ax1.hold_limits():
                             F_P = ax1.pcolormesh(
                                 lons,
                                 lats,
                                 ss,
-                                norm=colors.LogNorm(vmin=1e-10, vmax=0.2),
+                                norm=colors.LogNorm(vmin=1e-8, vmax=0.1),
                                 cmap=my_colors[i],
                                 zorder=1,
                                 alpha=0.9,
                                 transform=ccrs.PlateCarree(),
                             )
-                        ##F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-10, vmax=0.2), cmap=pl, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
+                        ##F_P = ax1.pcolormesh(lons, lats, spec2b,  norm=colors.LogNorm(vmin=1e-8, vmax=0.1), cmap=pl, zorder=1, alpha=0.9, transform=ccrs.PlateCarree())
                         # del ss
                     # MSLP with contour labels every 10 hPa
                     C_P = ax1.contour(

@@ -12,7 +12,7 @@ fi
 if [[ "$HOSTNAME" == *"islas-forecast.novalocal"* ]]; then
    cf="source ../../data/config/config_islas_server.sh"
 fi
-if [[ "$HOSTNAME" == *"islas-operational.novalocal"* ]]; then
+if [[ "$HOSTNAME" == *"islas-plotting.novalocal"* ]]; then
    cf="source ../../data/config/config_islas_server.sh"
 fi
 
@@ -39,7 +39,7 @@ modelrun_hour="00"
 model=("AromeArctic")
 steps_max=(66)
 domain_name="None"
-# point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
+#point_name=("Andenes" "pcmet1" "pcmet2" "pcmet3" "ALOMAR" "Tromso" "NyAlesund" "NorwegianSea" "Bjornoya" "CAO" "Longyearbyen")
 point_name=$(echo $( shyaml keys < ../../data/sites.yaml ) | sed s/'default '//)
 
 while [ $# -gt 0 ]; do

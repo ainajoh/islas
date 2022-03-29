@@ -211,8 +211,9 @@ def Cloud_base_top(
                 CB3[np.where(~np.isnan(CB1))] = np.nan  # no double counting
                 CB3[np.where(~np.isnan(CB2))] = np.nan  # no double counting
                 CB3[np.where(CB > 3000)] = np.nan
-
-                HH = np.zeros([65, 949, 739])
+                xxx = CT.shape[0]
+                yyy = CT.shape[1]
+                HH = np.zeros([65, xxx, yyy])
                 for i, z in enumerate(H):
                     HH[i, :, :] = z + dmet.surface_geopotential[tidx, 0, :, :] / 9.81
 
@@ -223,7 +224,7 @@ def Cloud_base_top(
                 buf[np.where(caf3 >= thresh)] = 1
                 HH3 = HH[14:65, :, :]
                 ### this can for sure be improved!
-                CT_new = np.zeros([949, 739])
+                CT_new = np.zeros([xxx, yyy])
                 for z in range(
                     HH3.shape[0] - 1, 0, -1
                 ):  # go from lowest to topmost and overwrite values
@@ -407,15 +408,40 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    Cloud_base_top(
-        datetime=args.datetime,
-        steps=[np.min(args.steps), np.max(args.steps)],
-        model=args.model,
-        domain_name=args.domain_name,
-        domain_lonlat=args.domain_lonlat,
-        legend=args.legend,
-        info=args.info,
-        grid=args.grid,
-        runid=args.id,
-        outpath=args.outpath,
-    )
+    # CHUNCK SIZE TO BIG
+    s = np.arange(np.min(args.steps), np.max(args.steps) + 1)
+    cn = np.int(len(s) // 6)
+    if cn == 0:  # length of 6 not exceeded
+
+        Cloud_base_top(
+            datetime=args.datetime,
+            steps=[np.min(args.steps), np.max(args.steps)],
+            model=args.model,
+            domain_name=args.domain_name,
+            domain_lonlat=args.domain_lonlat,
+            legend=args.legend,
+            info=args.info,
+            grid=args.grid,
+            runid=args.id,
+            outpath=args.outpath,
+        )
+
+    else:  # lenght of 6 is exceeded, split in chunks, set by cn+1
+        print(
+            f"\n####### request exceeds 6 timesteps, will be chunked to smaller bits due to request limit ##########"
+        )
+        chunks = np.array_split(s, cn + 1)
+        for c in chunks:
+
+            Cloud_base_top(
+                datetime=args.datetime,
+                steps=[np.min(c), np.max(c)],
+                model=args.model,
+                domain_name=args.domain_name,
+                domain_lonlat=args.domain_lonlat,
+                legend=args.legend,
+                info=args.info,
+                grid=args.grid,
+                runid=args.id,
+                outpath=args.outpath,
+            )
