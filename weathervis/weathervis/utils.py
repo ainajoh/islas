@@ -72,7 +72,6 @@ def remove_pcolormesh_border(xx, yy, data):
         | (x[1:, 1:] > 1e20)
         | (x[:-1, :-1] > 1e20)
         | (x[1:, :-1] > 1e20)
-        | (x[:-1, 1:] > 1e20)
         | (x[1:, 1:] > 1e20)
     )
     data = data[: nx - 1, : ny - 1].copy()
@@ -495,7 +494,14 @@ def plot_track_on_map(
 
 
 def domain_input_handler(
-    dt, model, domain_name, domain_lonlat, file, point_name=None, point_lonlat=None
+    dt,
+    model,
+    file,
+    domain_name=None,
+    domain_lonlat=None,
+    point_name=None,
+    point_lonlat=None,
+    use_latest=True,
 ):
     # print(point_name)
     # print(domain_name)
@@ -505,37 +511,31 @@ def domain_input_handler(
             print(
                 f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########"
             )
-            data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
+            data_domain = domain(
+                dt, model, file=file, lonlat=domain_lonlat, use_latest=use_latest
+            )
         else:
-            data_domain = domain(dt, model, file=file)
+            print(f"\n####### Setting up domain for area: {domain_name} ##########")
+            data_domain = domain(
+                dt, model, file=file, domain_name=domain_name, use_latest=use_latest
+            )
 
-        if domain_name != None and domain_name in dir(data_domain):
-            print(f"\n####### Setting up domain: {domain_name} ##########")
-            domain_name = domain_name.strip()
-            # data_domain = domain(dt, model, file=file, domain_name=domain_name)
-            if re.search("\(\)$", domain_name):
-                func = f"data_domain.{domain_name}"
-            else:
-                func = f"data_domain.{domain_name}()"
-            print(func)
-            print(domain_name)
-            eval(func)
-        else:
-            print(f"No domain found with that name; {domain_name}")
     else:
         data_domain = None
-    if point_name != None and domain_name == None and domain_lonlat == None:
-        print("GGGGGOOOO")
-        data_domain = domain(dt, model, file=file, point_name=point_name)
-        print("DOM DONE")
-    if (
-        point_lonlat != None
-        and point_name == None
-        and domain_name == None
-        and domain_lonlat == None
-    ):
-        print("IN WRONG ONE")
-        data_domain = domain(dt, model, file=file, lonlat=point_lonlat)
-        print("DOM DONE")
-    print(data_domain)
+
+    if point_name or point_lonlat:
+        if point_name != None and domain_name == None and domain_lonlat == None:
+            print(f"\n####### Setting up point for site: {point_name} ##########")
+            data_domain = domain(dt, model, file=file, point_name=point_name)
+        if (
+            point_lonlat != None
+            and point_name == None
+            and domain_name == None
+            and domain_lonlat == None
+        ):
+            print(
+                f"\n####### Setting up point for coordinates: {point_lonlat} ##########"
+            )
+            data_domain = domain(dt, model, file=file, lonlat=point_lonlat)
+    # print(data_domain)
     return data_domain

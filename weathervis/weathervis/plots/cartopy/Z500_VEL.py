@@ -94,7 +94,11 @@ def Z500_VEL(
             file_all = check_all.file.loc[0]
 
             data_domain = domain_input_handler(
-                dt, model, domain_name, domain_lonlat, file_all
+                dt,
+                model,
+                file_all,
+                domain_name=domain_name,
+                domain_lonlat=domain_lonlat,
             )
 
             # lonlat = np.array(data_domain.lonlat)
@@ -116,7 +120,11 @@ def Z500_VEL(
             # get sfc level data
             file_sfc = check_sfc.file.loc[0]
             data_domain = domain_input_handler(
-                dt, model, domain_name, domain_lonlat, file_sfc
+                dt,
+                model,
+                file_sfc,
+                domain_name=domain_name,
+                domain_lonlat=domain_lonlat,
             )
             # lonlat = np.array(data_domain.lonlat)
             dmap_meps = get_data(

@@ -1,0 +1,145 @@
+# example:
+# <area name>:
+#   north: <domain latitude north (degree_north)>
+#   south: <domain latitude south (degree_north)>
+#   west: <domain longitude west (degree_east)>
+#   east: <domain longitude east (degree_east)>
+#   height: <domain height (m)>
+#   description: >
+#     <description could be write on multilines>
+
+default: # set of default values applied if attribute is missing
+    west:
+    north:
+    east:
+    south:
+    height: 0.0
+    description: ''
+
+ALOMAR:
+    west: 15.8
+    north: 69.4
+    east: 16.4
+    south: 69.2
+    height: 0.0
+    description: ''
+
+Andenes:
+    west: 15.8
+    north: 69.4
+    east: 16.4
+    south: 69.2
+    height: 0.0
+    description: ''
+
+Andenes_area:
+    west: 6.0
+    north: 71.6
+    east: 20.5
+    south: 67.5
+    height: 0.0
+    description: ''
+
+AromeArctic:
+    west: -18.0
+    north: 88.0
+    east: 80.0
+    south: 62.0
+    height: 0.0
+    description: ''
+
+Finse:
+    west: 7.524026
+    north: 61.5
+    east: 8.524026
+    south: 60.0
+    height: 0.0
+    description: ''
+
+Iceland:
+    west: -26.0
+    north: 67.0
+    east: -8.0
+    south: 63.0
+    height: 0.0
+    description: ''
+
+KingsBay:
+    west: 10.0
+    north: 79.3
+    east: 13.3
+    south: 78.6
+    height: 0.0
+    description: ''
+
+KingsBay_Z0:
+    west: 11.0
+    north: 79.16
+    east: 13.0
+    south: 78.73
+    height: 0.0
+    description: ''
+
+MEPS:
+    west: -1.0
+    north: 72.0
+    east: 60.0
+    south: 49.0
+    height: 0.0
+    description: ''
+
+North_Norway:
+    west: 5.0
+    north: 77.2
+    east: 25.0
+    south: 66.5
+    height: 0.0
+    description: ''
+
+NorwegianSea_area:
+    west: -7.0
+    north: 77.2
+    east: 16.0
+    south: 69.0
+    height: 0.0
+    description: ''
+
+South_Norway:
+    west: 4.0
+    north: 62.2
+    east: 9.18
+    south: 58.01
+    height: 0.0
+    description: ''
+
+Svalbard:
+    west: -8.0
+    north: 82.0
+    east: 30.0
+    south: 73.0
+    height: 0.0
+    description: ''
+
+Svalbard_z1:
+    west: 4.0
+    north: 82.0
+    east: 23.0
+    south: 76.3
+    height: 0.0
+    description: ''
+
+Svalbard_z2:
+    west: 15.0
+    north: 82.0
+    east: 23.0
+    south: 77.0
+    height: 0.0
+    description: ''
+
+West_Norway:
+    west: 1.0
+    north: 64.0
+    east: 12.0
+    south: 54.5
+    height: 0.0
+    description: ''

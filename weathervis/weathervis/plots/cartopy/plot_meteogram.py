@@ -30,27 +30,6 @@ dname = os.path.dirname(abspath)
 # package_path = os.path.dirname(__file__)
 os.chdir(dname)
 # matplotlib.rcParams.update({'figure.autolayout': True})
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
-    if domain_name or domain_lonlat:
-        if domain_lonlat:
-            print(
-                f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########"
-            )
-            data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
-        else:
-            data_domain = domain(dt, model, file=file)
-
-        if domain_name != None and domain_name in dir(data_domain):
-            print(f"\n####### Setting up domain: {domain_name} ##########")
-            domain_name = domain_name.strip()
-            if re.search("\(\)$", domain_name):
-                func = f"data_domain.{domain_name}"
-            else:
-                func = f"data_domain.{domain_name}()"
-            eval(func)
-    else:
-        data_domain = None
-    return data_domain
 
 
 def plot_meteogram_vertical(
@@ -1162,7 +1141,7 @@ def read_data(dt, steps, model, domain_name, domain_lonlat):
     if not split:
         file_all = check_all.file.loc[0]
         data_domain = domain_input_handler(
-            dt, model, domain_name, domain_lonlat, file_all
+            dt, model, file_all, domain_name=domain_name, domain_lonlat=domain_lonlat
         )
         dmet = get_data(
             model=model,
@@ -1193,7 +1172,7 @@ def read_data(dt, steps, model, domain_name, domain_lonlat):
         # get sfc level data
         file_sfc = check_sfc.file.loc[0]
         data_domain = domain_input_handler(
-            dt, model, domain_name, domain_lonlat, file_sfc
+            dt, model, file_sfc, domain_name=domain_name, domain_lonlat=domain_lonlat
         )
         # lonlat = np.array(data_domain.lonlat)
         dmet = get_data(

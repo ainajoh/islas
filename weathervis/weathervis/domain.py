@@ -110,6 +110,8 @@ class domain:
         if self.point_name != None and self.domain_name == None:
             print("GOTCHA")
             self.setup_point(point_name)
+        elif self.domain_name != None:
+            self.setup_domain(domain_name)
 
         # if self.idx:
         #    self.lonlat = idx2lonlat(self.idx, url)  # rough
@@ -124,227 +126,227 @@ class domain:
         #    url = f"https://thredds.met.no/thredds/dodsC/meps25epsarchive/{YYYY}/{MM}/{DD}/meps_det_2_5km_{YYYY}{MM}{DD}T{HH}Z.nc?latitude,longitude"
         # eval()
 
-    def MEPS(self):
-        self.lonlat = [-1, 60.0, 49.0, 72]
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def MEPS(self):
+    #     self.lonlat = [-1, 60.0, 49.0, 72]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def Finse(self):
-        self.lonlat = [7.524026, 8.524026, 60, 61.5]
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def Finse(self):
+    #     self.lonlat = [7.524026, 8.524026, 60, 61.5]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def South_Norway(self):
-        self.lonlat = [4.0, 9.18, 58.01, 62.2]  # lonmin,lonmax,latmin,latmax,
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def South_Norway(self):
+    #     self.lonlat = [4.0, 9.18, 58.01, 62.2]  # lonmin,lonmax,latmin,latmax,
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def West_Norway(self):
-        # self.lonlat = [2., 12., 53., 64.]  # lonmin,lonmax,latmin,latmax,
-        self.lonlat = [1.0, 12.0, 54.5, 64.0]  # lonmin,lonmax,latmin,latmax,
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def West_Norway(self):
+    #     # self.lonlat = [2., 12., 53., 64.]  # lonmin,lonmax,latmin,latmax,
+    #     self.lonlat = [1.0, 12.0, 54.5, 64.0]  # lonmin,lonmax,latmin,latmax,
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def AromeArctic(self):
-        # self.lonlat = [-10,60,30,90] # lonmin,lonmax,latmin,latmax,
-        # self.lonlat = [-30,90,10,91] # lonmin,lonmax,latmin,latmax,
-        self.lonlat = [
-            -18.0,
-            80.0,
-            62.0,
-            88.0,
-        ]  # lonmin,lonmax,latmin,latmax,
+    # def AromeArctic(self):
+    #     # self.lonlat = [-10,60,30,90] # lonmin,lonmax,latmin,latmax,
+    #     # self.lonlat = [-30,90,10,91] # lonmin,lonmax,latmin,latmax,
+    #     self.lonlat = [
+    #         -18.0,
+    #         80.0,
+    #         62.0,
+    #         88.0,
+    #     ]  # lonmin,lonmax,latmin,latmax,
 
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_det_2_5km_latest.nc?latitude,longitude"
-        self.idx = lonlat2idx(
-            self.lonlat, url=self.url
-        )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_det_2_5km_latest.nc?latitude,longitude"
+    #     self.idx = lonlat2idx(
+    #         self.lonlat, url=self.url
+    #     )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
-    def Svalbard_z2(self):  # map
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    # def Svalbard_z2(self):  # map
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
-        self.lonlat = [15, 23, 77, 82]  #
-        self.idx = lonlat2idx(
-            self.lonlat, url
-        )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+    #     self.lonlat = [15, 23, 77, 82]  #
+    #     self.idx = lonlat2idx(
+    #         self.lonlat, url
+    #     )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
-    def Svalbard_z1(self):  # map
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    # def Svalbard_z1(self):  # map
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
-        self.lonlat = [4, 23, 76.3, 82]  #
-        self.idx = lonlat2idx(
-            self.lonlat, url
-        )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+    #     self.lonlat = [4, 23, 76.3, 82]  #
+    #     self.idx = lonlat2idx(
+    #         self.lonlat, url
+    #     )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
-    def Svalbard(self):  # data
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_det_2_5km_latest.nc?latitude,longitude"
-        self.domain_name = "Svalbard"
-        self.lonlat = [-8, 30, 73, 82]  #
-        self.idx = lonlat2idx(
-            self.lonlat, url=self.url
-        )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+    # def Svalbard(self):  # data
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_det_2_5km_latest.nc?latitude,longitude"
+    #     self.domain_name = "Svalbard"
+    #     self.lonlat = [-8, 30, 73, 82]  #
+    #     self.idx = lonlat2idx(
+    #         self.lonlat, url=self.url
+    #     )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
-    def North_Norway(self):  # data
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
-        self.domain_name = "North_Norway"
-        self.lonlat = [5, 25, 66.5, 77.2]  #
-        self.idx = lonlat2idx(
-            self.lonlat, url=self.url
-        )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
+    # def North_Norway(self):  # data
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    #     self.domain_name = "North_Norway"
+    #     self.lonlat = [5, 25, 66.5, 77.2]  #
+    #     self.idx = lonlat2idx(
+    #         self.lonlat, url=self.url
+    #     )  # RIUGHNone#[0, -1, 0, -1]  # Index; y_min,y_max,x_min,x_max such that lat[y_min] = latmin
 
-    def KingsBay(self):  # bigger data
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    # def KingsBay(self):  # bigger data
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
-        self.lonlat = [10, 13.3, 78.6, 79.3]
-        self.idx = lonlat2idx(self.lonlat, url)  # Rough
+    #     self.lonlat = [10, 13.3, 78.6, 79.3]
+    #     self.idx = lonlat2idx(self.lonlat, url)  # Rough
 
-    def KingsBay_Z0(self):  # map
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    # def KingsBay_Z0(self):  # map
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
-        self.lonlat = [11, 13.0, 78.73, 79.16]
-        self.idx = lonlat2idx(self.lonlat, url)  # Rough
+    #     self.lonlat = [11, 13.0, 78.73, 79.16]
+    #     self.idx = lonlat2idx(self.lonlat, url)  # Rough
 
-    def KingsBay_Z1(self):  # smaller data
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    # def KingsBay_Z1(self):  # smaller data
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
 
-        self.idx = np.array(
-            [
-                [
-                    517,
-                    517,
-                    518,
-                    518,
-                    518,
-                    518,
-                    518,
-                    519,
-                    519,
-                    519,
-                    519,
-                    519,
-                    519,
-                    520,
-                    520,
-                    520,
-                    520,
-                    520,
-                    520,
-                    520,
-                    520,
-                    520,
-                    521,
-                    521,
-                    521,
-                    521,
-                    521,
-                    521,
-                    521,
-                    521,
-                    521,
-                    522,
-                    522,
-                    522,
-                    522,
-                    522,
-                    522,
-                    522,
-                    522,
-                    522,
-                    523,
-                    523,
-                    523,
-                    523,
-                    523,
-                    523,
-                    524,
-                    524,
-                    524,
-                    524,
-                    524,
-                    525,
-                    525,
-                    525,
-                ],
-                [
-                    183,
-                    184,
-                    182,
-                    183,
-                    184,
-                    185,
-                    186,
-                    182,
-                    183,
-                    184,
-                    185,
-                    186,
-                    187,
-                    181,
-                    182,
-                    183,
-                    184,
-                    185,
-                    186,
-                    187,
-                    188,
-                    189,
-                    182,
-                    183,
-                    184,
-                    185,
-                    186,
-                    187,
-                    188,
-                    189,
-                    190,
-                    183,
-                    184,
-                    185,
-                    186,
-                    187,
-                    188,
-                    189,
-                    190,
-                    191,
-                    185,
-                    186,
-                    187,
-                    188,
-                    189,
-                    190,
-                    186,
-                    187,
-                    188,
-                    189,
-                    190,
-                    187,
-                    188,
-                    189,
-                ],
-            ]
-        )  # y,x
-        self.lonlat = idx2lonlat(self.idx, url)  # rough
+    #     self.idx = np.array(
+    #         [
+    #             [
+    #                 517,
+    #                 517,
+    #                 518,
+    #                 518,
+    #                 518,
+    #                 518,
+    #                 518,
+    #                 519,
+    #                 519,
+    #                 519,
+    #                 519,
+    #                 519,
+    #                 519,
+    #                 520,
+    #                 520,
+    #                 520,
+    #                 520,
+    #                 520,
+    #                 520,
+    #                 520,
+    #                 520,
+    #                 520,
+    #                 521,
+    #                 521,
+    #                 521,
+    #                 521,
+    #                 521,
+    #                 521,
+    #                 521,
+    #                 521,
+    #                 521,
+    #                 522,
+    #                 522,
+    #                 522,
+    #                 522,
+    #                 522,
+    #                 522,
+    #                 522,
+    #                 522,
+    #                 522,
+    #                 523,
+    #                 523,
+    #                 523,
+    #                 523,
+    #                 523,
+    #                 523,
+    #                 524,
+    #                 524,
+    #                 524,
+    #                 524,
+    #                 524,
+    #                 525,
+    #                 525,
+    #                 525,
+    #             ],
+    #             [
+    #                 183,
+    #                 184,
+    #                 182,
+    #                 183,
+    #                 184,
+    #                 185,
+    #                 186,
+    #                 182,
+    #                 183,
+    #                 184,
+    #                 185,
+    #                 186,
+    #                 187,
+    #                 181,
+    #                 182,
+    #                 183,
+    #                 184,
+    #                 185,
+    #                 186,
+    #                 187,
+    #                 188,
+    #                 189,
+    #                 182,
+    #                 183,
+    #                 184,
+    #                 185,
+    #                 186,
+    #                 187,
+    #                 188,
+    #                 189,
+    #                 190,
+    #                 183,
+    #                 184,
+    #                 185,
+    #                 186,
+    #                 187,
+    #                 188,
+    #                 189,
+    #                 190,
+    #                 191,
+    #                 185,
+    #                 186,
+    #                 187,
+    #                 188,
+    #                 189,
+    #                 190,
+    #                 186,
+    #                 187,
+    #                 188,
+    #                 189,
+    #                 190,
+    #                 187,
+    #                 188,
+    #                 189,
+    #             ],
+    #         ]
+    #     )  # y,x
+    #     self.lonlat = idx2lonlat(self.idx, url)  # rough
 
-    def Andenes(self):
-        # 16.120;69.310;10
-        self.domain_name = "Andenes"
-        self.lonlat = [15.8, 16.4, 69.2, 69.4]
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def Andenes(self):
+    #     # 16.120;69.310;10
+    #     self.domain_name = "Andenes"
+    #     self.lonlat = [15.8, 16.4, 69.2, 69.4]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def ALOMAR(self):
-        # 16.120;69.310;10
-        self.domain_name = "ALOMAR"
-        self.lonlat = [15.8, 16.4, 69.2, 69.4]
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def ALOMAR(self):
+    #     # 16.120;69.310;10
+    #     self.domain_name = "ALOMAR"
+    #     self.lonlat = [15.8, 16.4, 69.2, 69.4]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def NorwegianSea_area(self):  # PAraglidingstart
-        url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
-        self.domain_name = "NorwegianSea_area"
-        self.lonlat = [-7, 16, 69.0, 77.2]  #
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def NorwegianSea_area(self):  # PAraglidingstart
+    #     url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+    #     self.domain_name = "NorwegianSea_area"
+    #     self.lonlat = [-7, 16, 69.0, 77.2]  #
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def Andenes_area(self):
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
-        self.domain_name = "Andenes_area"
-        self.lonlat = [6.0, 20.5, 67.5, 71.6]
-        # self.lonlat = [12.0, 19.5, 68.0, 70.6]
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def Andenes_area(self):
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    #     self.domain_name = "Andenes_area"
+    #     self.lonlat = [6.0, 20.5, 67.5, 71.6]
+    #     # self.lonlat = [12.0, 19.5, 68.0, 70.6]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
     # def Varlegenhuken(self):
     #     point_name = "Varlegenhuken"
@@ -358,13 +360,13 @@ class domain:
     #     self.lonlat = [minlon, maxlon, minlat, maxlat]
     #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def Iceland(self):
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
-        self.domain_name = "Iceland"
-        # self.lonlat = [12.0, 19.5, 68.0, 70.6]
-        # self.idx = lonlat2idx(self.lonlat, self.url)
-        # self.lonlat = [-65, 20., 58., 85]
-        self.lonlat = [-26.0, -8, 63.0, 67]
+    # def Iceland(self):
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_sfx_2_5km_latest.nc?latitude,longitude"
+    #     self.domain_name = "Iceland"
+    #     # self.lonlat = [12.0, 19.5, 68.0, 70.6]
+    #     # self.idx = lonlat2idx(self.lonlat, self.url)
+    #     # self.lonlat = [-65, 20., 58., 85]
+    #     self.lonlat = [-26.0, -8, 63.0, 67]
 
     # def Longyearbyen(self):
     #     point_name = "Longyearbyen"
@@ -510,11 +512,11 @@ class domain:
     #     self.lonlat = [minlon, maxlon, minlat, maxlat]
     #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def NorwegianSea_area(self):  # PAraglidingstart
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
-        self.domain_name = "NorwegianSea_area"
-        self.lonlat = [-7, 16, 69.0, 77.2]  #
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def NorwegianSea_area(self):  # PAraglidingstart
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    #     self.domain_name = "NorwegianSea_area"
+    #     self.lonlat = [-7, 16, 69.0, 77.2]  #
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
     # def GEOF322(self):  # PAraglidingstart
     #     point_name = "GEOF322"
@@ -528,19 +530,19 @@ class domain:
     #     self.lonlat = [minlon, maxlon, minlat, maxlat]
     #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def Iceland(self):
-        # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
-        self.domain_name = "Iceland"
-        # self.lonlat = [12.0, 19.5, 68.0, 70.6]
-        # self.idx = lonlat2idx(self.lonlat, self.url)
-        # self.lonlat = [-65, 20., 58., 85]
-        self.lonlat = [-26.0, -8, 63.0, 67]
-        self.idx = lonlat2idx(self.lonlat, self.url)
+    # def Iceland(self):
+    #     # url = "https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_det_2_5km_latest.ncml?latitude,longitude"
+    #     self.domain_name = "Iceland"
+    #     # self.lonlat = [12.0, 19.5, 68.0, 70.6]
+    #     # self.idx = lonlat2idx(self.lonlat, self.url)
+    #     # self.lonlat = [-65, 20., 58., 85]
+    #     self.lonlat = [-26.0, -8, 63.0, 67]
+    #     self.idx = lonlat2idx(self.lonlat, self.url)
 
-    def cross_region(self):
-        self.domain_name = "cross_region"
-        self.idx = []
-        self.lonlat = idx2lonlat[self.idx, self.url]
+    # def cross_region(self):
+    #     self.domain_name = "cross_region"
+    #     self.idx = []
+    #     self.lonlat = idx2lonlat[self.idx, self.url]
 
     # def pcmet1(self):
     #     point_name = "pcmet1"
@@ -575,6 +577,19 @@ class domain:
     #     maxlat = float(plat + 0.05)
     #     self.lonlat = [minlon, maxlon, minlat, maxlat]
     #     self.idx = lonlat2idx(self.lonlat, self.url)
+
+    def setup_domain(self, name):
+        """set up domain attributes"""
+        # read information from configuration file
+        domain = setup_area(name)
+        # put back information in domain object
+        west = domain["west"]
+        east = domain["east"]
+        south = domain["south"]
+        north = domain["north"]
+
+        self.lonlat = [west, east, south, north]
+        self.idx = lonlat2idx(self.lonlat, self.url)
 
     def setup_point(self, name):
         """set up point attributes"""
@@ -639,6 +654,52 @@ def setup_site(name, cfg="../../data/sites.yaml"):
         raise  # Throw exception again so calling code knows it happened
 
 
+def setup_area(name, cfg="../../data/domains.yaml"):
+    """set up area attributes
+
+    Attributes are read from a yaml configuration file.
+    If attribute is missing, default value is applied
+
+    :param name: domain name
+    :return: dictionary
+    """
+
+    def setdefault_recursively(tgt, default):
+        """replace missing attributes in target dictionnay by default_values"""
+        for k in default:
+            if isinstance(default[k], dict):  # if the current item is a dict,
+                # expand it recursively
+                setdefault_recursively(tgt.setdefault(k, {}), default[k])
+            else:
+                # ... otherwise simply set a default value if it's not set before
+                tgt.setdefault(k, default[k])
+        return tgt
+
+    try:
+        # read parameters configuration file yaml
+        # cfg = (
+        #     "/home/jpa029/Code/Git/Islas/Upstream/weathervis/weathervis/data/sites.yaml"
+        # )
+        with open(cfg, "r") as stream:
+            try:
+                domains = yaml.safe_load(stream)
+            except yaml.YAMLError as exc:
+                logging.exception(exc)
+                raise
+        # check parameters file
+        try:
+            domain = setdefault_recursively(domains[name], default=domains["default"])
+            return domain
+        except KeyError:
+            logging.exception(f"Invalid domain {name}. Check config file -{cfg}-.")
+            raise
+    except Exception:
+        logging.exception(
+            f"Something goes wrong when loading domain {name} from file -{cfg}-."
+        )
+        raise  # Throw exception again so calling code knows it happened
+
+
 def list_sites(cfg="../../data/sites.yaml"):
     """list all sites
 
@@ -651,3 +712,17 @@ def list_sites(cfg="../../data/sites.yaml"):
             raise yaml.YAMLError(exc)
     sites.pop("default")
     return list(sites.keys())
+
+
+def list_domains(cfg="../../data/domains.yaml"):
+    """list all domains
+
+    :return: list
+    """
+    with open(cfg, "r") as stream:
+        try:
+            domains = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            raise yaml.YAMLError(exc)
+    domains.pop("default")
+    return list(domains.keys())

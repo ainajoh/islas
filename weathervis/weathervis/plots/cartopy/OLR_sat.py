@@ -51,7 +51,7 @@ def OLR_sat(
         check_all = check_data(date=dt, model=model, param=param, step=steps)
         file_all = check_all.file
         data_domain = domain_input_handler(
-            dt, model, domain_name, domain_lonlat, file_all
+            dt, model, file_all, domain_name=domain_name, domain_lonlat=domain_lonlat
         )
         dmap_meps = get_data(
             model=model,

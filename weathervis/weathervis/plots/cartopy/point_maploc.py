@@ -30,29 +30,6 @@ dname = os.path.dirname(abspath)
 os.chdir(dname)
 
 
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file):
-    if domain_name or domain_lonlat:
-        if domain_lonlat:
-            print(
-                f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########"
-            )
-            data_domain = domain(dt, model, file=file, lonlat=domain_lonlat)
-        else:
-            data_domain = domain(dt, model, file=file)
-
-        if domain_name != None and domain_name in dir(data_domain):
-            print(f"\n####### Setting up domain: {domain_name} ##########")
-            domain_name = domain_name.strip()
-            if re.search("\(\)$", domain_name):
-                func = f"data_domain.{domain_name}"
-            else:
-                func = f"data_domain.{domain_name}()"
-            eval(func)
-    else:
-        data_domain = None
-    return data_domain
-
-
 def setup_directory(modelrun, point_name, point_lonlat):
     # projectpath = setup_directory(OUTPUTPATH, "{0}".format(modelrun))
     projectpath = OUTPUTPATH + "{0}".format(modelrun)
@@ -275,7 +252,11 @@ class MAP:
             print("\n######## Retriving sfx data ############")
             file_sfx = check_sfx.file.loc[0]
             data_domain = domain_input_handler(
-                self.date, self.model, self.domain_name, self.domain_lonlat, file_sfx
+                self.date,
+                self.model,
+                file_sfx,
+                domain_name=self.domain_name,
+                domain_lonlat=self.domain_lonlat,
             )
             dmet_sfx = get_data(
                 model=self.model,
@@ -290,7 +271,11 @@ class MAP:
         if not split:
             file_all = check_all.file.loc[0]
             data_domain = domain_input_handler(
-                self.date, self.model, self.domain_name, self.domain_lonlat, file_all
+                self.date,
+                self.model,
+                file_all,
+                domain_name=self.domain_name,
+                domain_lonlat=self.domain_lonlat,
             )
             dmet = get_data(
                 model=self.model,
@@ -314,7 +299,11 @@ class MAP:
             # get sfc level data
             file_sfc = check_sfc.file.loc[0]
             data_domain = domain_input_handler(
-                dt, model, domain_name, domain_lonlat, file_sfc
+                dt,
+                model,
+                file_sfc,
+                domain_name=domain_name,
+                domain_lonlat=domain_lonlat,
             )
             dmet_sfc = get_data(
                 model=model,
@@ -327,7 +316,7 @@ class MAP:
             )
 
             file_pl = check_pl.file.loc[0]
-            # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_pl)
+            # data_domain = domain_input_handler(dt, model, file_pl, domain_name=domain_name, domain_lonlat=domain_lonlat)
             dmet_pl = get_data(
                 model=model,
                 param=param_pl,
@@ -340,7 +329,7 @@ class MAP:
             )
 
             file_ml = check_ml.file.loc[0]
-            # data_domain = domain_input_handler(dt, model, domain_name, domain_lonlat, file_ml)
+            # data_domain = domain_input_handler(dt, model, file_ml, domain_name=domain_name, domain_lonlat=domain_lonlat)
             dmet_ml = get_data(
                 model=model,
                 param=param_ml,

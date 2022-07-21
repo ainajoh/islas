@@ -27,71 +27,10 @@ from weathervis.domain import *
 from weathervis.get_data import *
 from weathervis.utils import *
 
-
 # if len(param_we_want_that_areNOT_available) != 0:
 #        print(f"The requested parameters are not all available. Missing: {param_we_want_that_areNOT_available}")
 #            raise ValueError
 #            break
-def domain_input_handler(
-    dt,
-    model,
-    domain_name,
-    domain_lonlat,
-    file,
-    point_name,
-    point_lonlat=None,
-    use_latest=True,
-):
-    # print(point_name)
-    # print(domain_name)
-    # print(domain_lonlat)
-    # print("TESTING DOM")
-    print(point_lonlat)
-    if domain_name or domain_lonlat:
-        if domain_lonlat:
-            print(
-                f"\n####### Setting up domain for coordinates: {domain_lonlat} ##########"
-            )
-            data_domain = domain(
-                dt, model, file=file, lonlat=domain_lonlat, use_latest=use_latest
-            )
-        else:
-            data_domain = domain(dt, model, file=file, use_latest=use_latest)
-
-        if domain_name != None and domain_name in dir(data_domain):
-            print(f"\n####### Setting up domain: {domain_name} ##########")
-            domain_name = domain_name.strip()
-            # data_domain = domain(dt, model, file=file, domain_name=domain_name)
-            if re.search("\(\)$", domain_name):
-                func = f"data_domain.{domain_name}"
-            else:
-                func = f"data_domain.{domain_name}()"
-            print(func)
-            print(domain_name)
-            eval(func)
-        else:
-            print(f"No domain found with that name; {domain_name}")
-    else:
-        data_domain = None
-    if point_name != None and domain_name == None and domain_lonlat == None:
-        # print("GGGGGOOOO")
-        data_domain = domain(
-            dt, model, file=file, point_name=point_name, use_latest=use_latest
-        )
-        # print("DOM DONE")
-    if (
-        point_lonlat != None
-        and point_name == None
-        and domain_name == None
-        and domain_lonlat == None
-    ):
-        # print("IN WRONG ONE")
-        data_domain = domain(
-            dt, model, file=file, lonlat=point_lonlat, use_latest=use_latest
-        )
-        # print("DOM DONE")
-    print(data_domain)
-    return data_domain
 
 
 def find_best_combinationoffiles(
@@ -263,9 +202,9 @@ def retrievenow(
         data_domain = domain_input_handler(
             dt=date,
             model=model,
+            file=ourfileobj,
             domain_name=domain_name,
             domain_lonlat=domain_lonlat,
-            file=ourfileobj,
             point_name=point_name,
             point_lonlat=point_lonlat,
             use_latest=use_latest,
@@ -382,7 +321,6 @@ def checkget_data_handler(
             print("Oops!", sys.exc_info()[0], "occurred.")
             print("Next entry.")
             print(" ")
-    print(dmet)
     return dmet, data_domain, bad_param
 
 
