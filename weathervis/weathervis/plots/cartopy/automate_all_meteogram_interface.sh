@@ -3,21 +3,21 @@ source ~/.bashrc
 
 cf=""
 if [[ "$HOSTNAME" == *"cyclone.hpc.uib.no"* ]]; then
-    cf="source ../../data/config/config_cyclone.sh"
-    fi
+   cf="source ../../data/config/config_cyclone.sh"
+fi
 if [[ "$HOSTNAME" == *"islas-forecasts-testing.novalocal"* ]]; then
-    cf="source ../../data/config/config_islas_server.sh"
-    fi
+   cf="source ../../data/config/config_islas_server.sh"
+fi
 
 $cf
 
 #fclagh=350 #3.5 hour before forecsast is issued
 
 if [ "${BASH_VERSINFO:-0}" -ge 4 ];then
-  modeldatehour=$(date -u --date "today - $((350*60/100)) minutes" +'%Y%m%d%H%M')
+   modeldatehour=$(date -u --date "today - $((350*60/100)) minutes" +'%Y%m%d%H%M')
 else
-  modeldatehour=$(date -v-$((350*60/100))M -u +%Y%m%d%H%M)
-  #date -v-60M -u +%Y%m%d%H%M
+   modeldatehour=$(date -v-$((350*60/100))M -u +%Y%m%d%H%M)
+   #date -v-60M -u +%Y%m%d%H%M
 fi
 
 #modeldatehour="2021021121"
@@ -47,6 +47,7 @@ model="AromeArctic"
 #domain_name=("GEOF322")
 point_name=("Andenes")
 domain_name=("Andenes")
+
 #Make overview map
 map_loc="python point_maploc.py --datetime ${modelrun[0]} --point_name ${point_name[@]}"
 
@@ -54,13 +55,13 @@ map_loc="python point_maploc.py --datetime ${modelrun[0]} --point_name ${point_n
 $map_loc
 
 for dt in ${modelrun[@]}; do #${StringArray[@]}
-  #runstring="python point_meteogram.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"
-  runstring="python all_meteogram_interface.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"
-  for ((i=0;i<${#point_name[@]};++i)); do
-    runstring="$runstring --domain_name ${domain_name[i]} --point_name ${point_name[i]}"
-    echo $runstring
-    $runstring
-  done
+   #runstring="python point_meteogram.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"
+   runstring="python all_meteogram_interface.py --datetime $dt --point_num $point_num --steps ${steps[0]} ${steps[1]} --model $model"
+   for ((i=0;i<${#point_name[@]};++i)); do
+      runstring="$runstring --domain_name ${domain_name[i]} --point_name ${point_name[i]}"
+      echo $runstring
+      $runstring
+   done
 done
 #example of commande:
 #python meteogram_v3.py --datetime 2018031700 --point_num 1 --steps 0 60 --model AromeArctic --domain_name Andenes --point_name Andenes

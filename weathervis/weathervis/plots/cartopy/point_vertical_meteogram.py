@@ -13,19 +13,18 @@ import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from cartopy.io import (  # For reading shapefiles containg high-resolution coastline.
-    shapereader,
+from cartopy.io import (
+    shapereader,  # For reading shapefiles containg high-resolution coastline.
 )
 from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 from weathervis.calculation import *
-
-# from weathervis.get_data import *
-# from weathervis.check_data import *
+from weathervis.check_data import *
 from weathervis.checkget_data_handler import *
 from weathervis.config import *
 from weathervis.domain import *
+from weathervis.get_data import *
 from weathervis.utils import *
 
 abspath = os.path.abspath(__file__)
@@ -249,7 +248,7 @@ class VERT_MET:
         # print("test4")
         self.dmet.time_normal = timestamp2utc(self.dmet.time)
         # print("test5")
-        self.dmet.theta = potential_temperature(
+        self.dmet.theta = potential_temperatur(
             self.dmet.air_temperature_ml, self.dmet.p
         )
         # print("test6")
@@ -283,18 +282,11 @@ class VERT_MET:
                 num_point,
             )
         else:
-            site = setup_site(self.poit_name)
+            point = setup_site(self.point_name)
             ind_list = nearest_neighbour(
-                site["lon"],
-                site["lat"],
-                dmet.longitude,
-                dmet.latitude,
-                num_point,
+                point["lon"], point["lat"], dmet.longitude, dmet.latitude, num_point
             )
-            point_lonlat = [
-                site["lon"],
-                site["lat"],
-            ]
+            point_lonlat = [point["lon"], point["lat"]]
         poi = ind_list[0:num_point]
         return poi
 
@@ -439,8 +431,12 @@ class VERT_MET:
         axm1.clabel(CF_ICE, CF_ICE.levels, inline=False, fmt="%3.1f", fontsize=12)
         # marker=r"$C_H$"
 
-        # lvl = np.linspace(np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),np.max(mass_fraction_of_cloud_condensed_water_in_air_ml), 4)
-        lvl = [0.5, 5, 20, 50, 150]
+        lvl = np.linspace(
+            np.min(mass_fraction_of_cloud_condensed_water_in_air_ml),
+            np.max(mass_fraction_of_cloud_condensed_water_in_air_ml),
+            4,
+        )
+        lvl = [0.1, 5, 20, 50, 150]
         print(np.max(mass_fraction_of_cloud_condensed_water_in_air_ml))
         CF_C = axm1.contour(
             tx,
@@ -677,7 +673,8 @@ class VERT_MET:
         lvl = np.append(lvl1, lvl2)
         lvl = np.append(lvl, lvl3)
         ticks = np.array([-9.8, -6.5, -3, 0, 3, 6])
-        norm = mpl.colors.TwoSlopeNorm(vmin=-10.0, vcenter=0.0, vmax=6)
+        norm = mpl.colors.DivergingNorm(vmin=-10.0, vcenter=0.0, vmax=6)
+        # norm = mpl.colors.TwoSlopeNorm(vmin=-10.0, vcenter=0.0, vmax=6)
         CF = axm1.pcolormesh(tx, p_p, dtdz_p, cmap=cmap, zorder=1, norm=norm)  # dtdz_p
         cbar = nice_vprof_colorbar(
             CF=CF, ax=axm1, ticks=ticks, label="Lapse. rate. [C/km]", format="%.1f"
@@ -729,7 +726,8 @@ class VERT_MET:
 
         # TEMP
         cmap = cm.get_cmap("twilight_shifted")  # BrBu  BrYlBu
-        norm = mpl.colors.TwoSlopeNorm(vmin=-30.0, vcenter=0.0, vmax=10)
+        norm = mpl.colors.DivergingNorm(vmin=-30.0, vcenter=0.0, vmax=10)
+        # norm = mpl.colors.TwoSlopeNorm(vmin=-30.0, vcenter=0.0, vmax=10)
         CF_2 = axm2.pcolormesh(
             tx, p_p, temp_p, zorder=1, cmap=cmap, norm=norm
         )  # dtdz_p
@@ -903,7 +901,7 @@ if __name__ == "__main__":
         type=float,
         help="lonmin lonmax latmin latmax",
     )
-    parser.add_argument("--point_name", default=None, help="see sites.csv")
+    parser.add_argument("--point_name", default=None, help="see sites.yaml")
     parser.add_argument(
         "--point_lonlat", default=None, nargs="+", type=float, help="lon lat"
     )
@@ -934,7 +932,11 @@ if __name__ == "__main__":
             figname_b2,
             figname_b3,
         ) = setup_met_directory(
-            dt, args.point_name, args.point_lonlat, runid=args.id, outpath=args.outpath
+            dt,
+            args.point_name,
+            args.point_lonlat,
+            runid=args.id,
+            outpath=args.outpath,
         )
 
         VM = VERT_MET(

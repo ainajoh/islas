@@ -1,0 +1,258 @@
+# example:
+# <station name>:
+#   lat: <station latitude (degree_north)>
+#   lon: <station longitude (degree_east)>
+#   height: <station height ()>
+#   stationId: <station identifier>
+#   WMOID:     <WMO identifier>
+#   description: >
+#      <description could be write on multilines>
+#   margin: <create area around station to display>
+#     north:  <adds X degree(s) north of station (degree)>
+#     east:   <adds X degree(s) east of station (degree)>
+#     south:  <substracts X degree(s) south of station (degree)>
+#     west:   <substracts X degree(s) west of station (degree)>
+
+default: # set of default values applied if attribute is missing
+  lat:
+  lon:
+  height:
+  stationID:
+  WMOID:
+  description:
+  margin:
+    west: 0.32
+    east: 0.28
+    south: 0.11
+    north: 0.09
+
+OldPier:
+  lat: 78.93030
+  lon: 11.91929
+  height: 5
+
+OldPierG:
+  lat: 78.929994
+  lon: 11.918122
+
+Zeppelin:
+  lat: 78.90722
+  lon: 11.88604
+  height: 472
+
+Bergen:
+  lat: 60.383669
+  lon: 5.331850
+
+Osteroy:
+  lat: 60.52
+  lon: 5.55
+  height: 0
+  margin:
+    west: 1.70
+    east: 1.10
+    south: 0.80
+    north: 1.00
+
+NyAlesund:
+  lat: 78.9243
+  lon: 11.9312
+  height: 10
+  stationID: SN99910
+
+Kiruna:
+   lat: 67.8222
+   lon: 20.31891
+   height: 530.0
+
+Andenes:
+  lat: 69.310
+  lon: 16.120
+  height: 10
+  stationID: SN87110
+
+ALOMAR:
+  lat: 69.278
+  lon: 16.009
+  height: 378
+  margin:
+    west: 0.21
+    east: 0.39
+    south: 0.08
+    north: 0.12
+
+Bjornoya:
+  lat: 74.5033
+  lon: 18.9977
+  height: 18
+  stationID: SN99700
+  WMOID: 01028
+
+Alta:
+  lat: 69.96887
+  lon: 23.27163
+  height: 20.0
+
+Kirkenes:
+   lat: 69.72708
+   lon: 30.04511
+   height: 20.0
+
+Tromso:
+  lat: 69.6538
+  lon: 18.9095
+  height: 20
+  stationID: SN90400
+  WMOID: 01027
+
+Bodo:
+  lat: 67.267
+  lon: 14.3637
+  height: 0
+  StationID: 82290
+  WMOID: 01162
+
+Trondheim:
+   lat: 63.43048
+   lon: 10.39506
+   height: 20.0
+
+
+Hopen:
+  lat: 76.5097
+  lon: 25.0133
+  height: 0
+  stationID: 99720
+  WMOID: 01062
+
+Longyearbyen:
+  lat: 78.2453
+  lon: 15.5015
+  height: 28
+  stationID: 99840
+  WMOID: 01008
+
+Varlegenhuken:
+  lat: 80.0592
+  lon: 16.25
+  height: 8
+  stationID: 99927
+  WMOID: 01002
+
+Olsnesnipa:
+  lat: 60.48684
+  lon: 5.65150
+  height: 653
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05
+
+JanMayen:
+  lat: 71.161223
+  lon: -8.008265
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05
+
+NorwegianSea:
+  lat: 72.953497
+  lon: 5.112194
+  height: 0
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05
+
+Sodankyla:
+   lat: 67.3959
+   lon: 26.6308
+   height: 180
+
+Abisko:
+   lat: 68.3532
+   lon: 19.0506
+   height: 360
+
+CAO:
+  lat: 70.824218
+  lon: 0.04802
+  height: 0
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05
+
+GEOF322:
+  lat: 60.2
+  lon: 5.41667
+  height: 60
+  description: 'OS_HORDALAND'
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05
+
+pcmet1:
+   # lat: 69.670501
+   # lon: 20.494432
+   # height: 0.0
+   # description: 'EaterAina'
+   # lat: 77.0
+   # lon: 10.0
+   # height: 0.0
+   # description: 'FramStrait'
+  lat: 78.75
+  lon: 9.5
+  height: 0.0
+  description: 'Box1'
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05
+
+
+pcmet2:
+   # lat: 78.771857
+   # lon: 8.2396375
+   # height: 0
+   # description: 9500
+   # lat: 72.0
+   # lon: 24.0
+   # height: 0.0
+   # description: 'BarentsSea'
+  lat: 78.0
+  lon: 25.0
+  height: 0.0
+  description: 'Box2'
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05
+
+pcmet3:
+   # lat: 78.201387
+   # lon: 1.333293
+   # height: 1214.1
+   # description: 0.0
+   # lat: 70.0
+   # lon: 4.0
+   # height: 0.0
+   # decription: 'NorwegianSea'
+  lat: 73.3
+  lon: 30.0
+  height: 0.0
+  description: 'NorwegianSea'
+  margin:
+    west: 0.15
+    east: 0.15
+    south: 0.05
+    north: 0.05

@@ -1,0 +1,23 @@
+name: weathervis-env
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.7
+  - cartopy
+  - matplotlib=3.3.1
+  - pandas
+  - beautifulsoup4
+  - requests
+  - pyyaml
+  - shyaml
+  - netCDF4
+  - pip
+  - pip:
+    - geog==0.0.2
+  # Code quality
+  - flake8-isort
+  - black
+  - pre-commit

@@ -1,8 +1,8 @@
-#from weathervis.config import *
+# from weathervis.config import *
 
-#global wc
-#global projectpath
-#import weathervis.config as wc
+# global wc
+# global projectpath
+# import weathervis.config as wc
 
 
-#projectpath= wc.projectpath
+# projectpath= wc.projectpath
