@@ -61,7 +61,7 @@ filter_function_for_file=lambda value: value if value is not None else SomeError
 #Domain filter not needed as it should be handled in domain itself
 class get_data():
 
-    def __init__(self, model=None, date=None, param=None, file=None, step=None, data_domain=None, p_level = None, m_level = None, mbrs=None, url=None, use_latest=True):
+    def __init__(self, model=None, date=None, param=None, file=None, step=None, data_domain=None, p_level = None, m_level = None, mbrs=None, url=None, use_latest=False):
         """
 
         Parameters - Type - Info - Example

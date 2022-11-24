@@ -30,7 +30,7 @@ import itertools
 #        print(f"The requested parameters are not all available. Missing: {param_we_want_that_areNOT_available}")
 #            raise ValueError
 #            break
-def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name, point_lonlat=None, use_latest=True):
+def domain_input_handler(dt, model, domain_name, domain_lonlat, file, point_name, point_lonlat=None, use_latest=False):
   #print(point_name)
   #print(domain_name)
   #print(domain_lonlat)
@@ -155,7 +155,7 @@ def find_best_combinationoffiles(all_param,fileobj,m_level=None,p_level=None):  
     print(ppd)
     return ppd,bad_param
 
-def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name=None, domain_lonlat=None,bad_param=[],bad_param_sfx=[],point_name=None, point_lonlat=None, use_latest=True):
+def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name=None, domain_lonlat=None,bad_param=[],bad_param_sfx=[],point_name=None, point_lonlat=None, use_latest=False):
     #print("HEEEE")
     fixed_var = ["ap", "b", "ap2", "b2", "pressure", "hybrid", "hybrid2","hybrid0"]  # this should be gotten from get_data
     #indexidct = {"time": step, "y": y, "x": x, "ensemble_member": mbrs,
@@ -221,7 +221,7 @@ def retrievenow(our_choice,model,step, date,fileobj,m_level,p_level, domain_name
 
     return dmet, data_domain,bad_param
 
-def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=None, mbrs=None, domain_name=None, domain_lonlat=None, point_name=None,point_lonlat=None,use_latest=True):
+def checkget_data_handler(all_param,date,  model, step, p_level= None, m_level=None, mbrs=None, domain_name=None, domain_lonlat=None, point_name=None,point_lonlat=None,use_latest=False):
     fileobj = check_data(model, date=date, step=step,use_latest=use_latest).file
     #print(fileobj)
     print(all_param)

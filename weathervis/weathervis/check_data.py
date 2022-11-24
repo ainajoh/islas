@@ -30,7 +30,7 @@ model = ["AromeArctic", "MEPS"] #ECMWF later
 source = ["thredds"] # later"netcdf", "grib" 2019120100
 levtype = [None,"pl","ml"] #include pl here aswell.
 
-#use_latest = True
+#use_latest = False
 
 logging.basicConfig(filename="get_data.log", level = logging.INFO, format = '%(levelname)s : %(message)s')
 
@@ -94,7 +94,7 @@ def filter_any(file):
 
 class check_data():
 
-    def __init__(self, model, date = None,param=None, step=None, mbrs=None,levtype=None, p_level= None, m_level=None,file = None, numbervar = 100, search = None, use_latest=True):
+    def __init__(self, model, date = None,param=None, step=None, mbrs=None,levtype=None, p_level= None, m_level=None,file = None, numbervar = 100, search = None, use_latest=False):
         """
         Parameters
         ----------
@@ -274,11 +274,14 @@ class check_data():
 
         soup = BeautifulSoup(page.text, 'html.parser')
         rawfiles= soup.table.find_all("a")
+        
         ff =[i.text for i in rawfiles]
-        pattern=re.compile(f'.*{YYYY}{MM}{DD}T{HH}Z.ncml')
+        pattern=re.compile(f'.*{YYYY}{MM}{DD}T{HH}Z.nc*')
         ff= pd.DataFrame( data = list(filter(pattern.match,ff)), columns=["File"])
+    
         drop_files = ["_vc_", "thunder", "_kf_", "_ppalgs_", "_pp_", "t2myr", "wbkz", "vtk","_preop_"]
         df = ff.copy()[~ff["File"].str.contains('|'.join(drop_files))] #(drop_files)])
+        #print(df)
 
         df.reset_index(inplace=True, drop = True)
         df["var"] = None
@@ -286,6 +289,7 @@ class check_data():
         df["mbr_bool"] = False
         df["ml_bool"] = False
         df["p_levels"] = False
+
         i=0
         while i<len(df):
             file=df["File"][i]

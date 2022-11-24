@@ -194,7 +194,7 @@ def set_variable2d(modelruntime,steps,lvl,xres,yres,model):
         attr['rotation_radian'] = 0.0
         attr['xdim'] = np.long(len(dmap_arome2d.x[::xres]))#np.long(dataset.variables["x"].getncattr("_ChunkSizes"))  # Use: None
         attr['input_lat'] = proj.getncattr("latitude_of_projection_origin")  # Use: None
-        attr['reference_lat'] = proj.getncattr("latitude_of_projection_origin")
+        attr['reference_lat']xetncattr("latitude_of_projection_origin")
         attr['y_resolution'] = np.double("2500.0") #np.double("2500.0")*yres   # Use: None
         attr['date'] =  validdate.strftime("%Y%m%d") # "20180331"
         attr['input_lon'] = proj.getncattr("longitude_of_central_meridian")  # Use: None

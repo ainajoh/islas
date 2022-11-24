@@ -136,7 +136,7 @@ class VERT_MET():
         self.param = self.param_pl + self.param_ml + self.param_sfc + self.param_sfx
         dmet,data_domain,bad_param = checkget_data_handler(all_param=self.param, date=self.date, model=self.model, step=self.steps,
                                      p_level=self.p_level, m_level=self.m_level,mbrs=self.mbrs,
-                                     domain_name=self.domain_name, domain_lonlat=self.domain_lonlat, point_name=self.point_name, use_latest=True)
+                                     domain_name=self.domain_name, domain_lonlat=self.domain_lonlat, point_name=self.point_name, use_latest=False)
 
         self.dmet = dmet
         self.data_domain = data_domain
