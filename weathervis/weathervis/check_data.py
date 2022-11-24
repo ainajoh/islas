@@ -125,7 +125,7 @@ class check_data:
         file=None,
         numbervar=100,
         search=None,
-        use_latest=True,
+        use_latest=False,
     ):
         """
         Parameters

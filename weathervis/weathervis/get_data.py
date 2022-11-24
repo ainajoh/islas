@@ -123,7 +123,7 @@ class get_data:
         m_level=None,
         mbrs=None,
         url=None,
-        use_latest=True,
+        use_latest=False,
     ):
         """
 

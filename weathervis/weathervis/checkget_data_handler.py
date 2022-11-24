@@ -167,7 +167,7 @@ def retrievenow(
     bad_param_sfx=[],
     point_name=None,
     point_lonlat=None,
-    use_latest=True,
+    use_latest=False,
 ):
     # print("HEEEE")
     fixed_var = [
