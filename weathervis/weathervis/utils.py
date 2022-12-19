@@ -501,7 +501,7 @@ def domain_input_handler(
     domain_lonlat=None,
     point_name=None,
     point_lonlat=None,
-    use_latest=True,
+    use_latest=False,
 ):
     # print(point_name)
     # print(domain_name)
